@@ -1,0 +1,64 @@
+# Project: renderer
+# Makefile created by Dev-C++ 5.11
+
+CPP      = g++.exe
+CC       = gcc.exe
+WINDRES  = windres.exe
+OBJ      = obj/color.o obj/common.o obj/geometry.o obj/intersect_result.o obj/main.o obj/material.o obj/perspectivecamera.o obj/plane.o obj/ray.o obj/renderer.o obj/sphere.o obj/union.o obj/vector.o
+LINKOBJ  = obj/color.o obj/common.o obj/geometry.o obj/intersect_result.o obj/main.o obj/material.o obj/perspectivecamera.o obj/plane.o obj/ray.o obj/renderer.o obj/sphere.o obj/union.o obj/vector.o
+LIBS     = -L"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib" -L"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/lib" -static-libgcc -g -lgdi32
+INCS     = -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include" -I"D:/wyman/bitsync/project/renderer/include" -I"D:/wyman/bitsync/project/renderer/src"
+CXXINCS  = -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include/c++" -I"D:/wyman/bitsync/project/renderer/include" -I"D:/wyman/bitsync/project/renderer/src"
+BIN      = bin/renderer.exe
+CXXFLAGS = $(CXXINCS) -std=gnu++11 -lgdi32 -pthread
+CFLAGS   = $(INCS) 
+RM       = rm.exe -f
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before $(BIN) all-after
+
+clean: clean-custom
+	${RM} $(OBJ) $(BIN)
+
+$(BIN): $(OBJ)
+	$(CPP) $(LINKOBJ) -o $(BIN) $(LIBS)
+
+obj/color.o: src/color.cpp
+	$(CPP) -c src/color.cpp -o obj/color.o $(CXXFLAGS)
+
+obj/common.o: src/common.cpp
+	$(CPP) -c src/common.cpp -o obj/common.o $(CXXFLAGS)
+
+obj/geometry.o: src/geometry.cpp
+	$(CPP) -c src/geometry.cpp -o obj/geometry.o $(CXXFLAGS)
+
+obj/intersect_result.o: src/intersect_result.cpp
+	$(CPP) -c src/intersect_result.cpp -o obj/intersect_result.o $(CXXFLAGS)
+
+obj/main.o: src/main.cpp
+	$(CPP) -c src/main.cpp -o obj/main.o $(CXXFLAGS)
+
+obj/material.o: src/material.cpp
+	$(CPP) -c src/material.cpp -o obj/material.o $(CXXFLAGS)
+
+obj/perspectivecamera.o: src/perspectivecamera.cpp
+	$(CPP) -c src/perspectivecamera.cpp -o obj/perspectivecamera.o $(CXXFLAGS)
+
+obj/plane.o: src/plane.cpp
+	$(CPP) -c src/plane.cpp -o obj/plane.o $(CXXFLAGS)
+
+obj/ray.o: src/ray.cpp
+	$(CPP) -c src/ray.cpp -o obj/ray.o $(CXXFLAGS)
+
+obj/renderer.o: src/renderer.cpp
+	$(CPP) -c src/renderer.cpp -o obj/renderer.o $(CXXFLAGS)
+
+obj/sphere.o: src/sphere.cpp
+	$(CPP) -c src/sphere.cpp -o obj/sphere.o $(CXXFLAGS)
+
+obj/union.o: src/union.cpp
+	$(CPP) -c src/union.cpp -o obj/union.o $(CXXFLAGS)
+
+obj/vector.o: src/vector.cpp
+	$(CPP) -c src/vector.cpp -o obj/vector.o $(CXXFLAGS)
