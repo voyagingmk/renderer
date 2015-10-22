@@ -28,8 +28,8 @@ Folders=include,src
 IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=0
-CompilerSettings=0000000000000000000000000
-UnitCount=30
+CompilerSettings=0000000000000000001000000
+UnitCount=32
 
 [VersionInfo]
 Major=1
@@ -231,13 +231,14 @@ BuildCmd=
 CompileCpp=1
 
 [Unit32]
-FileName=src\plane.o
+FileName=src\parser.cpp
 Folder=src
-Compile=0
-Link=0
+Compile=1
+Link=1
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
+CompileCpp=1
 
 [Unit33]
 FileName=src\ray.cpp
@@ -457,6 +458,16 @@ BuildCmd=
 FileName=src\geometry.cpp
 CompileCpp=1
 Folder=src
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit31]
+FileName=include\parser.hpp
+CompileCpp=1
+Folder=include
 Compile=1
 Link=1
 Priority=1000
