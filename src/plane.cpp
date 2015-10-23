@@ -17,6 +17,7 @@ Plane::Plane(const Plane& p){
 Plane Plane::operator = (const Plane& p){
     m_normal = p.getNormal();
     m_distance = p.getDistance();
+	return *this;
 }
 void Plane::init(){
     m_position = std::make_shared<Vector>(*m_normal * m_distance);

@@ -3,3 +3,5 @@ obj/
 src/sphere.cpp.save-failed
 *.o
 *.exe
+renderer.vcxproj.user
+renderer.vcxproj.filters

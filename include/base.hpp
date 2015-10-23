@@ -1,6 +1,12 @@
 #ifndef BASE_HPP
 #define BASE_HPP
 
+#if _MSC_VER
+
+#else
+
+#endif 
+#include <algorithm>
 #include <memory>
 #include <stdio.h>
 #include <string>
@@ -10,6 +16,7 @@
 #include <list>
 #include <assert.h>
 #include "CImg.h"
+
 
 #define DEFINE_SHARE_PTR(name) typedef std::shared_ptr<name> Ptr#name;
 class IntersectResult;

@@ -1,0 +1,67 @@
+{
+	"width": 400,
+	"height": 400,
+	"multithread":1,
+	"camera":{
+		"eye":[0,5,15],
+		"front":[0,0,-1],
+		"up":[0,1,0],
+		"fov":90
+	},
+	"scene":[
+		{
+			"type": "Sphere",
+			"pos":[-10,10,-10],
+			"radius":10,
+			"matId":1
+		},
+		{
+			"type": "Sphere",
+			"pos":[10,10,-10],
+			"radius":10,
+			"matId":2
+		},
+		{
+			"type": "Sphere",
+			"pos":[-10,20,-20],
+			"radius":10,
+			"matId":1
+		},
+		{
+			"type": "Sphere",
+			"pos":[10,20,-20],
+			"radius":10,
+			"matId":2
+		},
+		{
+			"type": "Plane",
+			"normal":[0,1,0],
+			"distance":0,
+			"matId":3
+		}
+	],
+	"material":[
+		{
+			"id":1,
+			"type":"Phone",
+			"diffuse":"Red",
+			"specular":"White",
+			"shininess":16,
+			"reflectiveness":0.25
+		},
+		{
+			"id":2,
+			"type":"Phone",
+			"diffuse":"Blue",
+			"specular":"White",
+			"shininess":16,
+			"reflectiveness":0.25
+		},
+		{
+			"id":3,
+			"type":"Checker",
+			"scale":0.1,
+			"reflectiveness":0.5
+		}
+	]
+}

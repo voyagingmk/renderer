@@ -25,7 +25,7 @@ PtrIntersectResult Sphere::intersect(PtrRay ray){
     if (DdotV <= 0) {
         double discr = DdotV * DdotV - a0;
         if (discr >= 0) {
-            auto distance = -DdotV - sqrtf(discr);
+            auto distance = -DdotV - double(sqrtf(discr));
             auto position = ray->getPoint(distance);
             auto normal = (*position - *m_center).normalize();
             return std::make_shared<IntersectResult>(IntersectResult(shared_from_this(), distance, *position, normal));
