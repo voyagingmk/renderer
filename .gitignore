@@ -5,3 +5,4 @@ src/sphere.cpp.save-failed
 *.exe
 renderer.vcxproj.user
 renderer.vcxproj.filters
+.vs/renderer/v14/

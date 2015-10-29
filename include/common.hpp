@@ -1,7 +1,7 @@
 #ifndef COMMON_HPP
 #define COMMON_HPP
 
-#include "geometry.hpp"
+#include "shape.hpp"
 #include "vector.hpp"
 
 

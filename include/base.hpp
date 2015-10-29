@@ -20,7 +20,7 @@
 
 #define DEFINE_SHARE_PTR(name) typedef std::shared_ptr<name> Ptr#name;
 class IntersectResult;
-class Geometry;
+class Shape;
 class Material;
 class Vector;
 class Sphere;
@@ -30,7 +30,7 @@ class Color;
 class Ray;
 
 typedef std::shared_ptr<IntersectResult> PtrIntersectResult;
-typedef std::shared_ptr<Geometry> PtrGeometry;
+typedef std::shared_ptr<Shape> PtrGeometry;
 typedef std::shared_ptr<Material> PtrMaterial;
 typedef std::shared_ptr<Vector> PtrVector;
 typedef std::shared_ptr<Sphere> PtrSphere;
