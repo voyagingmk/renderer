@@ -1,12 +1,12 @@
-#ifndef SPHERE_HPP
-#define SPHERE_HPP
+#ifndef RENDERER_SPHERE_HPP
+#define RENDERER_SPHERE_HPP
 
 #include "base.hpp"
 #include "shape.hpp"
 namespace renderer {
 	class Sphere :public Shape {
 		PtrVector m_center;
-		float m_radius;
+		float r;
 		float m_sqrRadius;
 	public:
 		Sphere(PtrVector center, float radius);
@@ -15,8 +15,8 @@ namespace renderer {
 		virtual void init();
 		virtual PtrIntersectResult intersect(PtrRay);
 		PtrVector getCenter() const { return m_center; }
-		inline float getRadius() const { return m_radius; }
+		inline float getRadius() const { return r; }
 	};
 }
 
-#endif // SPHERE_HPP
+#endif // RENDERER_SPHERE_HPP

@@ -1,5 +1,5 @@
 #include "renderer.hpp"
-#include "perspectivecamera.hpp"
+#include "camera.hpp"
 #include "shape.hpp"
 #include "intersect_result.hpp"
 #include "vector.hpp"
@@ -41,9 +41,9 @@ namespace renderer {
 				PtrIntersectResult result = scene.intersect(ray);
 				if (result->getGeometry()) {
 					PtrVector pNormal = result->getNormal();
-					img.atXYZC(x, y, 0, 0) = (pNormal->x() + 1) * 128;
-					img.atXYZC(x, y, 0, 1) = (pNormal->y() + 1) * 128;
-					img.atXYZC(x, y, 0, 2) = (pNormal->z() + 1) * 128;
+					img.atXYZC(x, y, 0, 0) = (pNormal->x + 1) * 128;
+					img.atXYZC(x, y, 0, 1) = (pNormal->y + 1) * 128;
+					img.atXYZC(x, y, 0, 2) = (pNormal->z + 1) * 128;
 					//atXYZC(x, y, 0, 0) = 255;
 				}
 			}
@@ -104,7 +104,7 @@ namespace renderer {
 		if (h == 0)
 			h = img_height;
 		for (int y = py, yMax = py + h; y < yMax; y++) {
-			float sy = 1.0 - (float)y / img_height;
+			float sy = 1.0f - (float)y / img_height;
 			for (int x = px, xMax = px + w; x < xMax; x++) {
 				float sx = (float)x / img_width;
 				//printf("sx,sy=%f,%f\n",sx,sy);

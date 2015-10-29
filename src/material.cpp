@@ -9,7 +9,7 @@ namespace renderer {
 	};
 
 	PtrColor CheckerMaterial::sample(PtrRay ray, PtrVector position, PtrVector normal) {
-		return abs((int(std::floor(position->x() * 0.1)) + int(std::floor(position->z() * m_scale))) % 2) < 1 ? Color::Black : Color::White;
+		return abs((int(std::floor(position->x * 0.1)) + int(std::floor(position->z * m_scale))) % 2) < 1 ? Color::Black : Color::White;
 	};
 
 

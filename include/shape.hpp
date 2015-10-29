@@ -1,5 +1,5 @@
-#ifndef GEOMETRY_HPP
-#define GEOMETRY_HPP
+#ifndef RENDERER_SHAPE_HPP
+#define RENDERER_SHAPE_HPP
 
 #include "base.hpp"
 namespace renderer {
@@ -15,4 +15,4 @@ namespace renderer {
 	};
 }
 
-#endif // GEOMETRY_HPP
+#endif //RENDERER_SHAPE_HPP

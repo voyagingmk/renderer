@@ -1,5 +1,5 @@
-#ifndef UNION_HPP
-#define UNION_HPP
+#ifndef RENDERER_UNION_HPP
+#define RENDERER_UNION_HPP
 
 #include "base.hpp"
 #include "shape.hpp"
@@ -16,4 +16,4 @@ namespace renderer {
 }
 
 
-#endif // UNION_HPP
+#endif // RENDERER_UNION_HPP

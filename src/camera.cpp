@@ -1,4 +1,4 @@
-#include "perspectivecamera.hpp"
+#include "camera.hpp"
 #include <cmath>
 #include <vector.hpp>
 #include <ray.hpp>

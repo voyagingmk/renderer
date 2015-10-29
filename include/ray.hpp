@@ -1,5 +1,5 @@
-#ifndef RAY_HPP
-#define RAY_HPP
+#ifndef RENDERER_RAY_HPP
+#define RENDERER_RAY_HPP
 
 #include "base.hpp"
 namespace renderer {
@@ -13,4 +13,4 @@ namespace renderer {
 		inline PtrVector getDirection() { return m_direction; };
 	};
 }
-#endif // RAY_HPP
+#endif // RENDERER_RAY_HPP

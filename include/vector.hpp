@@ -1,12 +1,14 @@
-#ifndef VECTOR_HPP
-#define VECTOR_HPP
+#ifndef RENDERER_VECTOR_HPP
+#define RENDERER_VECTOR_HPP
 
 #include "base.hpp"
-namespace renderer {
 
+
+namespace renderer {
 	class Vector {
-	private:
-		float m_x, m_y, m_z;
+	public:
+		float x, y, z;
+		static PtrVector Zero;
 	public:
 		Vector();
 		Vector(const float x, const float y, const float z);
@@ -23,11 +25,8 @@ namespace renderer {
 		bool operator == (const Vector& v);
 		float dot(const Vector&);
 		Vector cross(const Vector&);
-		inline float x() const { return m_x; };
-		inline float y() const { return m_y; };
-		inline float z() const { return m_z; };
-		inline float length() { return sqrt(m_x * m_x + m_y * m_y + m_z * m_z); };
-		inline float squareLength() { return m_x * m_x + m_y * m_y + m_z * m_z; };
+		inline float length() { return sqrt(x * x + y * y + z * z); };
+		inline float squareLength() { return x * x + y * y + z * z; };
 		Vector normalize();
 		Vector& swap(Vector&);
 		void debug() {
@@ -36,10 +35,9 @@ namespace renderer {
 		void debug(std::string msg) {
 			//printf("%s [x, y, z = %f, %f, %f]\n", msg.c_str(), m_x, m_y, m_z);
 		}
-	public:
-		static PtrVector Zero;
+
 
 	};
 }
 
-#endif // VECTOR_HPP
+#endif // RENDERER_VECTOR_HPP

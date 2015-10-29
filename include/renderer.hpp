@@ -1,5 +1,5 @@
-#ifndef RENDERER_HPP
-#define RENDERER_HPP
+#ifndef RENDERER_RENDERER_HPP
+#define RENDERER_RENDERER_HPP
 
 #include "base.hpp"
 namespace renderer {
@@ -17,4 +17,4 @@ namespace renderer {
 }
 
 
-#endif // RENDERER_HPP
+#endif // RENDERER_RENDERER_HPP

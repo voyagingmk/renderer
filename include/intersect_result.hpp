@@ -1,5 +1,5 @@
-#ifndef INTERSECT_RESULT_HPP
-#define INTERSECT_RESULT_HPP
+#ifndef RENDERER_INTERSECT_RESULT_HPP
+#define RENDERER_INTERSECT_RESULT_HPP
 
 #include "base.hpp"
 namespace renderer {
@@ -23,4 +23,4 @@ namespace renderer {
 	};
 }
 
-#endif // INTERSECT_RESULT_HPP
+#endif // RENDERER_INTERSECT_RESULT_HPP

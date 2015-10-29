@@ -9,7 +9,7 @@
 #include "vector.hpp"
 #include "renderer.hpp"
 #include "sphere.hpp"
-#include "perspectivecamera.hpp"
+#include "camera.hpp"
 #include "material.hpp"
 #include "color.hpp"
 #include "plane.hpp"

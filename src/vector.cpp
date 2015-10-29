@@ -3,28 +3,28 @@
 
 namespace renderer {
 
-	Vector::Vector() :m_x(0), m_y(0), m_z(0) {
+	Vector::Vector() :x(0), y(0), z(0) {
 		debug("Vector default created.");
 	};
 
-	Vector::Vector(const float x, const float y, const float z) :m_x(x), m_y(y), m_z(z) {
+	Vector::Vector(const float x, const float y, const float z) :x(x), y(y), z(z) {
 		debug("Vector param created.");
 	};
 
-	Vector::Vector(Vector && v) :m_x(0), m_y(0), m_z(0) {
-		m_x = v.m_x;
-		m_y = v.m_y;
-		m_z = v.m_z;
-		v.m_x = 0;
-		v.m_y = 0;
-		v.m_z = 0;
+	Vector::Vector(Vector && v) :x(0), y(0), z(0) {
+		x = v.x;
+		y = v.y;
+		z = v.z;
+		v.x = 0;
+		v.y = 0;
+		v.z = 0;
 		debug("Vector move created.");
 	}
 
 	Vector::Vector(const Vector & v) {
-		m_x = v.x();
-		m_y = v.y();
-		m_z = v.z();
+		x = v.x;
+		y = v.y;
+		z = v.z;
 		debug("Vector copy created.");
 	}
 
@@ -33,9 +33,9 @@ namespace renderer {
 	}
 
 	Vector& Vector::operator = (const Vector& v) {
-		m_x = v.x();
-		m_y = v.y();
-		m_z = v.z();
+		x = v.x;
+		y = v.y;
+		z = v.z;
 		debug("Vector copy assigned.");
 		return *this;
 	}
@@ -47,30 +47,30 @@ namespace renderer {
 
 
 	Vector Vector::operator + (const Vector& v) {
-		return Vector(m_x + v.x(), m_y + v.y(), m_z + v.z());
+		return Vector(x + v.x, y + v.y, z + v.z);
 	}
 	Vector Vector::operator - (const Vector& v) {
-		return Vector(m_x - v.x(), m_y - v.y(), m_z - v.z());
+		return Vector(x - v.x, y - v.y, z - v.z);
 	}
 	Vector Vector::operator - () {
-		return Vector(-m_x, -m_y, -m_z);
+		return Vector(-x, -y, -z);
 	}
 	Vector Vector::operator * (float f) {
-		return Vector(m_x * f, m_y * f, m_z * f);
+		return Vector(x * f, y * f, z * f);
 	}
 
 	Vector Vector::operator / (float f) {
 		if (f == 0)
 			return *this;
-		return Vector(m_x / f, m_y / f, m_z / f);
+		return Vector(x / f, y / f, z / f);
 	}
 
 	bool Vector::operator == (const Vector& v) {
-		return m_x == v.x() && m_y == v.y() && m_z == v.z();
+		return x == v.x && y == v.y && z == v.z;
 	}
 
 	Vector Vector::cross(const Vector& v) {
-		Vector && res = Vector(-m_z * v.y() + m_y * v.z(), m_z * v.x() - m_x * v.z(), -m_y * v.x() + m_x * v.y());
+		Vector && res = Vector(-z * v.y + y * v.z, z * v.x - x * v.z, -y * v.x + x * v.y);
 		return res;
 	}
 
@@ -81,12 +81,12 @@ namespace renderer {
 	}
 
 	float Vector::dot(const Vector& v) {
-		return m_x * v.x() + m_y * v.y() + m_z * v.z();
+		return x * v.x + y * v.y + z * v.z;
 	}
 
 	Vector Vector::normalize() {
 		float inv = 1.0f / length();
-		return Vector(m_x * inv, m_y * inv, m_z * inv);
+		return Vector(x * inv, y * inv, z * inv);
 	}
 
 	PtrVector Vector::Zero = std::make_shared<Vector>(0.f, 0.f, 0.f);

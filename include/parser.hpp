@@ -1,5 +1,5 @@
-#ifndef PARSER_HPP
-#define PARSER_HPP
+#ifndef RENDERER_PARSER_HPP
+#define RENDERER_PARSER_HPP
 
 #include "base.hpp"
 

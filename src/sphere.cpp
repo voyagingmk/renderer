@@ -5,19 +5,19 @@
 
 namespace renderer {
 
-	Sphere::Sphere(PtrVector center, float radius) :m_center(center), m_radius(radius) {
+	Sphere::Sphere(PtrVector center, float radius) :m_center(center), r(radius) {
 	}
 	Sphere::Sphere(Sphere& s) {
 		m_center = std::make_shared<Vector>(*s.getCenter());
-		m_radius = s.getRadius();
+		r = s.getRadius();
 	}
 	Sphere Sphere::operator = (const Sphere& s) {
-		m_radius = s.getRadius();
+		r = s.getRadius();
 		m_center = std::make_shared<Vector>(*s.getCenter());
 		return *this;
 	}
 	void Sphere::init() {
-		m_sqrRadius = m_radius * m_radius;
+		m_sqrRadius = r * r;
 	}
 	PtrIntersectResult Sphere::intersect(PtrRay ray) {
 		Vector&& v = *(ray->getOrigin()) - (*m_center);

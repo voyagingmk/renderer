@@ -1,5 +1,5 @@
-#ifndef MATERIAL_HPP
-#define MATERIAL_HPP
+#ifndef RENDERER_MATERIAL_HPP
+#define RENDERER_MATERIAL_HPP
 
 #include "base.hpp"
 
@@ -36,4 +36,4 @@ namespace renderer {
 	};
 }
 
-#endif // MATERIAL_HPP
+#endif // RENDERER_MATERIAL_HPP
