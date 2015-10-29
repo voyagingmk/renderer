@@ -1,10 +1,11 @@
-#ifndef RENDERER_VECTOR_HPP
-#define RENDERER_VECTOR_HPP
+#ifndef RENDERER_GEOMETRY_HPP
+#define RENDERER_GEOMETRY_HPP
 
 #include "base.hpp"
 
 
 namespace renderer {
+
 	class Vector {
 	public:
 		float x, y, z;
@@ -35,9 +36,7 @@ namespace renderer {
 		void Debug(std::string msg) {
 			//printf("%s [x, y, z = %f, %f, %f]\n", msg.c_str(), m_x, m_y, m_z);
 		}
-
-
 	};
 }
 
-#endif // RENDERER_VECTOR_HPP
+#endif // RENDERER_GEOMETRY_HPP

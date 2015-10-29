@@ -2,7 +2,7 @@
 #define RENDERER_COMMON_HPP
 
 #include "shape.hpp"
-#include "vector.hpp"
+#include "geometry.hpp"
 
 
 #endif // RENDERER_COMMON_HPP

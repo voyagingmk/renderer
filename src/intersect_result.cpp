@@ -1,5 +1,5 @@
 #include "intersect_result.hpp"
-#include "vector.hpp"
+#include "geometry.hpp"
 
 namespace renderer {
 	IntersectResult::IntersectResult() :

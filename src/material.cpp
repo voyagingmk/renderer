@@ -1,5 +1,5 @@
 #include "material.hpp"
-#include "vector.hpp"
+#include "geometry.hpp"
 #include "color.hpp"
 #include "ray.hpp"
 namespace renderer {

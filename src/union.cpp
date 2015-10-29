@@ -3,7 +3,7 @@
 #include "plane.hpp"
 #include "ray.hpp"
 #include "intersect_result.hpp"
-#include "vector.hpp"
+#include "geometry.hpp"
 #include "material.hpp"
 
 namespace renderer {

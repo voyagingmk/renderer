@@ -1,5 +1,5 @@
 #include "plane.hpp"
-#include "vector.hpp"
+#include "geometry.hpp"
 #include "ray.hpp"
 #include "intersect_result.hpp"
 

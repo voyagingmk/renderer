@@ -1,6 +1,6 @@
 #include "camera.hpp"
 #include <cmath>
-#include <vector.hpp>
+#include <geometry.hpp>
 #include <ray.hpp>
 
 namespace renderer {

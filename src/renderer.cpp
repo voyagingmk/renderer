@@ -2,7 +2,7 @@
 #include "camera.hpp"
 #include "shape.hpp"
 #include "intersect_result.hpp"
-#include "vector.hpp"
+#include "geometry.hpp"
 #include "material.hpp"
 #include "color.hpp"
 #include "ray.hpp"
@@ -20,7 +20,7 @@ namespace renderer {
 				PtrRay ray = camera.GenerateRay(sx, sy);
 				PtrIntersectResult result = scene.Intersect(ray);
 				if (result->geometry) {
-					int depth = 255.0f - min((result->distance / maxDepth) * 255.0f, 255.0f);
+					int depth = int(255.0f - min((result->distance / maxDepth) * 255.0f, 255.0f));
 					img.atXYZC(x, y, 0, 0) = depth;
 					img.atXYZC(x, y, 0, 1) = depth;
 					img.atXYZC(x, y, 0, 2) = depth;
@@ -41,9 +41,9 @@ namespace renderer {
 				PtrIntersectResult result = scene.Intersect(ray);
 				if (result->geometry) {
 					PtrVector pNormal = result->normal;
-					img.atXYZC(x, y, 0, 0) = (pNormal->x + 1) * 128;
-					img.atXYZC(x, y, 0, 1) = (pNormal->y + 1) * 128;
-					img.atXYZC(x, y, 0, 2) = (pNormal->z + 1) * 128;
+					img.atXYZC(x, y, 0, 0) = (pNormal->x + 1.0f) * 128.0f;
+					img.atXYZC(x, y, 0, 1) = (pNormal->y + 1.0f) * 128.0f;
+					img.atXYZC(x, y, 0, 2) = (pNormal->z + 1.0f) * 128.0f;
 					//atXYZC(x, y, 0, 0) = 255;
 				}
 			}

@@ -117,7 +117,7 @@
     <ClCompile Include="src\shapes\plane.cpp" />
     <ClCompile Include="src\shapes\sphere.cpp" />
     <ClCompile Include="src\union.cpp" />
-    <ClCompile Include="src\vector.cpp" />
+    <ClCompile Include="src\geometry.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\base.hpp" />
@@ -136,7 +136,7 @@
     <ClInclude Include="include\shapes\plane.hpp" />
     <ClInclude Include="include\shapes\sphere.hpp" />
     <ClInclude Include="include\union.hpp" />
-    <ClInclude Include="include\vector.hpp" />
+    <ClInclude Include="include\geometry.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

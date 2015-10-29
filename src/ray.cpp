@@ -1,5 +1,5 @@
 #include "ray.hpp"
-#include <vector.hpp>
+#include <geometry.hpp>
 
 namespace renderer {
 

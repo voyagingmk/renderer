@@ -6,7 +6,7 @@
 #include <chrono>
 #include "parser.hpp"
 #include "json.hpp"
-#include "vector.hpp"
+#include "geometry.hpp"
 #include "renderer.hpp"
 #include "sphere.hpp"
 #include "camera.hpp"
