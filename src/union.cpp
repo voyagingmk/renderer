@@ -16,7 +16,7 @@ void Union::init() {
 };
 
 PtrIntersectResult Union::intersect(PtrRay ray){
-    double minDistance = std::numeric_limits<double>::max();
+    float minDistance = std::numeric_limits<float>::max();
     auto minResult = IntersectResult::NoHit;
      for (auto p:m_geometries){
         auto result = p->intersect(ray);

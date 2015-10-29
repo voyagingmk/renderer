@@ -106,7 +106,7 @@
   <ItemGroup>
     <ClCompile Include="src\color.cpp" />
     <ClCompile Include="src\common.cpp" />
-    <ClCompile Include="src\geometry.cpp" />
+    <ClCompile Include="src\shape.cpp" />
     <ClCompile Include="src\intersect_result.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\material.cpp" />
@@ -126,7 +126,7 @@
     <ClInclude Include="include\CImg.h" />
     <ClInclude Include="include\color.hpp" />
     <ClInclude Include="include\common.hpp" />
-    <ClInclude Include="include\geometry.hpp" />
+    <ClInclude Include="include\shape.hpp" />
     <ClInclude Include="include\intersect_result.hpp" />
     <ClInclude Include="include\json.hpp" />
     <ClInclude Include="include\material.hpp" />

@@ -4,7 +4,7 @@
 #include "intersect_result.hpp"
 
 
-Sphere::Sphere(PtrVector center, double radius):m_center(center), m_radius(radius){
+Sphere::Sphere(PtrVector center, float radius):m_center(center), m_radius(radius){
 }
 Sphere::Sphere(Sphere& s){
     m_center = std::make_shared<Vector>(*s.getCenter());
@@ -20,12 +20,12 @@ void Sphere::init(){
 }
 PtrIntersectResult Sphere::intersect(PtrRay ray){
     Vector&& v = *(ray->getOrigin()) - (*m_center);
-    double a0 = v.squareLength() - m_sqrRadius;
-    double DdotV = ray->getDirection()->dot(v);
+    float a0 = v.squareLength() - m_sqrRadius;
+    float DdotV = ray->getDirection()->dot(v);
     if (DdotV <= 0) {
-        double discr = DdotV * DdotV - a0;
+        float discr = DdotV * DdotV - a0;
         if (discr >= 0) {
-            auto distance = -DdotV - double(sqrtf(discr));
+            auto distance = -DdotV - float(sqrtf(discr));
             auto position = ray->getPoint(distance);
             auto normal = (*position - *m_center).normalize();
             return std::make_shared<IntersectResult>(IntersectResult(shared_from_this(), distance, *position, normal));

@@ -17,6 +17,8 @@
 #include <assert.h>
 #include "CImg.h"
 
+using std::min;
+using std::max;
 
 #define DEFINE_SHARE_PTR(name) typedef std::shared_ptr<name> Ptr#name;
 class IntersectResult;
@@ -39,6 +41,6 @@ typedef std::shared_ptr<Union> PtrUnion;
 typedef std::shared_ptr<Color> PtrColor;
 typedef std::shared_ptr<Ray> PtrRay;
 
-constexpr double PI  =3.141592653589793238463;
+constexpr float PI  =3.141592653589793238463f;
 
 #endif // BASE_HPP

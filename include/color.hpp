@@ -4,10 +4,10 @@
 #include "base.hpp"
 
 class Color{
-    double m_rgb[3] = {0};
+    float m_rgb[3] = {0};
 public:
     Color();
-    Color(double r, double g, double b);
+    Color(float r, float g, float b);
     Color(const Color &);
     Color(Color &&);
     Color& operator = (const Color&);
@@ -15,13 +15,13 @@ public:
     ~Color();
     Color operator + (const Color&);
     Color operator - (const Color&);
-    Color operator * (double f);
-    Color operator / (double f);
+    Color operator * (float f);
+    Color operator / (float f);
     bool operator == (const Color&);
     Color modulate(const Color&);
-    inline double r() const {return m_rgb[0];};
-    inline double g() const {return m_rgb[1];};
-    inline double b() const {return m_rgb[2];};
+    inline float r() const {return m_rgb[0];};
+    inline float g() const {return m_rgb[1];};
+    inline float b() const {return m_rgb[2];};
 public:
     static const PtrColor Black;
     static const PtrColor White;

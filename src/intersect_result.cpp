@@ -8,14 +8,14 @@ IntersectResult::IntersectResult():
 	m_normal(Vector::Zero){
 };
 
-IntersectResult::IntersectResult(PtrGeometry ptrGeo, double dis, PtrVector pos, PtrVector normal):
+IntersectResult::IntersectResult(PtrGeometry ptrGeo, float dis, PtrVector pos, PtrVector normal):
 	m_geometry(ptrGeo),
 	m_distance(dis),
 	m_position(pos),
 	m_normal(normal){
 };
 
-IntersectResult::IntersectResult(PtrGeometry ptrGeo, double dis, const Vector& pos, const Vector& normal):
+IntersectResult::IntersectResult(PtrGeometry ptrGeo, float dis, const Vector& pos, const Vector& normal):
 	m_geometry(ptrGeo),
 	m_distance(dis),
 	m_position(std::make_shared<Vector>(pos)),

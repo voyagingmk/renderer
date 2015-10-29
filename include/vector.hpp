@@ -5,10 +5,10 @@
 
 class Vector {
 private:
-	double m_x, m_y, m_z;
+	float m_x, m_y, m_z;
 public:
 	Vector();
-	Vector(const double x, const double y, const double z);
+	Vector(const float x, const float y, const float z);
 	Vector(const Vector &);
 	Vector(Vector &&);
 	Vector& operator = (const Vector&);
@@ -16,17 +16,17 @@ public:
 	~Vector();
 	Vector operator + (const Vector&);
 	Vector operator - (const Vector&);
-	Vector operator * (double f);
-	Vector operator / (double f);
+	Vector operator * (float f);
+	Vector operator / (float f);
 	Vector operator - ();
 	bool operator == (const Vector& v);
-	double dot (const Vector&);
+	float dot (const Vector&);
 	Vector cross(const Vector&);
-	inline double x() const{return m_x;};
-	inline double y() const{return m_y;};
-	inline double z() const{return m_z;};
-	inline double length(){ return sqrt(m_x * m_x + m_y * m_y + m_z * m_z); };
-	inline double squareLength(){ return m_x * m_x + m_y * m_y + m_z * m_z; };
+	inline float x() const{return m_x;};
+	inline float y() const{return m_y;};
+	inline float z() const{return m_z;};
+	inline float length(){ return sqrt(m_x * m_x + m_y * m_y + m_z * m_z); };
+	inline float squareLength(){ return m_x * m_x + m_y * m_y + m_z * m_z; };
 	Vector normalize();
 	Vector& swap(Vector&);
 	void debug(){

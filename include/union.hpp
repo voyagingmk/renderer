@@ -2,9 +2,9 @@
 #define UNION_HPP
 
 #include "base.hpp"
-#include "geometry.hpp"
+#include "shape.hpp"
 
-class Union:public Geometry{
+class Union:public Shape{
     std::vector<PtrGeometry> m_geometries;
 public:
     Union(std::vector<PtrGeometry>);

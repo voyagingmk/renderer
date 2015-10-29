@@ -9,12 +9,12 @@ class PerspectiveCamera {
 	PtrVector m_up;
 	PtrVector m_refUp;
 	PtrVector m_right;
-	double m_fov;
-	double m_fovScale;
+	float m_fov;
+	float m_fovScale;
 public:
-	PerspectiveCamera(PtrVector eye, PtrVector front, PtrVector up, double fov);
+	PerspectiveCamera(PtrVector eye, PtrVector front, PtrVector up, float fov);
 	void init();
-	PtrRay generateRay(double x, double y);
+	PtrRay generateRay(float x, float y);
 };
 
 #endif // PERSPECTIVE_CAMERA_HPP

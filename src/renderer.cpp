@@ -1,24 +1,24 @@
 #include "renderer.hpp"
 #include "perspectivecamera.hpp"
-#include "geometry.hpp"
+#include "shape.hpp"
 #include "intersect_result.hpp"
 #include "vector.hpp"
 #include "material.hpp"
 #include "color.hpp"
 #include "ray.hpp"
 
-void Renderer::renderDepth(cil::CImg<unsigned char> &img, Geometry& scene, PerspectiveCamera& camera, double maxDepth){
+void Renderer::renderDepth(cil::CImg<unsigned char> &img, Shape& scene, PerspectiveCamera& camera, float maxDepth){
     scene.init();
     camera.init();
     int w = img.width(), h = img.height();
     for (int y = 0; y < h; y++) {
-        double sy = 1.0 - (double)y / h;
+		float sy = 1.0f - (float)y / h;
         for (int x = 0; x < w; x++) {
-            double sx = (double)x / w;
+			float sx = (float)x / w;
             PtrRay ray = camera.generateRay(sx, sy);
             PtrIntersectResult result = scene.intersect(ray);
             if (result->getGeometry()) {
-                int depth = 255.0 - std::min((result->getDistance() / maxDepth) * 255.0, 255.0);
+                int depth = 255.0f - min((result->getDistance() / maxDepth) * 255.0f, 255.0f);
                 img.atXYZC(x, y, 0, 0) = depth;
                 img.atXYZC(x, y, 0, 1) = depth;
                 img.atXYZC(x, y, 0, 2) = depth;
@@ -27,14 +27,14 @@ void Renderer::renderDepth(cil::CImg<unsigned char> &img, Geometry& scene, Persp
         }
     }
 }
-void Renderer::renderNormal(cil::CImg<unsigned char> &img, Geometry& scene, PerspectiveCamera& camera, double maxDepth){
+void Renderer::renderNormal(cil::CImg<unsigned char> &img, Shape& scene, PerspectiveCamera& camera, float maxDepth){
     scene.init();
     camera.init();
     int w = img.width(), h = img.height();
     for (int y = 0; y < h; y++) {
-        double sy = 1.0 - (double)y / h;
+        float sy = 1.0f - (float)y / h;
         for (int x = 0; x < w; x++) {
-            double sx = (double)x / w;
+            float sx = (float)x / w;
             PtrRay ray = camera.generateRay(sx, sy);
             PtrIntersectResult result = scene.intersect(ray);
             if (result->getGeometry()) {
@@ -49,23 +49,23 @@ void Renderer::renderNormal(cil::CImg<unsigned char> &img, Geometry& scene, Pers
 };
 
 
-void Renderer::rayTrace(cil::CImg<unsigned char> &img, Geometry& scene, PerspectiveCamera& camera){
+void Renderer::rayTrace(cil::CImg<unsigned char> &img, Shape& scene, PerspectiveCamera& camera){
     scene.init();
     camera.init();
     int w = img.width(), h = img.height();
     for (int y = 0; y < h; y++) {
-        double sy = 1.0 - (double)y / h;
+        float sy = 1.0f - (float)y / h;
         for (int x = 0; x < w; x++) {
-            double sx = (double)x / w;
+            float sx = (float)x / w;
             PtrRay ray = camera.generateRay(sx, sy);
             PtrIntersectResult result = scene.intersect(ray);
             if (result->getGeometry()) {
                 PtrMaterial pMaterial = result->getGeometry()->getMaterial();
                 PtrColor color = pMaterial->sample(ray, result->getPosition(), result->getNormal());
                 //printf("c=%f,%f,%f\n", color->r(),color->g(),color->b());
-                img.atXYZC(x, y, 0, 0) = std::min( int(color->r() * 255), 255);
-                img.atXYZC(x, y, 0, 1) = std::min( int(color->g() * 255), 255);
-                img.atXYZC(x, y, 0, 2) = std::min( int(color->b() * 255), 255);
+                img.atXYZC(x, y, 0, 0) = min( int(color->r() * 255), 255);
+                img.atXYZC(x, y, 0, 1) = min( int(color->g() * 255), 255);
+                img.atXYZC(x, y, 0, 2) = min( int(color->b() * 255), 255);
             }
         }
     }
@@ -75,10 +75,10 @@ PtrColor Renderer::rayTraceRecursive( PtrGeometry scene, PtrRay ray, int maxRefl
     PtrIntersectResult result = scene->intersect(ray);
     if (result->getGeometry()) {
     	PtrMaterial pMaterial = result->getGeometry()->getMaterial();
-        double reflectiveness = pMaterial->getReflectiveness();
+        float reflectiveness = pMaterial->getReflectiveness();
         PtrColor color = pMaterial->sample(ray, result->getPosition(), result->getNormal());
         //printf("c=%f,%f,%f\n", color->r(),color->g(),color->b());
-		color = std::make_shared<Color>(*color * (1.0 - reflectiveness));
+		color = std::make_shared<Color>(*color * (1.0f - reflectiveness));
         
         if (reflectiveness > 0 && maxReflect > 0) {
             PtrVector r =std::make_shared<Vector>( *(result->getNormal()) * ( -2 * (result->getNormal()->dot(*(ray->getDirection()))) ) + *(ray->getDirection()) );
@@ -102,15 +102,15 @@ void Renderer::rayTraceReflection(cil::CImg<unsigned char> &img, PtrGeometry sce
 	if(h == 0)
 		h = img_height;
     for (int y = py, yMax = py + h; y < yMax; y++) {
-        double sy = 1.0 - (double)y / img_height;
+        float sy = 1.0 - (float)y / img_height;
         for (int x = px, xMax = px + w; x < xMax; x++) {
-            double sx = (double)x / img_width;
+            float sx = (float)x / img_width;
             //printf("sx,sy=%f,%f\n",sx,sy);
             PtrRay ray = camera.generateRay(sx, sy);
             PtrColor color = rayTraceRecursive(scene, ray, maxReflect);
-            img.atXYZC(x, y, 0, 0) = std::min( int(color->r() * 255), 255);
-            img.atXYZC(x, y, 0, 1) = std::min( int(color->g() * 255), 255);
-            img.atXYZC(x, y, 0, 2) = std::min( int(color->b() * 255), 255);
+            img.atXYZC(x, y, 0, 0) = min( int(color->r() * 255), 255);
+            img.atXYZC(x, y, 0, 1) = min( int(color->g() * 255), 255);
+            img.atXYZC(x, y, 0, 2) = min( int(color->b() * 255), 255);
         }
     }
 }

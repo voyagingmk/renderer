@@ -2,20 +2,20 @@
 #define SPHERE_HPP
 
 #include "base.hpp"
-#include "geometry.hpp"
+#include "shape.hpp"
 
-class Sphere:public Geometry{
+class Sphere:public Shape{
     PtrVector m_center;
-    double m_radius;
-    double m_sqrRadius;
+    float m_radius;
+    float m_sqrRadius;
 public:
-	Sphere(PtrVector center, double radius);
+	Sphere(PtrVector center, float radius);
 	Sphere(Sphere &);
 	Sphere operator = (const Sphere&);
 	virtual void init();
 	virtual PtrIntersectResult intersect(PtrRay);
 	PtrVector getCenter() const {return m_center;}
-	inline double getRadius() const {return m_radius;}
+	inline float getRadius() const {return m_radius;}
 };
 
 #endif // SPHERE_HPP

@@ -5,7 +5,7 @@ Vector::Vector():m_x(0), m_y(0), m_z(0) {
      debug("Vector default created.");
 };
 
-Vector::Vector(const double x, const double y, const double z):m_x(x), m_y(y), m_z(z) {
+Vector::Vector(const float x, const float y, const float z):m_x(x), m_y(y), m_z(z) {
     debug("Vector param created.");
 };
 
@@ -53,11 +53,11 @@ Vector Vector::operator - (const Vector& v) {
 Vector Vector::operator - () {
 	return Vector(-m_x, -m_y, -m_z);
 }
-Vector Vector::operator * (double f) {
+Vector Vector::operator * (float f) {
 	return Vector(m_x * f, m_y * f, m_z * f);
 }
 
-Vector Vector::operator / (double f) {
+Vector Vector::operator / (float f) {
 	if(f==0)
 		return *this;
 	return Vector(m_x / f, m_y / f, m_z / f);
@@ -78,13 +78,13 @@ Vector& Vector::swap(Vector& v) {
 	return *this;
 }
 
-double Vector::dot(const Vector& v){
+float Vector::dot(const Vector& v){
     return m_x * v.x() + m_y * v.y() + m_z * v.z();
 }
 
 Vector Vector::normalize(){
-   double inv = 1.0 / length();
+   float inv = 1.0f / length();
    return Vector(m_x * inv, m_y * inv, m_z * inv);
 }
 
-PtrVector Vector::Zero = std::make_shared<Vector>(0,0,0);
+PtrVector Vector::Zero = std::make_shared<Vector>(0.f,0.f,0.f);

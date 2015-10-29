@@ -5,16 +5,16 @@
 
 class IntersectResult{
 	PtrGeometry m_geometry;
-	double m_distance;
+	float m_distance;
 	PtrVector m_position;
 	PtrVector m_normal;
 public:
 	IntersectResult();
-    IntersectResult(PtrGeometry, double, PtrVector, PtrVector);
-    IntersectResult(PtrGeometry, double, const Vector&, const Vector&);
+    IntersectResult(PtrGeometry, float, PtrVector, PtrVector);
+    IntersectResult(PtrGeometry, float, const Vector&, const Vector&);
     void setGeometry(PtrGeometry ptrGeo){ m_geometry = ptrGeo;};
     PtrGeometry getGeometry(){ return m_geometry; };
-    double getDistance(){ return m_distance; };
+    float getDistance(){ return m_distance; };
     PtrVector getPosition(){ return m_position; };
     PtrVector getNormal(){ return m_normal; };
 public:

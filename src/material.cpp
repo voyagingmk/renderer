@@ -3,7 +3,7 @@
 #include "color.hpp"
 #include "ray.hpp"
 
-CheckerMaterial::CheckerMaterial(double scale, double reflectiveness):
+CheckerMaterial::CheckerMaterial(float scale, float reflectiveness):
     Material(reflectiveness),
 	m_scale(scale){
 };
@@ -13,7 +13,7 @@ PtrColor CheckerMaterial::sample(PtrRay ray, PtrVector position, PtrVector norma
 };
 
 
-PhongMaterial::PhongMaterial(PtrColor diffuse, PtrColor specular, int shininess, double reflectiveness):
+PhongMaterial::PhongMaterial(PtrColor diffuse, PtrColor specular, int shininess, float reflectiveness):
     Material(reflectiveness),
 	m_diffuse(diffuse),
     m_specular(specular),
@@ -22,15 +22,15 @@ PhongMaterial::PhongMaterial(PtrColor diffuse, PtrColor specular, int shininess,
 };
 
 PtrColor PhongMaterial::sample(PtrRay ray, PtrVector position, PtrVector normal){
-    double NdotL = normal->dot(*LightDir);
+    float NdotL = normal->dot(*LightDir);
     Vector&& H = (*LightDir - *(ray->getDirection())).normalize();
-    double NdotH = normal->dot(H);
-    Color&& diffuseTerm = *m_diffuse * ( std::max(NdotL, 0.0) );
-    Color&& specularTerm = *m_specular * (double)(std::pow(std::max(NdotH, 0.0), m_shininess));
+    float NdotH = normal->dot(H);
+    Color&& diffuseTerm = *m_diffuse * ( max(NdotL, 0.0f) );
+    Color&& specularTerm = *m_specular * (float)(std::pow(max(NdotH, 0.0f), m_shininess));
     Color result = Color::White->modulate(diffuseTerm + specularTerm);
     return std::make_shared<Color>(result);
 };
 
 
-PtrVector Material::LightDir = std::make_shared<Vector>(Vector(1, 1, 1).normalize());
+PtrVector Material::LightDir = std::make_shared<Vector>(Vector(1.f, 1.f, 1.f).normalize());
 PtrColor Material::LightColor = Color::White;
