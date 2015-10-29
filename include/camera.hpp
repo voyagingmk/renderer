@@ -4,17 +4,17 @@
 #include "base.hpp"
 namespace renderer {
 	class PerspectiveCamera {
-		PtrVector m_eye;
-		PtrVector m_front;
-		PtrVector m_up;
-		PtrVector m_refUp;
-		PtrVector m_right;
-		float m_fov;
-		float m_fovScale;
+		PtrVector eye;
+		PtrVector front;
+		PtrVector up;
+		PtrVector refUp;
+		PtrVector right;
+		float fov;
+		float fovScale;
 	public:
 		PerspectiveCamera(PtrVector eye, PtrVector front, PtrVector up, float fov);
-		void init();
-		PtrRay generateRay(float x, float y);
+		void Init();
+		PtrRay GenerateRay(float x, float y);
 	};
 }
 

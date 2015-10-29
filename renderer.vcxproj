@@ -111,7 +111,7 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\material.cpp" />
     <ClCompile Include="src\parser.cpp" />
-    <ClCompile Include="src\perspectivecamera.cpp" />
+    <ClCompile Include="src\camera.cpp" />
     <ClCompile Include="src\plane.cpp" />
     <ClCompile Include="src\ray.cpp" />
     <ClCompile Include="src\renderer.cpp" />
@@ -131,7 +131,6 @@
     <ClInclude Include="include\json.hpp" />
     <ClInclude Include="include\material.hpp" />
     <ClInclude Include="include\parser.hpp" />
-    <ClInclude Include="include\perspectivecamera.hpp" />
     <ClInclude Include="include\plane.hpp" />
     <ClInclude Include="include\ray.hpp" />
     <ClInclude Include="include\renderer.hpp" />

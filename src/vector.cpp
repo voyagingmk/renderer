@@ -4,11 +4,11 @@
 namespace renderer {
 
 	Vector::Vector() :x(0), y(0), z(0) {
-		debug("Vector default created.");
+		Debug("Vector default created.");
 	};
 
 	Vector::Vector(const float x, const float y, const float z) :x(x), y(y), z(z) {
-		debug("Vector param created.");
+		Debug("Vector param created.");
 	};
 
 	Vector::Vector(Vector && v) :x(0), y(0), z(0) {
@@ -18,30 +18,30 @@ namespace renderer {
 		v.x = 0;
 		v.y = 0;
 		v.z = 0;
-		debug("Vector move created.");
+		Debug("Vector move created.");
 	}
 
 	Vector::Vector(const Vector & v) {
 		x = v.x;
 		y = v.y;
 		z = v.z;
-		debug("Vector copy created.");
+		Debug("Vector copy created.");
 	}
 
 	Vector::~Vector() {
-		debug("Destroyed.");
+		Debug("Destroyed.");
 	}
 
 	Vector& Vector::operator = (const Vector& v) {
 		x = v.x;
 		y = v.y;
 		z = v.z;
-		debug("Vector copy assigned.");
+		Debug("Vector copy assigned.");
 		return *this;
 	}
 	Vector& Vector::operator = (Vector&& v) {
-		v.swap(*this);
-		debug("Vector move assigned.");
+		v.Swap(*this);
+		Debug("Vector move assigned.");
 		return *this;
 	}
 
@@ -69,23 +69,23 @@ namespace renderer {
 		return x == v.x && y == v.y && z == v.z;
 	}
 
-	Vector Vector::cross(const Vector& v) {
+	Vector Vector::Cross(const Vector& v) {
 		Vector && res = Vector(-z * v.y + y * v.z, z * v.x - x * v.z, -y * v.x + x * v.y);
 		return res;
 	}
 
 
-	Vector& Vector::swap(Vector& v) {
+	Vector& Vector::Swap(Vector& v) {
 		std::swap(*this, v);
 		return *this;
 	}
 
-	float Vector::dot(const Vector& v) {
+	float Vector::Dot(const Vector& v) {
 		return x * v.x + y * v.y + z * v.z;
 	}
 
-	Vector Vector::normalize() {
-		float inv = 1.0f / length();
+	Vector Vector::Normalize() {
+		float inv = 1.0f / Length();
 		return Vector(x * inv, y * inv, z * inv);
 	}
 

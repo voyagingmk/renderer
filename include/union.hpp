@@ -7,11 +7,12 @@
 
 namespace renderer {
 	class Union :public Shape {
-		std::vector<PtrGeometry> m_geometries;
 	public:
-		Union(std::vector<PtrGeometry>);
-		void init();
-		PtrIntersectResult intersect(PtrRay ray);
+		std::vector<PtShape> geometries;
+	public:
+		Union(std::vector<PtShape>);
+		void Init();
+		PtrIntersectResult Intersect(PtrRay ray);
 	};
 }
 

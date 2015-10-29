@@ -5,17 +5,15 @@
 #include "shape.hpp"
 namespace renderer {
 	class Sphere :public Shape {
-		PtrVector m_center;
+		PtrVector center;
 		float r;
-		float m_sqrRadius;
+		float sqrRadius;
 	public:
 		Sphere(PtrVector center, float radius);
 		Sphere(Sphere &);
 		Sphere operator = (const Sphere&);
-		virtual void init();
-		virtual PtrIntersectResult intersect(PtrRay);
-		PtrVector getCenter() const { return m_center; }
-		inline float getRadius() const { return r; }
+		virtual void Init();
+		virtual PtrIntersectResult Intersect(PtrRay);
 	};
 }
 

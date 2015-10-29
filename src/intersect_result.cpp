@@ -3,24 +3,24 @@
 
 namespace renderer {
 	IntersectResult::IntersectResult() :
-		m_geometry(nullptr),
-		m_distance(0),
-		m_position(Vector::Zero),
-		m_normal(Vector::Zero) {
+		geometry(nullptr),
+		distance(0),
+		position(Vector::Zero),
+		normal(Vector::Zero) {
 	};
 
-	IntersectResult::IntersectResult(PtrGeometry ptrGeo, float dis, PtrVector pos, PtrVector normal) :
-		m_geometry(ptrGeo),
-		m_distance(dis),
-		m_position(pos),
-		m_normal(normal) {
+	IntersectResult::IntersectResult(PtShape ptrGeo, float dis, PtrVector pos, PtrVector normal) :
+		geometry(ptrGeo),
+		distance(dis),
+		position(pos),
+		normal(normal) {
 	};
 
-	IntersectResult::IntersectResult(PtrGeometry ptrGeo, float dis, const Vector& pos, const Vector& normal) :
-		m_geometry(ptrGeo),
-		m_distance(dis),
-		m_position(std::make_shared<Vector>(pos)),
-		m_normal(std::make_shared<Vector>(normal)) {
+	IntersectResult::IntersectResult(PtShape ptrGeo, float dis, const Vector& pos, const Vector& normal) :
+		geometry(ptrGeo),
+		distance(dis),
+		position(std::make_shared<Vector>(pos)),
+		normal(std::make_shared<Vector>(normal)) {
 	};
 
 	PtrIntersectResult IntersectResult::NoHit = std::make_shared<IntersectResult>();

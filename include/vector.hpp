@@ -23,16 +23,16 @@ namespace renderer {
 		Vector operator / (float f);
 		Vector operator - ();
 		bool operator == (const Vector& v);
-		float dot(const Vector&);
-		Vector cross(const Vector&);
-		inline float length() { return sqrt(x * x + y * y + z * z); };
-		inline float squareLength() { return x * x + y * y + z * z; };
-		Vector normalize();
-		Vector& swap(Vector&);
-		void debug() {
-			debug("");
+		float Dot(const Vector&);
+		Vector Cross(const Vector&);
+		inline float Length() { return sqrt(x * x + y * y + z * z); };
+		inline float LengthSquare() { return x * x + y * y + z * z; };
+		Vector Normalize();
+		Vector& Swap(Vector&);
+		void Debug() {
+			Debug("");
 		}
-		void debug(std::string msg) {
+		void Debug(std::string msg) {
 			//printf("%s [x, y, z = %f, %f, %f]\n", msg.c_str(), m_x, m_y, m_z);
 		}
 

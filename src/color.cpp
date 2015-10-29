@@ -55,7 +55,7 @@ namespace renderer {
 	bool Color::operator == (const Color& c) {
 		return rgb[0] == c.r() && rgb[1] == c.g() && rgb[2] == c.b();
 	};
-	Color Color::modulate(const Color& c) {
+	Color Color::Modulate(const Color& c) {
 		return Color(rgb[0] * c.r(), rgb[1] * c.g(), rgb[2] * c.b());
 	};
 

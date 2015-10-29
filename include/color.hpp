@@ -18,7 +18,7 @@ namespace renderer {
 		Color operator * (float f);
 		Color operator / (float f);
 		bool operator == (const Color&);
-		Color modulate(const Color&);
+		Color Modulate(const Color&);
 		inline float r() const { return rgb[0]; };
 		inline float g() const { return rgb[1]; };
 		inline float b() const { return rgb[2]; };

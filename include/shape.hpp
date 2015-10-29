@@ -5,13 +5,12 @@
 namespace renderer {
 
 	class Shape : public std::enable_shared_from_this<Shape> {
-		PtrMaterial m_material;
 	public:
-		Shape() :m_material(nullptr) {};
-		virtual void init() = 0;
-		virtual PtrIntersectResult intersect(PtrRay) = 0;
-		inline void setMaterial(PtrMaterial pMaterial) { m_material = pMaterial; };
-		inline PtrMaterial getMaterial() { return m_material; };
+		PtrMaterial material;
+	public:
+		Shape() :material(nullptr) {};
+		virtual void Init() = 0;
+		virtual PtrIntersectResult Intersect(PtrRay) = 0;
 	};
 }
 

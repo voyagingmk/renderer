@@ -4,13 +4,12 @@
 #include "base.hpp"
 namespace renderer {
 	class Ray {
-		PtrVector m_origin;
-		PtrVector m_direction;
+	public:
+		PtrVector origin;
+		PtrVector direction;
 	public:
 		Ray(PtrVector origin, PtrVector direction);
-		PtrVector getPoint(float t);
-		inline PtrVector getOrigin() { return m_origin; };
-		inline PtrVector getDirection() { return m_direction; };
+		PtrVector GetPoint(float t);
 	};
 }
 #endif // RENDERER_RAY_HPP

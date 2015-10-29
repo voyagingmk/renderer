@@ -8,22 +8,22 @@
 
 namespace renderer {
 
-	Union::Union(std::vector<PtrGeometry> geometries) :m_geometries(geometries) {
+	Union::Union(std::vector<PtShape> geometries) :geometries(geometries) {
 	};
 
-	void Union::init() {
-		for (auto p : m_geometries) {
-			p->init();
+	void Union::Init() {
+		for (auto p : geometries) {
+			p->Init();
 		}
 	};
 
-	PtrIntersectResult Union::intersect(PtrRay ray) {
+	PtrIntersectResult Union::Intersect(PtrRay ray) {
 		float minDistance = std::numeric_limits<float>::max();
 		auto minResult = IntersectResult::NoHit;
-		for (auto p : m_geometries) {
-			auto result = p->intersect(ray);
-			if (result->getGeometry() && result->getDistance() < minDistance) {
-				minDistance = result->getDistance();
+		for (auto p : geometries) {
+			auto result = p->Intersect(ray);
+			if (result->geometry && result->distance < minDistance) {
+				minDistance = result->distance;
 				minResult = result;
 				//printf("%f,%f,%f == %f,%f\n",ray->getDirection()->x(),ray->getDirection()->y(),ray->getDirection()->z(),minDistance, result->getGeometry()->getMaterial()->getReflectiveness());
 			}

@@ -5,14 +5,14 @@ namespace renderer {
 
 
 	Ray::Ray(PtrVector origin, PtrVector direction)
-		: m_origin(origin)
-		, m_direction(direction)
+		: origin(origin)
+		, direction(direction)
 	{
 	}
 
-	PtrVector Ray::getPoint(float t)
+	PtrVector Ray::GetPoint(float t)
 	{
-		PtrVector result = std::make_shared<Vector>((*m_origin) + (*m_direction) * t);
+		PtrVector result = std::make_shared<Vector>((*origin) + (*direction) * t);
 		return result;
 	}
 

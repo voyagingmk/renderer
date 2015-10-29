@@ -35,7 +35,7 @@ namespace renderer {
 	class Ray;
 
 	typedef std::shared_ptr<IntersectResult> PtrIntersectResult;
-	typedef std::shared_ptr<Shape> PtrGeometry;
+	typedef std::shared_ptr<Shape> PtShape;
 	typedef std::shared_ptr<Material> PtrMaterial;
 	typedef std::shared_ptr<Vector> PtrVector;
 	typedef std::shared_ptr<Sphere> PtrSphere;
