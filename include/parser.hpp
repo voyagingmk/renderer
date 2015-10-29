@@ -4,12 +4,14 @@
 #include "base.hpp"
 
 
-class Parser{
-public:
-	int parseFromFile(std::string path);
-private:
-	PtrColor parseColor(std::string c);
-};
+namespace renderer {
+	class Parser {
+	public:
+		int parseFromFile(std::string path);
+	private:
+		PtrColor parseColor(std::string c);
+	};
+}
 
 
 #endif //PARSER_HPP

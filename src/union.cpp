@@ -6,25 +6,29 @@
 #include "vector.hpp"
 #include "material.hpp"
 
-Union::Union( std::vector<PtrGeometry> geometries):m_geometries(geometries){
-};
+namespace renderer {
 
-void Union::init() {
-    for (auto p:m_geometries){
-        p->init();
-    }
-};
+	Union::Union(std::vector<PtrGeometry> geometries) :m_geometries(geometries) {
+	};
 
-PtrIntersectResult Union::intersect(PtrRay ray){
-    float minDistance = std::numeric_limits<float>::max();
-    auto minResult = IntersectResult::NoHit;
-     for (auto p:m_geometries){
-        auto result = p->intersect(ray);
-        if (result->getGeometry() && result->getDistance() < minDistance) {
-            minDistance = result->getDistance();
-            minResult = result;
-            //printf("%f,%f,%f == %f,%f\n",ray->getDirection()->x(),ray->getDirection()->y(),ray->getDirection()->z(),minDistance, result->getGeometry()->getMaterial()->getReflectiveness());
-        }
-    }
-    return minResult;
-};
+	void Union::init() {
+		for (auto p : m_geometries) {
+			p->init();
+		}
+	};
+
+	PtrIntersectResult Union::intersect(PtrRay ray) {
+		float minDistance = std::numeric_limits<float>::max();
+		auto minResult = IntersectResult::NoHit;
+		for (auto p : m_geometries) {
+			auto result = p->intersect(ray);
+			if (result->getGeometry() && result->getDistance() < minDistance) {
+				minDistance = result->getDistance();
+				minResult = result;
+				//printf("%f,%f,%f == %f,%f\n",ray->getDirection()->x(),ray->getDirection()->y(),ray->getDirection()->z(),minDistance, result->getGeometry()->getMaterial()->getReflectiveness());
+			}
+		}
+		return minResult;
+	};
+
+}

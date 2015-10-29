@@ -1,4 +1,5 @@
 #include "parser.hpp"
+using namespace renderer;
 
 int main(int argc, char ** argv){
 	Parser parser;

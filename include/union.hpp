@@ -4,13 +4,16 @@
 #include "base.hpp"
 #include "shape.hpp"
 
-class Union:public Shape{
-    std::vector<PtrGeometry> m_geometries;
-public:
-    Union(std::vector<PtrGeometry>);
-    void init();
-    PtrIntersectResult intersect(PtrRay ray);
-};
+
+namespace renderer {
+	class Union :public Shape {
+		std::vector<PtrGeometry> m_geometries;
+	public:
+		Union(std::vector<PtrGeometry>);
+		void init();
+		PtrIntersectResult intersect(PtrRay ray);
+	};
+}
 
 
 #endif // UNION_HPP
