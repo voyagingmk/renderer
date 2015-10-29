@@ -4,6 +4,7 @@
 #include "base.hpp"
 #include "shape.hpp"
 namespace renderer {
+
 	class Sphere :public Shape {
 		PtrVector center;
 		float r;

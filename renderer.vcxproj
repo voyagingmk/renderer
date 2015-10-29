@@ -70,7 +70,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>include;src;$(IncludePath)</IncludePath>
+    <IncludePath>src\shapes;include\shapes;include;src;$(IncludePath)</IncludePath>
     <OutDir>$(VSGenerateDir)\$(ProjectName)\$(Configuration)\</OutDir>
     <IntDir>$(VSGenerateDir)\$(ProjectName)\$(Configuration)\tmp</IntDir>
   </PropertyGroup>
@@ -112,10 +112,10 @@
     <ClCompile Include="src\material.cpp" />
     <ClCompile Include="src\parser.cpp" />
     <ClCompile Include="src\camera.cpp" />
-    <ClCompile Include="src\plane.cpp" />
     <ClCompile Include="src\ray.cpp" />
     <ClCompile Include="src\renderer.cpp" />
-    <ClCompile Include="src\sphere.cpp" />
+    <ClCompile Include="src\shapes\plane.cpp" />
+    <ClCompile Include="src\shapes\sphere.cpp" />
     <ClCompile Include="src\union.cpp" />
     <ClCompile Include="src\vector.cpp" />
   </ItemGroup>
@@ -131,10 +131,10 @@
     <ClInclude Include="include\json.hpp" />
     <ClInclude Include="include\material.hpp" />
     <ClInclude Include="include\parser.hpp" />
-    <ClInclude Include="include\plane.hpp" />
     <ClInclude Include="include\ray.hpp" />
     <ClInclude Include="include\renderer.hpp" />
-    <ClInclude Include="include\sphere.hpp" />
+    <ClInclude Include="include\shapes\plane.hpp" />
+    <ClInclude Include="include\shapes\sphere.hpp" />
     <ClInclude Include="include\union.hpp" />
     <ClInclude Include="include\vector.hpp" />
   </ItemGroup>
