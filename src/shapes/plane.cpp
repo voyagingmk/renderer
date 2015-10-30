@@ -5,7 +5,7 @@
 
 namespace renderer {
 
-	Plane::Plane(PtrVector normal, float distance) :
+	Plane::Plane(Vector& normal, float distance) :
 		normal(normal),
 		distance(distance) {
 
@@ -21,14 +21,17 @@ namespace renderer {
 		return *this;
 	}
 	void Plane::Init() {
-		position = std::make_shared<Vector>(*normal * distance);
+		position = normal * distance;
 	}
-	PtrIntersectResult Plane::Intersect(PtrRay ray) {
-		float dotA = ray->direction->Dot(*normal);
-		if (dotA >= 0)
-			return IntersectResult::NoHit;
-		float dotB = normal->Dot(*(ray->origin) - *position);
+	int Plane::Intersect(Ray& ray, IntersectResult* result) {
+		float dotA = ray.d.Dot(normal);
+		if (dotA >= 0) {
+			result = &IntersectResult::NoHit;
+			return 0;
+		}
+		float dotB = normal.Dot(ray.o - position);
 		float distance = -dotB / dotA;
-		return std::make_shared<IntersectResult>(IntersectResult(shared_from_this(), distance, ray->GetPoint(distance), normal));
+		*result = IntersectResult(shared_from_this(), distance, ray.GetPoint(distance), normal);
+		return 0;
 	}
 }

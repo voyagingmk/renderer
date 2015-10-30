@@ -3,17 +3,19 @@
 
 #include "base.hpp"
 #include "shape.hpp"
+#include "../geometry.hpp"
+
 namespace renderer {
 	class Plane :public Shape {
-		PtrVector normal;
+		Vector normal;
 		float distance;
-		PtrVector position;
+		Vector position;
 	public:
-		Plane(PtrVector normal, float distance);
+		Plane(Vector& normal, float distance);
 		Plane(const Plane &);
 		Plane operator = (const Plane&);
 		virtual void Init();
-		virtual PtrIntersectResult Intersect(PtrRay);
+		virtual int Intersect(Ray&, IntersectResult*);
 	};
 
 }

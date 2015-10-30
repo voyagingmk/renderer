@@ -12,7 +12,7 @@ namespace renderer {
 		static PtrColor LightColor;
 	public:
 		Material(float reflectiveness) :reflectiveness(reflectiveness) {};
-		virtual PtrColor Sample(PtrRay ray, PtrVector position, PtrVector normal) = 0;
+		virtual PtrColor Sample(Ray& ray, Vector& position, Vector& normal) = 0;
 	};
 
 	class CheckerMaterial : public Material {
@@ -20,7 +20,7 @@ namespace renderer {
 		float scale;
 	public:
 		CheckerMaterial(float scale, float reflectiveness = 0);
-		PtrColor Sample(PtrRay ray, PtrVector position, PtrVector normal);
+		PtrColor Sample(Ray& ray, Vector& position, Vector& normal);
 	};
 
 
@@ -30,7 +30,7 @@ namespace renderer {
 		int shininess;
 	public:
 		PhongMaterial(PtrColor diffuse, PtrColor specular, int shininess, float reflectiveness = 0);
-		PtrColor Sample(PtrRay ray, PtrVector position, PtrVector normal);
+		PtrColor Sample(Ray& ray, Vector& position, Vector& normal);
 	};
 }
 

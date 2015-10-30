@@ -9,20 +9,14 @@ namespace renderer {
 		normal(Vector::Zero) {
 	};
 
-	IntersectResult::IntersectResult(PtShape ptrGeo, float dis, PtrVector pos, PtrVector normal) :
-		geometry(ptrGeo),
+	IntersectResult::IntersectResult(PtrShape pShape, float dis, Vector& pos, Vector& normal) :
+		geometry(pShape),
 		distance(dis),
 		position(pos),
 		normal(normal) {
 	};
 
-	IntersectResult::IntersectResult(PtShape ptrGeo, float dis, const Vector& pos, const Vector& normal) :
-		geometry(ptrGeo),
-		distance(dis),
-		position(std::make_shared<Vector>(pos)),
-		normal(std::make_shared<Vector>(normal)) {
-	};
 
-	PtrIntersectResult IntersectResult::NoHit = std::make_shared<IntersectResult>();
+	IntersectResult IntersectResult::NoHit = IntersectResult();
 
 }

@@ -10,7 +10,7 @@ namespace renderer {
 	public:
 		Shape() :material(nullptr) {};
 		virtual void Init() = 0;
-		virtual PtrIntersectResult Intersect(PtrRay) = 0;
+		virtual int Intersect(Ray&, IntersectResult*) = 0;
 	};
 }
 

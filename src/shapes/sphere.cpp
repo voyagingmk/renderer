@@ -5,35 +5,36 @@
 
 namespace renderer {
 
-	Sphere::Sphere(PtrVector center, float radius) :center(center), r(radius) {
+	Sphere::Sphere(Vector& center, float radius) :center(center), r(radius) {
 	}
 	Sphere::Sphere(Sphere& s) {
-		center = std::make_shared<Vector>(*s.center);
+		center = s.center;
 		r = s.r;
 	}
 	Sphere Sphere::operator = (const Sphere& s) {
 		r = s.r;
-		center = std::make_shared<Vector>(*s.center);
+		center = s.center;
 		return *this;
 	}
 	void Sphere::Init() {
 		sqrRadius = r * r;
 	}
-	PtrIntersectResult Sphere::Intersect(PtrRay ray) {
-		Vector&& v = *(ray->origin) - (*center);
+	int Sphere::Intersect(Ray& ray, IntersectResult* result) {
+		Vector&& v = ray.o - center;
 		float a0 = v.LengthSquare() - sqrRadius;
-		float DdotV = ray->direction->Dot(v);
+		float DdotV = ray.d.Dot(v);
 		if (DdotV <= 0) {
 			float discr = DdotV * DdotV - a0;
 			if (discr >= 0) {
-				auto distance = -DdotV - float(sqrtf(discr));
-				auto position = ray->GetPoint(distance);
-				auto normal = (*position - *center).Normalize();
-				return std::make_shared<IntersectResult>(IntersectResult(shared_from_this(), distance, *position, normal));
+				float distance = -DdotV - float(sqrtf(discr));
+				Vector& position = ray.GetPoint(distance);
+				Vector& normal = (position - center).Normalize();
+				*result = IntersectResult(shared_from_this(), distance, position, normal);
+				return 0;
 			}
 		}
-
-		return IntersectResult::NoHit;
+		result = &IntersectResult::NoHit;
+		return 0;
 	}
 
 }

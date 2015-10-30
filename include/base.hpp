@@ -18,6 +18,7 @@
 #include "CImg.h"
 
 #define DEFINE_SHARE_PTR(name) typedef std::shared_ptr<name> Ptr#name;
+#define FLOAT_MAX (std::numeric_limits<float>::max())
 
 namespace renderer {
 
@@ -27,17 +28,22 @@ namespace renderer {
 	class IntersectResult;
 	class Shape;
 	class Material;
-	class Vector;
+	class Point;
 	class Sphere;
 	class Plane;
 	class Union;
 	class Color;
 	class Ray;
 
+	typedef Point Normal;
+	typedef Point Vector;
+
 	typedef std::shared_ptr<IntersectResult> PtrIntersectResult;
-	typedef std::shared_ptr<Shape> PtShape;
+	typedef std::shared_ptr<Shape> PtrShape;
 	typedef std::shared_ptr<Material> PtrMaterial;
-	typedef std::shared_ptr<Vector> PtrVector;
+	typedef std::shared_ptr<Point> PtrPoint;
+	typedef std::shared_ptr<Point> PtrNormal;
+	typedef std::shared_ptr<Point> PtrVector;
 	typedef std::shared_ptr<Sphere> PtrSphere;
 	typedef std::shared_ptr<Plane> PtrPlane;
 	typedef std::shared_ptr<Union> PtrUnion;

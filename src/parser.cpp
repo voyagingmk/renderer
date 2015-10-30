@@ -17,7 +17,7 @@
 
 namespace renderer {
 
-	void renderArea(Renderer &renderer, cil::CImg<unsigned char> &img, PtShape pUnion, PerspectiveCamera& camera, int maxReflect, int x, int y, int w, int h)
+	void renderArea(Renderer &renderer, cil::CImg<unsigned char> &img, PtrShape pUnion, PerspectiveCamera& camera, int maxReflect, int x, int y, int w, int h)
 	{
 		renderer.rayTraceReflection(img, std::static_pointer_cast<Shape>(pUnion), camera, maxReflect, x, y, w, h);
 	}
@@ -50,20 +50,20 @@ namespace renderer {
 			}
 			matDict[objinfo["id"]] = pm;
 		}
-		std::vector<PtShape> vecGeo;
+		std::vector<PtrShape> vecGeo;
 		for (auto objinfo : config["scene"]) {
-			PtShape pg = nullptr;
+			PtrShape pg = nullptr;
 			if (objinfo["type"] == "Sphere") {
 				auto pos = objinfo["pos"];
 				pg = std::make_shared<Sphere>(
-					std::make_shared<Vector>(pos[0], pos[1], pos[2]),
+					Vector(pos[0], pos[1], pos[2]),
 					objinfo["radius"]);
 				pg->material = matDict[objinfo["matId"]];
 			}
 			else if (objinfo["type"] == "Plane") {
 				auto normal = objinfo["normal"];
 				pg = std::make_shared<Plane>(
-					std::make_shared<Vector>(normal[0], normal[1], normal[2]),
+					Vector(normal[0], normal[1], normal[2]),
 					objinfo["distance"]);
 				pg->material = matDict[objinfo["matId"]];
 			}
@@ -77,9 +77,9 @@ namespace renderer {
 		auto front = config["camera"]["front"];
 		auto up = config["camera"]["up"];
 
-		PerspectiveCamera camera(std::make_shared<Vector>(eye[0], eye[1], eye[2]),
-			std::make_shared<Vector>(front[0], front[1], front[2]),
-			std::make_shared<Vector>(up[0], up[1], up[2]),
+		PerspectiveCamera camera(Vector(eye[0], eye[1], eye[2]),
+			Vector(front[0], front[1], front[2]),
+			Vector(up[0], up[1], up[2]),
 			config["camera"]["fov"]);
 
 		Renderer renderer;

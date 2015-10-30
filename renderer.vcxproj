@@ -64,7 +64,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>include;src;$(IncludePath)</IncludePath>
+    <IncludePath>include;src;include\shapes;src\shapes;$(IncludePath)</IncludePath>
     <OutDir>$(VSGenerateDir)\$(ProjectName)\$(Configuration)\</OutDir>
     <IntDir>$(VSGenerateDir)\$(ProjectName)\$(Configuration)\tmp</IntDir>
   </PropertyGroup>
@@ -116,8 +116,8 @@
     <ClCompile Include="src\renderer.cpp" />
     <ClCompile Include="src\shapes\plane.cpp" />
     <ClCompile Include="src\shapes\sphere.cpp" />
-    <ClCompile Include="src\union.cpp" />
     <ClCompile Include="src\geometry.cpp" />
+    <ClCompile Include="src\shapes\union.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\base.hpp" />
@@ -135,8 +135,8 @@
     <ClInclude Include="include\renderer.hpp" />
     <ClInclude Include="include\shapes\plane.hpp" />
     <ClInclude Include="include\shapes\sphere.hpp" />
-    <ClInclude Include="include\union.hpp" />
     <ClInclude Include="include\geometry.hpp" />
+    <ClInclude Include="include\shapes\union.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

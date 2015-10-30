@@ -6,30 +6,30 @@
 
 namespace renderer {
 
-	class Vector {
+	class Point {
 	public:
 		float x, y, z;
-		static PtrVector Zero;
+		static Point Zero;
 	public:
-		Vector();
-		Vector(const float x, const float y, const float z);
-		Vector(const Vector &);
-		Vector(Vector &&);
-		Vector& operator = (const Vector&);
-		Vector& operator = (Vector&&);
-		~Vector();
-		Vector operator + (const Vector&);
-		Vector operator - (const Vector&);
-		Vector operator * (float f);
-		Vector operator / (float f);
-		Vector operator - ();
-		bool operator == (const Vector& v);
-		float Dot(const Vector&);
-		Vector Cross(const Vector&);
+		Point();
+		Point(const float x, const float y, const float z);
+		Point(const Point &);
+		Point(Point &&);
+		Point& operator = (const Point&);
+		Point& operator = (Point&&);
+		~Point();
+		Point operator + (const Point&);
+		Point operator - (const Point&);
+		Point operator * (float f);
+		Point operator / (float f);
+		Point operator - ();
+		bool operator == (const Point& v);
+		float Dot(const Point&);
+		Point Cross(const Point&);
 		inline float Length() { return sqrt(x * x + y * y + z * z); };
 		inline float LengthSquare() { return x * x + y * y + z * z; };
-		Vector Normalize();
-		Vector& Swap(Vector&);
+		Point Normalize();
+		Point& Swap(Point&);
 		void Debug() {
 			Debug("");
 		}
@@ -37,6 +37,7 @@ namespace renderer {
 			//printf("%s [x, y, z = %f, %f, %f]\n", msg.c_str(), m_x, m_y, m_z);
 		}
 	};
+
 }
 
 #endif // RENDERER_GEOMETRY_HPP

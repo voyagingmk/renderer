@@ -2,19 +2,20 @@
 #define RENDERER_INTERSECT_RESULT_HPP
 
 #include "base.hpp"
+#include "geometry.hpp"
+
 namespace renderer {
 
 	class IntersectResult {
 	public:
-		PtShape geometry;
+		PtrShape geometry;
 		float distance;
-		PtrVector position;
-		PtrVector normal;
-		static PtrIntersectResult NoHit;
+		Vector position;
+		Vector normal;
+		static IntersectResult NoHit;
 	public:
 		IntersectResult();
-		IntersectResult(PtShape, float, PtrVector, PtrVector);
-		IntersectResult(PtShape, float, const Vector&, const Vector&);
+		IntersectResult(PtrShape pShape, float dis, Vector& pos, Vector& normal);
 	};
 }
 

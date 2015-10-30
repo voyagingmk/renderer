@@ -3,18 +3,21 @@
 
 #include "base.hpp"
 #include "shape.hpp"
+#include "../geometry.hpp"
+
+
 namespace renderer {
 
 	class Sphere :public Shape {
-		PtrVector center;
+		Vector center;
 		float r;
 		float sqrRadius;
 	public:
-		Sphere(PtrVector center, float radius);
+		Sphere(Vector& center, float radius);
 		Sphere(Sphere &);
 		Sphere operator = (const Sphere&);
 		virtual void Init();
-		virtual PtrIntersectResult Intersect(PtrRay);
+		virtual int Intersect(Ray&, IntersectResult*);
 	};
 }
 

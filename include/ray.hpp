@@ -2,14 +2,16 @@
 #define RENDERER_RAY_HPP
 
 #include "base.hpp"
+#include "geometry.hpp"
+
 namespace renderer {
 	class Ray {
 	public:
-		PtrVector origin;
-		PtrVector direction;
+		Vector o;//origin
+		Vector d;//direction
 	public:
-		Ray(PtrVector origin, PtrVector direction);
-		PtrVector GetPoint(float t);
+		Ray(Vector& origin, Vector& direction);
+		Vector GetPoint(float t);
 	};
 }
 #endif // RENDERER_RAY_HPP

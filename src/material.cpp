@@ -8,8 +8,8 @@ namespace renderer {
 		scale(scale) {
 	};
 
-	PtrColor CheckerMaterial::Sample(PtrRay ray, PtrVector position, PtrVector normal) {
-		return abs((int(std::floor(position->x * 0.1)) + int(std::floor(position->z * scale))) % 2) < 1 ? Color::Black : Color::White;
+	PtrColor CheckerMaterial::Sample(Ray& ray, Vector& position, Vector& normal) {
+		return abs((int(std::floor(position.x * 0.1)) + int(std::floor(position.z * scale))) % 2) < 1 ? Color::Black : Color::White;
 	};
 
 
@@ -21,10 +21,10 @@ namespace renderer {
 
 	};
 
-	PtrColor PhongMaterial::Sample(PtrRay ray, PtrVector position, PtrVector normal) {
-		float NdotL = normal->Dot(*LightDir);
-		Vector&& H = (*LightDir - *(ray->direction)).Normalize();
-		float NdotH = normal->Dot(H);
+	PtrColor PhongMaterial::Sample(Ray& ray, Vector& position, Vector& normal) {
+		float NdotL = normal.Dot(*LightDir);
+		Vector&& H = (*LightDir - ray.d).Normalize();
+		float NdotH = normal.Dot(H);
 		Color&& diffuseTerm = *diffuse * (max(NdotL, 0.0f));
 		Color&& specularTerm = *specular * (float)(std::pow(max(NdotH, 0.0f), shininess));
 		Color result = Color::White->Modulate(diffuseTerm + specularTerm);

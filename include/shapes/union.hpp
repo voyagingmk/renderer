@@ -8,11 +8,11 @@
 namespace renderer {
 	class Union :public Shape {
 	public:
-		std::vector<PtShape> geometries;
+		std::vector<PtrShape> geometries;
 	public:
-		Union(std::vector<PtShape>);
+		Union(std::vector<PtrShape>);
 		void Init();
-		PtrIntersectResult Intersect(PtrRay ray);
+		int Intersect(Ray&, IntersectResult*);
 	};
 }
 
