@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "union.hpp"
 #include "sphere.hpp"
 #include "plane.hpp"

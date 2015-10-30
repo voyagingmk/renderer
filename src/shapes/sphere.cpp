@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "sphere.hpp"
 #include "geometry.hpp"
 #include "ray.hpp"

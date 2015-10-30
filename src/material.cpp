@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "material.hpp"
 #include "geometry.hpp"
 #include "color.hpp"

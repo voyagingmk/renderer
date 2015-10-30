@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "camera.hpp"
 #include <cmath>
 #include <geometry.hpp>

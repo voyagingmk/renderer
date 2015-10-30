@@ -6,6 +6,7 @@
 #else
 
 #endif 
+
 #include <algorithm>
 #include <memory>
 #include <stdio.h>
@@ -15,22 +16,27 @@
 #include <vector>
 #include <list>
 #include <assert.h>
-#include "CImg.h"
+
+#include "stdafx.h"
+
 
 #define DEFINE_SHARE_PTR(name) typedef std::shared_ptr<name> Ptr#name;
 #define FLOAT_MAX (std::numeric_limits<float>::max())
 
-//#define DEBUG_RENDERER
+#define DEBUG_RENDERER
 
 #ifdef DEBUG_RENDERER
-
-#define DEBUG_POINT(msg) printf("%s [x, y, z = %f, %f, %f]\n", msg, x, y, z)
-
+#define Assert(expr) \
+    ((expr) ? (void)0 : \
+        Severe("[Assert] \"%s\" failed in %s, line %d", \
+               #expr, __FILE__, __LINE__))
 #else
+#define Assert(expr) ((void)0)
+#endif
 
 #define DEBUG_POINT(msg)
+//#define DEBUG_POINT(msg) printf("%s [x, y, z = %f, %f, %f]\n", msg, x, y, z)
 
-#endif
 namespace renderer {
 
 	using std::min;

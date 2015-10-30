@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "renderer.hpp"
 #include "camera.hpp"
 #include "shape.hpp"

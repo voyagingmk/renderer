@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "intersect_result.hpp"
 #include "geometry.hpp"
 

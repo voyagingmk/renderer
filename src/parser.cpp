@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include <fstream>
 #include <map>
 #include <stdio.h>
@@ -5,7 +6,6 @@
 #include <ctime>
 #include <chrono>
 #include "parser.hpp"
-#include "json.hpp"
 #include "geometry.hpp"
 #include "renderer.hpp"
 #include "sphere.hpp"
