@@ -20,6 +20,17 @@
 #define DEFINE_SHARE_PTR(name) typedef std::shared_ptr<name> Ptr#name;
 #define FLOAT_MAX (std::numeric_limits<float>::max())
 
+//#define DEBUG_RENDERER
+
+#ifdef DEBUG_RENDERER
+
+#define DEBUG_POINT(msg) printf("%s [x, y, z = %f, %f, %f]\n", msg, x, y, z)
+
+#else
+
+#define DEBUG_POINT(msg)
+
+#endif
 namespace renderer {
 
 	using std::min;

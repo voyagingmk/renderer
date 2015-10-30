@@ -4,89 +4,107 @@
 namespace renderer {
 
 	Point::Point() :x(0), y(0), z(0) {
-		Debug("Point default created.");
+		DEBUG_POINT("Point default created.");
 	};
 
 	Point::Point(const float x, const float y, const float z) :x(x), y(y), z(z) {
-		Debug("Point param created.");
+		DEBUG_POINT("Point param created.");
 	};
 
-	Point::Point(Point && v) :x(0), y(0), z(0) {
-		x = v.x;
-		y = v.y;
-		z = v.z;
-		v.x = 0;
-		v.y = 0;
-		v.z = 0;
-		Debug("Point move created.");
+	Point::Point(const Point & p) {
+		x = p.x;
+		y = p.y;
+		z = p.z;
+		DEBUG_POINT("Point copy created.");
 	}
 
-	Point::Point(const Point & v) {
-		x = v.x;
-		y = v.y;
-		z = v.z;
-		Debug("Point copy created.");
+	Point::Point(Point && p) :x(0), y(0), z(0) {
+		x = p.x;
+		y = p.y;
+		z = p.z;
+		p.x = 0;
+		p.y = 0;
+		p.z = 0;
+		DEBUG_POINT("Point move created.");
 	}
 
 	Point::~Point() {
-		Debug("Destroyed.");
+		DEBUG_POINT("Destroyed.");
 	}
 
-	Point& Point::operator = (const Point& v) {
-		x = v.x;
-		y = v.y;
-		z = v.z;
-		Debug("Point copy assigned.");
-		return *this;
-	}
-	Point& Point::operator = (Point&& v) {
-		x = v.x;
-		y = v.y;
-		z = v.z;
-		v.x = 0;
-		v.y = 0;
-		v.z = 0;
-		Debug("Point move assigned.");
+	Point& Point::operator = (const Point& p) {
+		x = p.x;
+		y = p.y;
+		z = p.z;
+		DEBUG_POINT("Point copy assigned.");
 		return *this;
 	}
 
+	Point Point::operator + (const Point& p) {
+		return Point(x + p.x, y + p.y, z + p.z);
+	}
+	Point Point::operator - (const Point& p) {
+		return Point(x - p.x, y - p.y, z - p.z);
+	}
 
-	Point Point::operator + (const Point& v) {
-		return Point(x + v.x, y + v.y, z + v.z);
-	}
-	Point Point::operator - (const Point& v) {
-		return Point(x - v.x, y - v.y, z - v.z);
-	}
-	Point Point::operator - () {
-		return Point(-x, -y, -z);
-	}
 	Point Point::operator * (float f) {
 		return Point(x * f, y * f, z * f);
 	}
 
 	Point Point::operator / (float f) {
 		if (f == 0)
-			return *this;
+			throw "[Point /] f = 0";
 		return Point(x / f, y / f, z / f);
 	}
 
-	bool Point::operator == (const Point& v) {
-		return x == v.x && y == v.y && z == v.z;
-	}
-
-	Point Point::Cross(const Point& v) {
-		Point && res = Point(-z * v.y + y * v.z, z * v.x - x * v.z, -y * v.x + x * v.y);
-		return res;
-	}
-
-
-	Point& Point::Swap(Point& v) {
-		std::swap(*this, v);
+	Point& Point::operator += (const Point& p) {
+		x += p.x;
+		y += p.y;
+		z += p.z;
 		return *this;
 	}
 
-	float Point::Dot(const Point& v) {
-		return x * v.x + y * v.y + z * v.z;
+	Point& Point::operator -= (const Point& p) {
+		x -= p.x;
+		y -= p.y;
+		z -= p.z;
+		return *this;
+	}
+
+	Point& Point::operator *= (float f) {
+		x *= f;
+		y *= f;
+		z *= f;
+		return *this;
+	}
+
+	Point& Point::operator /= (float f) {
+		x /= f;
+		y /= f;
+		z /= f;
+		return *this;
+	}
+
+	Point Point::operator - () {
+		return Point(-x, -y, -z);
+	}
+
+	bool Point::operator == (const Point& p) {
+		return x == p.x && y == p.y && z == p.z;
+	}
+
+	Point Point::Cross(const Point& p) {
+		return Point(-z * p.y + y * p.z, z * p.x - x * p.z, -y * p.x + x * p.y);
+	}
+
+
+	Point& Point::Swap(Point& p) {
+		std::swap(*this, p);
+		return *this;
+	}
+
+	float Point::Dot(const Point& p) {
+		return x * p.x + y * p.y + z * p.z;
 	}
 
 	Point Point::Normalize() {

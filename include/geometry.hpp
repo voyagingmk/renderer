@@ -16,12 +16,15 @@ namespace renderer {
 		Point(const Point &);
 		Point(Point &&);
 		Point& operator = (const Point&);
-		Point& operator = (Point&&);
 		~Point();
 		Point operator + (const Point&);
 		Point operator - (const Point&);
 		Point operator * (float f);
 		Point operator / (float f);
+		Point& operator += (const Point&);
+		Point& operator -= (const Point&);
+		Point& operator *= (float f);
+		Point& operator /= (float f);
 		Point operator - ();
 		bool operator == (const Point& v);
 		float Dot(const Point&);
@@ -30,12 +33,6 @@ namespace renderer {
 		inline float LengthSquare() { return x * x + y * y + z * z; };
 		Point Normalize();
 		Point& Swap(Point&);
-		void Debug() {
-			Debug("");
-		}
-		void Debug(std::string msg) {
-			//printf("%s [x, y, z = %f, %f, %f]\n", msg.c_str(), m_x, m_y, m_z);
-		}
 	};
 
 }
