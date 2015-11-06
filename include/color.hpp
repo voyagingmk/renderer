@@ -18,16 +18,16 @@ namespace renderer {
 		Color operator * (float f);
 		Color operator / (float f);
 		bool operator == (const Color&);
-		Color Modulate(const Color&);
+		Color Modulate (const Color&) const;
 		inline float r() const { return rgb[0]; };
 		inline float g() const { return rgb[1]; };
 		inline float b() const { return rgb[2]; };
 	public:
-		static const PtrColor Black;
-		static const PtrColor White;
-		static const PtrColor Red;
-		static const PtrColor Green;
-		static const PtrColor Blue;
+		static const Color Black;
+		static const Color White;
+		static const Color Red;
+		static const Color Green;
+		static const Color Blue;
 	};
 }
 

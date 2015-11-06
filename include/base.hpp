@@ -55,17 +55,11 @@ namespace renderer {
 	typedef Point Normal;
 	typedef Point Vector;
 
-	typedef std::shared_ptr<IntersectResult> PtrIntersectResult;
-	typedef std::shared_ptr<Shape> PtrShape;
-	typedef std::shared_ptr<Material> PtrMaterial;
-	typedef std::shared_ptr<Point> PtrPoint;
-	typedef std::shared_ptr<Point> PtrNormal;
-	typedef std::shared_ptr<Point> PtrVector;
-	typedef std::shared_ptr<Sphere> PtrSphere;
-	typedef std::shared_ptr<Plane> PtrPlane;
-	typedef std::shared_ptr<Union> PtrUnion;
-	typedef std::shared_ptr<Color> PtrColor;
-	typedef std::shared_ptr<Ray> PtrRay;
+	template<class T>
+	static MemoryPool<T>* GetPool() {
+		static MemoryPool<T> pool;
+		return &pool;
+	}
 
 	constexpr float PI = 3.141592653589793238463f;
 }

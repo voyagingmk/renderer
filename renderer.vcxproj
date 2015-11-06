@@ -151,6 +151,7 @@
     <ClInclude Include="include\CImg.h" />
     <ClInclude Include="include\color.hpp" />
     <ClInclude Include="include\common.hpp" />
+    <ClInclude Include="include\MemoryPool.h" />
     <ClInclude Include="include\shape.hpp" />
     <ClInclude Include="include\intersect_result.hpp" />
     <ClInclude Include="include\json.hpp" />
@@ -163,6 +164,9 @@
     <ClInclude Include="include\geometry.hpp" />
     <ClInclude Include="include\shapes\union.hpp" />
     <ClInclude Include="include\stdafx.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="include\MemoryPool.tcc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

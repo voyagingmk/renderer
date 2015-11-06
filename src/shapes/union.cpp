@@ -9,15 +9,15 @@
 
 namespace renderer {
 
-	Union::Union(std::vector<PtrShape> geometries) :geometries(geometries) {
+	ShapeUnion::ShapeUnion(std::vector<Shape*> geometries) :geometries(geometries) {
 	};
 
-	void Union::Init() {
+	void ShapeUnion::Init() {
 		for (auto p : geometries) {
 			p->Init();
 		}
 	};
-	int Union::Intersect(Ray& ray, IntersectResult* minResult) {
+	int ShapeUnion::Intersect(Ray& ray, IntersectResult* minResult) {
 		float minDistance = FLOAT_MAX;
 		*minResult = IntersectResult::NoHit;
 		IntersectResult resultTmp;

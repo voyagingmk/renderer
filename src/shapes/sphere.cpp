@@ -30,7 +30,7 @@ namespace renderer {
 				float distance = -DdotV - float(sqrtf(discr));
 				Vector& position = ray.GetPoint(distance);
 				Vector& normal = (position - center).Normalize();
-				*result = IntersectResult(shared_from_this(), distance, position, normal);
+				*result = IntersectResult(this, distance, position, normal);
 				return 0;
 			}
 		}

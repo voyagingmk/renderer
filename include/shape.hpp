@@ -6,7 +6,7 @@ namespace renderer {
 
 	class Shape : public std::enable_shared_from_this<Shape> {
 	public:
-		PtrMaterial material;
+		Material* material;
 	public:
 		Shape() :material(nullptr) {};
 		virtual void Init() = 0;

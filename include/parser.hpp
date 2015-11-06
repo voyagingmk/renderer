@@ -9,7 +9,7 @@ namespace renderer {
 	public:
 		int parseFromFile(std::string path);
 	private:
-		PtrColor parseColor(std::string c);
+		Color parseColor(std::string c);
 	};
 }
 

@@ -17,9 +17,9 @@
 
 namespace renderer {
 
-	void renderArea(Renderer &renderer, cil::CImg<unsigned char> &img, PtrShape pUnion, PerspectiveCamera& camera, int maxReflect, int x, int y, int w, int h)
+	void renderArea(Renderer &renderer, cil::CImg<unsigned char> &img, Shape* pUnion, PerspectiveCamera& camera, int maxReflect, int x, int y, int w, int h)
 	{
-		renderer.rayTraceReflection(img, std::static_pointer_cast<Shape>(pUnion), camera, maxReflect, x, y, w, h);
+		renderer.rayTraceReflection(img, pUnion, camera, maxReflect, x, y, w, h);
 	}
 
 	int Parser::parseFromFile(std::string path) {
@@ -35,43 +35,43 @@ namespace renderer {
 
 		cil::CImg<unsigned char> img(width, height, 1, 3);
 
-		std::map<int, PtrMaterial> matDict;
+		std::map<int, Material*> matDict;
 
 		for (auto objinfo : config["material"]) {
-			PtrMaterial pm = nullptr;
+			Material* mt = nullptr;
 			if (objinfo["type"] == "Phone") {
-				pm = std::make_shared<PhongMaterial>(parseColor(objinfo["diffuse"]),
-					parseColor(objinfo["specular"]),
-					objinfo["shininess"],
-					objinfo["reflectiveness"]);
+				auto pool = GetPool<PhongMaterial>();
+				mt = pool->newElement(parseColor(objinfo["diffuse"]),
+						parseColor(objinfo["specular"]),
+						objinfo["shininess"],
+						objinfo["reflectiveness"]);
 			}
 			else if (objinfo["type"] == "Checker") {
-				pm = std::make_shared<CheckerMaterial>(objinfo["scale"], objinfo["reflectiveness"]);
+				auto pool = GetPool<CheckerMaterial>();
+				mt = pool->newElement(objinfo["scale"], objinfo["reflectiveness"]);
 			}
-			matDict[objinfo["id"]] = pm;
+			matDict[objinfo["id"]] = mt;
 		}
-		std::vector<PtrShape> vecGeo;
+		std::vector<Shape*> vecGeo;
 		for (auto objinfo : config["scene"]) {
-			PtrShape pg = nullptr;
+			Shape* pg = nullptr;
 			if (objinfo["type"] == "Sphere") {
 				auto pos = objinfo["pos"];
-				pg = std::make_shared<Sphere>(
-					Vector(pos[0], pos[1], pos[2]),
+				auto pool = GetPool<Sphere>();
+				pg = pool->newElement(Vector(pos[0], pos[1], pos[2]),
 					objinfo["radius"]);
 				pg->material = matDict[objinfo["matId"]];
 			}
 			else if (objinfo["type"] == "Plane") {
 				auto normal = objinfo["normal"];
-				pg = std::make_shared<Plane>(
-					Vector(normal[0], normal[1], normal[2]),
-					objinfo["distance"]);
+				auto pool = GetPool<Plane>();
+				pg = pool->newElement(Vector(normal[0], normal[1], normal[2]),
+					   objinfo["distance"] );
 				pg->material = matDict[objinfo["matId"]];
 			}
-			if (!pg)
-				exit(1);
 			vecGeo.push_back(pg);
-		}
-		PtrUnion pUnion = std::make_shared<Union>(vecGeo);
+		} 
+		ShapeUnion shapeUnion(vecGeo);
 
 		auto eye = config["camera"]["eye"];
 		auto front = config["camera"]["front"];
@@ -86,35 +86,35 @@ namespace renderer {
 
 		auto time0 = std::chrono::system_clock::now();
 		if (!multithread) {
-			renderer.rayTrace(img, *pUnion, camera);
-			renderer.rayTraceReflection(img, std::static_pointer_cast<Shape>(pUnion), camera, 4);
+			renderer.rayTrace(img, shapeUnion, camera);
+			renderer.rayTraceReflection(img, &shapeUnion, camera, 4);
 		}
 		else {
 			if (multithread == 1) {
-				std::thread t1(renderArea, std::ref(renderer), std::ref(img), std::static_pointer_cast<Shape>(pUnion), std::ref(camera), 4, 0, 0, width, height / 2);
-				std::thread t2(renderArea, std::ref(renderer), std::ref(img), std::static_pointer_cast<Shape>(pUnion), std::ref(camera), 4, 0, height / 2, width, height / 2);
+				std::thread t1(renderArea, std::ref(renderer), std::ref(img), &shapeUnion, std::ref(camera), 4, 0, 0, width, height / 2);
+				std::thread t2(renderArea, std::ref(renderer), std::ref(img), &shapeUnion, std::ref(camera), 4, 0, height / 2, width, height / 2);
 				t1.join();
 				t2.join();
 			}
 			if (multithread == 2) {
-				std::thread t1(renderArea, std::ref(renderer), std::ref(img), std::static_pointer_cast<Shape>(pUnion), std::ref(camera), 4, 0, 0, width, height / 4);
-				std::thread t2(renderArea, std::ref(renderer), std::ref(img), std::static_pointer_cast<Shape>(pUnion), std::ref(camera), 4, 0, 1 * height / 4, width, height / 4);
-				std::thread t3(renderArea, std::ref(renderer), std::ref(img), std::static_pointer_cast<Shape>(pUnion), std::ref(camera), 4, 0, 2 * height / 4, width, height / 4);
-				std::thread t4(renderArea, std::ref(renderer), std::ref(img), std::static_pointer_cast<Shape>(pUnion), std::ref(camera), 4, 0, 3 * height / 4, width, height / 4);
+				std::thread t1(renderArea, std::ref(renderer), std::ref(img), &shapeUnion, std::ref(camera), 4, 0, 0, width, height / 4);
+				std::thread t2(renderArea, std::ref(renderer), std::ref(img), &shapeUnion, std::ref(camera), 4, 0, 1 * height / 4, width, height / 4);
+				std::thread t3(renderArea, std::ref(renderer), std::ref(img), &shapeUnion, std::ref(camera), 4, 0, 2 * height / 4, width, height / 4);
+				std::thread t4(renderArea, std::ref(renderer), std::ref(img), &shapeUnion, std::ref(camera), 4, 0, 3 * height / 4, width, height / 4);
 				t1.join();
 				t2.join();
 				t3.join();
 				t4.join();
 			}
 			if (multithread == 3) {
-				std::thread t1(renderArea, std::ref(renderer), std::ref(img), std::static_pointer_cast<Shape>(pUnion), std::ref(camera), 4, 0, 0, width, height / 8);
-				std::thread t2(renderArea, std::ref(renderer), std::ref(img), std::static_pointer_cast<Shape>(pUnion), std::ref(camera), 4, 0, 1 * height / 8, width, height / 8);
-				std::thread t3(renderArea, std::ref(renderer), std::ref(img), std::static_pointer_cast<Shape>(pUnion), std::ref(camera), 4, 0, 2 * height / 8, width, height / 8);
-				std::thread t4(renderArea, std::ref(renderer), std::ref(img), std::static_pointer_cast<Shape>(pUnion), std::ref(camera), 4, 0, 3 * height / 8, width, height / 8);
-				std::thread t5(renderArea, std::ref(renderer), std::ref(img), std::static_pointer_cast<Shape>(pUnion), std::ref(camera), 4, 0, 4 * height / 8, width, height / 8);
-				std::thread t6(renderArea, std::ref(renderer), std::ref(img), std::static_pointer_cast<Shape>(pUnion), std::ref(camera), 4, 0, 5 * height / 8, width, height / 8);
-				std::thread t7(renderArea, std::ref(renderer), std::ref(img), std::static_pointer_cast<Shape>(pUnion), std::ref(camera), 4, 0, 6 * height / 8, width, height / 8);
-				std::thread t8(renderArea, std::ref(renderer), std::ref(img), std::static_pointer_cast<Shape>(pUnion), std::ref(camera), 4, 0, 7 * height / 8, width, height / 8);
+				std::thread t1(renderArea, std::ref(renderer), std::ref(img), &shapeUnion, std::ref(camera), 4, 0, 0, width, height / 8);
+				std::thread t2(renderArea, std::ref(renderer), std::ref(img), &shapeUnion, std::ref(camera), 4, 0, 1 * height / 8, width, height / 8);
+				std::thread t3(renderArea, std::ref(renderer), std::ref(img), &shapeUnion, std::ref(camera), 4, 0, 2 * height / 8, width, height / 8);
+				std::thread t4(renderArea, std::ref(renderer), std::ref(img), &shapeUnion, std::ref(camera), 4, 0, 3 * height / 8, width, height / 8);
+				std::thread t5(renderArea, std::ref(renderer), std::ref(img), &shapeUnion, std::ref(camera), 4, 0, 4 * height / 8, width, height / 8);
+				std::thread t6(renderArea, std::ref(renderer), std::ref(img), &shapeUnion, std::ref(camera), 4, 0, 5 * height / 8, width, height / 8);
+				std::thread t7(renderArea, std::ref(renderer), std::ref(img), &shapeUnion, std::ref(camera), 4, 0, 6 * height / 8, width, height / 8);
+				std::thread t8(renderArea, std::ref(renderer), std::ref(img), &shapeUnion, std::ref(camera), 4, 0, 7 * height / 8, width, height / 8);
 				t1.join();
 				t2.join();
 				t3.join();
@@ -132,7 +132,7 @@ namespace renderer {
 		return 0;
 	}
 
-	PtrColor Parser::parseColor(std::string c) {
+	Color Parser::parseColor(std::string c) {
 		if (c == "Red")
 			return Color::Red;
 		else if (c == "White")
@@ -144,7 +144,7 @@ namespace renderer {
 		else if (c == "Blue")
 			return Color::Blue;
 		else
-			return nullptr;
+			return Color::White;
 	}
 
 

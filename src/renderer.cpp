@@ -66,32 +66,32 @@ namespace renderer {
 				Ray& ray = camera.GenerateRay(sx, sy);
 				scene.Intersect(ray, &result);
 				if (result.geometry) {
-					PtrMaterial pMaterial = result.geometry->material;
-					PtrColor color = pMaterial->Sample(ray, result.position, result.normal);
+					Material* pMaterial = result.geometry->material;
+					Color color = pMaterial->Sample(ray, result.position, result.normal);
 					//printf("c=%f,%f,%f\n", color->r(),color->g(),color->b());
-					img.atXYZC(x, y, 0, 0) = min(int(color->r() * 255), 255);
-					img.atXYZC(x, y, 0, 1) = min(int(color->g() * 255), 255);
-					img.atXYZC(x, y, 0, 2) = min(int(color->b() * 255), 255);
+					img.atXYZC(x, y, 0, 0) = min(int(color.r() * 255), 255);
+					img.atXYZC(x, y, 0, 1) = min(int(color.g() * 255), 255);
+					img.atXYZC(x, y, 0, 2) = min(int(color.b() * 255), 255);
 				}
 			}
 		}
 	}
 
-	PtrColor Renderer::rayTraceRecursive(Shape* scene, Ray& ray, int maxReflect) {
+	Color Renderer::rayTraceRecursive(Shape* scene, Ray& ray, int maxReflect) {
 		IntersectResult result;
 		scene->Intersect(ray, &result);
 		if (result.geometry) {
-			PtrMaterial pMaterial = result.geometry->material;
+			Material* pMaterial = result.geometry->material;
 			float reflectiveness = pMaterial->reflectiveness;
-			PtrColor color = pMaterial->Sample(ray, result.position, result.normal);
-			color = std::make_shared<Color>(*color * (1.0f - reflectiveness));
+			Color color = pMaterial->Sample(ray, result.position, result.normal);
+			color = Color(color * (1.0f - reflectiveness));
 
 			if (reflectiveness > 0 && maxReflect > 0) {
-				PtrVector r = std::make_shared<Vector>(result.normal * (-2 * (result.normal.Dot(ray.d))) + ray.d);
-				Ray new_ray(result.position, *r);
-				PtrColor reflectedColor = rayTraceRecursive(scene, new_ray, maxReflect - 1);
-				assert(reflectedColor->r() >= 0 && reflectedColor->g() >= 0 && reflectedColor->b() >= 0);
-				*color = *color + *reflectedColor * reflectiveness;
+				Vector r = Vector(result.normal * (-2 * (result.normal.Dot(ray.d))) + ray.d);
+				Ray new_ray(result.position, r);
+				Color reflectedColor = rayTraceRecursive(scene, new_ray, maxReflect - 1);
+				assert(reflectedColor.r() >= 0 && reflectedColor.g() >= 0 && reflectedColor.b() >= 0);
+				color = color + reflectedColor * reflectiveness;
 			}
 			return color;
 		}
@@ -99,7 +99,7 @@ namespace renderer {
 			return Color::Black;
 	}
 
-	void Renderer::rayTraceReflection(cil::CImg<unsigned char> &img, PtrShape scene, PerspectiveCamera& camera, int maxReflect, int px, int py, int pw, int ph) {
+	void Renderer::rayTraceReflection(cil::CImg<unsigned char> &img, Shape* scene, PerspectiveCamera& camera, int maxReflect, int px, int py, int pw, int ph) {
 		scene->Init();
 		camera.Init();
 		int w = pw, h = ph, img_width = img.width(), img_height = img.height();
@@ -113,10 +113,10 @@ namespace renderer {
 				float sx = (float)x / img_width;
 				//printf("sx,sy=%f,%f\n",sx,sy);
 				Ray& ray = camera.GenerateRay(sx, sy);
-				PtrColor color = rayTraceRecursive(&(*scene), ray, maxReflect);
-				img.atXYZC(x, y, 0, 0) = min(int(color->r() * 255), 255);
-				img.atXYZC(x, y, 0, 1) = min(int(color->g() * 255), 255);
-				img.atXYZC(x, y, 0, 2) = min(int(color->b() * 255), 255);
+				Color color = rayTraceRecursive(&(*scene), ray, maxReflect);
+				img.atXYZC(x, y, 0, 0) = min(int(color.r() * 255), 255);
+				img.atXYZC(x, y, 0, 1) = min(int(color.g() * 255), 255);
+				img.atXYZC(x, y, 0, 2) = min(int(color.b() * 255), 255);
 			}
 		}
 	}

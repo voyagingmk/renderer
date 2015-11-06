@@ -10,7 +10,7 @@ namespace renderer {
 		normal(Vector::Zero) {
 	};
 
-	IntersectResult::IntersectResult(PtrShape pShape, float dis, Vector& pos, Vector& normal) :
+	IntersectResult::IntersectResult(Shape* pShape, float dis, Vector& pos, Vector& normal) :
 		geometry(pShape),
 		distance(dis),
 		position(pos),

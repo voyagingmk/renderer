@@ -8,14 +8,14 @@ namespace renderer {
 
 	class IntersectResult {
 	public:
-		PtrShape geometry;
+		Shape* geometry;
 		float distance;
 		Vector position;
 		Vector normal;
 		static IntersectResult NoHit;
 	public:
 		IntersectResult();
-		IntersectResult(PtrShape pShape, float dis, Vector& pos, Vector& normal);
+		IntersectResult(Shape* pShape, float dis, Vector& pos, Vector& normal);
 	};
 }
 

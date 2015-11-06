@@ -32,7 +32,7 @@ namespace renderer {
 		}
 		float dotB = normal.Dot(ray.o - position);
 		float distance = -dotB / dotA;
-		*result = IntersectResult(shared_from_this(), distance, ray.GetPoint(distance), normal);
+		*result = IntersectResult(this, distance, ray.GetPoint(distance), normal);
 		return 0;
 	}
 }
