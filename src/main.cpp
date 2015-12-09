@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "parser.hpp"
+#include "tiny_obj_loader.h"
 using namespace renderer;
 
 int main(int argc, char ** argv){
