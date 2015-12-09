@@ -6,3 +6,5 @@ src/sphere.cpp.save-failed
 renderer.vcxproj.user
 renderer.vcxproj.filters
 .vs/renderer/v14/
+*.tlog
+*.idb

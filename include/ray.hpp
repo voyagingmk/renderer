@@ -10,8 +10,8 @@ namespace renderer {
 		Vector o;//origin
 		Vector d;//direction
 	public:
-		Ray(Vector& origin, Vector& direction);
-		Vector GetPoint(float t);
+		Ray(Vector& origin, Vector& direction) noexcept;
+		Vector GetPoint(float t) noexcept;
 	};
 }
 #endif // RENDERER_RAY_HPP
