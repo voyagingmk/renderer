@@ -10,6 +10,7 @@ namespace renderer {
 		int parseFromFile(std::string path);
 	private:
 		Color parseColor(std::string c);
+		void parserObj(std::string inputfile);
 	};
 }
 

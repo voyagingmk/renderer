@@ -8,6 +8,7 @@
 		"up":[0,1,0],
 		"fov":90
 	},
+	"obj": "test.obj",
 	"scene":[
 		{
 			"type": "Sphere",

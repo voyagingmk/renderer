@@ -164,6 +164,7 @@
     <ClInclude Include="include\geometry.hpp" />
     <ClInclude Include="include\shapes\union.hpp" />
     <ClInclude Include="include\stdafx.h" />
+    <ClInclude Include="include\transform.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="include\MemoryPool.tcc" />
