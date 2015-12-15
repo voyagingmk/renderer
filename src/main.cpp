@@ -21,7 +21,9 @@ int main(int argc, char ** argv){
 	Matrix4x4 m3 = m1.add(m2);
 	Matrix4x4 m4 = m3.minus(m2);
 	m4.debug();
-	auto m5 = m1.multiply(m2.multiply(3.0f));
+	auto m5 = m1.multiply(m2.multiply(3.0f).add(m2).minus(m2).divide(3.0f));
 	m5.debug();
+	auto m6 = m5.clone();
+	m6.debug();
 	return 0;
 }

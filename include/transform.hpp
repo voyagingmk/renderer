@@ -35,96 +35,123 @@ namespace renderer {
 		Matrix() {
 			data = GetPool<T>()->newElement(T());
 		}
+		
 		Matrix(std::initializer_list<V> values) {
 			data = GetPool<T>()->newElement(T(std::forward<std::initializer_list<V>>(values)));
 		}
+		
 		Matrix(Matrix<T>&& m) {
 			data = m.data;
 			m.data = nullptr;
 		}
+		
 		virtual ~Matrix() {
 			if (!data)
 				return;
 			auto pool = GetPool<T>();
 			pool->deleteElement(data);
 		}
+		
 		inline int row() {
 			return T::row;
 		}
+		
 		inline int col() {
 			return T::col;
 		}
+		
+		inline bool isSquare() {
+			return row() == col();
+		}
+		
+		inline bool isSameOrder(Matrix<T>& m) {
+			return row() == m.row() && col() == m.col();
+		}
+		
 		//access only
 		inline const V& operator [] (const int i) { return static_cast<V>(*((V*)data + i)); }
+		
 		//API
+		Matrix<T> clone() {
+			Matrix<T> result;
+			memcpy(result.data, data, row() * col() * sizeof(V));
+			return result;
+		}
+		
 		Matrix<T> add(Matrix<T>& m) {
 			Matrix<T> result;
-			int row = T::row, col = T::col;
+			int rowNum = row(), colNum = col();
 			int idx;
 			V* dataOfResult = result.data->data;
-			for (int i = 0; i < row; i++) {
-				for (int j = 0; j < col; j++) {
-					idx = i * col + j;
+			for (int i = 0; i < rowNum; i++) {
+				for (int j = 0; j < colNum; j++) {
+					idx = i * colNum + j;
 					dataOfResult[idx] = (*this)[idx] + m[idx];
 				}
 			}
 			return result;
 		}
+		
 		Matrix<T> minus(Matrix<T>& m) {
 			Matrix<T> result;
-			int row = T::row, col = T::col;
+			int rowNum = row(), colNum = col();
 			int idx;
 			V* dataOfResult = result.data->data;
-			for (int i = 0; i < row; i++) {
-				for (int j = 0; j < col; j++) {
-					idx = i * col + j;
+			for (int i = 0; i < rowNum; i++) {
+				for (int j = 0; j < colNum; j++) {
+					idx = i * colNum + j;
 					dataOfResult[idx] = (*this)[idx] - m[idx];
 				}
 			}
 			return result;
 		}
+		
 		template<int M, int N>
 		Matrix<T> multiply(Matrix<MxN<V, M, N>>& m) {
 			Matrix<MxN<V, T::row, N>> result;
-			int row = T::row, col = T::col;
+			int rowNum = row(), colNum = col();
 			int idx;
 			V* dataOfResult = result.data->data;
 			for (int i = 0; i < m.row(); i++) {
 				for (int j = 0; j < m.col(); j++) {
 					V total = 0;
-					for (int k = 0; k < col; k++) {
-						total += (*this)[i * col + k] * m[k * m.col() + j];
+					for (int k = 0; k < colNum; k++) {
+						total += (*this)[i * colNum + k] * m[k * m.col() + j];
 					}
 					dataOfResult[i * m.col() + j] = total;
 				}
 			}
 			return result;
 		}
+		
 		Matrix<T> multiply(V v) {
 			Matrix<T> result;
-			int row = T::row, col = T::col;
+			int rowNum = row(), colNum = col();
 			int idx;
 			V* dataOfResult = result.data->data;
-			for (int i = 0; i < row; i++) {
-				for (int j = 0; j < col; j++) {
-					idx = i * col + j;
+			for (int i = 0; i < rowNum; i++) {
+				for (int j = 0; j < colNum; j++) {
+					idx = i * colNum + j;
 					dataOfResult[idx] = (*this)[idx] *v;
 				}
 			}
 			return result;
 		}
-		Matrix<T> divide(T m) {
-			return multiply(T(1.0)/m);
+		
+		Matrix<T> divide(V v) {
+			return multiply(V(1.0)/v);
 		}
+		
 		//debug
 		void debug() {
-			int row = T::row, col = T::col;
+			int rowNum = row(), colNum = col();
 			int idx;
-			for (int i = 0; i < row; i++) {
-				for (int j = 0; j < col; j++) {
-					idx = i * col + j;
-					printf("%.1f,", (*this)[idx]);
+			for (int i = 0; i < rowNum; i++) {
+				for (int j = 0; j < colNum; j++) {
+					idx = i * colNum + j;
+					printf("%.1f\t", (*this)[idx]);
 				}
+				printf("\n");
 			}
 			printf("\n");
 		}
