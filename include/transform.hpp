@@ -71,11 +71,30 @@ namespace renderer {
 		//access only
 		inline const V& operator [] (const int i) { return static_cast<V>(*((V*)data + i)); }
 		
-		Matrix<T>& operator= (Matrix<T>& m) {
+		Matrix<T>& operator=(Matrix<T>& m) {
 			memcpy(data, m.data, row() * col() * sizeof(V));
 			return *this;
 		}
 
+		Matrix<T> operator+(Matrix<T>& m) {
+			return add(m);
+		}
+
+		Matrix<T> operator-(Matrix<T>& m) {
+			return minus(m);
+		}
+
+		Matrix<T> operator*(V v) {
+			return multiply(v);
+		}
+
+		Matrix<T> operator*(Matrix<T>& m) {
+			return multiply(m);
+		}
+
+		Matrix<T> operator/(V v) {
+			return divide(v);
+		}
 		//API
 		Matrix<T> clone() {
 			Matrix<T> result;

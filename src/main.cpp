@@ -23,6 +23,8 @@ int main(int argc, char ** argv){
 	m4.debug();
 	auto m5 = m1.multiply(m2.multiply(3.0f).add(m2).minus(m2).divide(3.0f));
 	m5.debug();
+	m5 = m1 * ( (m2 * 3.0f + m2 - m2) / 3.0f );
+	m5.debug();
 	auto m6 = m5.clone();
 	m6.debug();
 	m6.transpose().debug();
