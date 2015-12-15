@@ -40,7 +40,12 @@ namespace renderer {
 		Matrix(std::initializer_list<V> values) {
 			data = GetPool<T>()->newElement(T(std::forward<std::initializer_list<V>>(values)));
 		}
-		
+
+		Matrix(Matrix<T>& m) {
+			data = GetPool<T>()->newElement(T()); 
+			*this = m;
+		}
+
 		Matrix(Matrix<T>&& m) {
 			data = m.data;
 			m.data = nullptr;
@@ -97,8 +102,7 @@ namespace renderer {
 		}
 		//API
 		Matrix<T> clone() {
-			Matrix<T> result;
-			memcpy(result.data, data, row() * col() * sizeof(V));
+			Matrix<T> result = *this;
 			return result;
 		}
 
