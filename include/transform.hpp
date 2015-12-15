@@ -71,6 +71,11 @@ namespace renderer {
 		//access only
 		inline const V& operator [] (const int i) { return static_cast<V>(*((V*)data + i)); }
 		
+		Matrix<T>& operator= (Matrix<T>& m) {
+			memcpy(data, m.data, row() * col() * sizeof(V));
+			return *this;
+		}
+
 		//API
 		Matrix<T> clone() {
 			Matrix<T> result;
@@ -153,7 +158,15 @@ namespace renderer {
 		Matrix<T> divide(V v) {
 			return multiply(V(1.0)/v);
 		}
-		
+
+		Matrix<T> power(int pow) {
+			Matrix<T> result = clone();
+			for (int i = 0; i < pow - 1; i++) {
+				result = result.multiply(*this);
+			}
+			return result;
+		}
+
 		//debug
 		void debug() {
 			int rowNum = row(), colNum = col();

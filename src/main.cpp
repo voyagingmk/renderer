@@ -9,15 +9,15 @@ int main(int argc, char ** argv){
 	Parser parser;
 	//parser.parseFromFile("config.json");
 	Matrix4x4 m1 = { 
-		1,0,0,0,
-		0,1,0,0,
-		0,0,1,0,
-		0,0,0,1 };
+		1.f,0,0,0,
+		0,1.f,0,0,
+		0,0,1.f,0,
+		0,0,0,1.f };
 	Matrix4x4 m2 = { 
-		1,2,3,4,
-		5,6,7,8,
-		1,2,3,4,
-		5,6,7,8 };
+		1.f,2.f,3.f,4.f,
+		5.f,6.f,7.f,8.f,
+		1.f,2.f,3.f,4.f,
+		5.f,6.f,7.f,8.f };
 	Matrix4x4 m3 = m1.add(m2);
 	Matrix4x4 m4 = m3.minus(m2);
 	m4.debug();
@@ -26,5 +26,12 @@ int main(int argc, char ** argv){
 	auto m6 = m5.clone();
 	m6.debug();
 	m6.transpose().debug();
+	Matrix4x4 m7 = {
+		1.f,1.f,1.f,1.f,
+		1.f,1.f,1.f,1.f,
+		1.f,1.f,1.f,1.f,
+		1.f,1.f,1.f,1.f,
+	};
+	m7.power(1).debug();
 	return 0;
 }
