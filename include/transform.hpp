@@ -31,6 +31,7 @@ namespace renderer {
 	public:
 		T * data;
 		typedef typename T::ValueType V;
+		typedef MxN<V, T::col, T::row> TransT;
 	public:
 		Matrix() {
 			data = GetPool<T>()->newElement(T());
@@ -43,8 +44,7 @@ namespace renderer {
 		Matrix(Matrix<T>&& m) {
 			data = m.data;
 			m.data = nullptr;
-		}
-		
+		}	
 		virtual ~Matrix() {
 			if (!data)
 				return;
@@ -75,6 +75,18 @@ namespace renderer {
 		Matrix<T> clone() {
 			Matrix<T> result;
 			memcpy(result.data, data, row() * col() * sizeof(V));
+			return result;
+		}
+
+		Matrix<TransT> transpose() {
+			Matrix<TransT> result;
+			int rowNum = row(), colNum = col();
+			V* dataOfResult = result.data->data;
+			for (int i = 0; i < rowNum; i++) {
+				for (int j = 0; j < colNum; j++) {
+					dataOfResult[j * rowNum + i] = (*this)[i * colNum + j];
+				}
+			}
 			return result;
 		}
 		

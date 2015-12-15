@@ -25,5 +25,6 @@ int main(int argc, char ** argv){
 	m5.debug();
 	auto m6 = m5.clone();
 	m6.debug();
+	m6.transpose().debug();
 	return 0;
 }
