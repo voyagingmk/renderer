@@ -29,8 +29,32 @@ namespace renderer {
 		//access only
 		inline const V& operator [] (const int i) { return static_cast<V>(*((V*)data + i)); }
 		//API
-		Matrix<T> add(Matrix<T>& m);
-		Matrix<T> minus(Matrix<T>& m);
+		Matrix<T> add(Matrix<T>& m) {
+			Matrix<T> result;
+			int row = T::row, col = T::col;
+			int idx;
+			V* data = result.data->data;
+			for (int i = 0; i < row; i++) {
+				for (int j = 0; j < col; j++) {
+					idx = i * col + j;
+					data[idx] = (*this)[idx] + m[idx];
+				}
+			}
+			return result;
+		}
+		Matrix<T> minus(Matrix<T>& m) {
+			Matrix<T> result;
+			int row = T::row, col = T::col;
+			int idx;
+			V* data = result.data->data;
+			for (int i = 0; i < row; i++) {
+				for (int j = 0; j < col; j++) {
+					idx = i * col + j;
+					data[idx] = (*this)[idx] - m[idx];
+				}
+			}
+			return result;
+		}
 		//debug
 		void debug() {
 			int row = T::row, col = T::col;

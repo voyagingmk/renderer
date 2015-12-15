@@ -8,3 +8,5 @@ renderer.vcxproj.filters
 .vs/renderer/v14/
 *.tlog
 *.idb
+*.max
+*.mtl
