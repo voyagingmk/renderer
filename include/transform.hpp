@@ -179,7 +179,7 @@ namespace renderer {
 		}
 		
 		Matrix<T> divide(V v) {
-			return multiply(V(1.0)/v);
+			return multiply(V(1)/v);
 		}
 
 		Matrix<T> power(int pow) {
