@@ -56,7 +56,7 @@ namespace renderer {
 			auto pool = GetPool<T>();
 			pool->deleteElement(data);
 		}
-		
+
 		inline int row() {
 			return T::row;
 		}
@@ -74,13 +74,23 @@ namespace renderer {
 		}
 		
 		//access only
-		inline const V& operator [] (const int i) { return static_cast<V>(*((V*)data + i)); }
-		
+		inline const V& operator [] (const int i) { 
+			return static_cast<V>(*((V*)data + i)); 
+		}
+	
+		inline const V at(int r, int c) {
+			return static_cast<V>(*((V*)data + r * col() + c));
+		}
+
 		Matrix<T>& operator=(Matrix<T>& m) {
 			memcpy(data, m.data, row() * col() * sizeof(V));
 			return *this;
 		}
-
+		Matrix<T>& operator=(Matrix<T>&& m) {
+			data = m.data;
+			m.data = nullptr;
+			return *this;
+		}
 		Matrix<T> operator+(Matrix<T>& m) {
 			return add(m);
 		}
@@ -194,8 +204,16 @@ namespace renderer {
 			Matrix<T> result;
 			Matrix<T> E = newIdentity();
 			V* dataOfResult = result.data->data;
+			Matrix<T> self = clone();
 			int rowNum = row(), colNum = col();
 			int idx;
+			bool isUpper = false;
+
+			if (std::abs(at(rowNum - 1, 0)) <= std::numeric_limits<V>::epsilon()) {
+				self = transpose();
+				isUpper = true;
+			}
+
 			for (int c = 0; c < colNum; c++) {
 				for (int r = 0; r < rowNum; r++) {
 					idx = r * colNum + c;
@@ -204,14 +222,16 @@ namespace renderer {
 					for (int k = 0; k < r; k++) {
 						//printf("r * colNum + k = %d\n", r * colNum + k);
 						//printf("tmp += %f*%f\n", (*this)[r * colNum + k], dataOfResult[r * colNum + k]);
-						tmp += (*this)[r * colNum + k] * dataOfResult[k * colNum + c];
+						tmp += self[r * colNum + k] * dataOfResult[k * colNum + c];
 					}
 					//printf("tmp = %f\n", tmp);
 					//printf("(E[idx] - tmp)/ (*this)[r * colNum + r] = (%f - %f)/%f\n", E[idx],tmp, (*this)[r * colNum + r]);
-					dataOfResult[idx] = (E[idx] - tmp)/ (*this)[r * colNum + r];
+					dataOfResult[idx] = (E[idx] - tmp)/ self[r * colNum + r];
 					//printf("=> %f\n\n", dataOfResult[idx]);
 				}
 			}
+			if (isUpper)
+				return result.transpose();
 			return result;
 		}
 

@@ -16,6 +16,8 @@
 #include <vector>
 #include <list>
 #include <assert.h>
+#include <type_traits>
+#include <algorithm>
 
 #include "stdafx.h"
 
