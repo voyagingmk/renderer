@@ -196,4 +196,18 @@ SUITE(TestMatrix4x4)
 			CHECK_CLOSE(m1[i], m2[i], 0.000001);
 		}
 	}
+	TEST(inverseAsTriangular) {
+		Matrix4x4 m1 = {
+			9.f,	0,		0,		0,
+			6.f,	3.f,	0,		0,
+			4.f,	0,		2.f,	0,
+			0,		2.f,	3.f,	4.f };
+
+		Matrix4x4 m2 = m1.inverseAsTriangular();
+		m2.debug();
+		(m1*m2).debug();
+		/*for (int i = 0; i < 16; i++) {
+			CHECK_CLOSE(m1[i], m2[i], 0.000001);
+		}*/
+	}
 }

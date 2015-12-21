@@ -190,6 +190,31 @@ namespace renderer {
 			return result;
 		}
 
+		Matrix<T> inverseAsTriangular() {
+			Matrix<T> result;
+			Matrix<T> E = newIdentity();
+			V* dataOfResult = result.data->data;
+			int rowNum = row(), colNum = col();
+			int idx;
+			for (int c = 0; c < colNum; c++) {
+				for (int r = 0; r < rowNum; r++) {
+					idx = r * colNum + c;
+					//printf("idx = %d\n", idx);
+					V tmp = 0;
+					for (int k = 0; k < r; k++) {
+						//printf("r * colNum + k = %d\n", r * colNum + k);
+						//printf("tmp += %f*%f\n", (*this)[r * colNum + k], dataOfResult[r * colNum + k]);
+						tmp += (*this)[r * colNum + k] * dataOfResult[k * colNum + c];
+					}
+					//printf("tmp = %f\n", tmp);
+					//printf("(E[idx] - tmp)/ (*this)[r * colNum + r] = (%f - %f)/%f\n", E[idx],tmp, (*this)[r * colNum + r]);
+					dataOfResult[idx] = (E[idx] - tmp)/ (*this)[r * colNum + r];
+					//printf("=> %f\n\n", dataOfResult[idx]);
+				}
+			}
+			return result;
+		}
+
 		static Matrix<T> newIdentity() {
 			return Matrix<T>{
 				1.f, 0, 0, 0,
@@ -198,6 +223,7 @@ namespace renderer {
 				0, 0, 0, 1.f
 			};
 		}
+
 		//debug
 		void debug() {
 			int rowNum = row(), colNum = col();
