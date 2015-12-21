@@ -184,4 +184,16 @@ SUITE(TestMatrix4x4)
 			}
 		}
 	}
+	TEST(newIdentity) {
+		Matrix4x4 m1 = {
+			1.f,0,	0,	0,
+			0,	1.f,0,	0,
+			0,	0,	1.f,0,
+			0,	0,	0,	1.f };
+
+		Matrix4x4 m2 = Matrix4x4::newIdentity();
+		for (int i = 0; i < 16; i++) {
+			CHECK_CLOSE(m1[i], m2[i], 0.000001);
+		}
+	}
 }

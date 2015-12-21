@@ -190,6 +190,14 @@ namespace renderer {
 			return result;
 		}
 
+		static Matrix<T> newIdentity() {
+			return Matrix<T>{
+				1.f, 0, 0, 0,
+				0, 1.f, 0, 0,
+				0, 0, 1.f, 0,
+				0, 0, 0, 1.f
+			};
+		}
 		//debug
 		void debug() {
 			int rowNum = row(), colNum = col();
