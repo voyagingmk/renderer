@@ -317,6 +317,9 @@ namespace renderer {
 
 	typedef MxN<float, 4, 4> Matrix4x4Value;
 	typedef Matrix<Matrix4x4Value> Matrix4x4;
+	
+	typedef MxN<float, 3, 3> Matrix3x3Value;
+	typedef Matrix<Matrix3x3Value> Matrix3x3;
 }
 
 #endif
