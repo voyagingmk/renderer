@@ -235,6 +235,61 @@ namespace renderer {
 			return result;
 		}
 
+		Matrix<T> pivotize() {
+			if (!this.isSquare()) {
+				return;
+			}
+			int colNum = colNum();
+			auto E = newIdentity();
+			for (int row = 0; row < colNum; row++) {
+				int row_with_max_elem = row;
+				int max_elem = (*this)[row * colNum + row];
+				for (int r = row_with_max_elem; r < colNum; r++) {
+					if (max_elem < (*this)[r * colNum + row]) {
+						max_elem = (*this)[r * colNum + row];
+						row_with_max_elem = r;
+					}
+				}
+				if (row != row_with_max_elem) {
+					for (int col = 0; col < colNum; col++) {
+						int tmp = E[row * colNum + col];
+						E[row * colNum + col] = E[row_with_max_elem * colNum + col];
+						E[row_with_max_elem * colNum + col] = tmp;
+					}
+				}
+			}
+			return E;
+		}
+		void LUP(Matrix<T>* &retP, Matrix<T>* &retL, Matrix<T>* &retU ) { //LUP Decomposition
+			if (!isSquare()) {
+				return;
+			}
+			auto n = this.m_col;
+			Matrix<T> L;
+			Matrix<T> U;
+			Matrix<T>* A = this;
+			auto P = A->pivotize();
+			auto PA = P.multiply(*A);
+
+			for (int j = 0; j < n; j++) {
+				L[j * n + j] = 1;
+				for (int i = 0; i < j + 1; i++) {
+					int s1 = 0;
+					for (int k = 0; k < j; k++)
+						s1 += U[k * n + j] * L[i * n + k];
+					U[i * n + j] = PA[i * n + j] - s1;
+				}
+				for (int i = j; i < n; i++) {
+					int s2 = 0;
+					for (int k = 0; k < j; k++)
+						s2 += U[k * n + j] * L[i * n + k];
+					L[i * n + j] = (PA[i * n + j] - s2) / U[j * n + j];
+				}
+			}
+			*retP = P;
+			*retL = L;
+			*retU = U;
+		}
 		static Matrix<T> newIdentity() {
 			return Matrix<T>{
 				1.f, 0, 0, 0,
