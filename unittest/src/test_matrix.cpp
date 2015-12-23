@@ -216,4 +216,17 @@ SUITE(TestMatrix4x4)
 			CHECK_CLOSE(m1[i], m2[i], 0.000001);
 		}*/
 	}
+
+	TEST(lup) {
+		Matrix4x4 m1 = {
+			1.f,	2.f,	3.f,	4.f,
+			5.f,	6.f,	7.f,	8.f,
+			9.f,	10.f,	11.f,	12.f,
+			13.f,	14.f,	15.f,	16.f };
+		Matrix4x4 L, U, P;
+		m1.LUP(&L, &U, &P);
+		L.debug();
+		U.debug();
+		P.debug();
+	}
 }

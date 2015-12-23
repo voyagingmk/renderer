@@ -74,7 +74,7 @@ namespace renderer {
 		}
 		
 		//access only
-		inline const V& operator [] (const int i) { 
+		inline V& operator [] (const int i) { 
 			return static_cast<V>(*((V*)data + i)); 
 		}
 	
@@ -236,10 +236,10 @@ namespace renderer {
 		}
 
 		Matrix<T> pivotize() {
-			if (!this.isSquare()) {
-				return;
+			if (!isSquare()) {
+				return Matrix<T>();
 			}
-			int colNum = colNum();
+			int colNum = col();
 			auto E = newIdentity();
 			for (int row = 0; row < colNum; row++) {
 				int row_with_max_elem = row;
@@ -260,11 +260,11 @@ namespace renderer {
 			}
 			return E;
 		}
-		void LUP(Matrix<T>* &retP, Matrix<T>* &retL, Matrix<T>* &retU ) { //LUP Decomposition
+		void LUP(Matrix<T>* retP, Matrix<T>* retL, Matrix<T>* retU) { //LUP Decomposition
 			if (!isSquare()) {
 				return;
 			}
-			auto n = this.m_col;
+			int n = col();
 			Matrix<T> L;
 			Matrix<T> U;
 			Matrix<T>* A = this;
@@ -274,13 +274,13 @@ namespace renderer {
 			for (int j = 0; j < n; j++) {
 				L[j * n + j] = 1;
 				for (int i = 0; i < j + 1; i++) {
-					int s1 = 0;
+					V s1 = 0;
 					for (int k = 0; k < j; k++)
 						s1 += U[k * n + j] * L[i * n + k];
 					U[i * n + j] = PA[i * n + j] - s1;
 				}
 				for (int i = j; i < n; i++) {
-					int s2 = 0;
+					V s2 = 0;
 					for (int k = 0; k < j; k++)
 						s2 += U[k * n + j] * L[i * n + k];
 					L[i * n + j] = (PA[i * n + j] - s2) / U[j * n + j];
