@@ -298,6 +298,64 @@ namespace renderer {
 			*retL = L;
 			*retU = U;
 		}
+		V diagonalMul() {
+			V total = 1;
+			for (int r = 0; r <T::row; r++) {
+				total *= (*this)[r * (T::row + 1)];
+			}
+			return total;
+		}
+
+		int pivotSwapNum() {
+			auto m = clone();
+			int n = col();
+			int num = 0;
+			for (int r = 0; r < n;) {
+				if (m[r * (n + 1)] != 0) {
+					r++;
+					continue;
+				}
+				else {
+					while (m[r * (n + 1)] == 0) {
+						int c1, c2;
+						for (int c = 0; c < n; c++) {
+							if (m[r * n + c] > 0) {
+								m[r * n + c] = 0;
+								c1 = c;
+								break;
+							}
+						}
+						for (int c = 0; c < n; c++) {
+							if (m[c1 * n + c] > 0) {
+								m[c1 * n + c] = 0;
+								c2 = c;
+								break;
+							}
+						}
+						//exchage c1 and c2 column (just the two number 1)
+						m[c1 * n + c1] = 1;
+						m[r * n + c2] = 1;
+						num++;
+					}
+				}
+			}
+			return num;
+		}
+
+		V det() { //determinant
+			if (!isSquare()) {
+				return 0;
+			}
+			Matrix<T> L, U, P;
+			LUP(&L, &U, &P);
+			Matrix<T> Pt = P.transpose();
+			V detPt = Pt.pivotSwapNum() % 2 == 0 ? 1 : -1;
+			V detL = L.diagonalMul();
+			V detU = U.diagonalMul();
+			V detA = detPt * detL * detU;
+			return detA;
+		}
+
 		static Matrix<T> newIdentity() {
 			Matrix<T> result;
 			for (int r = 0; r < T::row; r++)

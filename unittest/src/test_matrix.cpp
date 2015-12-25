@@ -269,4 +269,12 @@ SUITE(TestMatrix4x4)
 			CHECK_CLOSE(AinvA[i], I[i], precision);
 		}
 	}
+
+	TEST(det) {
+		Matrix3x3 A = {
+			9.f,	6.f,	0.f,
+			6.f,	5.f,	4.f,
+			3.f,	4.f,	10.f };
+		CHECK_CLOSE(18.0, A.det(), precision);
+	}
 }
