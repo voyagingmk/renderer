@@ -161,14 +161,13 @@ namespace renderer {
 			Matrix<MxN<V, T::row, N>> result;
 			int rowNum = row(), colNum = col();
 			int idx;
-			V* dataOfResult = result.data->data;
 			for (int i = 0; i < m.row(); i++) {
 				for (int j = 0; j < m.col(); j++) {
 					V total = 0;
 					for (int k = 0; k < colNum; k++) {
 						total += (*this)[i * colNum + k] * m[k * m.col() + j];
 					}
-					dataOfResult[i * m.col() + j] = total;
+					result[i * m.col() + j] = total;
 				}
 			}
 			return result;
@@ -235,6 +234,15 @@ namespace renderer {
 			return result;
 		}
 
+		Matrix<T> inverse() {
+			Matrix<T> L, U, P;
+			LUP(&L, &U, &P);
+			Matrix<T> invL = L.inverseAsTriangular();
+			Matrix<T> invU = U.inverseAsTriangular();
+			Matrix<T> result = invU * invL * P;
+			return result;
+		}
+
 		Matrix<T> pivotize() {
 			if (!isSquare()) {
 				return Matrix<T>();
@@ -260,16 +268,16 @@ namespace renderer {
 			}
 			return E;
 		}
-		void LUP(Matrix<T>* retP, Matrix<T>* retL, Matrix<T>* retU) { //LUP Decomposition
+
+		void LUP( Matrix<T>* retL, Matrix<T>* retU, Matrix<T>* retP) { //LUP Decomposition
 			if (!isSquare()) {
 				return;
 			}
 			int n = col();
 			Matrix<T> L;
 			Matrix<T> U;
-			Matrix<T>* A = this;
-			auto P = A->pivotize();
-			auto PA = P.multiply(*A);
+			auto P = pivotize();
+			auto PA = P.multiply(*this);
 
 			for (int j = 0; j < n; j++) {
 				L[j * n + j] = 1;
@@ -291,12 +299,12 @@ namespace renderer {
 			*retU = U;
 		}
 		static Matrix<T> newIdentity() {
-			return Matrix<T>{
-				1.f, 0, 0, 0,
-				0, 1.f, 0, 0,
-				0, 0, 1.f, 0,
-				0, 0, 0, 1.f
+			Matrix<T> result;
+			for (int r = 0; r < T::row; r++)
+			{
+				result[r * T::row + r] = V(1);
 			};
+			return result;
 		}
 
 		//debug
@@ -320,6 +328,12 @@ namespace renderer {
 	
 	typedef MxN<float, 3, 3> Matrix3x3Value;
 	typedef Matrix<Matrix3x3Value> Matrix3x3;
+
+	typedef MxN<double, 4, 4> Matrix4x4ValueD;
+	typedef Matrix<Matrix4x4ValueD> Matrix4x4D;
+
+	typedef MxN<double, 3, 3> Matrix3x3ValueD;
+	typedef Matrix<Matrix3x3ValueD> Matrix3x3D;
 }
 
 #endif
