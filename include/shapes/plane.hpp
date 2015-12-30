@@ -7,11 +7,11 @@
 
 namespace renderer {
 	class Plane :public Shape {
-		Vector normal;
+		Vector3dF normal;
 		float distance;
-		Vector position;
+		Vector3dF position;
 	public:
-		Plane(Vector& normal, float distance);
+		Plane(Vector3dF& normal, float distance);
 		Plane(const Plane &);
 		Plane operator = (const Plane&);
 		virtual void Init();

@@ -6,7 +6,7 @@
 
 namespace renderer {
 
-	PerspectiveCamera::PerspectiveCamera(Vector& eye, Vector& front, Vector& up, float fov)
+	PerspectiveCamera::PerspectiveCamera(Vector3dF& eye, Vector3dF& front, Vector3dF& up, float fov)
 		: eye(eye)
 		, front(front)
 		, refUp(up)
@@ -21,9 +21,9 @@ namespace renderer {
 	}
 
 	Ray PerspectiveCamera::GenerateRay(float x, float y) {
-		Vector&& r = right * ((x - 0.5f) * fovScale);
-		Vector&& u = up * ((y - 0.5f) * fovScale);
-		Vector&& v = (front + r + u).Normalize();
+		Vector3dF&& r = right * ((x - 0.5f) * fovScale);
+		Vector3dF&& u = up * ((y - 0.5f) * fovScale);
+		Vector3dF&& v = (front + r + u).Normalize();
 		return Ray(eye, v);
 	}
 

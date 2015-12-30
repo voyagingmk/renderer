@@ -98,6 +98,10 @@ namespace renderer {
 		Matrix<T> operator-(Matrix<T>& m) {
 			return minus(m);
 		}
+		template<int M, int N>
+		Matrix<T> operator*(Matrix<MxN<V, M, N>>& m) {
+			return multiply(m);
+		}
 
 		Matrix<T> operator*(V v) {
 			return multiply(v);

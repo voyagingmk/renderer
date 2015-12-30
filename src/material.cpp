@@ -3,13 +3,14 @@
 #include "geometry.hpp"
 #include "color.hpp"
 #include "ray.hpp"
+
 namespace renderer {
 	CheckerMaterial::CheckerMaterial(float scale, float reflectiveness) :
 		Material(reflectiveness),
 		scale(scale) {
 	};
 
-	Color CheckerMaterial::Sample(Ray& ray, Vector& position, Vector& normal) {
+	Color CheckerMaterial::Sample(Ray& ray, Vector3dF& position, Vector3dF& normal) {
 		return abs((int(std::floor(position.x * 0.1)) + int(std::floor(position.z * scale))) % 2) < 1 ? Color::Black : Color::White;
 	};
 
@@ -22,9 +23,9 @@ namespace renderer {
 
 	};
 
-	Color PhongMaterial::Sample(Ray& ray, Vector& position, Vector& normal) {
+	Color PhongMaterial::Sample(Ray& ray, Vector3dF& position, Vector3dF& normal) {
 		float NdotL = normal.Dot(LightDir);
-		Vector&& H = (LightDir - ray.d).Normalize();
+		Vector3dF H = (LightDir - ray.d).Normalize();
 		float NdotH = normal.Dot(H);
 		Color diffuseTerm = diffuse * (max(NdotL, 0.0f));
 		Color specularTerm = specular * (float)(std::pow(max(NdotH, 0.0f), shininess));
@@ -32,7 +33,7 @@ namespace renderer {
 	};
 
 
-	Vector Material::LightDir = Vector(1.f, 1.f, 1.f).Normalize();
+	Vector3dF Material::LightDir = Vector3dF(1.f, 1.f, 1.f).Normalize();
 	Color Material::LightColor = Color::White;
 
 }

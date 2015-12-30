@@ -6,7 +6,7 @@
 
 namespace renderer {
 
-	Sphere::Sphere(Vector& center, float radius) :center(center), r(radius) {
+	Sphere::Sphere(Vector3dF& center, float radius) :center(center), r(radius) {
 	}
 	Sphere::Sphere(Sphere& s) {
 		center = s.center;
@@ -21,15 +21,15 @@ namespace renderer {
 		sqrRadius = r * r;
 	}
 	int Sphere::Intersect(Ray& ray, IntersectResult* result) {
-		Vector&& v = ray.o - center;
+		Vector3dF&& v = ray.o - center;
 		float a0 = v.LengthSquare() - sqrRadius;
 		float DdotV = ray.d.Dot(v);
 		if (DdotV <= 0) {
 			float discr = DdotV * DdotV - a0;
 			if (discr >= 0) {
 				float distance = -DdotV - float(sqrtf(discr));
-				Vector& position = ray.GetPoint(distance);
-				Vector& normal = (position - center).Normalize();
+				Vector3dF position = ray.GetPoint(distance);
+				Vector3dF normal = (position - center).Normalize();
 				*result = IntersectResult(this, distance, position, normal);
 				return 0;
 			}

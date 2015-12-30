@@ -43,7 +43,7 @@ namespace renderer {
 				Ray&& ray = camera.GenerateRay(sx, sy);
 				scene.Intersect(ray, &result);
 				if (result.geometry) {
-					Vector& pNormal = result.normal;
+					Vector3dF& pNormal = result.normal;
 					img.atXYZC(x, y, 0, 0) = (pNormal.x + 1.0f) * 128.0f;
 					img.atXYZC(x, y, 0, 1) = (pNormal.y + 1.0f) * 128.0f;
 					img.atXYZC(x, y, 0, 2) = (pNormal.z + 1.0f) * 128.0f;
@@ -87,7 +87,7 @@ namespace renderer {
 			color = Color(color * (1.0f - reflectiveness));
 
 			if (reflectiveness > 0 && maxReflect > 0) {
-				Vector r = Vector(result.normal * (-2 * (result.normal.Dot(ray.d))) + ray.d);
+				Vector3dF r = Vector3dF(result.normal * (-2 * (result.normal.Dot(ray.d))) + ray.d);
 				Ray new_ray(result.position, r);
 				Color reflectedColor = rayTraceRecursive(scene, new_ray, maxReflect - 1);
 				assert(reflectedColor.r() >= 0 && reflectedColor.g() >= 0 && reflectedColor.b() >= 0);

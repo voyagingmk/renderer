@@ -6,41 +6,188 @@
 
 namespace renderer {
 
-	class Point {
+	template<typename T>
+	class Point2d {
 	public:
-		float x, y, z;
-		static Point Zero;
+		T x, y;
 	public:
-		Point();
-		Point(const float x, const float y, const float z);
-		Point(const Point &);
-		Point(Point &&);
-		Point& operator = (const Point&);
-		~Point();
-		Point operator + (const Point&);
-		Point operator - (const Point&);
-		Point operator * (float f);
-		Point operator / (float f);
-		Point& operator += (const Point&);
-		Point& operator -= (const Point&);
-		Point& operator *= (float f);
-		Point& operator /= (float f);
-		Point operator - ();
-		bool operator == (const Point& v);
-		float operator[](int i) const {
+		Point2d() :x(0), y(0) {}
+		Point2d(const T x, const T y) :x(x), y(y) {};
+		Point2d(const Point2d<T> & p) {
+			x = p.x;
+			y = p.y;
+		}
+		Point2d<T>& operator = (const Point2d<T>& p) {
+			x = p.x;
+			y = p.y;
+			return *this;
+		}
+		Point2d<T> operator + (const Point2d<T>& p) {
+			return Point2d<T>(x + p.x, y + p.y);
+		}
+		Point2d<T> operator - (const Point2d<T>& p) {
+			return Point2d<T>(x - p.x, y - p.y);
+		}
+		Point2d<T> operator * (T f) {
+			return Point2d<T>(x * f, y * f);
+		}
+		Point2d<T> operator / (T f) {
+			if (f == 0)
+				throw "[Point /] f = 0";
+			return Point2d<T>(x / f, y / f);
+		}
+		Point2d<T>& operator += (const Point2d<T>& p) {
+			x += p.x;
+			y += p.y;
+			return *this;
+		}
+		Point2d<T>& operator -= (const Point2d<T>& p) {
+			x -= p.x;
+			y -= p.y;
+			return *this;
+		}
+		Point2d<T>& operator *= (T f) {
+			x *= f;
+			y *= f;
+			return *this;
+		}
+		Point2d<T>& operator /= (T f) {
+			x /= f;
+			y /= f;
+			return *this;
+		}
+		Point2d<T> operator - () {
+			return Point<T>(-x, -y);
+		}
+		bool operator == (const Point2d<T>& p) {
+			return x == p.x && y == p.y;
+		}
+		T operator[](int i) const {
 			return (&x)[i];
 		}
-		float &operator[](int i) {
+		T &operator[](int i) {
 			return (&x)[i];
 		}
-		float Dot(const Point&);
-		Point Cross(const Point&);
-		inline float Length() { return sqrt(x * x + y * y + z * z); };
-		inline float LengthSquare() { return x * x + y * y + z * z; };
-		Point Normalize();
-		Point& Swap(Point&);
+		T Dot(const Point2d<T>& p) {
+			return x * p.x + y * p.y;
+		}
+		inline T Length() {
+			return sqrt(x * x + y * y);
+		};
+		inline T LengthSquare() {
+			return x * x + y * y;
+		};
+		Point2d<T> Normalize() {
+			T inv = T(1) / Length();
+			return Point2d<T>(x * inv, y * inv);
+		}
+		Point2d& Swap(Point2d& p) {
+			std::swap(*this, p);
+			return *this;
+		}
 	};
 
+	template<typename T>
+	class Point3d{
+	public:
+		T x, y, z;
+	public:
+		Point3d():x(0), y(0), z(0) {}
+		Point3d(const T x, const T y, const T z):x(x), y(y), z(z) {};
+		Point3d(const Point3d<T> & p) {
+			x = p.x;
+			y = p.y;
+			z = p.z;
+		}
+		Point3d<T>& operator = (const Point3d<T>& p) {
+			x = p.x;
+			y = p.y;
+			z = p.z;
+			return *this;
+		}
+		Point3d<T> operator + (const Point3d<T>& p) {
+			return Point3d<T>(x + p.x, y + p.y, z + p.z);
+		}
+		Point3d<T> operator - (const Point3d<T>& p) {
+			return Point3d<T>(x - p.x, y - p.y, z - p.z);
+		}
+		Point3d<T> operator * (T f) {
+			return Point3d<T>(x * f, y * f, z * f);
+		}
+		Point3d<T> operator / (T f) {
+			if (f == 0)
+				throw "[Point /] f = 0";
+			return Point3d<T>(x / f, y / f, z / f);
+		}
+		Point3d<T>& operator += (const Point3d<T>& p) {
+			x += p.x;
+			y += p.y;
+			z += p.z;
+			return *this;
+		}
+		Point3d<T>& operator -= (const Point3d<T>& p) {
+			x -= p.x;
+			y -= p.y;
+			z -= p.z;
+			return *this;
+		}
+		Point3d<T>& operator *= (T f) {
+			x *= f;
+			y *= f;
+			z *= f;
+			return *this;
+		}
+		Point3d<T>& operator /= (T f) {
+			x /= f;
+			y /= f;
+			z /= f;
+			return *this;
+		}
+		Point3d<T> operator - () {
+			return Point<T>(-x, -y, -z);
+		}
+		bool operator == (const Point3d<T>& p) {
+			return x == p.x && y == p.y && z == p.z;
+		}
+		T operator[](int i) const {
+			return (&x)[i];
+		}
+		T &operator[](int i) {
+			return (&x)[i];
+		}
+		T Dot(const Point3d<T>& p) {
+			return x * p.x + y * p.y + z * p.z;
+		}
+		Point3d<T> Cross(const Point3d<T> & p) {
+			return Point3d<T>(-z * p.y + y * p.z, z * p.x - x * p.z, -y * p.x + x * p.y);
+		}
+		inline T Length() { 
+			return sqrt(x * x + y * y + z * z); 
+		};
+		inline T LengthSquare() { 
+			return x * x + y * y + z * z; 
+		};
+		Point3d<T> Normalize() {
+			T inv = T(1) / Length();
+			return Point3d<T>(x * inv, y * inv, z * inv);
+		}
+		Point3d& Swap(Point3d& p) {
+			std::swap(*this, p);
+			return *this;
+		}
+	};
+
+	typedef Point2d<float> Point2dF;
+	typedef Point3d<float> Point3dF;
+
+	using Normal2dF = Point2dF;
+	using Vector2dF = Point2dF;
+	using Normal3dF = Point3dF;
+	using Vector3dF = Point3dF;
+
+	namespace Const {
+		static Point3dF Zero;
+	}
 }
 
 #endif // RENDERER_GEOMETRY_HPP

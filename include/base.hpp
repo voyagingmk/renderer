@@ -47,15 +47,11 @@ namespace renderer {
 	class IntersectResult;
 	class Shape;
 	class Material;
-	class Point;
 	class Sphere;
 	class Plane;
 	class Union;
 	class Color;
 	class Ray;
-
-	typedef Point Normal;
-	typedef Point Vector;
 
 	template<class T>
 	static MemoryPool<T>* GetPool() {

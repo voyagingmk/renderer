@@ -2,38 +2,36 @@
 #include "parser.hpp"
 #include "tiny_obj_loader.h"
 #include "transform.hpp"
+#include "geometry.hpp"
 using namespace renderer;
 
 
 int main(int argc, char ** argv){
 	Parser parser;
 	//parser.parseFromFile("config.json");
-	Matrix4x4 m1 = { 
-		1.f,0,0,0,
-		0,1.f,0,0,
-		0,0,1.f,0,
-		0,0,0,1.f };
-	Matrix4x4 m2 = { 
-		1.f,2.f,3.f,4.f,
-		5.f,6.f,7.f,8.f,
-		1.f,2.f,3.f,4.f,
-		5.f,6.f,7.f,8.f };
-	Matrix4x4 m3 = m1.add(m2);
-	Matrix4x4 m4 = m3.minus(m2);
-	m4.debug();
-	auto m5 = m1.multiply(m2.multiply(3.0f).add(m2).minus(m2).divide(3.0f));
-	m5.debug();
-	m5 = m1 * ( (m2 * 3.0f + m2 - m2) / 3.0f );
-	m5.debug();
-	auto m6 = m5.clone();
-	m6.debug();
-	m6.transpose().debug();
-	Matrix4x4 m7 = {
-		1.f,1.f,1.f,1.f,
-		1.f,1.f,1.f,1.f,
-		1.f,1.f,1.f,1.f,
-		1.f,1.f,1.f,1.f,
+	Matrix3x3 P = {
+		20.f, 20.f,		0,
+		770.f, 30.f,	0,
+		400.f, 780.f,	0,
 	};
-	m7.power(1).debug();
+	Matrix3x3 B = {
+		1,	0,	0,
+		-2,	2,	0,
+		1,	-2,	1
+	};
+	Matrix3x3 BP = B * P;
+	typedef Matrix<MxN<float, 1, 3>> Matrix1x3;
+	cil::CImg<unsigned char> img(800, 800, 1, 3);
+	img.atXYZC(P[0], P[1], 0, 1) = 255;
+	img.atXYZC(P[3], P[4], 0, 1) = 255;
+	img.atXYZC(P[6], P[7], 0, 1) = 255;
+	for (float t = 0; t < 1; t += 0.0005f) {
+		Matrix1x3 T = { 1, t, t * t };
+		Matrix1x3 TBP = T * BP;
+		int x = int(TBP[0]);
+		int y = int(TBP[1]);
+		img.atXYZC(x, y, 0, 0) = 255;
+	}
+	img.display("");
 	return 0;
 }

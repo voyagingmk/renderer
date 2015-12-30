@@ -60,14 +60,14 @@ namespace renderer {
 			if (objinfo["type"] == "Sphere") {
 				auto pos = objinfo["pos"];
 				auto pool = GetPool<Sphere>();
-				pg = pool->newElement(Vector(pos[0], pos[1], pos[2]),
+				pg = pool->newElement(Vector3dF(pos[0], pos[1], pos[2]),
 					objinfo["radius"]);
 				pg->material = matDict[objinfo["matId"]];
 			}
 			else if (objinfo["type"] == "Plane") {
 				auto normal = objinfo["normal"];
 				auto pool = GetPool<Plane>();
-				pg = pool->newElement(Vector(normal[0], normal[1], normal[2]),
+				pg = pool->newElement(Vector3dF(normal[0], normal[1], normal[2]),
 					   objinfo["distance"] );
 				pg->material = matDict[objinfo["matId"]];
 			}
@@ -79,9 +79,9 @@ namespace renderer {
 		auto front = config["camera"]["front"];
 		auto up = config["camera"]["up"];
 
-		PerspectiveCamera camera(Vector(eye[0], eye[1], eye[2]),
-			Vector(front[0], front[1], front[2]),
-			Vector(up[0], up[1], up[2]),
+		PerspectiveCamera camera(Vector3dF(eye[0], eye[1], eye[2]),
+			Vector3dF(front[0], front[1], front[2]),
+			Vector3dF(up[0], up[1], up[2]),
 			config["camera"]["fov"]);
 
 		Renderer renderer;

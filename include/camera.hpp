@@ -6,15 +6,15 @@
 
 namespace renderer {
 	class PerspectiveCamera {
-		Vector eye;
-		Vector front;
-		Vector up;
-		Vector refUp;
-		Vector right;
+		Vector3dF eye;
+		Vector3dF front;
+		Vector3dF up;
+		Vector3dF refUp;
+		Vector3dF right;
 		float fov;
 		float fovScale;
 	public:
-		PerspectiveCamera(Vector& eye, Vector& front, Vector& up, float fov);
+		PerspectiveCamera(Vector3dF& eye, Vector3dF& front, Vector3dF& up, float fov);
 		void Init();
 		Ray GenerateRay(float x, float y);
 	};

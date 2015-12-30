@@ -5,13 +5,13 @@
 namespace renderer {
 
 
-	Ray::Ray(Vector& origin, Vector& direction) noexcept
+	Ray::Ray(Vector3dF& origin, Vector3dF& direction) noexcept
 		: o(origin)
 		, d(direction)
 	{
 	}
 
-	Vector Ray::GetPoint(float t) noexcept
+	Vector3dF Ray::GetPoint(float t) noexcept
 	{
 		return o + d * t;
 	}

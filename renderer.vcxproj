@@ -157,6 +157,7 @@
     <ClInclude Include="include\CImg.h" />
     <ClInclude Include="include\color.hpp" />
     <ClInclude Include="include\common.hpp" />
+    <ClInclude Include="include\curve.hpp" />
     <ClInclude Include="include\MemoryPool.h" />
     <ClInclude Include="include\shape.hpp" />
     <ClInclude Include="include\intersect_result.hpp" />

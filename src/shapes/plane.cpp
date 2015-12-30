@@ -6,7 +6,7 @@
 
 namespace renderer {
 
-	Plane::Plane(Vector& normal, float distance) :
+	Plane::Plane(Vector3dF& normal, float distance) :
 		normal(normal),
 		distance(distance) {
 

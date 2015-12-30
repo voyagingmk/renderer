@@ -9,11 +9,11 @@
 namespace renderer {
 
 	class Sphere :public Shape {
-		Vector center;
+		Vector3dF center;
 		float r;
 		float sqrRadius;
 	public:
-		Sphere(Vector& center, float radius);
+		Sphere(Vector3dF& center, float radius);
 		Sphere(Sphere &);
 		Sphere operator = (const Sphere&);
 		virtual void Init();
