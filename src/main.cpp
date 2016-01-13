@@ -3,33 +3,32 @@
 #include "tiny_obj_loader.h"
 #include "transform.hpp"
 #include "geometry.hpp"
+#include "curve.hpp"
+
 using namespace renderer;
 
 
-int main(int argc, char ** argv){
+int main(int argc, char ** argv) {
 	Parser parser;
 	//parser.parseFromFile("config.json");
-	Matrix3x3 P = {
-		20.f, 20.f,		0,
-		770.f, 30.f,	0,
-		400.f, 780.f,	0,
+	std::vector<Point2dF> points = {
+		{-1.0f, 0.0f},
+		{-0.5f, 0.5f},
+		{0.5f, -0.5f},
+		{1.0f, 0.0f}
 	};
-	Matrix3x3 B = {
-		1,	0,	0,
-		-2,	2,	0,
-		1,	-2,	1
-	};
-	Matrix3x3 BP = B * P;
-	typedef Matrix<MxN<float, 1, 3>> Matrix1x3;
-	cil::CImg<unsigned char> img(800, 800, 1, 3);
-	img.atXYZC(P[0], P[1], 0, 1) = 255;
-	img.atXYZC(P[3], P[4], 0, 1) = 255;
-	img.atXYZC(P[6], P[7], 0, 1) = 255;
-	for (float t = 0; t < 1; t += 0.0005f) {
-		Matrix1x3 T = { 1, t, t * t };
-		Matrix1x3 TBP = T * BP;
-		int x = int(TBP[0]);
-		int y = int(TBP[1]);
+	Spline spline;
+	spline.setOrder(3);
+	spline.setCtrlPoints(points);
+	spline.initSplineParam();
+
+	cil::CImg<unsigned char> img(500, 500, 1, 3);
+	Point2dF result;
+	for (float t = 0; t < 1.0f; t += 0.01f) {
+		spline.interpolate(&result, t);
+		printf("%f,%f\n", result.x, result.y);
+		int x = int(((result.x + 1) / 2.f) *500);
+		int y = int((1.0f - ((result.y+1) /2.f)) * 500);
 		img.atXYZC(x, y, 0, 0) = 255;
 	}
 	img.display("");
