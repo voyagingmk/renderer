@@ -12,18 +12,18 @@ namespace renderer {
 		// Film Interface
 		Film(int xres, int yres)
 			: xResolution(xres), yResolution(yres) { }
-		virtual ~Film();
-		virtual void set(int x, int y, int r, int g, int b) = 0;
+		virtual ~Film() {};
+		virtual void set(int x, int y, int r, int g, int b) {};
 	};
 
-	class ImageFilm: Film {
+	class ImageFilm:public Film {
 	public:
 		typedef cil::CImg<unsigned char> Image;
-		Image img;
+		Image* img;
 	public:
 		// Film Interface
-		ImageFilm(int xres, int yres, Image& image): Film(xres, yres),img(image) {}
-		virtual ~ImageFilm();
+		ImageFilm(int xres, int yres, Image* image): Film(xres, yres),img(image) {}
+		virtual ~ImageFilm() {};
 		virtual void set(int x, int y, int r, int g, int b);
 	};
 };

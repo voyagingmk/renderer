@@ -4,6 +4,8 @@
 #include "transform.hpp"
 #include "geometry.hpp"
 #include "curve.hpp"
+#include "film.hpp"
+#include "draw.hpp"
 
 using namespace renderer;
 
@@ -29,7 +31,12 @@ int main(int argc, char ** argv) {
 		printf("%f,%f\n", result.x, result.y);
 		int x = int(((result.x + 1) / 2.f) *500);
 		int y = int((1.0f - ((result.y+1) /2.f)) * 500);
-		img.atXYZC(x, y, 0, 0) = 255;
+		//img.atXYZC(x, y, 0, 0) = 255;
+	}
+	{
+		ImageFilm film(img.width(), img.height(), &img);
+		DrawPen pen;
+		pen.drawline(&film, 100, 100, 400, 300, Color(0, 255, 0));
 	}
 	img.display("");
 	return 0;
