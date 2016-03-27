@@ -25,6 +25,9 @@ int main(int argc, char ** argv) {
 	spline.initSplineParam();
 
 	cil::CImg<unsigned char> img(500, 500, 1, 3);
+	for (int i = 0; i < img.width(); i++)
+		for (int j = 0; j < img.width(); j++)
+			img.atXYZC(i, j, 0, 0) = img.atXYZC(i, j, 0, 2) = img.atXYZC(i, j, 0, 2) = 0;
 	Point2dF result;
 	for (float t = 0; t < 1.0f; t += 0.01f) {
 		spline.interpolate(&result, t);
@@ -33,11 +36,10 @@ int main(int argc, char ** argv) {
 		int y = int((1.0f - ((result.y+1) /2.f)) * 500);
 		//img.atXYZC(x, y, 0, 0) = 255;
 	}
-	{
-		ImageFilm film(img.width(), img.height(), &img);
-		DrawPen pen;
-		pen.drawline(&film, 100, 100, 400, 300, Color(0, 255, 0));
-	}
+	ImageFilm film(img.width(), img.height(), &img);
+	DrawPen pen;
+	pen.drawline(&film, 100, 100, 400, 300, Color(255, 0, 0));
+	pen.drawline(&film, 0, 100, 400, 300, Color(0, 255, 0));
 	img.display("");
 	return 0;
 }

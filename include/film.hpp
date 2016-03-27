@@ -16,7 +16,7 @@ namespace renderer {
 		virtual void set(int x, int y, int r, int g, int b) {};
 	};
 
-	class ImageFilm:public Film {
+	class ImageFilm: public Film {
 	public:
 		typedef cil::CImg<unsigned char> Image;
 		Image* img;
