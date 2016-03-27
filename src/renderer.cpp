@@ -7,13 +7,14 @@
 #include "material.hpp"
 #include "color.hpp"
 #include "ray.hpp"
+#include "film.hpp"
 
 namespace renderer {
 
-	void Renderer::renderDepth(cil::CImg<unsigned char> &img, Shape& scene, PerspectiveCamera& camera, float maxDepth) {
+	void Renderer::renderDepth(Film *film, Shape& scene, PerspectiveCamera& camera, float maxDepth) {
 		scene.Init();
 		camera.Init();
-		int w = img.width(), h = img.height();
+		int w = film->width(), h = film->height();
 		IntersectResult result;
 		for (int y = 0; y < h; y++) {
 			float sy = 1.0f - (float)y / h;
@@ -23,18 +24,15 @@ namespace renderer {
 				scene.Intersect(ray, &result);
 				if (result.geometry) {
 					int depth = int(255.0f - min((result.distance / maxDepth) * 255.0f, 255.0f));
-					img.atXYZC(x, y, 0, 0) = depth;
-					img.atXYZC(x, y, 0, 1) = depth;
-					img.atXYZC(x, y, 0, 2) = depth;
-					//atXYZC(x, y, 0, 0) = 255;
+					film->set(x, y, depth, depth, depth);
 				}
 			}
 		}
 	}
-	void Renderer::renderNormal(cil::CImg<unsigned char> &img, Shape& scene, PerspectiveCamera& camera, float maxDepth) {
+	void Renderer::renderNormal(Film *film, Shape& scene, PerspectiveCamera& camera, float maxDepth) {
 		scene.Init();
 		camera.Init();
-		int w = img.width(), h = img.height();
+		int w = film->width(), h = film->height();
 		IntersectResult result;
 		for (int y = 0; y < h; y++) {
 			float sy = 1.0f - (float)y / h;
@@ -44,20 +42,20 @@ namespace renderer {
 				scene.Intersect(ray, &result);
 				if (result.geometry) {
 					Vector3dF& pNormal = result.normal;
-					img.atXYZC(x, y, 0, 0) = (pNormal.x + 1.0f) * 128.0f;
-					img.atXYZC(x, y, 0, 1) = (pNormal.y + 1.0f) * 128.0f;
-					img.atXYZC(x, y, 0, 2) = (pNormal.z + 1.0f) * 128.0f;
-					//atXYZC(x, y, 0, 0) = 255;
+					film->set(x, y, 
+						(pNormal.x + 1.0f) * 128.0f,
+						(pNormal.y + 1.0f) * 128.0f,
+						(pNormal.z + 1.0f) * 128.0f);
 				}
 			}
 		}
 	};
 
 
-	void Renderer::rayTrace(cil::CImg<unsigned char> &img, Shape& scene, PerspectiveCamera& camera) {
+	void Renderer::rayTrace(Film *film, Shape& scene, PerspectiveCamera& camera) {
 		scene.Init();
 		camera.Init();
-		int w = img.width(), h = img.height();
+		int w = film->width(), h = film->height();
 		IntersectResult result;
 		for (int y = 0; y < h; y++) {
 			float sy = 1.0f - (float)y / h;
@@ -69,9 +67,10 @@ namespace renderer {
 					Material* pMaterial = result.geometry->material;
 					Color color = pMaterial->Sample(ray, result.position, result.normal);
 					//printf("c=%f,%f,%f\n", color->r(),color->g(),color->b());
-					img.atXYZC(x, y, 0, 0) = min(int(color.r() * 255), 255);
-					img.atXYZC(x, y, 0, 1) = min(int(color.g() * 255), 255);
-					img.atXYZC(x, y, 0, 2) = min(int(color.b() * 255), 255);
+					film->set(x, y, 
+						min(int(color.r() * 255), 255),
+						min(int(color.g() * 255), 255),
+						min(int(color.b() * 255), 255));
 				}
 			}
 		}
@@ -99,10 +98,10 @@ namespace renderer {
 			return Color::Black;
 	}
 
-	void Renderer::rayTraceReflection(cil::CImg<unsigned char> &img, Shape* scene, PerspectiveCamera& camera, int maxReflect, int px, int py, int pw, int ph) {
+	void Renderer::rayTraceReflection(Film *film, Shape* scene, PerspectiveCamera& camera, int maxReflect, int px, int py, int pw, int ph) {
 		scene->Init();
 		camera.Init();
-		int w = pw, h = ph, img_width = img.width(), img_height = img.height();
+		int w = pw, h = ph, img_width = film->width(), img_height = film->height();
 		if (w == 0)
 			w = img_width;
 		if (h == 0)
@@ -114,9 +113,10 @@ namespace renderer {
 				//printf("sx,sy=%f,%f\n",sx,sy);
 				Ray& ray = camera.GenerateRay(sx, sy);
 				Color color = rayTraceRecursive(&(*scene), ray, maxReflect);
-				img.atXYZC(x, y, 0, 0) = min(int(color.r() * 255), 255);
-				img.atXYZC(x, y, 0, 1) = min(int(color.g() * 255), 255);
-				img.atXYZC(x, y, 0, 2) = min(int(color.b() * 255), 255);
+				film->set(x, y, 
+					min(int(color.r() * 255), 255),
+					min(int(color.g() * 255), 255),
+					min(int(color.b() * 255), 255));
 			}
 		}
 	}

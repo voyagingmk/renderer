@@ -6,9 +6,10 @@
 #else
 
 #endif 
-
 #include <algorithm>
 #include <memory>
+#include <SDL/SDL.h>
+#include <GL/GL.h>
 #include <stdio.h>
 #include <string>
 #include <math.h>

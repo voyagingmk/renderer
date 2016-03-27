@@ -5,9 +5,11 @@
 
 
 namespace renderer {
+	class Film;
+
 	class Parser {
 	public:
-		int parseFromFile(std::string path);
+		int parseFromFile(std::string path, Film * film);
 	private:
 		Color parseColor(std::string c);
 		void parserObj(std::string inputfile);
