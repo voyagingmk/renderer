@@ -7,7 +7,7 @@
 
 namespace renderer {
 
-	class Material : public std::enable_shared_from_this<Material> {
+	class Material {
 	public:
 		float reflectiveness;
 		static Vector3dF LightDir;

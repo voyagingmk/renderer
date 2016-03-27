@@ -4,7 +4,7 @@
 #include "base.hpp"
 namespace renderer {
 
-	class Shape : public std::enable_shared_from_this<Shape> {
+	class Shape {
 	public:
 		Material* material;
 	public:

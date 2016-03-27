@@ -50,7 +50,9 @@ int main(int argc, char *argv[]) {
 	Parser parser;
 	parser.parseFromFile("config.json", &film);
 	bitmapTex = SDL_CreateTextureFromSurface(renderer, film.img);
-
+	SDL_RenderClear(renderer);
+	SDL_RenderCopy(renderer, bitmapTex, NULL, NULL);
+	SDL_RenderPresent(renderer);
 	while (1) {
 		SDL_Event e;
 		if (SDL_PollEvent(&e)) {
@@ -58,12 +60,7 @@ int main(int argc, char *argv[]) {
 				break;
 			}
 		}
-
-		SDL_RenderClear(renderer);
-		SDL_RenderCopy(renderer, bitmapTex, NULL, NULL);
-		SDL_RenderPresent(renderer);
 	}
-
 	SDL_DestroyTexture(bitmapTex);
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(win);
