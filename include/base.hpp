@@ -45,6 +45,8 @@ namespace renderer {
 	using std::min;
 	using std::max;
 
+	typedef unsigned int uint;
+
 	class IntersectResult;
 	class Shape;
 	class Material;
