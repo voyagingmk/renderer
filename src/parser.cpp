@@ -129,6 +129,7 @@ namespace renderer {
 				t8.join();
 			}
 		}
+
 		parserObj(config["obj"]);
 		auto time1 = std::chrono::system_clock::now();
 		auto time_cost = std::chrono::duration_cast<std::chrono::milliseconds>(time1 - time0).count();

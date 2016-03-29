@@ -6,11 +6,21 @@
 #include "../geometry.hpp"
 
 namespace renderer {
-	typedef std::vector<Vector3dF> VectorArray;
-	typedef std::vector<Vector2dF> UVArray;
-	typedef std::vector<uint> UIntArray;
+	class Mesh;
+	
+	class Triangle : public Shape {
+	public:
+		Mesh* mesh;
+		int indexes[3];
+	public:
+		Triangle(Mesh* m):mesh(m), indexes{ 0,0,0 } {};
+		Triangle(const Triangle&);
+		Triangle operator = (const Triangle&);
+		virtual void Init();
+		virtual int Intersect(Ray&, IntersectResult*);
+	};
 
-	class Mesh:public Shape {
+	class Mesh: public Shape {
 	public:
 		VectorArray vertices;
 		VectorArray normals;

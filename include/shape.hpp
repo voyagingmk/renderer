@@ -2,10 +2,13 @@
 #define RENDERER_SHAPE_HPP
 
 #include "base.hpp"
-namespace renderer {
+#include "transform.hpp"
 
+namespace renderer {
 	class Shape {
 	public:
+		//Matrix4x4 o2w;
+		//Matrix4x4 w2o;
 		Material* material;
 	public:
 		Shape() noexcept :material(nullptr) {};

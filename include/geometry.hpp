@@ -188,6 +188,12 @@ namespace renderer {
 	namespace Const {
 		static Point3dF Zero;
 	}
+
+	typedef std::vector<Vector3dF> VectorArray;
+	typedef std::vector<Vector2dF> UVArray;
+	typedef std::vector<uint> UIntArray;
+
+
 }
 
 #endif // RENDERER_GEOMETRY_HPP
