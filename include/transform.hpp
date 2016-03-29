@@ -362,6 +362,8 @@ namespace renderer {
 
 		static Matrix<T> newIdentity() {
 			Matrix<T> result;
+			if (T::row != T::col)
+				return result;
 			for (int r = 0; r < T::row; r++)
 			{
 				result[r * T::row + r] = V(1);

@@ -35,17 +35,21 @@ namespace renderer {
 		Vector3dF e2 = p2 - p0;
 		Vector3dF s = ray.o - p0;
 		Vector3dF s1 = ray.d.Cross(e2);
-		Real deno = s1.Dot(e1);
-		if (almost_equal(deno, Real(0), 2))
+		Real d = s1.Dot(e1);
+		if (almost_equal(d, Real(0), 2))
 			return 0;
+		d = 1. / d;
 		Vector3dF s2 = s.Cross(e1);
-		Real d = 1 / deno;
 		Real r1 = s2.Dot(e2);
 		Real r2 = s1.Dot(s);
 		Real r3 = s2.Dot(ray.d);
 		Real t = r1 * d;
 		Real b1 = r2 * d;
+		if (b1 < 0. || b1 > 1.)
+			return 0;
 		Real b2 = r3 * d;
+		if (b2 < 0. || b1 + b2 > 1.)
+			return 0;
 		Vector3dF position = ray.GetPoint(t);
 		Vector3dF normal = (e1.Cross(e2)).Normalize();
 		*result = IntersectResult(mesh, t, position, normal);
@@ -72,12 +76,13 @@ namespace renderer {
 
 	int Mesh::Intersect(Ray& ray, IntersectResult* result) {
 		Triangle tri(this);
-		for (int tri_idx = 0, tri_num = indexes.size()/3; tri_idx < tri_num; tri_idx++) {
-			tri.indexes[0] = indexes[tri_idx];
-			tri.indexes[1] = indexes[tri_idx + 1];
-			tri.indexes[2] = indexes[tri_idx + 2];
+		for (int tri_idx = 0, tri_num = indexes.size()/3; tri_idx < tri_num; tri_idx += 1) {
+			tri.indexes[0] = indexes[tri_idx * 3];
+			tri.indexes[1] = indexes[tri_idx * 3 + 1];
+			tri.indexes[2] = indexes[tri_idx * 3 + 2];
 			tri.Intersect(ray, result);
 			if (result->geometry) {
+				//printf("hit tri: %.2f,%.2f,%.2f\n", result->position.x, result->position.y, result->position.z);
 				return 0;
 			}
 		}

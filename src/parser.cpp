@@ -15,6 +15,7 @@
 #include "plane.hpp"
 #include "union.hpp"
 #include "film.hpp"
+#include "mesh.hpp"
 
 #define TINYOBJLOADER_IMPLEMENTATION // define this in only *one* .cc
 #include "tiny_obj_loader.h"
@@ -71,6 +72,26 @@ namespace renderer {
 				auto pool = GetPool<Plane>();
 				pg = pool->newElement(Vector3dF(normal[0], normal[1], normal[2]),
 					   objinfo["distance"] );
+				pg->material = matDict[objinfo["matId"]];
+			}
+			else if (objinfo["type"] == "Mesh") {
+				auto pool = GetPool<Mesh>();
+				VectorArray vertices, normals;
+				UIntArray indexes;
+				UVArray uvs;
+				for (auto vertice : objinfo["vertices"]) {
+					vertices.push_back(Vector3dF(vertice[0], vertice[1], vertice[2]));
+				}
+				for (auto normal : objinfo["normals"]) {
+					normals.push_back(Vector3dF(normal[0], normal[1], normal[2]));
+				}
+				for (auto index : objinfo["indexes"]) {
+					indexes.push_back(index);
+				}
+				for (auto uv : objinfo["uvs"]) {
+					uvs.push_back(Vector2dF(uv[0], uv[1]));
+				}
+				pg = pool->newElement(vertices, normals, indexes, uvs);
 				pg->material = matDict[objinfo["matId"]];
 			}
 			vecGeo.push_back(pg);

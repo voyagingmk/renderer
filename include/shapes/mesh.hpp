@@ -1,5 +1,5 @@
-#ifndef RENDERER_PLANE_HPP
-#define RENDERER_PLANE_HPP
+#ifndef RENDERER_MESH_HPP
+#define RENDERER_MESH_HPP
 
 #include "base.hpp"
 #include "shape.hpp"
