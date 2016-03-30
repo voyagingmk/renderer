@@ -2,7 +2,7 @@
 #define RENDERER_RENDERER_HPP
 
 #include "base.hpp"
-
+#include "geometry.hpp"
 
 namespace renderer {
 	class Shape;
@@ -13,9 +13,9 @@ namespace renderer {
 	public:
 		void renderDepth(Film*, Shape&, PerspectiveCamera&, float maxDepth);
 		void renderNormal(Film*, Shape& scene, PerspectiveCamera& camera, float maxDepth);
-		void rayTrace(Film*, Shape& scene, PerspectiveCamera& camera);
-		Color rayTraceRecursive(Shape* scene, Ray& ray, int maxReflect);
-		void rayTraceReflection(Film*, Shape* scene, PerspectiveCamera& camera, int maxReflect, int x = 0, int y = 0, int w = 0, int h = 0);
+		void rayTrace(Film*, Shape& scene, PerspectiveCamera& camera, Vector3dF& lightDir);
+		Color rayTraceRecursive(Shape* scene, Ray& ray, Vector3dF& lightDir, int maxReflect);
+		void rayTraceReflection(Film*, Shape* scene, PerspectiveCamera& camera, Vector3dF& lightDir, int maxReflect, int x = 0, int y = 0, int w = 0, int h = 0);
 	};
 }
 

@@ -52,7 +52,7 @@ namespace renderer {
 			return 0;
 		Vector3dF position = ray.GetPoint(t);
 		Vector3dF normal = (e1.Cross(e2)).Normalize();
-		if (normal.Dot(ray.d) > 0)
+		if (normal.Dot(ray.d) >= 0)
 			normal = -normal;
 		*result = IntersectResult(mesh, t, position, normal);
 		return 0;
@@ -77,15 +77,19 @@ namespace renderer {
 	}
 
 	int Mesh::Intersect(Ray& ray, IntersectResult* result) {
+		float minDistance = FLOAT_MAX;
+		
 		Triangle tri(this);
 		for (int tri_idx = 0, tri_num = indexes.size()/3; tri_idx < tri_num; tri_idx += 1) {
 			tri.indexes[0] = indexes[tri_idx * 3];
 			tri.indexes[1] = indexes[tri_idx * 3 + 1];
 			tri.indexes[2] = indexes[tri_idx * 3 + 2];
-			tri.Intersect(ray, result);
-			if (result->geometry) {
-				//printf("hit tri: %.2f,%.2f,%.2f\n", result->position.x, result->position.y, result->position.z);
-				return 0;
+			IntersectResult resultTmp;
+			tri.Intersect(ray, &resultTmp);
+			if (resultTmp.geometry && resultTmp.distance < minDistance) {
+				minDistance = resultTmp.distance;
+				*result = resultTmp;
+				//printf("%f,%f,%f == %f,%f\n",ray->getDirection()->x(),ray->getDirection()->y(),ray->getDirection()->z(),minDistance, result->getGeometry()->getMaterial()->getReflectiveness());
 			}
 		}
 		return 0;

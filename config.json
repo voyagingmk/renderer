@@ -1,15 +1,20 @@
 {
 	"width": 400,
 	"height": 400,
-	"multithread":3,
+	"multithread":0,
 	"camera":{
-		"eye":[25,15,15],
-		"front":[-0.5,0,-0.86575],
+		"eye":[10,5,15],
+		"front":[0, 0, -1],
 		"up":[0,1,0],
 		"fov":90
 	},
 	"obj": "test.obj",
 	"scene":[
+		{
+			"type": "Light",
+			"pos":[1,1,1],
+			"color":[255,255,255]
+		},
 		{
 			"type": "Sphere",
 			"pos":[-10,10,-10],
@@ -17,7 +22,7 @@
 			"matId":1
 		},
 		{
-			"type": "Mesh",
+			"type": "Mesh8",
 			"vertices":[
 				[10,  5,  0],
 				[20, 5,  0],
@@ -30,6 +35,8 @@
 
 			],
 			"indexes": [
+			],
+			"indexes_b": [
 				0,1,2,
 				3,2,1,
 				2,3,4,
@@ -42,7 +49,6 @@
 				4,6,2,
 				3,1,7,
 				3,7,5
-
 			],
 			"normals":[
 				[0,0,1],
@@ -103,7 +109,7 @@
 			"diffuse":"Blue",
 			"specular":"White",
 			"shininess":16,
-			"reflectiveness":0.75
+			"reflectiveness":0.25
 		}
 	]
 }

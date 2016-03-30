@@ -10,7 +10,7 @@ namespace renderer {
 		scale(scale) {
 	};
 
-	Color CheckerMaterial::Sample(Ray& ray, Vector3dF& position, Vector3dF& normal) {
+	Color CheckerMaterial::Sample(Ray& ray, Vector3dF& position, Vector3dF& normal, Vector3dF& lightDir) {
 		return abs((int(std::floor(position.x * 0.1)) + int(std::floor(position.z * scale))) % 2) < 1 ? Color::Black : Color::White;
 	};
 
@@ -23,17 +23,13 @@ namespace renderer {
 
 	};
 
-	Color PhongMaterial::Sample(Ray& ray, Vector3dF& position, Vector3dF& normal) {
-		float NdotL = normal.Dot(LightDir);
-		Vector3dF H = (LightDir - ray.d).Normalize();
+	Color PhongMaterial::Sample(Ray& ray, Vector3dF& position, Vector3dF& normal, Vector3dF& lightDir) {
+		float NdotL = normal.Dot(lightDir);
+		Vector3dF H = (lightDir - ray.d).Normalize();
 		float NdotH = normal.Dot(H);
 		Color diffuseTerm = diffuse * (max(NdotL, 0.0f));
 		Color specularTerm = specular * (float)(std::pow(max(NdotH, 0.0f), shininess));
 		return Color::White.Modulate(diffuseTerm + specularTerm);
 	};
-
-
-	Vector3dF Material::LightDir = Vector3dF(1.f, 1.f, 1.f).Normalize();
-	Color Material::LightColor = Color::White;
 
 }

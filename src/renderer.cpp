@@ -52,7 +52,7 @@ namespace renderer {
 	};
 
 
-	void Renderer::rayTrace(Film *film, Shape& scene, PerspectiveCamera& camera) {
+	void Renderer::rayTrace(Film *film, Shape& scene, PerspectiveCamera& camera, Vector3dF& lightDir) {
 		scene.Init();
 		camera.Init();
 		int w = film->width(), h = film->height();
@@ -65,7 +65,7 @@ namespace renderer {
 				scene.Intersect(ray, &result);
 				if (result.geometry) {
 					Material* pMaterial = result.geometry->material;
-					Color color = pMaterial->Sample(ray, result.position, result.normal);
+					Color color = pMaterial->Sample(ray, result.position, result.normal, lightDir);
 					//printf("c=%f,%f,%f\n", color->r(),color->g(),color->b());
 					film->set(x, y, 
 						min(int(color.r() * 255), 255),
@@ -76,19 +76,19 @@ namespace renderer {
 		}
 	}
 
-	Color Renderer::rayTraceRecursive(Shape* scene, Ray& ray, int maxReflect) {
+	Color Renderer::rayTraceRecursive(Shape* scene, Ray& ray, Vector3dF& lightDir, int maxReflect) {
 		IntersectResult result;
 		scene->Intersect(ray, &result);
 		if (result.geometry) {
 			Material* pMaterial = result.geometry->material;
 			float reflectiveness = pMaterial->reflectiveness;
-			Color color = pMaterial->Sample(ray, result.position, result.normal);
+			Color color = pMaterial->Sample(ray, result.position, result.normal, lightDir);
 			color = Color(color * (1.0f - reflectiveness));
 
 			if (reflectiveness > 0 && maxReflect > 0) {
 				Vector3dF r = Vector3dF(result.normal * (-2 * (result.normal.Dot(ray.d))) + ray.d);
 				Ray new_ray(result.position, r);
-				Color reflectedColor = rayTraceRecursive(scene, new_ray, maxReflect - 1);
+				Color reflectedColor = rayTraceRecursive(scene, new_ray, lightDir, maxReflect - 1);
 				assert(reflectedColor.r() >= 0 && reflectedColor.g() >= 0 && reflectedColor.b() >= 0);
 				color = color + reflectedColor * reflectiveness;
 			}
@@ -98,7 +98,7 @@ namespace renderer {
 			return Color::Black;
 	}
 
-	void Renderer::rayTraceReflection(Film *film, Shape* scene, PerspectiveCamera& camera, int maxReflect, int px, int py, int pw, int ph) {
+	void Renderer::rayTraceReflection(Film *film, Shape* scene, PerspectiveCamera& camera, Vector3dF& lightDir, int maxReflect, int px, int py, int pw, int ph) {
 		scene->Init();
 		camera.Init();
 		int w = pw, h = ph, img_width = film->width(), img_height = film->height();
@@ -112,7 +112,7 @@ namespace renderer {
 				float sx = (float)x / img_width;
 				//printf("sx,sy=%f,%f\n",sx,sy);
 				Ray& ray = camera.GenerateRay(sx, sy);
-				Color color = rayTraceRecursive(&(*scene), ray, maxReflect);
+				Color color = rayTraceRecursive(&(*scene), ray, lightDir, maxReflect);
 				film->set(x, y, 
 					min(int(color.r() * 255), 255),
 					min(int(color.g() * 255), 255),

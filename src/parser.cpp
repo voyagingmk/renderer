@@ -22,9 +22,9 @@
 
 namespace renderer {
 
-	void renderArea(Renderer &renderer, Film* film, Shape* pUnion, PerspectiveCamera& camera, int maxReflect, int x, int y, int w, int h)
+	void renderArea(Renderer &renderer, Film* film, Shape* pUnion, PerspectiveCamera& camera, Vector3dF& lightDir, int maxReflect, int x, int y, int w, int h)
 	{
-		renderer.rayTraceReflection(film, pUnion, camera, maxReflect, x, y, w, h);
+		renderer.rayTraceReflection(film, pUnion, camera, lightDir, maxReflect, x, y, w, h);
 	}
 
 	int Parser::parseFromFile(std::string path, Film * film) {
@@ -57,10 +57,19 @@ namespace renderer {
 			}
 			matDict[objinfo["id"]] = mt;
 		}
+		Vector3dF lightDir;
 		std::vector<Shape*> vecGeo;
 		for (auto objinfo : config["scene"]) {
 			Shape* pg = nullptr;
-			if (objinfo["type"] == "Sphere") {
+			if (objinfo["type"] == "Light") {
+				auto pos = objinfo["pos"];
+				auto color = objinfo["color"];
+				lightDir.x = pos[0];
+				lightDir.y = pos[1];
+				lightDir.z = pos[2];
+				continue;
+			}
+			else if (objinfo["type"] == "Sphere") {
 				auto pos = objinfo["pos"];
 				auto pool = GetPool<Sphere>();
 				pg = pool->newElement(Vector3dF(pos[0], pos[1], pos[2]),
@@ -94,6 +103,8 @@ namespace renderer {
 				pg = pool->newElement(vertices, normals, indexes, uvs);
 				pg->material = matDict[objinfo["matId"]];
 			}
+			else
+				continue;
 			vecGeo.push_back(pg);
 		} 
 		ShapeUnion shapeUnion(vecGeo);
@@ -111,35 +122,35 @@ namespace renderer {
 
 		auto time0 = std::chrono::system_clock::now();
 		if (!multithread) {
-			renderer.rayTrace(film, shapeUnion, camera);
-			renderer.rayTraceReflection(film, &shapeUnion, camera, 4);
+			renderer.rayTrace(film, shapeUnion, camera, lightDir);
+			renderer.rayTraceReflection(film, &shapeUnion, camera, std::ref(lightDir), 4);
 		}
 		else {
 			if (multithread == 1) {
-				std::thread t1(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), 4, 0, 0, width, height / 2);
-				std::thread t2(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), 4, 0, height / 2, width, height / 2);
+				std::thread t1(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), std::ref(lightDir), 4, 0, 0, width, height / 2);
+				std::thread t2(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), std::ref(lightDir), 4, 0, height / 2, width, height / 2);
 				t1.join();
 				t2.join();
 			}
 			if (multithread == 2) {
-				std::thread t1(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), 4, 0, 0, width, height / 4);
-				std::thread t2(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), 4, 0, 1 * height / 4, width, height / 4);
-				std::thread t3(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), 4, 0, 2 * height / 4, width, height / 4);
-				std::thread t4(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), 4, 0, 3 * height / 4, width, height / 4);
+				std::thread t1(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), std::ref(lightDir), 4, 0, 0, width, height / 4);
+				std::thread t2(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), std::ref(lightDir), 4, 0, 1 * height / 4, width, height / 4);
+				std::thread t3(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), std::ref(lightDir), 4, 0, 2 * height / 4, width, height / 4);
+				std::thread t4(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), std::ref(lightDir), 4, 0, 3 * height / 4, width, height / 4);
 				t1.join();
 				t2.join();
 				t3.join();
 				t4.join();
 			}
 			if (multithread == 3) {
-				std::thread t1(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), 4, 0, 0, width, height / 8);
-				std::thread t2(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), 4, 0, 1 * height / 8, width, height / 8);
-				std::thread t3(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), 4, 0, 2 * height / 8, width, height / 8);
-				std::thread t4(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), 4, 0, 3 * height / 8, width, height / 8);
-				std::thread t5(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), 4, 0, 4 * height / 8, width, height / 8);
-				std::thread t6(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), 4, 0, 5 * height / 8, width, height / 8);
-				std::thread t7(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), 4, 0, 6 * height / 8, width, height / 8);
-				std::thread t8(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), 4, 0, 7 * height / 8, width, height / 8);
+				std::thread t1(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), std::ref(lightDir), 4, 0, 0, width, height / 8);
+				std::thread t2(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), std::ref(lightDir), 4, 0, 1 * height / 8, width, height / 8);
+				std::thread t3(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), std::ref(lightDir), 4, 0, 2 * height / 8, width, height / 8);
+				std::thread t4(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), std::ref(lightDir), 4, 0, 3 * height / 8, width, height / 8);
+				std::thread t5(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), std::ref(lightDir), 4, 0, 4 * height / 8, width, height / 8);
+				std::thread t6(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), std::ref(lightDir), 4, 0, 5 * height / 8, width, height / 8);
+				std::thread t7(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), std::ref(lightDir), 4, 0, 6 * height / 8, width, height / 8);
+				std::thread t8(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), std::ref(lightDir), 4, 0, 7 * height / 8, width, height / 8);
 				t1.join();
 				t2.join();
 				t3.join();

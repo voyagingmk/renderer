@@ -10,11 +10,9 @@ namespace renderer {
 	class Material {
 	public:
 		float reflectiveness;
-		static Vector3dF LightDir;
-		static Color LightColor;
 	public:
 		Material(float reflectiveness) :reflectiveness(reflectiveness) {};
-		virtual Color Sample(Ray& ray, Vector3dF& position, Vector3dF& normal) = 0;
+		virtual Color Sample(Ray& ray, Vector3dF& position, Vector3dF& normal, Vector3dF& lightDir) = 0;
 	};
 
 	class CheckerMaterial : public Material {
@@ -22,7 +20,7 @@ namespace renderer {
 		float scale;
 	public:
 		CheckerMaterial(float scale, float reflectiveness = 0);
-		Color Sample(Ray& ray, Vector3dF& position, Vector3dF& normal);
+		Color Sample(Ray& ray, Vector3dF& position, Vector3dF& normal, Vector3dF& lightDir);
 	};
 
 
@@ -32,7 +30,7 @@ namespace renderer {
 		int shininess;
 	public:
 		PhongMaterial(Color& diffuse, Color& specular, int shininess, float reflectiveness = 0);
-		Color Sample(Ray& ray, Vector3dF& position, Vector3dF& normal);
+		Color Sample(Ray& ray, Vector3dF& position, Vector3dF& normal, Vector3dF& lightDir);
 	};
 }
 
