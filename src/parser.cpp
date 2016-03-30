@@ -115,7 +115,7 @@ namespace renderer {
 		auto front = config["camera"]["front"];
 		auto up = config["camera"]["up"];
 
-		PerspectiveCamera camera(Vector3dF(eye[0], eye[1], eye[2]).Normalize(),
+		PerspectiveCamera camera(Vector3dF(eye[0], eye[1], eye[2]),
 			Vector3dF(front[0], front[1], front[2]).Normalize(),
 			Vector3dF(up[0], up[1], up[2]).Normalize(),
 			config["camera"]["fov"]);
