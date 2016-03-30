@@ -168,7 +168,9 @@ namespace renderer {
 			return x * x + y * y + z * z; 
 		};
 		Point3d<T> Normalize() {
-			T inv = T(1) / Length();
+			T len = Length();
+			assert(len != 0);
+			T inv = T(1) / len;
 			return Point3d<T>(x * inv, y * inv, z * inv);
 		}
 		Point3d& Swap(Point3d& p) {

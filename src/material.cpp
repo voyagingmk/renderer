@@ -25,10 +25,16 @@ namespace renderer {
 
 	Color PhongMaterial::Sample(Ray& ray, Vector3dF& position, Vector3dF& normal, Vector3dF& lightDir) {
 		float NdotL = normal.Dot(lightDir);
-		Vector3dF H = (lightDir - ray.d).Normalize();
+		Vector3dF D = lightDir - ray.d;
+		if (almost_equal(D.Length(), 0.f, 2))
+			return Color::White;
+		Vector3dF H = D.Normalize();
 		float NdotH = normal.Dot(H);
 		Color diffuseTerm = diffuse * (max(NdotL, 0.0f));
 		Color specularTerm = specular * (float)(std::pow(max(NdotH, 0.0f), shininess));
+		assert(!isnan(diffuseTerm.r()) && !isnan(diffuseTerm.r()) && !isnan(diffuseTerm.r()));
+		assert(!isnan(specularTerm.r()) && !isnan(specularTerm.r()) && !isnan(specularTerm.r()));
+
 		return Color::White.Modulate(diffuseTerm + specularTerm);
 	};
 
