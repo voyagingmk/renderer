@@ -52,6 +52,8 @@ namespace renderer {
 			return 0;
 		Vector3dF position = ray.GetPoint(t);
 		Vector3dF normal = (e1.Cross(e2)).Normalize();
+		if (normal.Dot(ray.d) > 0)
+			normal = -normal;
 		*result = IntersectResult(mesh, t, position, normal);
 		return 0;
 	}

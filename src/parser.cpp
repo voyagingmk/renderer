@@ -151,7 +151,7 @@ namespace renderer {
 			}
 		}
 
-		parserObj(config["obj"]);
+		//parserObj(config["obj"]);
 		auto time1 = std::chrono::system_clock::now();
 		auto time_cost = std::chrono::duration_cast<std::chrono::milliseconds>(time1 - time0).count();
 		printf("cost: %lldms\n", time_cost);

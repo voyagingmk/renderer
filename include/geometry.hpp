@@ -144,7 +144,7 @@ namespace renderer {
 			return *this;
 		}
 		Point3d<T> operator - () {
-			return Point<T>(-x, -y, -z);
+			return Point3d<T>(-x, -y, -z);
 		}
 		bool operator == (const Point3d<T>& p) {
 			return x == p.x && y == p.y && z == p.z;
