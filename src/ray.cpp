@@ -8,6 +8,8 @@ namespace renderer {
 	Ray::Ray(Vector3dF& origin, Vector3dF& direction) noexcept
 		: o(origin)
 		, d(direction)
+		//, mint(0.f)
+		//, maxt(INFINITY)
 	{
 	}
 

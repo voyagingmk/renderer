@@ -1,125 +1,119 @@
 {
-	"width": 400,
-	"height": 400,
-	"multithread":3,
-	"camera":{
-		"eye":[0,5,15],
-		"front":[0, 0, -1],
-		"up":[0,1,0],
-		"fov":90
-	},
-	"maxReflect": 3,
-	"obj": "test.obj",
-	"scene":[
-		{
-			"type": "Light",
-			"pos":[0,0,1],
-			"color":[255,255,255]
-		},
-		{
-			"type": "Sphere",
-			"pos":[-10,10,-10],
-			"radius":10,
-			"matId":1
-		},
-		{
-			"type": "Mesh",
-			"vertices":[
-				[0,   5,  0],
-				[10,  5,  0],
-				[10,  5, -10],
-				[10,  15, 0]
-			],
-			"vertices_b":[
-				[0,  5,  0],
-				[10,  5,  0],
-				[0,  15, 0],
-				[10,  15, 0],
-				[0,  15,-10],
-				[10,  15,-10],
-				[0,  5, -10],
-				[10,  5, -10]
-			],
-			"indexes": [
-				0,2,1,
-				1,2,3,
-				0,1,3,
-				3,2,0
-			],
-			"indexes_b": [
-				0,1,2,
-				3,2,1,
-				2,3,4,
-				5,4,3,
-				6,4,5,
-				7,6,5,
-				6,7,1,
-				0,6,1,
-				2,6,0,
-				4,6,2,
-				3,1,7,
-				3,7,5
-			],
-			"normals":[
-				[0,0,1],
-				[0,0,1],
-				[0,0,1],
-				[0,0,1],
-				[0,0,1],
-				[0,0,1],
-				[0,0,1],
-				[0,0,1]
-			],
-			"uvs":[
-				[0,0],
-				[1,0],
-				[0,1],
-				[1,1],
-				[0,0],
-				[1,0],
-				[0,1],
-				[1,1]
-			],
-			"pos":[0,10,-10],
-			"matId":4
-		},
-		{
-			"type": "Plane",
-			"normal":[0,1,0],
-			"distance":0,
-			"matId":3
-		}
-	],
-	"material":[
-		{
-			"id":1,
-			"type":"Phone",
-			"diffuse":"Red",
-			"specular":"White",
-			"shininess":16,
-			"reflectiveness":0.25
-		},
-		{
-			"id":2,
-			"type":"Phone",
-			"diffuse":"Blue",
-			"specular":"White",
-			"shininess":16,
-			"reflectiveness":0.25
-		},
-		{
-			"id":3,
-			"type":"Checker",
-			"scale":0.1,
-			"reflectiveness":0.5
-		},
-		{
-			"id":4,
-			"type":"Phone",
-			"diffuse":"Blue",
-			"specular":"White",
-			"shininess":16,
-			"reflectiveness":0.5
-		}
-	]
+    "width": 400,
+    "height": 400,
+    "multithread": 3,
+    "camera": {
+        "eye": [0, 5, 15],
+        "front": [0, 0, -1],
+        "up": [0, 1, 0],
+        "fov": 90
+    },
+    "maxReflect": 3,
+    "obj": "test.obj",
+    "scene": [{
+        "type": "DirectionLight",
+        "dir": [0, 0, 1],
+        "color": [255, 255, 255]
+    }, {
+        "type": "PointLight",
+        "pos": [50, 0, 0],
+        "color": [255, 255, 255]
+    }, {
+        "type": "Sphere",
+        "pos": [-10, 10, -10],
+        "radius": 10,
+        "matId": 1
+    }, {
+        "type": "Mesh",
+        "vertices": [
+            [0, 5, 0],
+            [10, 5, 0],
+            [10, 5, -10],
+            [10, 15, 0]
+        ],
+        "vertices_b": [
+            [0, 5, 0],
+            [10, 5, 0],
+            [0, 15, 0],
+            [10, 15, 0],
+            [0, 15, -10],
+            [10, 15, -10],
+            [0, 5, -10],
+            [10, 5, -10]
+        ],
+        "indexes": [
+            0, 2, 1,
+            1, 2, 3,
+            0, 1, 3,
+            3, 2, 0
+        ],
+        "indexes_b": [
+            0, 1, 2,
+            3, 2, 1,
+            2, 3, 4,
+            5, 4, 3,
+            6, 4, 5,
+            7, 6, 5,
+            6, 7, 1,
+            0, 6, 1,
+            2, 6, 0,
+            4, 6, 2,
+            3, 1, 7,
+            3, 7, 5
+        ],
+        "normals": [
+            [0, 0, 1],
+            [0, 0, 1],
+            [0, 0, 1],
+            [0, 0, 1],
+            [0, 0, 1],
+            [0, 0, 1],
+            [0, 0, 1],
+            [0, 0, 1]
+        ],
+        "uvs": [
+            [0, 0],
+            [1, 0],
+            [0, 1],
+            [1, 1],
+            [0, 0],
+            [1, 0],
+            [0, 1],
+            [1, 1]
+        ],
+        "pos": [0, 10, -10],
+        "matId": 4
+    }, {
+        "type": "Plane",
+        "normal": [0, 1, 0],
+        "distance": 0,
+        "matId": 3
+    }],
+    "material": [{
+        "id": 1,
+        "type": "Phone",
+        "diffuse": "Red",
+        "specular": "White",
+        "shininess": 16,
+        "reflectiveness": 0.25
+    }, {
+        "id": 2,
+        "type": "Phone",
+        "diffuse": "Blue",
+        "specular": "White",
+        "shininess": 16,
+        "reflectiveness": 0.25
+    }, {
+        "id": 3,
+        "type": "Checker",
+        "scale": 0.1,
+        "reflectiveness": 0.5
+    }, {
+        "id": 4,
+        "type": "Phone",
+        "diffuse": "Blue",
+        "specular": "White",
+        "shininess": 16,
+        "reflectiveness": 0.5
+    }]
 }

@@ -16,6 +16,7 @@
 #include "union.hpp"
 #include "film.hpp"
 #include "mesh.hpp"
+#include "light.hpp"
 
 #define TINYOBJLOADER_IMPLEMENTATION // define this in only *one* .cc
 #include "tiny_obj_loader.h"
@@ -59,17 +60,23 @@ namespace renderer {
 		}
 		int maxReflect = config["maxReflect"];
 
-		Vector3dF lightDir;
+		std::vector<Light*> lights;
+		Vector3dF lightDir(0,0,1);
 		std::vector<Shape*> vecGeo;
 		for (auto objinfo : config["scene"]) {
 			Shape* pg = nullptr;
-			if (objinfo["type"] == "Light") {
+			Light* light = nullptr;
+			if (objinfo["type"] == "DirectionLight") {
+				auto dir = objinfo["dir"];
+				auto color = objinfo["color"];
+				auto pool = GetPool<DirectionLight>();
+				light = static_cast<Light*>(pool->newElement(Vector3dF(dir[0], dir[1], dir[2])));
+			}
+			else if (objinfo["type"] == "PointLight") {
 				auto pos = objinfo["pos"];
 				auto color = objinfo["color"];
-				lightDir.x = pos[0];
-				lightDir.y = pos[1];
-				lightDir.z = pos[2];
-				continue;
+				auto pool = GetPool<PointLight>();
+				light = static_cast<Light*>(pool->newElement(Vector3dF(pos[0], pos[1], pos[2])));
 			}
 			else if (objinfo["type"] == "Sphere") {
 				auto pos = objinfo["pos"];
@@ -107,7 +114,10 @@ namespace renderer {
 			}
 			else
 				continue;
-			vecGeo.push_back(pg);
+			if (light)
+				lights.push_back(light);
+			if(pg)
+				vecGeo.push_back(pg);
 		} 
 		ShapeUnion shapeUnion(vecGeo);
 
@@ -128,39 +138,14 @@ namespace renderer {
 			renderer.rayTraceReflection(film, &shapeUnion, camera, std::ref(lightDir), 4);
 		}
 		else {
-			if (multithread == 1) {
-				std::thread t1(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), std::ref(lightDir), maxReflect, 0, 0, width, height / 2);
-				std::thread t2(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), std::ref(lightDir), maxReflect, 0, height / 2, width, height / 2);
-				t1.join();
-				t2.join();
+			int threads_num = int(pow(2.0, multithread));
+			std::thread* *threads = new std::thread*[threads_num];
+			for (int i = 0; i < threads_num; i++) {
+				std::thread* t = new std::thread(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), std::ref(lightDir), maxReflect, 0, i * height / threads_num, width, height / threads_num);
+				threads[i] = t;
 			}
-			if (multithread == 2) {
-				std::thread t1(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), std::ref(lightDir), maxReflect, 0, 0, width, height / 4);
-				std::thread t2(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), std::ref(lightDir), maxReflect, 0, 1 * height / maxReflect, width, height / 4);
-				std::thread t3(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), std::ref(lightDir), maxReflect, 0, 2 * height / maxReflect, width, height / 4);
-				std::thread t4(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), std::ref(lightDir), maxReflect, 0, 3 * height / maxReflect, width, height / 4);
-				t1.join();
-				t2.join();
-				t3.join();
-				t4.join();
-			}
-			if (multithread == 3) {
-				std::thread t1(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), std::ref(lightDir), maxReflect, 0, 0, width, height / 8);
-				std::thread t2(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), std::ref(lightDir), maxReflect, 0, 1 * height / 8, width, height / 8);
-				std::thread t3(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), std::ref(lightDir), maxReflect, 0, 2 * height / 8, width, height / 8);
-				std::thread t4(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), std::ref(lightDir), maxReflect, 0, 3 * height / 8, width, height / 8);
-				std::thread t5(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), std::ref(lightDir), maxReflect, 0, 4 * height / 8, width, height / 8);
-				std::thread t6(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), std::ref(lightDir), maxReflect, 0, 5 * height / 8, width, height / 8);
-				std::thread t7(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), std::ref(lightDir), maxReflect, 0, 6 * height / 8, width, height / 8);
-				std::thread t8(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), std::ref(lightDir), maxReflect, 0, 7 * height / 8, width, height / 8);
-				t1.join();
-				t2.join();
-				t3.join();
-				t4.join();
-				t5.join();
-				t6.join();
-				t7.join();
-				t8.join();
+			for (int i = 0; i < threads_num; i++) {
+				threads[i]->join();
 			}
 		}
 
