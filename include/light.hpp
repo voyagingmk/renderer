@@ -8,6 +8,7 @@ namespace renderer {
 	class Light {
 	public:
 		Light() noexcept;
+		//incidence: lightPos towards targetPos
 		virtual Vector3dF incidence(Vector3dF& targetPos) = 0;
 		virtual void Init() = 0;
 	};

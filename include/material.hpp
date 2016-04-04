@@ -17,9 +17,10 @@ namespace renderer {
 
 	class CheckerMaterial : public Material {
 	public:
+		Color color1, color2;
 		float scale;
 	public:
-		CheckerMaterial(float scale, float reflectiveness = 0);
+		CheckerMaterial(float scale, float reflectiveness = 0, Color c1 = Color::White, Color c2 = Color::Black);
 		Color Sample(Ray& ray, Vector3dF& position, Vector3dF& normal, Vector3dF& lightDir);
 	};
 

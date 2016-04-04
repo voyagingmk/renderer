@@ -5,13 +5,16 @@
 #include "ray.hpp"
 
 namespace renderer {
-	CheckerMaterial::CheckerMaterial(float scale, float reflectiveness) :
+	CheckerMaterial::CheckerMaterial(float scale, float reflectiveness, Color c1, Color c2) :
 		Material(reflectiveness),
-		scale(scale) {
+		scale(scale),
+		color1(c1),
+		color2(c2)
+	{
 	};
 
 	Color CheckerMaterial::Sample(Ray& ray, Vector3dF& position, Vector3dF& normal, Vector3dF& incidence) {
-		return abs((int(std::floor(position.x * 0.1)) + int(std::floor(position.z * scale))) % 2) < 1 ? Color::Black : Color::White;
+		return abs((int(std::floor(position.x * 0.1)) + int(std::floor(position.z * scale))) % 2) < 1 ? color1 : color2;
 	};
 
 

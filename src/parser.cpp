@@ -42,7 +42,9 @@ namespace renderer {
 			}
 			else if (objinfo["type"] == "Checker") {
 				auto pool = GetPool<CheckerMaterial>();
-				mt = pool->newElement(objinfo["scale"], objinfo["reflectiveness"]);
+				auto c1 = objinfo["color1"], c2 = objinfo["color2"];
+				Color color1 = parseColor(c1, Color::Black), color2 = parseColor(c2, Color::White);
+				mt = pool->newElement(objinfo["scale"], objinfo["reflectiveness"], color1, color2);
 			}
 			matDict[objinfo["id"]] = mt;
 		}

@@ -11,20 +11,20 @@
     "maxReflect": 3,
     "obj": "test.obj",
     "scene": [{
-        "type": "DirectionLight",
+        "type": "DirectionLight0",
         "dir": [0, -1, 0],
         "color": [255, 255, 255]
     }, {
         "type": "PointLight",
-        "pos": [20, 0, 20],
+        "pos": [-50, 50, 0],
         "color": [255, 255, 255]
     }, {
         "type": "Sphere",
-        "pos": [-10, 10, -10],
+        "pos": [0, 10, -10],
         "radius": 10,
         "matId": 1
     }, {
-        "type": "Mesh",
+        "type": "Mesh5",
         "vertices": [
             [0, 5, 0],
             [10, 5, 0],
@@ -107,7 +107,9 @@
         "id": 3,
         "type": "Checker",
         "scale": 0.1,
-        "reflectiveness": 0.5
+        "reflectiveness": 0.5,
+        "color1": [0.5, 0.5, 0.5],
+        "color2": "White"
     }, {
         "id": 4,
         "type": "Phone",

@@ -91,6 +91,13 @@ namespace renderer {
 			Color color(0, 0, 0);
 			for (int i = 0; i < lights.size(); i++) {
 				Vector3dF incidence = lights[i]->incidence(result.position);
+				//Is this light visible 
+				Ray light_inv_ray(result.position, (-incidence).Normalize());
+				IntersectResult _result;
+				scene->Intersect(light_inv_ray, &_result);
+				if (_result.geometry) {
+					continue;
+				}
 				Color c = pMaterial->Sample(ray, result.position, result.normal, incidence);
 				color = color + c;
 			}
