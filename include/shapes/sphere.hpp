@@ -16,8 +16,8 @@ namespace renderer {
 		Sphere(Vector3dF& center, float radius);
 		Sphere(Sphere &);
 		Sphere operator = (const Sphere&);
-		virtual void Init();
-		virtual int Intersect(Ray&, IntersectResult*);
+		virtual void Init() override;
+		virtual int Intersect(Ray&, IntersectResult*) override;
 	};
 }
 

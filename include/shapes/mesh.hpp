@@ -16,8 +16,8 @@ namespace renderer {
 		Triangle(Mesh* m):mesh(m), indexes{ 0,0,0 } {};
 		Triangle(const Triangle&);
 		Triangle operator = (const Triangle&);
-		virtual void Init();
-		virtual int Intersect(Ray&, IntersectResult*);
+		virtual void Init() override;
+		virtual int Intersect(Ray&, IntersectResult*) override;
 	};
 
 	class Mesh: public Shape {
@@ -30,8 +30,8 @@ namespace renderer {
 		Mesh(VectorArray& v, VectorArray& n, UIntArray& i, UVArray& uv):vertices(v),normals(n),indexes(i),uvs(uv){};
 		Mesh(const Mesh&);
 		Mesh operator = (const Mesh&);
-		virtual void Init();
-		virtual int Intersect(Ray&, IntersectResult*);
+		virtual void Init() override;
+		virtual int Intersect(Ray&, IntersectResult*) override;
 	};
 
 }
