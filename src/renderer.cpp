@@ -113,10 +113,12 @@ namespace renderer {
 				//printf("sx,sy=%f,%f\n",sx,sy);
 				Ray& ray = camera.GenerateRay(sx, sy);
 				Color color = rayTraceRecursive(&(*scene), ray, lightDir, maxReflect);
+				int r = min(int(color.r() * 255), 255),
+					g = min(int(color.g() * 255), 255),
+					b = min(int(color.b() * 255), 255);
+				//printf("[rgb] %d %d = %d %d %d\n", x, y, r, g, b);
 				film->set(x, y, 
-					min(int(color.r() * 255), 255),
-					min(int(color.g() * 255), 255),
-					min(int(color.b() * 255), 255));
+					r, g, b);
 			}
 		}
 	}

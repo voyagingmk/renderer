@@ -19,7 +19,11 @@
 #include <assert.h>
 #include <type_traits>
 #include <algorithm>
-
+#include <fstream>
+#include <map>
+#include <thread>
+#include <ctime>
+#include <chrono>
 #include "stdafx.h"
 
 
@@ -74,6 +78,16 @@ namespace renderer {
 		return std::abs(x - y) < std::numeric_limits<T>::epsilon() * std::abs(x + y) * ulp
 			// unless the result is subnormal
 			|| std::abs(x - y) < std::numeric_limits<T>::min();
+	}
+
+	static nlohmann::json readJson(const char * filepath) {
+		using json = nlohmann::json;
+		std::ifstream f(filepath);
+		std::string s((std::istreambuf_iterator<char>(f)),
+			(std::istreambuf_iterator<char>()));
+		f.close();
+		json j = json::parse(s);
+		return j;
 	}
 }
 

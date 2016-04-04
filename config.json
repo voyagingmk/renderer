@@ -1,6 +1,6 @@
 {
-    "width": 400,
-    "height": 400,
+    "width": 300,
+    "height": 300,
     "multithread": 3,
     "camera": {
         "eye": [0, 5, 15],

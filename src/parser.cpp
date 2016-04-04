@@ -1,10 +1,4 @@
 #include "stdafx.h"
-#include <fstream>
-#include <map>
-#include <stdio.h>
-#include <thread>
-#include <ctime>
-#include <chrono>
 #include "parser.hpp"
 #include "geometry.hpp"
 #include "renderer.hpp"
@@ -28,13 +22,7 @@ namespace renderer {
 		renderer.rayTraceReflection(film, pUnion, camera, lightDir, maxReflect, x, y, w, h);
 	}
 
-	int Parser::parseFromFile(std::string path, Film * film) {
-		using json = nlohmann::json;
-		std::ifstream f("config.json");
-		std::string config_string((std::istreambuf_iterator<char>(f)),
-			(std::istreambuf_iterator<char>()));
-		f.close();
-		json config = json::parse(config_string);
+	int Parser::parseFromJson(nlohmann::json config, Film * film) {
 
 		int width = config["width"], height = config["height"], multithread = config["multithread"];
 		printf("width: %d, height: %d, multithread: %d \n", width, height, multithread);

@@ -9,7 +9,7 @@ namespace renderer {
 
 	class Parser {
 	public:
-		int parseFromFile(std::string path, Film * film);
+		int parseFromJson(nlohmann::json config, Film * film);
 	private:
 		Color parseColor(std::string c);
 		void parserObj(std::string inputfile);
