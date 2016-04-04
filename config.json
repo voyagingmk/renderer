@@ -12,10 +12,10 @@
     "obj": "test.obj",
     "scene": [{
         "type": "DirectionLight",
-        "dir": [0, 0, 1],
+        "dir": [0, 0, -1],
         "color": [255, 255, 255]
     }, {
-        "type": "PointLight",
+        "type": "PointLight5",
         "pos": [50, 0, 0],
         "color": [255, 255, 255]
     }, {

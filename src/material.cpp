@@ -10,7 +10,7 @@ namespace renderer {
 		scale(scale) {
 	};
 
-	Color CheckerMaterial::Sample(Ray& ray, Vector3dF& position, Vector3dF& normal, Vector3dF& lightDir) {
+	Color CheckerMaterial::Sample(Ray& ray, Vector3dF& position, Vector3dF& normal, Vector3dF& incidence) {
 		return abs((int(std::floor(position.x * 0.1)) + int(std::floor(position.z * scale))) % 2) < 1 ? Color::Black : Color::White;
 	};
 
@@ -23,7 +23,8 @@ namespace renderer {
 
 	};
 
-	Color PhongMaterial::Sample(Ray& ray, Vector3dF& position, Vector3dF& normal, Vector3dF& lightDir) {
+	Color PhongMaterial::Sample(Ray& ray, Vector3dF& position, Vector3dF& normal, Vector3dF& incidence) {
+		Vector3dF lightDir = -incidence;
 		float NdotL = normal.Dot(lightDir);
 		Vector3dF D = lightDir - ray.d;
 		if (almost_equal(D.Length(), 0.f, 2))

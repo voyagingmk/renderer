@@ -17,9 +17,9 @@
 
 namespace renderer {
 
-	void renderArea(Renderer &renderer, Film* film, Shape* pUnion, PerspectiveCamera& camera, Vector3dF& lightDir, int maxReflect, int x, int y, int w, int h)
+	void renderArea(Renderer &renderer, Film* film, Shape* pUnion, PerspectiveCamera& camera, std::vector<Light*>& lights, int maxReflect, int x, int y, int w, int h)
 	{
-		renderer.rayTraceReflection(film, pUnion, camera, lightDir, maxReflect, x, y, w, h);
+		renderer.rayTraceReflection(film, pUnion, camera, lights, maxReflect, x, y, w, h);
 	}
 
 	int Parser::parseFromJson(nlohmann::json config, Film * film) {
@@ -49,7 +49,6 @@ namespace renderer {
 		int maxReflect = config["maxReflect"];
 
 		std::vector<Light*> lights;
-		Vector3dF lightDir(0,0,1);
 		std::vector<Shape*> vecGeo;
 		for (auto objinfo : config["scene"]) {
 			Shape* pg = nullptr;
@@ -108,6 +107,9 @@ namespace renderer {
 				vecGeo.push_back(pg);
 		} 
 		ShapeUnion shapeUnion(vecGeo);
+		auto l = lights[0];
+
+		auto dd = l->incidence(Vector3dF(0, 0, 0));
 
 		auto eye = config["camera"]["eye"];
 		auto front = config["camera"]["front"];
@@ -122,8 +124,8 @@ namespace renderer {
 
 		auto time0 = std::chrono::system_clock::now();
 		if (!multithread) {
-			renderer.rayTrace(film, shapeUnion, camera, lightDir);
-			renderer.rayTraceReflection(film, &shapeUnion, camera, std::ref(lightDir), 4);
+			renderer.rayTrace(film, shapeUnion, camera, lights);
+			renderer.rayTraceReflection(film, &shapeUnion, camera, std::ref(lights), 4);
 		}
 		else {
 			int threads_num = int(pow(2.0, multithread));
@@ -133,7 +135,7 @@ namespace renderer {
 				int start_h = i * h, len_h = h;
 				if (i == threads_num - 1)
 					len_h += h_left;
-				std::thread* t = new std::thread(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), std::ref(lightDir), maxReflect, 0, start_h, width, len_h);
+				std::thread* t = new std::thread(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), std::ref(lights), maxReflect, 0, start_h, width, len_h);
 				threads[i] = t;
 			}
 			for (int i = 0; i < threads_num; i++) {
