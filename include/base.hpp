@@ -90,6 +90,12 @@ namespace renderer {
 		json j = json::parse(s);
 		return j;
 	}
+	static float randomFloat(){
+		static std::mt19937 eng(time(0));
+		static std::uniform_real_distribution<float> fraction_dist;
+		return fraction_dist(eng);
+
+	}
 }
 
 #endif // BASE_HPP

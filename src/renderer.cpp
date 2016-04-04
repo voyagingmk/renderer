@@ -92,8 +92,6 @@ namespace renderer {
 			for (int i = 0; i < lights.size(); i++) {
 				Color c;
 				if (lights[i]->softshadow) {
-					std::mt19937 eng(0);
-					std::uniform_real_distribution<float> fraction_dist;
 					Vector3dF incidenceCenter = lights[i]->incidence(result.position);
 					Vector3dF incidenceNormal = incidenceCenter.Normalize();
 					Vector3dF rayNormal(-incidenceCenter.y, incidenceCenter.x, 0);
@@ -102,8 +100,8 @@ namespace renderer {
 					int raysPerFan = lights[i]->shadowrays / 4;
 					for (int quadrant = 0; quadrant < 4; quadrant++) {
 						for (int r = 0; r < raysPerFan; r++) {
-							Vector3dF d = rayNormal.rotate(incidenceNormal, PI * (quadrant * 90.0f + fraction_dist(eng) * 90.f) / 180.f);
-							Ray shadowrays(result.position, (-incidenceCenter) + d * fraction_dist(eng) * lights[i]->radius);
+							Vector3dF d = rayNormal.rotate(incidenceNormal, PI * (quadrant * 90.0f + randomFloat() * 90.f) / 180.f);
+							Ray shadowrays(result.position, (-incidenceCenter) + d * randomFloat() * lights[i]->radius);
 							shadowrays.d = shadowrays.d.Normalize();
 							IntersectResult _result;
 							scene->Intersect(shadowrays, &_result);

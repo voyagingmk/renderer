@@ -49,10 +49,6 @@ namespace renderer {
 			matDict[objinfo["id"]] = mt;
 		}
 		int maxReflect = config["maxReflect"];
-
-		//Vector3dF v(1, 0, 0),v2 = v.rotate(Vector3dF(0,0,1),PI * 180.f/180.f);
-		
-
 		std::vector<Light*> lights;
 		std::vector<Shape*> vecGeo;
 		for (auto objinfo : config["scene"]) {
