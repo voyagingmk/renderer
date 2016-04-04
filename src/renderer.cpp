@@ -90,15 +90,50 @@ namespace renderer {
 			float reflectiveness = pMaterial->reflectiveness;
 			Color color(0, 0, 0);
 			for (int i = 0; i < lights.size(); i++) {
-				Vector3dF incidence = lights[i]->incidence(result.position);
-				//Is this light visible 
-				Ray light_inv_ray(result.position, (-incidence).Normalize());
-				IntersectResult _result;
-				scene->Intersect(light_inv_ray, &_result);
-				if (_result.geometry) {
-					continue;
+				Color c;
+				if (lights[i]->softshadow) {
+					std::mt19937 eng(0);
+					std::uniform_real_distribution<float> fraction_dist;
+					Vector3dF incidenceCenter = lights[i]->incidence(result.position);
+					Vector3dF incidenceNormal = incidenceCenter.Normalize();
+					Vector3dF rayNormal(-incidenceCenter.y, incidenceCenter.x, 0);
+					rayNormal = rayNormal.Normalize();
+					int hitTimes = 0;
+					int raysPerFan = lights[i]->shadowrays / 4;
+					for (int quadrant = 0; quadrant < 4; quadrant++) {
+						for (int r = 0; r < raysPerFan; r++) {
+							Vector3dF d = rayNormal.rotate(incidenceNormal, PI * (quadrant * 90.0f + fraction_dist(eng) * 90.f) / 180.f);
+							Ray shadowrays(result.position, (-incidenceCenter) + d * fraction_dist(eng) * lights[i]->radius);
+							shadowrays.d = shadowrays.d.Normalize();
+							IntersectResult _result;
+							scene->Intersect(shadowrays, &_result);
+							if (_result.geometry) {
+								hitTimes++;
+							}
+						}
+					}
+					c = pMaterial->Sample(ray, result.position, result.normal, incidenceNormal);
+					if (hitTimes > 0) {
+						//printf("%d\n", hitTimes);
+						float black_ratio = hitTimes / (float)lights[i]->shadowrays;
+						//c = c * ( 1.0f - black_ratio) + Color::Black * black_ratio;
+						c = c.Modulate(Color::White * (1.0f - black_ratio));
+						c = c.clamp();
+					}
 				}
-				Color c = pMaterial->Sample(ray, result.position, result.normal, incidence);
+				else {
+					Vector3dF incidenceNormal = lights[i]->incidenceNormal(result.position);
+					//Is this light visible 
+					Ray shadowrays(result.position, -incidenceNormal);
+					IntersectResult _result;
+					scene->Intersect(shadowrays, &_result);
+					if (_result.geometry) {
+						c = Color::Black;
+					}
+					else {
+						c = pMaterial->Sample(ray, result.position, result.normal, incidenceNormal);
+					}
+				}
 				color = color + c;
 			}
 			color = Color(color * (1.0f - reflectiveness));

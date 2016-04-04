@@ -50,6 +50,9 @@ namespace renderer {
 		}
 		int maxReflect = config["maxReflect"];
 
+		//Vector3dF v(1, 0, 0),v2 = v.rotate(Vector3dF(0,0,1),PI * 180.f/180.f);
+		
+
 		std::vector<Light*> lights;
 		std::vector<Shape*> vecGeo;
 		for (auto objinfo : config["scene"]) {
@@ -64,8 +67,15 @@ namespace renderer {
 			else if (objinfo["type"] == "PointLight") {
 				auto pos = objinfo["pos"];
 				auto color = objinfo["color"];
+				auto radius = objinfo["radius"];
+				auto shadowrays = objinfo["shadowrays"];
+				auto softshadow = objinfo["softshadow"];
 				auto pool = GetPool<PointLight>();
-				light = static_cast<Light*>(pool->newElement(Vector3dF(pos[0], pos[1], pos[2])));
+				light = static_cast<Light*>(pool->newElement(
+					Vector3dF(pos[0], pos[1], pos[2]),
+					softshadow,
+					radius,
+					shadowrays));
 			}
 			else if (objinfo["type"] == "Sphere") {
 				auto pos = objinfo["pos"];

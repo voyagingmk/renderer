@@ -1,6 +1,6 @@
 {
-    "width": 300,
-    "height": 300,
+    "width": 800,
+    "height": 800,
     "multithread": 3,
     "camera": {
         "eye": [0, 5, 15],
@@ -13,10 +13,14 @@
     "scene": [{
         "type": "DirectionLight0",
         "dir": [0, -1, 0],
+        "softshadow": false,
         "color": [255, 255, 255]
     }, {
         "type": "PointLight",
-        "pos": [-50, 50, 0],
+        "pos": [-40, 40, 0],
+        "radius": 15,
+        "shadowrays": 32,
+        "softshadow": true,
         "color": [255, 255, 255]
     }, {
         "type": "Sphere",

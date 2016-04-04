@@ -7,8 +7,14 @@
 namespace renderer {
 	class Light {
 	public:
+		bool softshadow;
+		float radius;
+		int shadowrays;
+	public:
 		Light() noexcept;
+		Light(bool s, float r, int rays) noexcept;
 		//incidence: lightPos towards targetPos
+		virtual Vector3dF incidenceNormal(Vector3dF& targetPos) = 0;
 		virtual Vector3dF incidence(Vector3dF& targetPos) = 0;
 		virtual void Init() = 0;
 	};
@@ -18,6 +24,9 @@ namespace renderer {
 		Vector3dF dir;
 	public:
 		DirectionLight(Vector3dF& dir) noexcept;
+		virtual Vector3dF incidenceNormal(Vector3dF& targetPos) override {
+			return dir.Normalize();
+		}
 		virtual Vector3dF incidence(Vector3dF& targetPos) override {
 			return dir;
 		}
@@ -28,9 +37,15 @@ namespace renderer {
 	public:
 		Vector3dF pos;
 	public:
-		PointLight(Vector3dF& pos) noexcept;
-		virtual Vector3dF incidence(Vector3dF& targetPos) override {
+		PointLight(Vector3dF& pos,
+			bool softshadow,
+			float radius,
+			int shadowrays) noexcept;
+		virtual Vector3dF incidenceNormal(Vector3dF& targetPos) override {
 			return (targetPos - pos).Normalize();
+		}		
+		virtual Vector3dF incidence(Vector3dF& targetPos) override {
+			return targetPos - pos;
 		}
 		virtual void Init() override;
 	};

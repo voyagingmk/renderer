@@ -13,12 +13,13 @@ namespace renderer {
 		Color& operator = (const Color&);
 		Color& operator = (Color&&);
 		~Color();
-		Color operator + (const Color&);
-		Color operator - (const Color&);
-		Color operator * (float f);
-		Color operator / (float f);
+		Color operator + (const Color&) const;
+		Color operator - (const Color&) const;
+		Color operator * (float f) const;
+		Color operator / (float f) const;
 		bool operator == (const Color&);
 		Color Modulate (const Color&) const;
+		Color clamp() const;
 		inline float r() const { return rgb[0]; };
 		inline float g() const { return rgb[1]; };
 		inline float b() const { return rgb[2]; };
