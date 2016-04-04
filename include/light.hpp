@@ -29,7 +29,7 @@ namespace renderer {
 	public:
 		PointLight(Vector3dF& pos) noexcept;
 		virtual Vector3dF incidence(Vector3dF& targetPos) override {
-			return targetPos - pos;
+			return (targetPos - pos).Normalize();
 		}
 		virtual void Init() override;
 	};

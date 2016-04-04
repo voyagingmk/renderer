@@ -107,9 +107,6 @@ namespace renderer {
 				vecGeo.push_back(pg);
 		} 
 		ShapeUnion shapeUnion(vecGeo);
-		auto l = lights[0];
-
-		auto dd = l->incidence(Vector3dF(0, 0, 0));
 
 		auto eye = config["camera"]["eye"];
 		auto front = config["camera"]["front"];
