@@ -128,8 +128,12 @@ namespace renderer {
 		else {
 			int threads_num = int(pow(2.0, multithread));
 			std::thread* *threads = new std::thread*[threads_num];
+			int h = height / threads_num, h_left = height % threads_num;
 			for (int i = 0; i < threads_num; i++) {
-				std::thread* t = new std::thread(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), std::ref(lightDir), maxReflect, 0, i * height / threads_num, width, height / threads_num);
+				int start_h = i * h, len_h = h;
+				if (i == threads_num - 1)
+					len_h += h_left;
+				std::thread* t = new std::thread(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), std::ref(lightDir), maxReflect, 0, start_h, width, len_h);
 				threads[i] = t;
 			}
 			for (int i = 0; i < threads_num; i++) {
