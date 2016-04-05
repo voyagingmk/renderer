@@ -14,8 +14,8 @@ namespace renderer {
 		Plane(Vector3dF& normal, float distance);
 		Plane(const Plane &);
 		Plane operator = (const Plane&);
-		virtual void Init();
-		virtual int Intersect(Ray&, IntersectResult*);
+		virtual void Init() override;
+		virtual int Intersect(Ray&, IntersectResult*) override;
 	};
 
 }

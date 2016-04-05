@@ -37,19 +37,19 @@ namespace renderer {
 
 	Color::~Color() {};
 
-	Color Color::operator + (const Color& c) {
+	Color Color::operator + (const Color& c) const {
 		return Color(rgb[0] + c.r(), rgb[1] + c.g(), rgb[2] + c.b());
 	};
 
-	Color Color::operator - (const Color& c) {
+	Color Color::operator - (const Color& c) const {
 		return Color(rgb[0] - c.r(), rgb[1] - c.g(), rgb[2] - c.b());
 	};
 
-	Color Color::operator * (float f) {
+	Color Color::operator * (float f) const {
 		return Color(rgb[0] * f, rgb[1] * f, rgb[2] * f);
 	};
 
-	Color Color::operator / (float f) {
+	Color Color::operator / (float f) const {
 		return Color(rgb[0] / f, rgb[1] / f, rgb[2] / f);
 	};
 
@@ -59,7 +59,12 @@ namespace renderer {
 	Color Color::Modulate(const Color& c) const {
 		return Color(rgb[0] * c.r(), rgb[1] * c.g(), rgb[2] * c.b());
 	};
-
+	Color Color::clamp() const {
+		return Color(
+			rgb[0] < 1.f ? (rgb[0] > 0.f ? rgb[0] : 0.f) : 1.f,
+			rgb[1] < 1.f ? (rgb[1] > 0.f ? rgb[1] : 0.f) : 1.f,
+			rgb[2] < 1.f ? (rgb[2] > 0.f ? rgb[2] : 0.f) : 1.f);
+	};
 
 	const Color Color::Black = Color(0.f, 0.f, 0.f);
 	const Color Color::White = Color(1.0f, 1.0f, 1.0f);

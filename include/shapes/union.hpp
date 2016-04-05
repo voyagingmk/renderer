@@ -11,8 +11,8 @@ namespace renderer {
 		std::vector<Shape*> geometries;
 	public:
 		ShapeUnion(std::vector<Shape*>);
-		void Init();
-		int Intersect(Ray&, IntersectResult*);
+		virtual void Init() override;
+		virtual int Intersect(Ray&, IntersectResult*) override;
 	};
 }
 

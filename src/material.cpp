@@ -5,13 +5,16 @@
 #include "ray.hpp"
 
 namespace renderer {
-	CheckerMaterial::CheckerMaterial(float scale, float reflectiveness) :
+	CheckerMaterial::CheckerMaterial(float scale, float reflectiveness, Color c1, Color c2) :
 		Material(reflectiveness),
-		scale(scale) {
+		scale(scale),
+		color1(c1),
+		color2(c2)
+	{
 	};
 
-	Color CheckerMaterial::Sample(Ray& ray, Vector3dF& position, Vector3dF& normal) {
-		return abs((int(std::floor(position.x * 0.1)) + int(std::floor(position.z * scale))) % 2) < 1 ? Color::Black : Color::White;
+	Color CheckerMaterial::Sample(Ray& ray, Vector3dF& position, Vector3dF& normal, Vector3dF& incidence) {
+		return abs((int(std::floor(position.x * 0.1)) + int(std::floor(position.z * scale))) % 2) < 1 ? color1 : color2;
 	};
 
 
@@ -23,17 +26,20 @@ namespace renderer {
 
 	};
 
-	Color PhongMaterial::Sample(Ray& ray, Vector3dF& position, Vector3dF& normal) {
-		float NdotL = normal.Dot(LightDir);
-		Vector3dF H = (LightDir - ray.d).Normalize();
+	Color PhongMaterial::Sample(Ray& ray, Vector3dF& position, Vector3dF& normal, Vector3dF& incidence) {
+		Vector3dF lightDir = -incidence;
+		float NdotL = normal.Dot(lightDir);
+		Vector3dF D = lightDir - ray.d;
+		if (almost_equal(D.Length(), 0.f, 2))
+			return Color::White;
+		Vector3dF H = D.Normalize();
 		float NdotH = normal.Dot(H);
 		Color diffuseTerm = diffuse * (max(NdotL, 0.0f));
 		Color specularTerm = specular * (float)(std::pow(max(NdotH, 0.0f), shininess));
+		assert(!isnan(diffuseTerm.r()) && !isnan(diffuseTerm.r()) && !isnan(diffuseTerm.r()));
+		assert(!isnan(specularTerm.r()) && !isnan(specularTerm.r()) && !isnan(specularTerm.r()));
+
 		return Color::White.Modulate(diffuseTerm + specularTerm);
 	};
-
-
-	Vector3dF Material::LightDir = Vector3dF(1.f, 1.f, 1.f).Normalize();
-	Color Material::LightColor = Color::White;
 
 }

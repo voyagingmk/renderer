@@ -27,8 +27,8 @@ namespace renderer {
 		// Film Interface
 		ImageFilm(int xres, int yres, Image* image): Film(xres, yres),img(image) {}
 		virtual ~ImageFilm() {};
-		virtual void set(int x, int y, int r, int g, int b);
-		virtual void resize(int xres, int yres);
+		virtual void set(int x, int y, int r, int g, int b) override;
+		virtual void resize(int xres, int yres) override;
 	};
 
 	class SDLFilm : public Film {
@@ -38,8 +38,8 @@ namespace renderer {
 		// Film Interface
 		SDLFilm(int xres, int yres);
 		virtual ~SDLFilm() {};
-		virtual void set(int x, int y, int r, int g, int b);
-		virtual void resize(int xres, int yres);
+		virtual void set(int x, int y, int r, int g, int b) override;
+		virtual void resize(int xres, int yres) override;
 	};
 };
 

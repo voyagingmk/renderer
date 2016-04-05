@@ -38,17 +38,24 @@ int main(int argc, char *argv[]) {
 	SDL_Window *win = NULL;
 	SDL_Renderer *renderer = NULL;
 	SDL_Texture *bitmapTex = NULL;
-	int posX = 100, posY = 100, width = 400, height = 400;
+	int width = 512, height = 512;
 
-	SDL_Init(SDL_INIT_VIDEO);
+	if (SDL_Init(SDL_INIT_VIDEO) < 0)
+		return 1;
 
-	win = SDL_CreateWindow("Renderer", posX, posY, width, height, 0);
+	using json = nlohmann::json;
+	json config = readJson("config.json");
+	width = config["width"], height = config["height"];
+
+	win = SDL_CreateWindow("Renderer", 
+		SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 
+		width, height, 0);
 
 	renderer = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
 
 	SDLFilm film(width, height);
 	Parser parser;
-	parser.parseFromFile("config.json", &film);
+	parser.parseFromJson(config, &film);
 	bitmapTex = SDL_CreateTextureFromSurface(renderer, film.img);
 	SDL_RenderClear(renderer);
 	SDL_RenderCopy(renderer, bitmapTex, NULL, NULL);
@@ -60,6 +67,9 @@ int main(int argc, char *argv[]) {
 				break;
 			}
 		}
+		SDL_RenderPresent(renderer);
+		SDL_Delay(30);
+
 	}
 	SDL_DestroyTexture(bitmapTex);
 	SDL_DestroyRenderer(renderer);

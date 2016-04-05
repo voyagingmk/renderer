@@ -7,6 +7,8 @@
 namespace renderer {
 	class Ray {
 	public:
+		//float mint;
+		//float maxt;
 		Vector3dF o;//origin
 		Vector3dF d;//direction
 	public:

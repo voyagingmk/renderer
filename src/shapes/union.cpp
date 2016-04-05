@@ -20,8 +20,8 @@ namespace renderer {
 	int ShapeUnion::Intersect(Ray& ray, IntersectResult* minResult) {
 		float minDistance = FLOAT_MAX;
 		*minResult = IntersectResult::NoHit;
-		IntersectResult resultTmp;
 		for (auto p : geometries) {
+			IntersectResult resultTmp;
 			p->Intersect(ray, &resultTmp);
 			if (resultTmp.geometry && resultTmp.distance < minDistance) {
 				minDistance = resultTmp.distance;

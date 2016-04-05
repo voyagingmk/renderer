@@ -1,10 +1,4 @@
 #include "stdafx.h"
-#include <fstream>
-#include <map>
-#include <stdio.h>
-#include <thread>
-#include <ctime>
-#include <chrono>
 #include "parser.hpp"
 #include "geometry.hpp"
 #include "renderer.hpp"
@@ -16,24 +10,19 @@
 #include "union.hpp"
 #include "film.hpp"
 #include "mesh.hpp"
+#include "light.hpp"
 
 #define TINYOBJLOADER_IMPLEMENTATION // define this in only *one* .cc
 #include "tiny_obj_loader.h"
 
 namespace renderer {
 
-	void renderArea(Renderer &renderer, Film* film, Shape* pUnion, PerspectiveCamera& camera, int maxReflect, int x, int y, int w, int h)
+	void renderArea(Renderer &renderer, Film* film, Shape* pUnion, PerspectiveCamera& camera, std::vector<Light*>& lights, int maxReflect, int x, int y, int w, int h)
 	{
-		renderer.rayTraceReflection(film, pUnion, camera, maxReflect, x, y, w, h);
+		renderer.rayTraceReflection(film, pUnion, camera, lights, maxReflect, x, y, w, h);
 	}
 
-	int Parser::parseFromFile(std::string path, Film * film) {
-		using json = nlohmann::json;
-		std::ifstream f("config.json");
-		std::string config_string((std::istreambuf_iterator<char>(f)),
-			(std::istreambuf_iterator<char>()));
-		f.close();
-		json config = json::parse(config_string);
+	int Parser::parseFromJson(nlohmann::json config, Film * film) {
 
 		int width = config["width"], height = config["height"], multithread = config["multithread"];
 		printf("width: %d, height: %d, multithread: %d \n", width, height, multithread);
@@ -53,14 +42,38 @@ namespace renderer {
 			}
 			else if (objinfo["type"] == "Checker") {
 				auto pool = GetPool<CheckerMaterial>();
-				mt = pool->newElement(objinfo["scale"], objinfo["reflectiveness"]);
+				auto c1 = objinfo["color1"], c2 = objinfo["color2"];
+				Color color1 = parseColor(c1, Color::Black), color2 = parseColor(c2, Color::White);
+				mt = pool->newElement(objinfo["scale"], objinfo["reflectiveness"], color1, color2);
 			}
 			matDict[objinfo["id"]] = mt;
 		}
+		int maxReflect = config["maxReflect"];
+		std::vector<Light*> lights;
 		std::vector<Shape*> vecGeo;
 		for (auto objinfo : config["scene"]) {
 			Shape* pg = nullptr;
-			if (objinfo["type"] == "Sphere") {
+			Light* light = nullptr;
+			if (objinfo["type"] == "DirectionLight") {
+				auto dir = objinfo["dir"];
+				auto color = objinfo["color"];
+				auto pool = GetPool<DirectionLight>();
+				light = static_cast<Light*>(pool->newElement(Vector3dF(dir[0], dir[1], dir[2])));
+			}
+			else if (objinfo["type"] == "PointLight") {
+				auto pos = objinfo["pos"];
+				auto color = objinfo["color"];
+				auto radius = objinfo["radius"];
+				auto shadowrays = objinfo["shadowrays"];
+				auto softshadow = objinfo["softshadow"];
+				auto pool = GetPool<PointLight>();
+				light = static_cast<Light*>(pool->newElement(
+					Vector3dF(pos[0], pos[1], pos[2]),
+					softshadow,
+					radius,
+					shadowrays));
+			}
+			else if (objinfo["type"] == "Sphere") {
 				auto pos = objinfo["pos"];
 				auto pool = GetPool<Sphere>();
 				pg = pool->newElement(Vector3dF(pos[0], pos[1], pos[2]),
@@ -94,7 +107,12 @@ namespace renderer {
 				pg = pool->newElement(vertices, normals, indexes, uvs);
 				pg->material = matDict[objinfo["matId"]];
 			}
-			vecGeo.push_back(pg);
+			else
+				continue;
+			if (light)
+				lights.push_back(light);
+			if(pg)
+				vecGeo.push_back(pg);
 		} 
 		ShapeUnion shapeUnion(vecGeo);
 
@@ -103,51 +121,30 @@ namespace renderer {
 		auto up = config["camera"]["up"];
 
 		PerspectiveCamera camera(Vector3dF(eye[0], eye[1], eye[2]),
-			Vector3dF(front[0], front[1], front[2]),
-			Vector3dF(up[0], up[1], up[2]),
+			Vector3dF(front[0], front[1], front[2]).Normalize(),
+			Vector3dF(up[0], up[1], up[2]).Normalize(),
 			config["camera"]["fov"]);
 
 		Renderer renderer;
 
 		auto time0 = std::chrono::system_clock::now();
 		if (!multithread) {
-			renderer.rayTrace(film, shapeUnion, camera);
-			renderer.rayTraceReflection(film, &shapeUnion, camera, 4);
+			renderer.rayTrace(film, shapeUnion, camera, lights);
+			renderer.rayTraceReflection(film, &shapeUnion, camera, std::ref(lights), 4);
 		}
 		else {
-			if (multithread == 1) {
-				std::thread t1(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), 4, 0, 0, width, height / 2);
-				std::thread t2(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), 4, 0, height / 2, width, height / 2);
-				t1.join();
-				t2.join();
+			int threads_num = int(pow(2.0, multithread));
+			std::thread* *threads = new std::thread*[threads_num];
+			int h = height / threads_num, h_left = height % threads_num;
+			for (int i = 0; i < threads_num; i++) {
+				int start_h = i * h, len_h = h;
+				if (i == threads_num - 1)
+					len_h += h_left;
+				std::thread* t = new std::thread(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), std::ref(lights), maxReflect, 0, start_h, width, len_h);
+				threads[i] = t;
 			}
-			if (multithread == 2) {
-				std::thread t1(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), 4, 0, 0, width, height / 4);
-				std::thread t2(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), 4, 0, 1 * height / 4, width, height / 4);
-				std::thread t3(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), 4, 0, 2 * height / 4, width, height / 4);
-				std::thread t4(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), 4, 0, 3 * height / 4, width, height / 4);
-				t1.join();
-				t2.join();
-				t3.join();
-				t4.join();
-			}
-			if (multithread == 3) {
-				std::thread t1(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), 4, 0, 0, width, height / 8);
-				std::thread t2(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), 4, 0, 1 * height / 8, width, height / 8);
-				std::thread t3(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), 4, 0, 2 * height / 8, width, height / 8);
-				std::thread t4(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), 4, 0, 3 * height / 8, width, height / 8);
-				std::thread t5(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), 4, 0, 4 * height / 8, width, height / 8);
-				std::thread t6(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), 4, 0, 5 * height / 8, width, height / 8);
-				std::thread t7(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), 4, 0, 6 * height / 8, width, height / 8);
-				std::thread t8(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), 4, 0, 7 * height / 8, width, height / 8);
-				t1.join();
-				t2.join();
-				t3.join();
-				t4.join();
-				t5.join();
-				t6.join();
-				t7.join();
-				t8.join();
+			for (int i = 0; i < threads_num; i++) {
+				threads[i]->join();
 			}
 		}
 
