@@ -10,3 +10,8 @@ renderer.vcxproj.filters
 *.idb
 *.max
 *.mtl
+*.obj
+*.pch
+*.ilk
+*.log
+*.pdb
