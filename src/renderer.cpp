@@ -89,9 +89,14 @@ namespace renderer {
 			Material* pMaterial = result.geometry->material;
 			float reflectiveness = pMaterial->reflectiveness;
 			Color color(0, 0, 0);
+			std::mt19937 eng(4029349);
+			std::uniform_real_distribution<float> fraction_dist;
 			for (int i = 0; i < lights.size(); i++) {
 				Color c;
-				if (lights[i]->softshadow) {
+				if (!lights[i]->shadow) {
+					Vector3dF incidenceNormal = lights[i]->incidenceNormal(result.position);
+					c = pMaterial->Sample(ray, result.position, result.normal, incidenceNormal);
+				} else if (lights[i]->softshadow) {
 					Vector3dF incidenceCenter = lights[i]->incidence(result.position);
 					Vector3dF incidenceNormal = incidenceCenter.Normalize();
 					Vector3dF rayNormal(-incidenceCenter.y, incidenceCenter.x, 0);
@@ -100,8 +105,11 @@ namespace renderer {
 					int raysPerFan = lights[i]->shadowrays / 4;
 					for (int quadrant = 0; quadrant < 4; quadrant++) {
 						for (int r = 0; r < raysPerFan; r++) {
-							Vector3dF d = rayNormal.rotate(incidenceNormal, PI * (quadrant * 90.0f + randomFloat() * 90.f) / 180.f);
-							Ray shadowrays(result.position, (-incidenceCenter) + d * randomFloat() * lights[i]->radius);
+							float angle = quadrant * 90.0f + fraction_dist(eng) * 90.f;
+							float dis = fraction_dist(eng) * lights[i]->radius;
+							//printf("<%.1f, %.1f> ", angle, dis);
+							Vector3dF d = rayNormal.rotate(incidenceNormal, PI * angle / 180.f);
+							Ray shadowrays(result.position, (-incidenceCenter) + d * dis);
 							shadowrays.d = shadowrays.d.Normalize();
 							IntersectResult _result;
 							scene->Intersect(shadowrays, &_result);
@@ -109,7 +117,9 @@ namespace renderer {
 								hitTimes++;
 							}
 						}
+						//printf("\n");
 					}
+					//printf("\n");
 					c = pMaterial->Sample(ray, result.position, result.normal, incidenceNormal);
 					if (hitTimes > 0) {
 						//printf("%d\n", hitTimes);

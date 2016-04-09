@@ -65,10 +65,12 @@ namespace renderer {
 				auto color = objinfo["color"];
 				auto radius = objinfo["radius"];
 				auto shadowrays = objinfo["shadowrays"];
+				auto shadow = objinfo["shadow"];
 				auto softshadow = objinfo["softshadow"];
 				auto pool = GetPool<PointLight>();
 				light = static_cast<Light*>(pool->newElement(
 					Vector3dF(pos[0], pos[1], pos[2]),
+					shadow,
 					softshadow,
 					radius,
 					shadowrays));

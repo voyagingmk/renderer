@@ -1,6 +1,6 @@
 {
-    "width": 400,
-    "height": 400,
+    "width": 600,
+    "height": 600,
     "multithread": 3,
     "camera": {
         "eye": [0, 5, 15],
@@ -17,23 +17,40 @@
         "color": [255, 255, 255]
     }, {
         "type": "PointLight",
-        "pos": [-40, 40, 0],
+        "pos": [0, 30, -30],
         "radius": 15,
-        "shadowrays": 100,
+        "shadowrays": 128,
+        "shadow": true,
         "softshadow": true,
         "color": [255, 255, 255]
     }, {
-        "type": "Sphere",
+        "type": "PointLight0",
+        "pos": [-30, 30, 0],
+        "radius": 15,
+        "shadowrays": 16,
+        "shadow": false,
+        "softshadow": false,
+        "color": [255, 255, 255]
+    }, {
+        "type": "PointLight0",
+        "pos": [0, -30, 0],
+        "radius": 15,
+        "shadowrays": 16,
+        "shadow": false,
+        "softshadow": false,
+        "color": [255, 255, 255]
+    }, {
+        "type": "Sphere0",
         "pos": [0, 10, -10],
         "radius": 10,
         "matId": 1
     }, {
-        "type": "Mesh5",
+        "type": "Mesh",
         "vertices": [
-            [0, 5, 0],
-            [10, 5, 0],
-            [10, 5, -10],
-            [10, 15, 0]
+            [ 0, 2, -5],
+            [ 5, 5,  0],
+            [ 10, 2, -5],
+            [ 5, 12, -5]
         ],
         "vertices_b": [
             [0, 5, 0],
@@ -47,9 +64,9 @@
         ],
         "indexes": [
             0, 2, 1,
-            1, 2, 3,
-            0, 1, 3,
-            3, 2, 0
+            0,1,3,
+            1,2,3,
+            0,3,2
         ],
         "indexes_b": [
             0, 1, 2,
@@ -92,6 +109,31 @@
         "normal": [0, 1, 0],
         "distance": 0,
         "matId": 3
+    }, {
+        "type": "Plane0",
+        "normal": [0, -1, 0],
+        "distance": 10,
+        "matId": 3
+    }, {
+        "type": "Plane0",
+        "normal": [1, 0, 0],
+        "distance": 10,
+        "matId": 3
+    }, {
+        "type": "Plane0",
+        "normal": [-1, 0, 0],
+        "distance": 10,
+        "matId": 3
+    }, {
+        "type": "Plane0",
+        "normal": [0, 0, 1],
+        "distance": 10,
+        "matId": 3
+    }, {
+        "type": "Plane0",
+        "normal": [0, 0, -1],
+        "distance": 10,
+        "matId": 3
     }],
     "material": [{
         "id": 1,
@@ -120,6 +162,6 @@
         "diffuse": "Blue",
         "specular": "White",
         "shininess": 16,
-        "reflectiveness": 0.5
+        "reflectiveness": 0.0
     }]
 }

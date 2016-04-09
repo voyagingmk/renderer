@@ -7,12 +7,13 @@
 namespace renderer {
 	class Light {
 	public:
+		bool shadow;
 		bool softshadow;
 		float radius;
 		int shadowrays;
 	public:
 		Light() noexcept;
-		Light(bool s, float r, int rays) noexcept;
+		Light(bool s, bool ss, float r, int rays) noexcept;
 		//incidence: lightPos towards targetPos
 		virtual Vector3dF incidenceNormal(Vector3dF& targetPos) = 0;
 		virtual Vector3dF incidence(Vector3dF& targetPos) = 0;
@@ -38,6 +39,7 @@ namespace renderer {
 		Vector3dF pos;
 	public:
 		PointLight(Vector3dF& pos,
+			bool shadow,
 			bool softshadow,
 			float radius,
 			int shadowrays) noexcept;
