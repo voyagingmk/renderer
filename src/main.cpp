@@ -34,14 +34,18 @@ void checkSDLError(int line = -1)
 	}
 #endif
 }
-int main(int argc, char *argv[]) {
+
+
+int main3(int argc, char *argv[]) {
 	SDL_Window *win = NULL;
 	SDL_Renderer *renderer = NULL;
 	SDL_Texture *bitmapTex = NULL;
 	int width = 512, height = 512;
 
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
-		return 1;
+		sdldie("Unable to initialize SDL");
+
+	checkSDLError(__LINE__);
 
 	using json = nlohmann::json;
 	json config = readJson("config.json");
@@ -50,6 +54,9 @@ int main(int argc, char *argv[]) {
 	win = SDL_CreateWindow("Renderer", 
 		SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 
 		width, height, 0);
+	
+	if (!win) /* Die if creation failed */
+		sdldie("Unable to create window");
 
 	renderer = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
 
@@ -81,58 +88,75 @@ int main(int argc, char *argv[]) {
 }
 /* Our program's entry point */
 //https://www.opengl.org/wiki/Tutorial1:_Creating_a_Cross_Platform_OpenGL_3.2_Context_in_SDL_(C_/_SDL)
-int main3(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
-	SDL_Window *mainwindow; /* Our window handle */
-	SDL_GLContext maincontext; /* Our opengl context handle */
+	SDL_Window *win = NULL;
+	SDL_GLContext glContext = NULL; /* Our opengl context handle */
+	int width = 512, height = 512;
 
-	if (SDL_Init(SDL_INIT_VIDEO) < 0) /* Initialize SDL's Video subsystem */
-		sdldie("Unable to initialize SDL"); /* Or die on error */
+	if (SDL_Init(SDL_INIT_VIDEO) < 0)
+		sdldie("Unable to initialize SDL");
+
+	checkSDLError(__LINE__);//on Win7 would cause a ERROR about SHCore.dll, just ignore it.
+
+	using json = nlohmann::json;
+	json config = readJson("config.json");
+	width = config["width"], height = config["height"];
 
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+
+	checkSDLError(__LINE__);
 
 	/* Turn on double buffering with a 24bit Z buffer.
 	* You may need to change this to 16 or 32 for your system */
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
-	/* Create our window centered at 512x512 resolution */
-	mainwindow = SDL_CreateWindow(PROGRAM_NAME, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-		320, 240, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
-	if (!mainwindow) /* Die if creation failed */
+	checkSDLError(__LINE__);
+
+	win = SDL_CreateWindow(PROGRAM_NAME, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+		width, height, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+	if (!win)
 		sdldie("Unable to create window");
 
 	checkSDLError(__LINE__);
 
 	/* Create our opengl context and attach it to our window */
-	maincontext = SDL_GL_CreateContext(mainwindow);
+	glContext = SDL_GL_CreateContext(win);
 	checkSDLError(__LINE__);
 
-	SDL_Renderer *renderer = SDL_CreateRenderer(mainwindow, -1, SDL_RENDERER_ACCELERATED);
-	SDL_Surface *bitmapSurface = SDL_LoadBMP("hello.bmp");
-	SDL_Texture *bitmapTex = SDL_CreateTextureFromSurface(renderer, bitmapSurface);
-	SDL_FreeSurface(bitmapSurface);
-
+	SDL_Renderer *renderer = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
+	SDL_Texture *bitmapTex;
+	{
+		SDL_Surface *bitmapSurface = SDL_LoadBMP("hello.bmp");
+		bitmapTex = SDL_CreateTextureFromSurface(renderer, bitmapSurface);
+		SDL_FreeSurface(bitmapSurface);
+	}
+	checkSDLError(__LINE__);
 	/* This makes our buffer swap syncronized with the monitor's vertical refresh */
 	SDL_GL_SetSwapInterval(1);
 
 	/* Clear our buffer with a red background */
-	//glClearColor(1.0, 0.0, 0.0, 1.0);
-	//glClear(GL_COLOR_BUFFER_BIT);
+	glClearColor(1.0, 1.0,1.0, 1.0);
+	glClear(GL_COLOR_BUFFER_BIT);
 	SDL_RenderClear(renderer);
-	SDL_RenderCopy(renderer, bitmapTex, NULL, NULL);
+	int ret = SDL_RenderCopy(renderer, bitmapTex, NULL, NULL);
+	if (ret == -1)
+		sdldie("SDL_RenderCopy failed");
 	SDL_RenderPresent(renderer);
-	/* Swap our back buffer to the front */
-	SDL_GL_SwapWindow(mainwindow);
-	/* Wait 2 seconds */
 	
+	/* Swap our back buffer to the front */
+	//SDL_GL_SwapWindow(win);
+	
+	/* Wait 2 seconds */
 	SDL_Delay(2000);
 
-	/* Delete our opengl context, destroy our window, and shutdown SDL */
-	//SDL_GL_DeleteContext(maincontext);
-	//SDL_DestroyWindow(mainwindow);
-	//SDL_Quit();
+	SDL_DestroyTexture(bitmapTex);
+	SDL_DestroyRenderer(renderer);
+	SDL_GL_DeleteContext(glContext);
+	SDL_DestroyWindow(win);
+	SDL_Quit();
 
 	return 0;
 }
