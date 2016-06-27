@@ -127,12 +127,18 @@ int main(int argc, char *argv[])
 	checkSDLError(__LINE__);
 
 	SDL_Renderer *renderer = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
+	
 	SDL_Texture *bitmapTex;
+	SDLFilm film(width, height);
+	Parser parser;
+	parser.parseFromJson(config, &film);
+	bitmapTex = SDL_CreateTextureFromSurface(renderer, film.img);
+	/*
 	{
 		SDL_Surface *bitmapSurface = SDL_LoadBMP("hello.bmp");
 		bitmapTex = SDL_CreateTextureFromSurface(renderer, bitmapSurface);
 		SDL_FreeSurface(bitmapSurface);
-	}
+	}*/
 	checkSDLError(__LINE__);
 	/* This makes our buffer swap syncronized with the monitor's vertical refresh */
 	SDL_GL_SetSwapInterval(1);
