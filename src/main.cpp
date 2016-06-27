@@ -148,10 +148,18 @@ int main(int argc, char *argv[])
 	
 	/* Swap our back buffer to the front */
 	//SDL_GL_SwapWindow(win);
-	
-	/* Wait 2 seconds */
-	SDL_Delay(2000);
 
+	while (1) {
+		SDL_Event e;
+		if (SDL_PollEvent(&e)) {
+			if (e.type == SDL_QUIT) {
+				break;
+			}
+		}
+		SDL_RenderPresent(renderer);
+		SDL_Delay(30);
+
+	}
 	SDL_DestroyTexture(bitmapTex);
 	SDL_DestroyRenderer(renderer);
 	SDL_GL_DeleteContext(glContext);
