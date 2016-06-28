@@ -48,8 +48,6 @@ void Severe(const char *, ...) PRINTF_FUNC;
 
 // Error Reporting Includes
 #include <stdarg.h>
-#include<stdio.h>
-#include<stdlib.h>
 #include<string>
 #include<algorithm>
 
