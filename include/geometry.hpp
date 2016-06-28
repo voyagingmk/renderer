@@ -109,19 +109,23 @@ namespace renderer {
 			return *this;
 		}
 
-		Point3d<T> operator + (const Point3d<T>& p) {
+		Point3d<T> operator + (const Point3d<T>& p) const {
 			return Point3d<T>(x + p.x, y + p.y, z + p.z);
 		}
 
-		Point3d<T> operator - (const Point3d<T>& p) {
+		Point3d<T> operator - (const Point3d<T>& p) const {
 			return Point3d<T>(x - p.x, y - p.y, z - p.z);
 		}
 
-		Point3d<T> operator * (T f) {
+		Point3d<T> operator * (T f) const {
 			return Point3d<T>(x * f, y * f, z * f);
 		}
 
-		Point3d<T> operator / (T f) {
+		friend Point3d<T> operator * (T f, Point3d<T> p) {
+			return Point3d<T>(p.x * f, p.y * f, p.z * f);
+		}
+
+		Point3d<T> operator / (T f) const {
 			if (f == 0)
 				throw "[Point /] f = 0";
 			return Point3d<T>(x / f, y / f, z / f);

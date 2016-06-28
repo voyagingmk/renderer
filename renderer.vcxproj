@@ -131,6 +131,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <PrecompiledHeader>Create</PrecompiledHeader>
+      <AdditionalOptions>/Zm132 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -148,6 +149,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\bbox.cpp" />
     <ClCompile Include="src\color.cpp" />
     <ClCompile Include="src\common.cpp" />
     <ClCompile Include="src\film.cpp" />
@@ -168,6 +170,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\base.hpp" />
+    <ClInclude Include="include\bbox.hpp" />
     <ClInclude Include="include\camera.hpp" />
     <ClInclude Include="include\catch.hpp" />
     <ClInclude Include="include\CImg.h" />

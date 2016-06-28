@@ -94,7 +94,12 @@ namespace renderer {
 		static std::mt19937 eng(time(0));
 		static std::uniform_real_distribution<float> fraction_dist;
 		return fraction_dist(eng);
+	}
 
+	template <class T, class Q>
+	inline T Lerp(T a, T b, Q t)
+	{
+		return (T)(a * (1 - t) + b * t);
 	}
 }
 
