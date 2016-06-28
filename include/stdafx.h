@@ -6,5 +6,6 @@
 #include "CImg.h"
 #include "json.hpp"
 #include "MemoryPool.h"
+#include "error.hpp"
 
 #endif // _MSC_VER

@@ -30,13 +30,13 @@ namespace renderer {
 
 	BBox::~BBox() {};
 
-	BBox& BBox::operator = (const BBox& b) {
+	BBox& BBox::operator = (const BBox& b) noexcept {
 		pMin = b.pMin;
 		pMax = b.pMax;
 		return *this;
 	};
 
-	BBox& BBox::operator = (BBox&& b) {
+	BBox& BBox::operator = (BBox&& b) noexcept {
 		pMin = b.pMin;
 		pMax = b.pMax;
 		return *this;
@@ -53,17 +53,28 @@ namespace renderer {
 		return ret;
 	}
 
+	BBox Union(const BBox &b1, const BBox &b2) {
+		BBox ret;
+		ret.pMin.x = min(b1.pMin.x, b2.pMin.x);
+		ret.pMin.y = min(b1.pMin.y, b2.pMin.y);
+		ret.pMin.z = min(b1.pMin.z, b2.pMin.z);
+		ret.pMax.x = max(b1.pMax.x, b2.pMax.x);
+		ret.pMax.y = max(b1.pMax.y, b2.pMax.y);
+		ret.pMax.z = max(b1.pMax.z, b2.pMax.z);
+		return ret;
+	}
+
 	bool BBox::Overlaps(const BBox &b) const {
-		bool x = (pMax.x >= b.pMin.x) && (pMin.x <= b.pMax.x);
-		bool y = (pMax.y >= b.pMin.y) && (pMin.y <= b.pMax.y);
-		bool z = (pMax.z >= b.pMin.z) && (pMin.z <= b.pMax.z);
-		return (x && y && z);
+		bool overlap_x = (pMax.x >= b.pMin.x) && (pMin.x <= b.pMax.x);
+		bool overlap_y = (pMax.y >= b.pMin.y) && (pMin.y <= b.pMax.y);
+		bool overlap_z = (pMax.z >= b.pMin.z) && (pMin.z <= b.pMax.z);
+		return (overlap_x && overlap_y && overlap_z);
 	}
 
 	bool BBox::Inside(const Vector3dF &p) const {
 		return (p.x >= pMin.x && p.x <= pMax.x &&
-			p.y >= pMin.y && p.y <= pMax.y &&
-			p.z >= pMin.z && p.z <= pMax.z);
+				p.y >= pMin.y && p.y <= pMax.y &&
+				p.z >= pMin.z && p.z <= pMax.z);
 	}
 
 	void BBox::Expand(float delta) {

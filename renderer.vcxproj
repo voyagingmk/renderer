@@ -178,6 +178,7 @@
     <ClInclude Include="include\common.hpp" />
     <ClInclude Include="include\curve.hpp" />
     <ClInclude Include="include\draw.hpp" />
+    <ClInclude Include="include\error.hpp" />
     <ClInclude Include="include\film.hpp" />
     <ClInclude Include="include\light.hpp" />
     <ClInclude Include="include\MemoryPool.h" />

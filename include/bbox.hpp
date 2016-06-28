@@ -16,9 +16,10 @@ namespace renderer {
 		BBox(const BBox& b) noexcept;
 		BBox(BBox&& b) noexcept;
 		~BBox();
-		BBox& operator = (const BBox& b);
-		BBox& operator = (BBox&& b);
+		BBox& operator = (const BBox& b) noexcept;
+		BBox& operator = (BBox&& b) noexcept;
 		BBox Union(const BBox &b, const Vector3dF &p);
+		friend BBox Union(const BBox &b1, const BBox &b2);
 		bool Overlaps(const BBox &b) const;
 		bool Inside(const Vector3dF &pt) const;
 		void Expand(float delta);
@@ -28,6 +29,15 @@ namespace renderer {
 		Vector3dF Lerp(float tx, float ty, float tz) const;
 		Vector3dF Offset(const Vector3dF &p) const; 
 		void BoundingSphere(Vector3dF *c, float *rad) const;
+		inline const Vector3dF &operator[](int i) const {
+			Assert(i == 0 || i == 1);
+			return (&pMin)[i];
+		}
+		inline Vector3dF &operator[](int i) {
+			Assert(i == 0 || i == 1);
+			return (&pMin)[i];
+		}
+
 	};
 }
 #endif // BBOX_HPP
