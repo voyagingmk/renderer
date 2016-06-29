@@ -167,6 +167,7 @@
     <ClCompile Include="src\shapes\sphere.cpp" />
     <ClCompile Include="src\geometry.cpp" />
     <ClCompile Include="src\shapes\union.cpp" />
+    <ClCompile Include="src\transform.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\base.hpp" />
@@ -195,6 +196,7 @@
     <ClInclude Include="include\geometry.hpp" />
     <ClInclude Include="include\shapes\union.hpp" />
     <ClInclude Include="include\stdafx.h" />
+    <ClInclude Include="include\matrix.hpp" />
     <ClInclude Include="include\transform.hpp" />
   </ItemGroup>
   <ItemGroup>

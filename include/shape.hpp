@@ -2,7 +2,7 @@
 #define RENDERER_SHAPE_HPP
 
 #include "base.hpp"
-#include "transform.hpp"
+#include "matrix.hpp"
 
 namespace renderer {
 	class Shape {
