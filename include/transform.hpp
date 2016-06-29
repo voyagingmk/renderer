@@ -8,13 +8,13 @@
 
 namespace renderer {
 
-	class Transform {
+	class Transform4x4 {
 	public:
 		Matrix4x4 m, mInv;
 	public:
-		Transform() { }
+		Transform4x4() { }
 
-		Transform(const float mat[4][4]) {
+		Transform4x4(const float mat[4][4]) {
 			m = Matrix4x4{ 
 				mat[0][0], mat[0][1], mat[0][2], mat[0][3],
 				mat[1][0], mat[1][1], mat[1][2], mat[1][3],
@@ -23,33 +23,31 @@ namespace renderer {
 			mInv = m.inverse();
 		}
 
-		Transform(const Matrix4x4 &mat)
+		Transform4x4(const Matrix4x4 &mat)
 			: m(mat), mInv(mat.inverse()) {
 		}
 
-		Transform(const Matrix4x4 &mat, const Matrix4x4 &minv)
+		Transform4x4(const Matrix4x4 &mat, const Matrix4x4 &minv)
 			: m(mat), mInv(minv) {
 		}
 
-		void Print(FILE *f) const;
-
-		friend Transform Inverse(const Transform &t) {
-			return Transform(t.mInv, t.m);
+		friend Transform4x4 Inverse(const Transform4x4 &t) {
+			return Transform4x4(t.mInv, t.m);
 		}
 
-		friend Transform Transpose(const Transform &t) {
-			return Transform(t.m.transpose(), t.mInv.transpose());
+		friend Transform4x4 Transpose(const Transform4x4 &t) {
+			return Transform4x4(t.m.transpose(), t.mInv.transpose());
 		}
 
-		bool operator==(const Transform &t) const {
+		bool operator==(const Transform4x4 &t) const {
 			return t.m == m && t.mInv == mInv;
 		}
 
-		bool operator!=(const Transform &t) const {
+		bool operator!=(const Transform4x4 &t) const {
 			return t.m != m || t.mInv != mInv;
 		}
 
-		bool operator<(const Transform &t2) const {
+		bool operator<(const Transform4x4 &t2) const {
 			for (uint32_t i = 0; i < 4; ++i)
 				for (uint32_t j = 0; j < 4; ++j) {
 					if (m.at(i, j) < t2.m.at(i, j)) return true;
@@ -86,17 +84,18 @@ namespace renderer {
 		inline void operator()(const Ray &r, Ray *rt) const;
 		BBox operator()(const BBox &b) const;
 		*/
-		Transform operator*(const Transform &t2) const;
+		Transform4x4 operator*(const Transform4x4 &t2) const;
 	};
 
-	inline Vector3dF Transform::operator()(const Vector3dF &v) const {
+	inline Vector3dF Transform4x4::operator()(const Vector3dF &v) const {
 		float x = v.x, y = v.y, z = v.z;
 		return Vector3dF(
-			m.at(0,0) * x + m.at(0,1) * y + m.at(0,2) * z,
-			m.at(1,0) * x + m.at(1,1) * y + m.at(1,2) * z,
-			m.at(2,0) * x + m.at(2,1) * y + m.at(2,2) * z);
+			m.at(0, 0) * x + m.at(0, 1) * y + m.at(0, 2) * z,
+			m.at(1, 0) * x + m.at(1, 1) * y + m.at(1, 2) * z,
+			m.at(2, 0) * x + m.at(2, 1) * y + m.at(2, 2) * z);
 	}
 
+	typedef Transform4x4 Transform;
 }
 
 #endif

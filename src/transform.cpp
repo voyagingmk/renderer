@@ -3,7 +3,7 @@
 
 namespace renderer {
 
-	Transform Transform::operator*(const Transform &t2) const {
-		return Transform(m * t2.m, t2.mInv * mInv);
+	Transform4x4 Transform4x4::operator*(const Transform4x4 &t2) const {
+		return Transform4x4(m * t2.m, t2.mInv * mInv);
 	}
 }
