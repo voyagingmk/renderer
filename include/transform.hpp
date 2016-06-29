@@ -68,7 +68,7 @@ namespace renderer {
 			float la2 = (*this)(Vector3dF(1, 0, 0)).LengthSquare();
 			float lb2 = (*this)(Vector3dF(0, 1, 0)).LengthSquare();
 			float lc2 = (*this)(Vector3dF(0, 0, 1)).LengthSquare();
-#define NOT_ONE(x) ((x) < .999f || (x) > 1.001f)
+#define NOT_ONE(x)  !almost_equal(x, 1.f)
 			return (NOT_ONE(la2) || NOT_ONE(lb2) || NOT_ONE(lc2));
 #undef NOT_ONE
 		}
