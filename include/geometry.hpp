@@ -215,10 +215,21 @@ namespace renderer {
 	typedef Point2d<float> Point2dF;
 	typedef Point3d<float> Point3dF;
 
-	using Normal2dF = Point2dF;
 	using Vector2dF = Point2dF;
-	using Normal3dF = Point3dF;
 	using Vector3dF = Point3dF;
+
+	template<typename T>
+	class Normal2d :public Point2d<T> {
+		using Point2d<T>::Point2d;
+	};
+
+	template<typename T>
+	class Normal3d :public Point3d<T> {
+		using Point3d<T>::Point3d;
+	};
+
+	typedef Normal2d<float> Normal2dF;
+	typedef Normal3d<float> Normal3dF;
 
 	namespace Const {
 		static Point3dF Zero;

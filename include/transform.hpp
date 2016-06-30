@@ -74,6 +74,7 @@ namespace renderer {
 		}
 
 		inline Vector3dF operator()(const Vector3dF &v) const;
+		inline Normal3dF operator()(const Normal3dF &v) const;
 		/*
 		inline Vector3dF operator()(const Vector3dF &pt) const;
 		inline void operator()(const Vector3dF &pt, Vector3dF *ptrans) const;
@@ -93,6 +94,14 @@ namespace renderer {
 			m.at(0, 0) * x + m.at(0, 1) * y + m.at(0, 2) * z,
 			m.at(1, 0) * x + m.at(1, 1) * y + m.at(1, 2) * z,
 			m.at(2, 0) * x + m.at(2, 1) * y + m.at(2, 2) * z);
+	}
+
+	inline Normal3dF Transform4x4::operator()(const Normal3dF &n) const {
+		float x = n.x, y = n.y, z = n.z;
+		return Normal3dF(
+			mInv.at(0, 0) * x + mInv.at(1, 0) * y + mInv.at(2, 0) * z,
+			mInv.at(0, 1) * x + mInv.at(1, 1) * y + mInv.at(2, 1) * z,
+			mInv.at(0, 2) * x + mInv.at(1, 2) * y + mInv.at(2, 2) * z);
 	}
 
 	typedef Transform4x4 Transform;
