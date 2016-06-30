@@ -104,6 +104,14 @@ namespace renderer {
 	{
 		return (T)(a * (1 - t) + b * t);
 	}
+
+	inline float Radians(float degree) {
+		return ((float)M_PI / 180.f) * degree;
+	}
+
+	inline float Degrees(float radian) {
+		return (180.f / (float)M_PI) * radian;
+	}
 }
 
 #endif // BASE_HPP

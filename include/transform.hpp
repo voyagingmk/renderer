@@ -96,6 +96,113 @@ namespace renderer {
 	}
 
 	typedef Transform4x4 Transform;
+
+	////////////////////////////////////////////////////
+	//  kinds of Transform
+	////////////////////////////////////////////////////
+	Transform Translate(const Vector3dF &v) {
+		Matrix4x4 m{ 
+			1, 0, 0, v.x,
+			0, 1, 0, v.y,
+			0, 0, 1, v.z,
+			0, 0, 0, 1 };
+		Matrix4x4 mInv{ 
+			1, 0, 0, -v.x,
+			0, 1, 0, -v.y,
+			0, 0, 1, -v.z,
+			0, 0, 0, 1 };
+		return Transform(m, mInv);
+	}
+
+	Transform Scale(float x, float y, float z) {
+		Matrix4x4 m{ 
+			x, 0, 0, 0,
+			0, y, 0, 0,
+			0, 0, z, 0,
+			0, 0, 0, 1 };
+		Matrix4x4 mInv{ 
+			1.f / x, 0, 0, 0,
+			0, 1.f / y, 0, 0,
+			0, 0, 1.f / z, 0,
+			0, 0, 0, 1 };
+		return Transform(m, mInv);
+	}
+
+	Transform RotateX(float angle) {
+		float sin_theta = sinf(Radians(angle));
+		float cos_theta = cosf(Radians(angle));
+		Matrix4x4 m{
+			1, 0, 0, 0,
+			0, cos_theta, sin_theta, 0,
+			0, -sin_theta, cos_theta, 0,
+			0, 0, 0, 1 };
+		return Transform(m, m.transpose());
+	}
+
+	Transform RotateY(float angle) {
+		float sin_theta = sinf(Radians(angle));
+		float cos_theta = cosf(Radians(angle));
+		Matrix4x4 m{ 
+			cos_theta, 0, -sin_theta, 0,
+			0, 1, 0, 0,
+			sin_theta, 0, cos_theta, 0,
+			0, 0, 0, 1 };
+		return Transform(m, m.transpose());
+	}
+
+	Transform RotateZ(float angle) {
+		float sin_theta = sinf(Radians(angle));
+		float cos_theta = cosf(Radians(angle));
+		Matrix4x4 m{ 
+			cos_theta, sin_theta, 0, 0,
+			-sin_theta, cos_theta, 0, 0,
+			0, 0, 1, 0,
+			0, 0, 0, 1 };
+		return Transform(m, m.transpose());
+	}
+
+	Transform Rotate(float angle, const Vector3dF &axis) {
+		Vector3dF a = axis.Normalize();
+		float s = sinf(Radians(angle));
+		float c = cosf(Radians(angle));
+		Matrix4x4 mat{
+			a.x * a.x * (1.f - c) + c,
+			a.x * a.y * (1.f - c) - a.z * s,
+			a.x * a.z * (1.f - c) - a.y * s,
+			0,
+
+			a.x * a.y * (1.f - c) - a.z * s,
+			a.y * a.y * (1.f - c) + c,
+			a.y * a.z * (1.f - c) + a.x * s,
+			0,
+
+			a.x * a.z * (1.f - c) + a.y * s,
+			a.y * a.z * (1.f - c) - a.x * s,
+			a.z * a.z * (1.f - c) + c,
+			0,
+
+			0,
+			0,
+			0,
+			1 };
+		return Transform(mat, mat.transpose());
+	}
+
+
+	Transform LookAt(const Vector3dF &eye, const Vector3dF &targetPos, const Vector3dF &up) {
+		Vector3dF focal = -(targetPos - eye).Normalize();
+		Vector3dF right = (focal.Cross(up.Normalize())).Normalize();
+		Vector3dF newUp = focal.Cross(right);
+		Matrix4x4 worldToCam{
+			right.x, right.y, right.z, -right.Dot(eye),
+			newUp.x, newUp.y, newUp.z, -newUp.Dot(eye),
+			focal.x, focal.y, focal.z, -focal.Dot(eye),
+			0,			0,			0,		1
+		};
+		return Transform(worldToCam, worldToCam.inverse());
+	}
+
+
 }
 
 #endif

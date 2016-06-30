@@ -145,25 +145,25 @@ namespace renderer {
 			return *this;
 		}
 
-		Point3d<T>& operator *= (T f) {
+		Point3d<T>& operator *= (const T f) const {
 			x *= f;
 			y *= f;
 			z *= f;
 			return *this;
 		}
 
-		Point3d<T>& operator /= (T f) {
+		Point3d<T>& operator /= (const T f) const {
 			x /= f;
 			y /= f;
 			z /= f;
 			return *this;
 		}
 
-		Point3d<T> operator - () {
+		Point3d<T> operator - () const {
 			return Point3d<T>(-x, -y, -z);
 		}
 
-		bool operator == (const Point3d<T>& p) {
+		bool operator == (const Point3d<T>& p) const {
 			return x == p.x && y == p.y && z == p.z;
 		}
 
@@ -175,23 +175,23 @@ namespace renderer {
 			return (&x)[i];
 		}
 
-		T Dot(const Point3d<T>& p) {
+		T Dot(const Point3d<T>& p) const {
 			return x * p.x + y * p.y + z * p.z;
 		}
 
-		Point3d<T> Cross(const Point3d<T> & p) {
+		Point3d<T> Cross(const Point3d<T> & p) const {
 			return Point3d<T>(-z * p.y + y * p.z, z * p.x - x * p.z, -y * p.x + x * p.y);
 		}
 
-		inline T Length() { 
+		inline T Length() const {
 			return sqrt(x * x + y * y + z * z); 
 		};
 
-		inline T LengthSquare() { 
+		inline T LengthSquare() const {
 			return x * x + y * y + z * z; 
 		};
 
-		Point3d<T> rotate(Point3d<T> &axis, float angle) {
+		Point3d<T> rotate(Point3d<T> &axis, float angle) const {
 			//v' = cos¦È(v - (v¡¤n)n) + sin¦È(n¡Áv) + (v¡¤n)n
 			//p = (v¡¤n)n
 			//v' = cos¦È(v - p) + sin¦È(n¡Áv) + p
@@ -199,7 +199,7 @@ namespace renderer {
 			return ((*this) - p) * cos(angle) + axis.Cross(*this) * sin(angle) + p;
 		}
 
-		Point3d<T> Normalize() {
+		Point3d<T> Normalize() const {
 			T len = Length();
 			assert(len != 0);
 			T inv = T(1) / len;
