@@ -118,4 +118,22 @@ namespace renderer {
 		*rad = Inside(*c) ? (*c - pMax).Length() : 0.f;
 	}
 
+	bool BBox::Intersect(const Ray &ray, float *hitt0, float *hitt1) const {
+		float t0 = ray.mint, t1 = ray.maxt;
+		for (int i = 0; i < 3; ++i) { //x y z
+			float invRayDir = 1.f / ray.d[i];
+			float tNear = (pMin[i] - ray.o[i]) * invRayDir;
+			float tFar = (pMax[i] - ray.o[i]) * invRayDir;
+			if (tNear > tFar)
+				std::swap(tNear, tFar);
+			t0 = std::max(tNear, t0);
+			t1 = std::min(tFar, t1);
+			if (t0 > t1) 
+				return false;
+		}
+		if (hitt0) *hitt0 = t0;
+		if (hitt1) *hitt1 = t1;
+		return true;
+	}
+
 }

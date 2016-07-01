@@ -3,6 +3,7 @@
 
 #include "base.hpp"
 #include "geometry.hpp"
+#include "ray.hpp"
 
 namespace renderer {
 	class BBox {
@@ -37,7 +38,7 @@ namespace renderer {
 			Assert(i == 0 || i == 1);
 			return (&pMin)[i];
 		}
-
+		bool Intersect(const Ray &ray, float *hitt0, float *hitt1) const;
 	};
 }
 #endif // BBOX_HPP
