@@ -34,5 +34,9 @@ namespace renderer {
 		float distance = -dotB / dotA;
 		*result = IntersectResult(this, distance, ray.GetPoint(distance), normal);
 		return 0;
+	}	
+	
+	BBox Plane::Bound() const {
+		return BBox(Vector3dF(0, 0, 0), Vector3dF(1, 1, 1));
 	}
 }

@@ -4,6 +4,7 @@
 #include "base.hpp"
 #include "shape.hpp"
 #include "../geometry.hpp"
+#include "bbox.hpp"
 
 namespace renderer {
 	class Plane :public Shape {
@@ -16,6 +17,7 @@ namespace renderer {
 		Plane operator = (const Plane&);
 		virtual void Init() override;
 		virtual int Intersect(Ray&, IntersectResult*) override;
+		virtual BBox Bound() const override;
 	};
 
 }

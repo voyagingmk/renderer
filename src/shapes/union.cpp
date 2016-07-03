@@ -10,13 +10,13 @@
 namespace renderer {
 
 	ShapeUnion::ShapeUnion(std::vector<Shape*> geometries) :geometries(geometries) {
-	};
+	}
 
 	void ShapeUnion::Init() {
 		for (auto p : geometries) {
 			p->Init();
 		}
-	};
+	}
 	int ShapeUnion::Intersect(Ray& ray, IntersectResult* minResult) {
 		float minDistance = FLOAT_MAX;
 		*minResult = IntersectResult::NoHit;
@@ -30,6 +30,9 @@ namespace renderer {
 			}
 		}
 		return 0;
-	};
+	}
 
+	BBox ShapeUnion::Bound() const {
+		return BBox(Vector3dF(0, 0, 0), Vector3dF(1, 1, 1));
+	}
 }

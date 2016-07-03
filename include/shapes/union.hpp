@@ -13,6 +13,7 @@ namespace renderer {
 		ShapeUnion(std::vector<Shape*>);
 		virtual void Init() override;
 		virtual int Intersect(Ray&, IntersectResult*) override;
+		virtual BBox Bound() const override;
 	};
 }
 

@@ -60,6 +60,13 @@ namespace renderer {
 		return 0;
 	}
 
+	BBox Triangle::Bound() const {
+		return BBox(Vector3dF(0, 0, 0), Vector3dF(1, 1, 1));
+	}
+
+
+
+
 	Mesh::Mesh(const Mesh& m) {
 		vertices = m.vertices;
 		normals = m.normals;
@@ -95,5 +102,9 @@ namespace renderer {
 			}
 		}
 		return 0;
+	}
+
+	BBox Mesh::Bound() const {
+		return BBox(Vector3dF(0, 0, 0), Vector3dF(1, 1, 1));
 	}
 }

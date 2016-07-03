@@ -4,7 +4,7 @@
 #include "base.hpp"
 #include "shape.hpp"
 #include "../geometry.hpp"
-
+#include "../bbox.hpp"
 
 namespace renderer {
 
@@ -18,6 +18,7 @@ namespace renderer {
 		Sphere operator = (const Sphere&);
 		virtual void Init() override;
 		virtual int Intersect(Ray&, IntersectResult*) override;
+		virtual BBox Bound() const override;
 	};
 }
 
