@@ -9,6 +9,7 @@ namespace renderer {
 	class ShapeUnion :public Shape {
 	public:
 		std::vector<Shape*> geometries;
+		BBox bbox;
 	public:
 		ShapeUnion(std::vector<Shape*>);
 		virtual void Init() override;

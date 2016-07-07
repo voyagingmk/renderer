@@ -110,8 +110,6 @@ namespace renderer {
 
 	void Mesh::initBound() {
 		if (bbox.IsEmpty()) {
-			bbox.pMin = { 0, 0, 0 };
-			bbox.pMax = { 0, 0, 0 };
 			for (int tri_idx = 0, tri_num = indexes.size() / 3; tri_idx < tri_num; tri_idx += 1) {
 				bbox.Union(Vector3dF{ (float)indexes[tri_idx * 3], (float)indexes[tri_idx * 3 + 1], (float)indexes[tri_idx * 3 + 2] });
 			}

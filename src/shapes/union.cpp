@@ -15,6 +15,7 @@ namespace renderer {
 	void ShapeUnion::Init() {
 		for (auto p : geometries) {
 			p->Init();
+			bbox = Union(bbox, p->Bound());
 		}
 	}
 	int ShapeUnion::Intersect(Ray& ray, IntersectResult* minResult) {

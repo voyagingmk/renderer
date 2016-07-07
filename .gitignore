@@ -15,3 +15,6 @@ renderer.vcxproj.filters
 *.ilk
 *.log
 *.pdb
+*.db
+*.opendb
+*.ipch
