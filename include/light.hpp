@@ -51,5 +51,7 @@ namespace renderer {
 		}
 		virtual void Init() override;
 	};
+
+	typedef std::vector<Light*> Lights;
 }
 #endif // RENDERER_RAY_HPP

@@ -8,10 +8,11 @@
 namespace renderer {
 	class ShapeUnion :public Shape {
 	public:
-		std::vector<Shape*> geometries;
+		Shapes geometries;
 		BBox bbox;
 	public:
 		ShapeUnion(std::vector<Shape*>);
+		ShapeUnion();
 		virtual void Init() override;
 		virtual int Intersect(Ray&, IntersectResult*) override;
 		virtual BBox Bound() const override;

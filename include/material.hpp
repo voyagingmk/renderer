@@ -33,6 +33,8 @@ namespace renderer {
 		PhongMaterial(Color& diffuse, Color& specular, int shininess, float reflectiveness = 0);
 		Color Sample(Ray& ray, Vector3dF& position, Vector3dF& normal, Vector3dF& lightDir);
 	};
+
+	typedef std::map<int, Material*> MaterialDict;
 }
 
 #endif // RENDERER_MATERIAL_HPP

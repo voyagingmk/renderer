@@ -11,7 +11,8 @@ namespace renderer {
 
 	ShapeUnion::ShapeUnion(std::vector<Shape*> geometries) :geometries(geometries) {
 	}
-
+	ShapeUnion::ShapeUnion() {
+	}
 	void ShapeUnion::Init() {
 		for (auto p : geometries) {
 			p->Init();

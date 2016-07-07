@@ -17,79 +17,79 @@
 
 namespace renderer {
 
-	void renderArea(Renderer &renderer, Film* film, Shape* pUnion, PerspectiveCamera& camera, std::vector<Light*>& lights, int maxReflect, int x, int y, int w, int h)
-	{
-		renderer.rayTraceReflection(film, pUnion, camera, lights, maxReflect, x, y, w, h);
+	int Parser::parseFromJson(nlohmann::json& config, Film * film) {
+		SceneDesc desc;
+		desc.width = config["width"];
+		desc.height = config["height"];
+		desc.threadsPow = config["multithread"];
+		desc.maxReflect = config["maxReflect"];
+		printf("width: %d, height: %d, multithread: %d \n", desc.width, desc.height, int(pow(2.0, desc.threadsPow)));
+		
+		if(film->width() != desc.width || film->height() != desc.height)
+			film->resize(desc.width, desc.height);
+
+		parseMaterials(config, desc.matDict);
+		parseLights(config, desc.lights, desc.matDict);
+		ShapeUnion shapeUnion = parseShapes(config, desc.matDict);
+		PerspectiveCamera camera = parsePerspectiveCamera(config);
+		Renderer renderer;
+
+		auto time0 = std::chrono::system_clock::now();
+		if (desc.threadsPow == 0) {
+			renderer.rayTrace(film, shapeUnion, camera, lights);
+			renderer.rayTraceReflection(film, &shapeUnion, camera, std::ref(lights), 4);
+		}
+		else {
+			
+		}
+
+		//parserObj(config["obj"]);
+		auto time1 = std::chrono::system_clock::now();
+		auto time_cost = std::chrono::duration_cast<std::chrono::milliseconds>(time1 - time0).count();
+		printf("cost: %lldms\n", time_cost);
+		//img.display("");
+		return 0;
 	}
 
-	int Parser::parseFromJson(nlohmann::json config, Film * film) {
-
-		int width = config["width"], height = config["height"], multithread = config["multithread"];
-		printf("width: %d, height: %d, multithread: %d \n", width, height, multithread);
-		if(film->width()!=width || film->height()!=height)
-			film->resize(width, height);
-
-		std::map<int, Material*> matDict;
-
+	void Parser::parseMaterials(nlohmann::json& config, MaterialDict& matDict)
+	{
 		for (auto objinfo : config["material"]) {
 			Material* mt = nullptr;
 			if (objinfo["type"] == "Phone") {
 				auto pool = GetPool<PhongMaterial>();
 				mt = pool->newElement(parseColor(objinfo["diffuse"]),
-						parseColor(objinfo["specular"]),
-						objinfo["shininess"],
-						objinfo["reflectiveness"]);
+					parseColor(objinfo["specular"]),
+					objinfo["shininess"],
+					objinfo["reflectiveness"]);
 			}
 			else if (objinfo["type"] == "Checker") {
 				auto pool = GetPool<CheckerMaterial>();
 				auto c1 = objinfo["color1"], c2 = objinfo["color2"];
-				Color color1 = parseColor(c1, Color::Black), color2 = parseColor(c2, Color::White);
+				Color colqq1qor1 = parseColor(c1, Color::Black), color2 = parseColor(c2, Color::White);
 				mt = pool->newElement(objinfo["scale"], objinfo["reflectiveness"], color1, color2);
 			}
 			matDict[objinfo["id"]] = mt;
 		}
-		int maxReflect = config["maxReflect"];
-		std::vector<Light*> lights;
-		std::vector<Shape*> vecGeo;
+	}
+
+	ShapeUnion Parser::parseShapes(nlohmann::json& config, MaterialDict& matDict)
+	{
+		Shapes shapes;
 		for (auto objinfo : config["scene"]) {
-			Shape* pg = nullptr;
-			Light* light = nullptr;
-			if (objinfo["type"] == "DirectionLight") {
-				auto dir = objinfo["dir"];
-				auto color = objinfo["color"];
-				auto pool = GetPool<DirectionLight>();
-				light = static_cast<Light*>(pool->newElement(Vector3dF(dir[0], dir[1], dir[2])));
-			}
-			else if (objinfo["type"] == "PointLight") {
-				auto pos = objinfo["pos"];
-				auto color = objinfo["color"];
-				auto radius = objinfo["radius"];
-				auto shadowrays = objinfo["shadowrays"];
-				auto shadow = objinfo["shadow"];
-				auto softshadow = objinfo["softshadow"];
-				auto pool = GetPool<PointLight>();
-				light = static_cast<Light*>(pool->newElement(
-					Vector3dF(pos[0], pos[1], pos[2]),
-					shadow,
-					softshadow,
-					radius,
-					shadowrays));
-			}
-			else if (objinfo["type"] == "Sphere") {
+			Shape* pShape = nullptr;
+			if (objinfo["type"] == "Sphere") {
 				auto pos = objinfo["pos"];
 				auto pool = GetPool<Sphere>();
-				pg = pool->newElement(Vector3dF(pos[0], pos[1], pos[2]),
+				pShape = pool->newElement(Vector3dF(pos[0], pos[1], pos[2]),
 					objinfo["radius"]);
-				pg->material = matDict[objinfo["matId"]];
-				pg->Init();
+				pShape->material = matDict[objinfo["matId"]];
 			}
 			else if (objinfo["type"] == "Plane") {
 				auto normal = objinfo["normal"];
 				auto pool = GetPool<Plane>();
-				pg = pool->newElement(Vector3dF(normal[0], normal[1], normal[2]),
-					   objinfo["distance"] );
-				pg->material = matDict[objinfo["matId"]];
-				pg->Init();
+				pShape = pool->newElement(Vector3dF(normal[0], normal[1], normal[2]),
+					objinfo["distance"]);
+				pShape->material = matDict[objinfo["matId"]];
 			}
 			else if (objinfo["type"] == "Mesh") {
 				auto pool = GetPool<Mesh>();
@@ -108,19 +108,52 @@ namespace renderer {
 				for (auto uv : objinfo["uvs"]) {
 					uvs.push_back(Vector2dF(uv[0], uv[1]));
 				}
-				pg = pool->newElement(vertices, normals, indexes, uvs);
-				pg->material = matDict[objinfo["matId"]];
-				pg->Init();
+				pShape = pool->newElement(vertices, normals, indexes, uvs);
+				pShape->material = matDict[objinfo["matId"]];
 			}
 			else
 				continue;
-			if (light)
-				lights.push_back(light);
-			if(pg)
-				vecGeo.push_back(pg);
-		} 
-		ShapeUnion shapeUnion(vecGeo);
+			if (pShape) {
+				pShape->Init();
+				shapes.push_back(pShape);
+			}
 
+		}
+		return ShapeUnion(shapes);
+	}
+
+	void Parser::parseLights(nlohmann::json& config, Lights& lights, MaterialDict& matDict)
+	{
+		for (auto objinfo : config["scene"]) {
+			Light* pLight = nullptr;
+			if (objinfo["type"] == "DirectionLight") {
+				auto dir = objinfo["dir"];
+				auto color = objinfo["color"];
+				auto pool = GetPool<DirectionLight>();
+				pLight = static_cast<Light*>(pool->newElement(Vector3dF(dir[0], dir[1], dir[2])));
+			}
+			else if (objinfo["type"] == "PointLight") {
+				auto pos = objinfo["pos"];
+				auto color = objinfo["color"];
+				auto radius = objinfo["radius"];
+				auto shadowrays = objinfo["shadowrays"];
+				auto shadow = objinfo["shadow"];
+				auto softshadow = objinfo["softshadow"];
+				auto pool = GetPool<PointLight>();
+				pLight = static_cast<Light*>(pool->newElement(
+					Vector3dF(pos[0], pos[1], pos[2]),
+					shadow,
+					softshadow,
+					radius,
+					shadowrays));
+			}
+			if (pLight)
+				lights.push_back(pLight);
+		}
+	}
+
+	PerspectiveCamera Parser::parsePerspectiveCamera(nlohmann::json& config)
+	{
 		auto eye = config["camera"]["eye"];
 		auto front = config["camera"]["front"];
 		auto up = config["camera"]["up"];
@@ -130,35 +163,7 @@ namespace renderer {
 			Vector3dF(up[0], up[1], up[2]).Normalize(),
 			config["camera"]["fov"]);
 
-		Renderer renderer;
-
-		auto time0 = std::chrono::system_clock::now();
-		if (!multithread) {
-			renderer.rayTrace(film, shapeUnion, camera, lights);
-			renderer.rayTraceReflection(film, &shapeUnion, camera, std::ref(lights), 4);
-		}
-		else {
-			int threads_num = int(pow(2.0, multithread));
-			std::thread* *threads = new std::thread*[threads_num];
-			int h = height / threads_num, h_left = height % threads_num;
-			for (int i = 0; i < threads_num; i++) {
-				int start_h = i * h, len_h = h;
-				if (i == threads_num - 1)
-					len_h += h_left;
-				std::thread* t = new std::thread(renderArea, std::ref(renderer), std::ref(film), &shapeUnion, std::ref(camera), std::ref(lights), maxReflect, 0, start_h, width, len_h);
-				threads[i] = t;
-			}
-			for (int i = 0; i < threads_num; i++) {
-				threads[i]->join();
-			}
-		}
-
-		//parserObj(config["obj"]);
-		auto time1 = std::chrono::system_clock::now();
-		auto time_cost = std::chrono::duration_cast<std::chrono::milliseconds>(time1 - time0).count();
-		printf("cost: %lldms\n", time_cost);
-		//img.display("");
-		return 0;
+		return camera;
 	}
 
 	Color Parser::parseColor(std::string c) {
