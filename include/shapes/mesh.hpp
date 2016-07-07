@@ -27,12 +27,14 @@ namespace renderer {
 		VectorArray normals;
 		UIntArray indexes;
 		UVArray uvs;
+		BBox bbox;
 	public:
 		Mesh(VectorArray& v, VectorArray& n, UIntArray& i, UVArray& uv):vertices(v),normals(n),indexes(i),uvs(uv){};
 		Mesh(const Mesh&);
 		Mesh operator = (const Mesh&);
 		virtual void Init() override;
 		virtual int Intersect(Ray&, IntersectResult*) override;
+		void initBound();
 		virtual BBox Bound() const override;
 	};
 

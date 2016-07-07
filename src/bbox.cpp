@@ -42,14 +42,14 @@ namespace renderer {
 		return *this;
 	};
 
-	BBox BBox::Union(const BBox &b, const Vector3dF &p) {
-		BBox ret = b;
-		ret.pMin.x = min(b.pMin.x, p.x);
-		ret.pMin.y = min(b.pMin.y, p.y);
-		ret.pMin.z = min(b.pMin.z, p.z);
-		ret.pMax.x = max(b.pMax.x, p.x);
-		ret.pMax.y = max(b.pMax.y, p.y);
-		ret.pMax.z = max(b.pMax.z, p.z);
+	BBox BBox::Union(const Vector3dF &p) {
+		BBox ret = *this;
+		ret.pMin.x = min(ret.pMin.x, p.x);
+		ret.pMin.y = min(ret.pMin.y, p.y);
+		ret.pMin.z = min(ret.pMin.z, p.z);
+		ret.pMax.x = max(ret.pMax.x, p.x);
+		ret.pMax.y = max(ret.pMax.y, p.y);
+		ret.pMax.z = max(ret.pMax.z, p.z);
 		return ret;
 	}
 
@@ -75,6 +75,13 @@ namespace renderer {
 		return (p.x >= pMin.x && p.x <= pMax.x &&
 				p.y >= pMin.y && p.y <= pMax.y &&
 				p.z >= pMin.z && p.z <= pMax.z);
+	}
+
+	bool BBox::IsEmpty() const {
+		if (pMin.x == INFINITY || pMin.x == INFINITY || pMin.x == INFINITY ||
+			pMax.x == -INFINITY || pMax.x == -INFINITY || pMax.x == -INFINITY)
+			return true;
+		return false;
 	}
 
 	void BBox::Expand(float delta) {

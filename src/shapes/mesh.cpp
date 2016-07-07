@@ -61,7 +61,11 @@ namespace renderer {
 	}
 
 	BBox Triangle::Bound() const {
-		return BBox(Vector3dF(0, 0, 0), Vector3dF(1, 1, 1));
+		auto vertices = mesh->vertices;
+		Vector3dF p0 = vertices[indexes[0]];
+		Vector3dF p1 = vertices[indexes[1]];
+		Vector3dF p2 = vertices[indexes[2]];
+		return BBox(p0, p1).Union(p2);
 	}
 
 
@@ -104,7 +108,17 @@ namespace renderer {
 		return 0;
 	}
 
+	void Mesh::initBound() {
+		if (bbox.IsEmpty()) {
+			bbox.pMin = { 0, 0, 0 };
+			bbox.pMax = { 0, 0, 0 };
+			for (int tri_idx = 0, tri_num = indexes.size() / 3; tri_idx < tri_num; tri_idx += 1) {
+				bbox.Union(Vector3dF{ (float)indexes[tri_idx * 3], (float)indexes[tri_idx * 3 + 1], (float)indexes[tri_idx * 3 + 2] });
+			}
+		}
+	}
+
 	BBox Mesh::Bound() const {
-		return BBox(Vector3dF(0, 0, 0), Vector3dF(1, 1, 1));
+		return bbox;
 	}
 }

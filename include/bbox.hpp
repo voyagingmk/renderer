@@ -19,10 +19,11 @@ namespace renderer {
 		~BBox();
 		BBox& operator = (const BBox& b) noexcept;
 		BBox& operator = (BBox&& b) noexcept;
-		BBox Union(const BBox &b, const Vector3dF &p);
+		BBox Union(const Vector3dF &p);
 		friend BBox Union(const BBox &b1, const BBox &b2);
 		bool Overlaps(const BBox &b) const;
 		bool Inside(const Vector3dF &pt) const;
+		bool IsEmpty() const;
 		void Expand(float delta);
 		float SurfaceArea() const;
 		float Volume() const;

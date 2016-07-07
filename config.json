@@ -11,37 +11,29 @@
     "maxReflect": 3,
     "obj": "test.obj",
     "scene": [{
-        "type": "DirectionLight0",
+        "type": "DirectionLight",
         "dir": [0, -1, 0],
         "softshadow": false,
         "color": [255, 255, 255]
     }, {
         "type": "PointLight",
         "pos": [0, 30, -30],
-        "radius": 15,
+        "radius": 5,
         "shadowrays": 16,
         "shadow": true,
         "softshadow": true,
         "color": [255, 255, 255]
     }, {
         "type": "PointLight0",
-        "pos": [-30, 30, 0],
+        "pos": [-5, 10, 10],
         "radius": 15,
         "shadowrays": 16,
-        "shadow": false,
+        "shadow": true,
         "softshadow": false,
         "color": [255, 255, 255]
-    }, {
-        "type": "PointLight0",
-        "pos": [0, -30, 0],
-        "radius": 15,
-        "shadowrays": 16,
-        "shadow": false,
-        "softshadow": false,
-        "color": [255, 255, 255]
-    }, {
-        "type": "Sphere0",
-        "pos": [0, 10, -10],
+    },  {
+        "type": "Sphere",
+        "pos": [-10, 10, -10],
         "radius": 10,
         "matId": 1
     }, {
@@ -154,7 +146,7 @@
         "type": "Checker",
         "scale": 0.1,
         "reflectiveness": 0.5,
-        "color1": [0.5, 0.5, 0.5],
+        "color1": "Red",
         "color2": "White"
     }, {
         "id": 4,
@@ -162,6 +154,6 @@
         "diffuse": "Blue",
         "specular": "White",
         "shininess": 16,
-        "reflectiveness": 0.0
+        "reflectiveness": 0.2
     }]
 }
