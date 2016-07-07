@@ -87,6 +87,7 @@ namespace renderer {
 	}
 
 	void Mesh::Init() {
+		initBound();
 	}
 
 	int Mesh::Intersect(Ray& ray, IntersectResult* result) {
@@ -110,8 +111,12 @@ namespace renderer {
 
 	void Mesh::initBound() {
 		if (bbox.IsEmpty()) {
+			Triangle tri(this);
 			for (int tri_idx = 0, tri_num = indexes.size() / 3; tri_idx < tri_num; tri_idx += 1) {
-				bbox.Union(Vector3dF{ (float)indexes[tri_idx * 3], (float)indexes[tri_idx * 3 + 1], (float)indexes[tri_idx * 3 + 2] });
+				tri.indexes[0] = indexes[tri_idx * 3];
+				tri.indexes[1] = indexes[tri_idx * 3 + 1];
+				tri.indexes[2] = indexes[tri_idx * 3 + 2];
+				bbox = Union(bbox, tri.Bound());
 			}
 		}
 	}

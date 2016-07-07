@@ -81,6 +81,7 @@ namespace renderer {
 				pg = pool->newElement(Vector3dF(pos[0], pos[1], pos[2]),
 					objinfo["radius"]);
 				pg->material = matDict[objinfo["matId"]];
+				pg->Init();
 			}
 			else if (objinfo["type"] == "Plane") {
 				auto normal = objinfo["normal"];
@@ -88,6 +89,7 @@ namespace renderer {
 				pg = pool->newElement(Vector3dF(normal[0], normal[1], normal[2]),
 					   objinfo["distance"] );
 				pg->material = matDict[objinfo["matId"]];
+				pg->Init();
 			}
 			else if (objinfo["type"] == "Mesh") {
 				auto pool = GetPool<Mesh>();
@@ -108,6 +110,7 @@ namespace renderer {
 				}
 				pg = pool->newElement(vertices, normals, indexes, uvs);
 				pg->material = matDict[objinfo["matId"]];
+				pg->Init();
 			}
 			else
 				continue;
