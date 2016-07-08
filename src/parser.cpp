@@ -23,6 +23,7 @@ namespace renderer {
 		desc.height = config["height"];
 		desc.threadsPow = config["multithread"];
 		desc.maxReflect = config["maxReflect"];
+		desc.film = film;
 		printf("width: %d, height: %d, multithread: %d \n", desc.width, desc.height, int(pow(2.0, desc.threadsPow)));
 		
 		if(film->width() != desc.width || film->height() != desc.height)
@@ -31,16 +32,18 @@ namespace renderer {
 		parseMaterials(config, desc.matDict);
 		parseLights(config, desc.lights, desc.matDict);
 		ShapeUnion shapeUnion = parseShapes(config, desc.matDict);
+		desc.shapeUnion = &shapeUnion;
 		PerspectiveCamera camera = parsePerspectiveCamera(config);
+		desc.camera = &camera;
 		Renderer renderer;
 
 		auto time0 = std::chrono::system_clock::now();
 		if (desc.threadsPow == 0) {
-			renderer.rayTrace(film, shapeUnion, camera, lights);
-			renderer.rayTraceReflection(film, &shapeUnion, camera, std::ref(lights), 4);
+			renderer.rayTrace(film, shapeUnion, camera, desc.lights);
+			renderer.rayTraceReflection(film, &shapeUnion, camera, std::ref(desc.lights), 4);
 		}
 		else {
-			
+			renderer.ConcurrentRender(desc);
 		}
 
 		//parserObj(config["obj"]);
@@ -65,7 +68,7 @@ namespace renderer {
 			else if (objinfo["type"] == "Checker") {
 				auto pool = GetPool<CheckerMaterial>();
 				auto c1 = objinfo["color1"], c2 = objinfo["color2"];
-				Color colqq1qor1 = parseColor(c1, Color::Black), color2 = parseColor(c2, Color::White);
+				Color color1 = parseColor(c1, Color::Black), color2 = parseColor(c2, Color::White);
 				mt = pool->newElement(objinfo["scale"], objinfo["reflectiveness"], color1, color2);
 			}
 			matDict[objinfo["id"]] = mt;

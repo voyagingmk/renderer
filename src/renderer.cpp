@@ -9,6 +9,7 @@
 #include "ray.hpp"
 #include "film.hpp"
 #include "light.hpp"
+#include "shapes/union.hpp"
 
 namespace renderer {
 
@@ -53,7 +54,7 @@ namespace renderer {
 	};
 
 
-	void Renderer::rayTrace(Film *film, Shape& scene, PerspectiveCamera& camera, std::vector<Light*>& lights) {
+	void Renderer::rayTrace(Film *film, Shape& scene, PerspectiveCamera& camera, Lights& lights) {
 		scene.Init();
 		camera.Init();
 		int w = film->width(), h = film->height();
@@ -82,7 +83,7 @@ namespace renderer {
 		}
 	}
 
-	Color Renderer::rayTraceRecursive(Shape* scene, Ray& ray, std::vector<Light*>& lights, int maxReflect) {
+	Color Renderer::rayTraceRecursive(Shape* scene, Ray& ray, Lights& lights, int maxReflect) {
 		IntersectResult result;
 		scene->Intersect(ray, &result);
 		if (result.geometry) {
@@ -159,7 +160,7 @@ namespace renderer {
 			return Color::Black;
 	}
 
-	void Renderer::rayTraceReflection(Film *film, Shape* scene, PerspectiveCamera& camera, std::vector<Light*>& lights, int maxReflect, int px, int py, int pw, int ph) {
+	void Renderer::rayTraceReflection(Film *film, Shape* scene, PerspectiveCamera& camera, Lights& lights, int maxReflect, int px, int py, int pw, int ph) {
 		scene->Init();
 		camera.Init();
 		int w = pw, h = ph, img_width = film->width(), img_height = film->height();
@@ -184,21 +185,24 @@ namespace renderer {
 		}
 	}
 	
-	void renderArea(Renderer &renderer, Film* film, Shape* pUnion, PerspectiveCamera& camera, std::vector<Light*>& lights, int maxReflect, int x, int y, int w, int h)
+	void renderArea(Renderer *renderer, SceneDesc& desc, int x, int y, int w, int h)
 	{
-		renderer.rayTraceReflection(film, pUnion, camera, lights, maxReflect, x, y, w, h);
+		renderer->rayTraceReflection(desc.film, dynamic_cast<Shape*>(desc.shapeUnion), *desc.camera, desc.lights, desc.maxReflect, x, y, w, h);
 	}
-	std::thread* Renderer::ConcurrentRender(Film* film, int threadsPow, int height, ShapeUnion* shapeUnion)
+
+	void Renderer::ConcurrentRender(SceneDesc& desc)
 	{
-		auto time0 = std::chrono::system_clock::now();
-		int threads_num = int(pow(2.0, threadsPow));
+		int threads_num = int(pow(2.0, desc.threadsPow));
 		std::thread* *threads = new std::thread*[threads_num];
-		int h = height / threads_num, h_left = height % threads_num;
+		int h = desc.height / threads_num, h_left = desc.height % threads_num;
 		for (int i = 0; i < threads_num; i++) {
 			int start_h = i * h, len_h = h;
 			if (i == threads_num - 1)
 				len_h += h_left;
-			std::thread* t = new std::thread(renderArea, std::ref(*this), std::ref(film), std::ref(shapeUnion), std::ref(camera), std::ref(lights), maxReflect, 0, start_h, width, len_h);
+			std::thread* t = new std::thread(renderArea, 
+				this, std::ref(desc),
+				0, start_h, 
+				desc.width, len_h);
 			threads[i] = t;
 		}
 		for (int i = 0; i < threads_num; i++) {

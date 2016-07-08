@@ -2,8 +2,7 @@
 #define RENDERER_PARSER_HPP
 
 #include "base.hpp"
-#include "union.hpp"
-#include "camera.hpp"
+#include "renderer.hpp"
 
 namespace renderer {
 	class Film;

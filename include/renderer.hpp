@@ -4,6 +4,7 @@
 #include "base.hpp"
 #include "geometry.hpp"
 #include "material.hpp"
+#include "light.hpp"
 
 namespace renderer {
 	class Shape;
@@ -33,10 +34,10 @@ namespace renderer {
 	public:
 		void renderDepth(Film*, Shape&, PerspectiveCamera&, float maxDepth);
 		void renderNormal(Film*, Shape& scene, PerspectiveCamera& camera, float maxDepth);
-		void rayTrace(Film*, Shape& scene, PerspectiveCamera& camera, std::vector<Light*>&);
-		Color rayTraceRecursive(Shape* scene, Ray& ray, std::vector<Light*>&, int maxReflect);
-		void rayTraceReflection(Film*, Shape* scene, PerspectiveCamera& camera, std::vector<Light*>&, int maxReflect, int x = 0, int y = 0, int w = 0, int h = 0);
-		std::thread* ConcurrentRender(int threadsPow, int height);
+		void rayTrace(Film*, Shape& scene, PerspectiveCamera& camera, Lights&);
+		Color rayTraceRecursive(Shape* scene, Ray& ray, Lights&, int maxReflect);
+		void rayTraceReflection(Film*, Shape* scene, PerspectiveCamera& camera, Lights&, int maxReflect, int x = 0, int y = 0, int w = 0, int h = 0);
+		void ConcurrentRender(SceneDesc&);
 
 	};
 }
