@@ -12,6 +12,19 @@ namespace renderer {
 		BBox bbox;
 	public:
 		ShapeUnion(std::vector<Shape*>);
+		ShapeUnion(const ShapeUnion& s) {
+			geometries = s.geometries;
+			bbox = s.bbox;
+		}
+		ShapeUnion& operator=(ShapeUnion&& s) {
+			geometries = std::move(s.geometries);
+			bbox = std::move(s.bbox);
+			return *this;
+		}
+		ShapeUnion(ShapeUnion&& s) {
+			geometries = std::move(s.geometries);
+			bbox = std::move(s.bbox);
+		}
 		ShapeUnion();
 		virtual void Init() override;
 		virtual int Intersect(Ray&, IntersectResult*) override;

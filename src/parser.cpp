@@ -18,29 +18,16 @@
 namespace renderer {
 
 	int Parser::parseFromJson(nlohmann::json& config, Film * film) {
-		SceneDesc desc;
-		desc.width = config["width"];
-		desc.height = config["height"];
-		desc.threadsPow = config["multithread"];
-		desc.maxReflect = config["maxReflect"];
-		desc.film = film;
+		SceneDesc desc = parseSceneDesc(config, film);
 		printf("width: %d, height: %d, multithread: %d \n", desc.width, desc.height, int(pow(2.0, desc.threadsPow)));
-		
-		if(film->width() != desc.width || film->height() != desc.height)
+		if (film->width() != desc.width || film->height() != desc.height)
 			film->resize(desc.width, desc.height);
-
-		parseMaterials(config, desc.matDict);
-		parseLights(config, desc.lights, desc.matDict);
-		ShapeUnion shapeUnion = parseShapes(config, desc.matDict);
-		desc.shapeUnion = &shapeUnion;
-		PerspectiveCamera camera = parsePerspectiveCamera(config);
-		desc.camera = &camera;
 		Renderer renderer;
 
 		auto time0 = std::chrono::system_clock::now();
 		if (desc.threadsPow == 0) {
-			renderer.rayTrace(film, shapeUnion, camera, desc.lights);
-			renderer.rayTraceReflection(film, &shapeUnion, camera, std::ref(desc.lights), 4);
+			renderer.rayTrace(film, desc.shapeUnion, desc.camera, desc.lights);
+			renderer.rayTraceReflection(film, &desc.shapeUnion, desc.camera, std::ref(desc.lights), 4);
 		}
 		else {
 			renderer.ConcurrentRender(desc);
@@ -52,6 +39,19 @@ namespace renderer {
 		printf("cost: %lldms\n", time_cost);
 		//img.display("");
 		return 0;
+	}
+	SceneDesc Parser::parseSceneDesc(nlohmann::json& config, Film * film) {
+		MaterialDict matDict;
+		parseMaterials(config, matDict); 
+		SceneDesc desc(film, parsePerspectiveCamera(config), parseShapes(config, matDict));
+		desc.matDict = std::move(matDict);
+		desc.width = config["width"];
+		desc.height = config["height"];
+		desc.threadsPow = config["multithread"];
+		desc.maxReflect = config["maxReflect"];
+		desc.film = film;
+		parseLights(config, desc.lights, desc.matDict);
+		return desc;
 	}
 
 	void Parser::parseMaterials(nlohmann::json& config, MaterialDict& matDict)

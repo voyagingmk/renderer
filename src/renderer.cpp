@@ -187,7 +187,7 @@ namespace renderer {
 	
 	void renderArea(Renderer *renderer, SceneDesc& desc, int x, int y, int w, int h)
 	{
-		renderer->rayTraceReflection(desc.film, dynamic_cast<Shape*>(desc.shapeUnion), *desc.camera, desc.lights, desc.maxReflect, x, y, w, h);
+		renderer->rayTraceReflection(desc.film, dynamic_cast<Shape*>(&desc.shapeUnion), desc.camera, desc.lights, desc.maxReflect, x, y, w, h);
 	}
 
 	void Renderer::ConcurrentRender(SceneDesc& desc)

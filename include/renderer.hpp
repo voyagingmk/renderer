@@ -5,6 +5,8 @@
 #include "geometry.hpp"
 #include "material.hpp"
 #include "light.hpp"
+#include "camera.hpp"
+#include "shapes\union.hpp"
 
 namespace renderer {
 	class Shape;
@@ -20,14 +22,31 @@ namespace renderer {
 		int height;
 		int maxReflect;
 		Film* film;
-		PerspectiveCamera* camera;
+		PerspectiveCamera camera;
 		MaterialDict matDict;
-		ShapeUnion* shapeUnion;
+		ShapeUnion shapeUnion;
 		Lights lights;
-		SceneDesc() :
+		SceneDesc(Film* f, const PerspectiveCamera& c, ShapeUnion&& s) :
 			threadsPow(0), width(1), height(1),
-			maxReflect(0), film(nullptr), camera(nullptr),
-			shapeUnion(nullptr) {}
+			maxReflect(0), film(f), camera(c),
+			shapeUnion(std::forward<ShapeUnion>(s)) {
+		}
+		SceneDesc(SceneDesc&& s):
+			threadsPow(s.threadsPow),
+			width(s.width),
+			height(s.height),
+			maxReflect( s.maxReflect),
+			film(s.film),
+			camera(s.camera)
+		{
+			s.film = nullptr;
+			matDict = std::move(s.matDict);
+			lights = std::move(s.lights);
+			shapeUnion = std::move(s.shapeUnion);
+		}
+		~SceneDesc() {
+			film = nullptr;
+		}
 	};
 
 	class Renderer {
