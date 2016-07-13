@@ -13,6 +13,12 @@
 
 namespace renderer {
 
+	void SceneDesc::setFilm(Film* f) {
+		film = f;
+		if (film->width() != width || film->height() != height)
+			film->resize(width, height);
+	}
+
 	void Renderer::renderDepth(Film *film, Shape& scene, PerspectiveCamera& camera, float maxDepth) {
 		scene.Init();
 		camera.Init();
@@ -190,7 +196,7 @@ namespace renderer {
 		renderer->rayTraceReflection(desc.film, dynamic_cast<Shape*>(&desc.shapeUnion), desc.camera, desc.lights, desc.maxReflect, x, y, w, h);
 	}
 
-	void Renderer::ConcurrentRender(SceneDesc& desc)
+	void Renderer::rayTraceConcurrence(SceneDesc& desc)
 	{
 		int threads_num = int(pow(2.0, desc.threadsPow));
 		std::thread* *threads = new std::thread*[threads_num];
@@ -208,5 +214,22 @@ namespace renderer {
 		for (int i = 0; i < threads_num; i++) {
 			threads[i]->join();
 		}
+	}
+	void Renderer::renderScene(SceneDesc& desc) {
+		printf("[renderScene] film = [w: %d, h: %d] multithread = %d \n", desc.width, desc.height, int(pow(2.0, desc.threadsPow)));
+
+		auto time_begin = std::chrono::system_clock::now();
+		if (desc.threadsPow == 0) {
+			rayTrace(desc.film, desc.shapeUnion, desc.camera, desc.lights);
+			rayTraceReflection(desc.film, &desc.shapeUnion, desc.camera, std::ref(desc.lights), 4);
+		}
+		else {
+			rayTraceConcurrence(desc);
+		}
+		//parserObj(config["obj"]);
+		auto time_end = std::chrono::system_clock::now();
+		auto time_cost = std::chrono::duration_cast<std::chrono::milliseconds>(time_end - time_begin).count();
+		printf("[renderScene] time cost: %lldms\n", time_cost);
+		//img.display("");
 	}
 }

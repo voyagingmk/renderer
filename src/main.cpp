@@ -38,7 +38,7 @@ void checkSDLError(int line = -1)
 
 int main3(int argc, char *argv[]) {
 	SDL_Window *win = NULL;
-	SDL_Renderer *renderer = NULL;
+	SDL_Renderer *rendererSDL = NULL;
 	SDL_Texture *bitmapTex = NULL;
 	int width = 512, height = 512;
 
@@ -58,15 +58,19 @@ int main3(int argc, char *argv[]) {
 	if (!win) /* Die if creation failed */
 		sdldie("Unable to create window");
 
-	renderer = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
+	rendererSDL = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
 
 	SDLFilm film(width, height);
-	Parser parser;
-	parser.parseFromJson(config, &film);
-	bitmapTex = SDL_CreateTextureFromSurface(renderer, film.img);
-	SDL_RenderClear(renderer);
-	SDL_RenderCopy(renderer, bitmapTex, NULL, NULL);
-	SDL_RenderPresent(renderer);
+	SceneParser parser; 
+	SceneDesc desc = parser.parse(config);
+	desc.setFilm(&film);
+	Renderer renderer;
+	renderer.renderScene(desc);
+	bitmapTex = SDL_CreateTextureFromSurface(rendererSDL, film.img);
+
+	SDL_RenderClear(rendererSDL);
+	SDL_RenderCopy(rendererSDL, bitmapTex, NULL, NULL);
+	SDL_RenderPresent(rendererSDL);
 	while (1) {
 		SDL_Event e;
 		if (SDL_PollEvent(&e)) {
@@ -74,12 +78,12 @@ int main3(int argc, char *argv[]) {
 				break;
 			}
 		}
-		SDL_RenderPresent(renderer);
+		SDL_RenderPresent(rendererSDL);
 		SDL_Delay(30);
 
 	}
 	SDL_DestroyTexture(bitmapTex);
-	SDL_DestroyRenderer(renderer);
+	SDL_DestroyRenderer(rendererSDL);
 	SDL_DestroyWindow(win);
 
 	SDL_Quit();
@@ -126,13 +130,16 @@ int main(int argc, char *argv[])
 	glContext = SDL_GL_CreateContext(win);
 	checkSDLError(__LINE__);
 
-	SDL_Renderer *renderer = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
+	SDL_Renderer * rendererSDL = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
 	
 	SDL_Texture *bitmapTex;
 	SDLFilm film(width, height);
-	Parser parser;
-	parser.parseFromJson(config, &film);
-	bitmapTex = SDL_CreateTextureFromSurface(renderer, film.img);
+	SceneParser parser;
+	SceneDesc desc = parser.parse(config);
+	desc.setFilm(&film);
+	Renderer renderer;
+	renderer.renderScene(desc);
+	bitmapTex = SDL_CreateTextureFromSurface(rendererSDL, film.img);
 	/*
 	{
 		SDL_Surface *bitmapSurface = SDL_LoadBMP("hello.bmp");
@@ -146,11 +153,11 @@ int main(int argc, char *argv[])
 	/* Clear our buffer with a red background */
 	glClearColor(1.0, 1.0,1.0, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT);
-	SDL_RenderClear(renderer);
-	int ret = SDL_RenderCopy(renderer, bitmapTex, NULL, NULL);
+	SDL_RenderClear(rendererSDL);
+	int ret = SDL_RenderCopy(rendererSDL, bitmapTex, NULL, NULL);
 	if (ret == -1)
 		sdldie("SDL_RenderCopy failed");
-	SDL_RenderPresent(renderer);
+	SDL_RenderPresent(rendererSDL);
 	
 	/* Swap our back buffer to the front */
 	//SDL_GL_SwapWindow(win);
@@ -162,12 +169,12 @@ int main(int argc, char *argv[])
 				break;
 			}
 		}
-		SDL_RenderPresent(renderer);
+		SDL_RenderPresent(rendererSDL);
 		SDL_Delay(30);
 
 	}
 	SDL_DestroyTexture(bitmapTex);
-	SDL_DestroyRenderer(renderer);
+	SDL_DestroyRenderer(rendererSDL);
 	SDL_GL_DeleteContext(glContext);
 	SDL_DestroyWindow(win);
 	SDL_Quit();

@@ -17,44 +17,23 @@
 
 namespace renderer {
 
-	int Parser::parseFromJson(nlohmann::json& config, Film * film) {
-		SceneDesc desc = parseSceneDesc(config, film);
-		printf("width: %d, height: %d, multithread: %d \n", desc.width, desc.height, int(pow(2.0, desc.threadsPow)));
-		if (film->width() != desc.width || film->height() != desc.height)
-			film->resize(desc.width, desc.height);
-		Renderer renderer;
-
-		auto time0 = std::chrono::system_clock::now();
-		if (desc.threadsPow == 0) {
-			renderer.rayTrace(film, desc.shapeUnion, desc.camera, desc.lights);
-			renderer.rayTraceReflection(film, &desc.shapeUnion, desc.camera, std::ref(desc.lights), 4);
-		}
-		else {
-			renderer.ConcurrentRender(desc);
-		}
-
-		//parserObj(config["obj"]);
-		auto time1 = std::chrono::system_clock::now();
-		auto time_cost = std::chrono::duration_cast<std::chrono::milliseconds>(time1 - time0).count();
-		printf("cost: %lldms\n", time_cost);
-		//img.display("");
-		return 0;
+	SceneDesc SceneParser::parse(nlohmann::json& config) {
+		return parseSceneDesc(config);
 	}
-	SceneDesc Parser::parseSceneDesc(nlohmann::json& config, Film * film) {
+	SceneDesc SceneParser::parseSceneDesc(nlohmann::json& config) {
 		MaterialDict matDict;
 		parseMaterials(config, matDict); 
-		SceneDesc desc(film, parsePerspectiveCamera(config), parseShapes(config, matDict));
+		SceneDesc desc(parsePerspectiveCamera(config), parseShapes(config, matDict));
 		desc.matDict = std::move(matDict);
 		desc.width = config["width"];
 		desc.height = config["height"];
 		desc.threadsPow = config["multithread"];
 		desc.maxReflect = config["maxReflect"];
-		desc.film = film;
 		parseLights(config, desc.lights, desc.matDict);
 		return desc;
 	}
 
-	void Parser::parseMaterials(nlohmann::json& config, MaterialDict& matDict)
+	void SceneParser::parseMaterials(nlohmann::json& config, MaterialDict& matDict)
 	{
 		for (auto objinfo : config["material"]) {
 			Material* mt = nullptr;
@@ -75,7 +54,7 @@ namespace renderer {
 		}
 	}
 
-	ShapeUnion Parser::parseShapes(nlohmann::json& config, MaterialDict& matDict)
+	ShapeUnion SceneParser::parseShapes(nlohmann::json& config, MaterialDict& matDict)
 	{
 		Shapes shapes;
 		for (auto objinfo : config["scene"]) {
@@ -125,7 +104,7 @@ namespace renderer {
 		return ShapeUnion(shapes);
 	}
 
-	void Parser::parseLights(nlohmann::json& config, Lights& lights, MaterialDict& matDict)
+	void SceneParser::parseLights(nlohmann::json& config, Lights& lights, MaterialDict& matDict)
 	{
 		for (auto objinfo : config["scene"]) {
 			Light* pLight = nullptr;
@@ -155,7 +134,7 @@ namespace renderer {
 		}
 	}
 
-	PerspectiveCamera Parser::parsePerspectiveCamera(nlohmann::json& config)
+	PerspectiveCamera SceneParser::parsePerspectiveCamera(nlohmann::json& config)
 	{
 		auto eye = config["camera"]["eye"];
 		auto front = config["camera"]["front"];
@@ -167,7 +146,7 @@ namespace renderer {
 			config["camera"]["fov"]);
 	}
 
-	Color Parser::parseColor(std::string c) {
+	Color SceneParser::parseColor(std::string c) {
 		if (c == "Red")
 			return Color::Red;
 		else if (c == "White")
@@ -182,7 +161,7 @@ namespace renderer {
 			return Color::White;
 	}
 
-	void Parser::parserObj(std::string inputfile) {
+	void SceneParser::parserObj(std::string inputfile) {
 		std::vector<tinyobj::shape_t> shapes;
 		std::vector<tinyobj::material_t> materials;
 

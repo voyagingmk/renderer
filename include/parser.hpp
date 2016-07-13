@@ -7,11 +7,11 @@
 namespace renderer {
 	class Film;
 
-	class Parser {
+	class SceneParser {
 	public:
-		int parseFromJson(nlohmann::json& config, Film * film);
+		SceneDesc parse(nlohmann::json& config);
 	private:
-		SceneDesc parseSceneDesc(nlohmann::json& config, Film * film);
+		SceneDesc parseSceneDesc(nlohmann::json& config);
 		PerspectiveCamera parsePerspectiveCamera(nlohmann::json& config);
 		void parseMaterials(nlohmann::json& config, MaterialDict& matDict);
 		ShapeUnion parseShapes(nlohmann::json& config, MaterialDict& matDict);

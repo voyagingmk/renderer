@@ -26,9 +26,9 @@ namespace renderer {
 		MaterialDict matDict;
 		ShapeUnion shapeUnion;
 		Lights lights;
-		SceneDesc(Film* f, const PerspectiveCamera& c, ShapeUnion&& s) :
+		SceneDesc(const PerspectiveCamera& c, ShapeUnion&& s) :
 			threadsPow(0), width(1), height(1),
-			maxReflect(0), film(f), camera(c),
+			maxReflect(0), film(nullptr), camera(c),
 			shapeUnion(std::forward<ShapeUnion>(s)) {
 		}
 		SceneDesc(SceneDesc&& s):
@@ -47,6 +47,7 @@ namespace renderer {
 		~SceneDesc() {
 			film = nullptr;
 		}
+		void setFilm(Film* f);
 	};
 
 	class Renderer {
@@ -56,8 +57,8 @@ namespace renderer {
 		void rayTrace(Film*, Shape& scene, PerspectiveCamera& camera, Lights&);
 		Color rayTraceRecursive(Shape* scene, Ray& ray, Lights&, int maxReflect);
 		void rayTraceReflection(Film*, Shape* scene, PerspectiveCamera& camera, Lights&, int maxReflect, int x = 0, int y = 0, int w = 0, int h = 0);
-		void ConcurrentRender(SceneDesc&);
-
+		void rayTraceConcurrence(SceneDesc&);
+		void renderScene(SceneDesc&);
 	};
 }
 
