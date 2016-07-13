@@ -92,7 +92,9 @@ namespace renderer {
 
 	int Mesh::Intersect(Ray& ray, IntersectResult* result) {
 		float minDistance = FLOAT_MAX;
-		
+		float hitt0, hitt1;
+		if (!bbox.Intersect(ray, &hitt0, &hitt1))
+			return 0;
 		Triangle tri(this);
 		for (int tri_idx = 0, tri_num = indexes.size()/3; tri_idx < tri_num; tri_idx += 1) {
 			tri.indexes[0] = indexes[tri_idx * 3];
