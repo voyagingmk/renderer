@@ -170,11 +170,11 @@ int main(int argc, char *argv[])
 			rect.y = p / desc.width;
 			rect.w = desc.width;
 			rect.h = 2;
-			int ret = SDL_UpdateTexture(bitmapTex, &rect, film.img->pixels, 3);
+			//int ret = SDL_UpdateTexture(bitmapTex, &rect, film.img->pixels, 3);
 			//printf("ret=%d\n", ret);
-			//SDL_Texture * bitmapTex = SDL_CreateTextureFromSurface(rendererSDL, film.img);
-			ret = SDL_RenderCopy(rendererSDL, bitmapTex, &rect, &rect);
-			//SDL_DestroyTexture(bitmapTex); 
+			SDL_Texture * bitmapTex = SDL_CreateTextureFromSurface(rendererSDL, film.img);
+			ret = SDL_RenderCopy(rendererSDL, bitmapTex, NULL, NULL);// &rect, &rect);
+			SDL_DestroyTexture(bitmapTex); 
 		p += 4;
 		SDL_RenderPresent(rendererSDL);
 		SDL_Delay(1);
