@@ -22,6 +22,7 @@
 #include <fstream>
 #include <map>
 #include <thread>
+#include <mutex>
 #include <random>
 #include <ctime>
 #include <chrono>
@@ -111,6 +112,20 @@ namespace renderer {
 
 	inline float Degrees(float radian) {
 		return (180.f / (float)M_PI) * radian;
+	}
+
+	static void checkSDLError(int line = -1)
+	{
+#ifndef NDEBUG
+		const char *error = SDL_GetError();
+		if (*error != '\0')
+		{
+			printf("SDL Error: %s\n", error);
+			if (line != -1)
+				printf(" + line: %i\n", line);
+			SDL_ClearError();
+		}
+#endif
 	}
 }
 

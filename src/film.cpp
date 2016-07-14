@@ -18,7 +18,7 @@ namespace renderer {
 	void SDLFilm::set(int x, int y, int r, int g, int b) {
 		Uint32 color = SDL_MapRGB(img->format, r, g, b);
 		SDL_Rect rect = { x, y, 1, 1 };
-		SDL_FillRect(img, &rect, color);
+		int ret =  SDL_FillRect(img, &rect, color);
 	}
 
 	void SDLFilm::resize(int w, int h) {

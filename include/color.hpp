@@ -23,6 +23,15 @@ namespace renderer {
 		inline float r() const { return rgb[0]; };
 		inline float g() const { return rgb[1]; };
 		inline float b() const { return rgb[2]; };
+		inline int rInt() const {
+			return r() * 255;
+		}
+		inline int gInt() const {
+			return g() * 255;
+		}
+		inline int bInt() const {
+			return b() * 255;
+		}
 	public:
 		static const Color Black;
 		static const Color White;

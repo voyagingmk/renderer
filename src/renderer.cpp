@@ -20,8 +20,6 @@ namespace renderer {
 	}
 
 	void Renderer::renderDepth(Film *film, Shape& scene, PerspectiveCamera& camera, float maxDepth) {
-		scene.Init();
-		camera.Init();
 		int w = film->width(), h = film->height();
 		IntersectResult result;
 		for (int y = 0; y < h; y++) {
@@ -38,8 +36,6 @@ namespace renderer {
 		}
 	}
 	void Renderer::renderNormal(Film *film, Shape& scene, PerspectiveCamera& camera, float maxDepth) {
-		scene.Init();
-		camera.Init();
 		int w = film->width(), h = film->height();
 		IntersectResult result;
 		for (int y = 0; y < h; y++) {
@@ -61,8 +57,6 @@ namespace renderer {
 
 
 	void Renderer::rayTrace(Film *film, Shape& scene, PerspectiveCamera& camera, Lights& lights) {
-		scene.Init();
-		camera.Init();
 		int w = film->width(), h = film->height();
 		IntersectResult result;
 		for (int y = 0; y < h; y++) {
@@ -167,8 +161,6 @@ namespace renderer {
 	}
 
 	void Renderer::rayTraceReflection(Film *film, Shape* scene, PerspectiveCamera& camera, Lights& lights, int maxReflect, int px, int py, int pw, int ph) {
-		scene->Init();
-		camera.Init();
 		int w = pw, h = ph, img_width = film->width(), img_height = film->height();
 		if (w == 0)
 			w = img_width;
@@ -191,6 +183,56 @@ namespace renderer {
 		}
 	}
 	
+	void Renderer::initRenderDesc(SceneDesc& desc) {
+		desc.shapeUnion.Init();
+		desc.camera.Init();
+	}
+
+	Color Renderer::rayTraceAt(SceneDesc& desc, int x, int y) {
+		int w = 1, 
+			h = 1,
+			img_width = desc.film->width(),
+			img_height = desc.film->height();
+		float sy = 1.0f - (float)y / img_height;
+		float sx = (float)x / img_width;
+		Ray& ray = desc.camera.GenerateRay(sx, sy);
+		//printf("x,y = %d,%d, sx,sy = %.3f,%.3f   %d,%d\n", x,y, sx, sy, img_width, img_height);
+		Color color = rayTraceRecursive(&desc.shapeUnion, ray, desc.lights, desc.maxReflect);
+		return color;
+	}
+
+	void asyncRenderAt(std::mutex& mtx, Renderer *renderer, SceneDesc& desc, int x, int y)
+	{
+		Color c = renderer->rayTraceAt(desc, x, y);
+		std::lock_guard<std::mutex> lock(mtx);
+		//desc.film->set(x, y, 255,0,0);
+		desc.film->set(x, y, c.rInt(), c.gInt(), c.bInt());
+		//printf("%d,%d = %d,%d,%d\n", x, y, c.rInt(), c.gInt(), c.bInt());
+	}
+
+	void Renderer::asyncRender(SceneDesc& desc, std::mutex& mtx, int p)
+	{
+		int total = desc.width * desc.height;
+		int pos[4] = { 0,1,2,3 };
+		//printf("p=%d total=%d\n", p, total);
+		if(p < total){
+			std::thread* *threads = new std::thread*[4];
+			for (int i = 0; i < 4; i++) {
+				int _p = p + i;
+				if (_p >= total)
+					break;
+				int x = _p % desc.width, y = _p / desc.width;
+				std::thread* t = new std::thread(asyncRenderAt,
+					std::ref(mtx), this, std::ref(desc),
+					x, y);
+				threads[i] = t;
+			}
+			for (int i = 0; i < 4; i++) {
+				threads[i]->join();
+				delete threads[i];
+			}
+		}
+	}
 	void renderArea(Renderer *renderer, SceneDesc& desc, int x, int y, int w, int h)
 	{
 		renderer->rayTraceReflection(desc.film, dynamic_cast<Shape*>(&desc.shapeUnion), desc.camera, desc.lights, desc.maxReflect, x, y, w, h);
@@ -215,8 +257,10 @@ namespace renderer {
 			threads[i]->join();
 		}
 	}
+
 	void Renderer::renderScene(SceneDesc& desc) {
-		printf("[renderScene] film = [w: %d, h: %d] multithread = %d \n", desc.width, desc.height, int(pow(2.0, desc.threadsPow)));
+		//printf("[renderScene] film = [w: %d, h: %d] multithread = %d \n", desc.width, desc.height, int(pow(2.0, desc.threadsPow)));
+		initRenderDesc(desc);
 
 		auto time_begin = std::chrono::system_clock::now();
 		if (desc.threadsPow == 0) {

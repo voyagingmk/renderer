@@ -21,19 +21,7 @@ void sdldie(const char *msg)
 }
 
 
-void checkSDLError(int line = -1)
-{
-#ifndef NDEBUG
-	const char *error = SDL_GetError();
-	if (*error != '\0')
-	{
-		printf("SDL Error: %s\n", error);
-		if (line != -1)
-			printf(" + line: %i\n", line);
-		SDL_ClearError();
-	}
-#endif
-}
+
 
 
 int main3(int argc, char *argv[]) {
@@ -138,7 +126,7 @@ int main(int argc, char *argv[])
 	SceneDesc desc = parser.parse(config);
 	desc.setFilm(&film);
 	Renderer renderer;
-	renderer.renderScene(desc);
+	//renderer.renderScene(desc);
 	bitmapTex = SDL_CreateTextureFromSurface(rendererSDL, film.img);
 	/*
 	{
@@ -153,6 +141,7 @@ int main(int argc, char *argv[])
 	/* Clear our buffer with a red background */
 	glClearColor(1.0, 1.0,1.0, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT);
+	SDL_SetRenderDrawColor(rendererSDL, 255, 255, 255, SDL_ALPHA_OPAQUE);
 	SDL_RenderClear(rendererSDL);
 	int ret = SDL_RenderCopy(rendererSDL, bitmapTex, NULL, NULL);
 	if (ret == -1)
@@ -162,6 +151,9 @@ int main(int argc, char *argv[])
 	/* Swap our back buffer to the front */
 	//SDL_GL_SwapWindow(win);
 
+	std::mutex mtx;
+	int p = 0;
+	renderer.initRenderDesc(desc);
 	while (1) {
 		SDL_Event e;
 		if (SDL_PollEvent(&e)) {
@@ -169,8 +161,23 @@ int main(int argc, char *argv[])
 				break;
 			}
 		}
+		renderer.asyncRender(desc, mtx, p);
+
+		glClearColor(1.0, 1.0, 1.0, 1.0);
+		glClear(GL_COLOR_BUFFER_BIT);
+			SDL_Rect rect;//2row
+			rect.x = 0;
+			rect.y = p / desc.width;
+			rect.w = desc.width;
+			rect.h = 2;
+			int ret = SDL_UpdateTexture(bitmapTex, &rect, film.img->pixels, 3);
+			//printf("ret=%d\n", ret);
+			//SDL_Texture * bitmapTex = SDL_CreateTextureFromSurface(rendererSDL, film.img);
+			ret = SDL_RenderCopy(rendererSDL, bitmapTex, &rect, &rect);
+			//SDL_DestroyTexture(bitmapTex); 
+		p += 4;
 		SDL_RenderPresent(rendererSDL);
-		SDL_Delay(30);
+		SDL_Delay(1);
 
 	}
 	SDL_DestroyTexture(bitmapTex);
@@ -180,6 +187,11 @@ int main(int argc, char *argv[])
 	SDL_Quit();
 
 	return 0;
+}
+
+void drawPixel(SDL_Renderer * rendererSDL, Color c, int x, int y) {
+	SDL_SetRenderDrawColor(rendererSDL, c.rInt(), c.gInt(), c.bInt(), SDL_ALPHA_OPAQUE);
+	SDL_RenderDrawPoint(rendererSDL, x, y);
 }
 
 void renderScene(SDLFilm * film) {
