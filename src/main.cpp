@@ -164,10 +164,8 @@ int main(int argc, char *argv[])
 				break;
 			}
 		}
-		//{
-			//Profiler pp("asyncRender");
-			renderer.asyncRender(desc, mtx, p);
-		//}
+		//Profiler pp("asyncRender");
+		renderer.asyncRender(desc, mtx, p);
 		checkSDLError(__LINE__);
 		glClearColor(1.0, 1.0, 1.0, 1.0);
 		glClear(GL_COLOR_BUFFER_BIT); 
@@ -183,7 +181,7 @@ int main(int argc, char *argv[])
 		//SDL_RenderCopy(rendererSDL, bitmapTex, NULL, NULL);
 		p += 4;
 		SDL_RenderPresent(rendererSDL);
-		SDL_Delay(1);
+		SDL_Delay(0);
 
 	}
 	SDL_DestroyTexture(bitmapTex);

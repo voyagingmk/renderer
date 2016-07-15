@@ -7,7 +7,7 @@
 
 namespace renderer {
 	class Profiler {
-		typedef std::chrono::system_clock::time_point time_point;
+		typedef std::chrono::steady_clock::time_point time_point;
 		time_point time_begin;
 		std::string flag;
 	public:

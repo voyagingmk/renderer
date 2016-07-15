@@ -20,8 +20,8 @@
         "pos": [0, 30, -30],
         "radius": 5,
         "shadowrays": 16,
-        "shadow": false,
-        "softshadow": false,
+        "shadow": true,
+        "softshadow": true,
         "color": [255, 255, 255]
     }, {
         "type": "PointLight0",
@@ -37,7 +37,7 @@
         "radius": 10,
         "matId": 1
     }, {
-        "type": "Mesh0",
+        "type": "Mesh",
         "vertices": [
             [ 0, 2, -5],
             [ 5, 5,  0],
