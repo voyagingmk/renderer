@@ -24,13 +24,13 @@ namespace renderer {
 		inline float g() const { return rgb[1]; };
 		inline float b() const { return rgb[2]; };
 		inline int rInt() const {
-			return r() * 255;
+			return min(int(r() * 255), 255);
 		}
 		inline int gInt() const {
-			return g() * 255;
+			return min(int(g() * 255), 255);
 		}
 		inline int bInt() const {
-			return b() * 255;
+			return min(int(b() * 255), 255);
 		}
 	public:
 		static const Color Black;
