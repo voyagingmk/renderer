@@ -10,6 +10,7 @@
 #include "film.hpp"
 #include "light.hpp"
 #include "shapes/union.hpp"
+#include "profiler.hpp"
 
 namespace renderer {
 
@@ -201,12 +202,12 @@ namespace renderer {
 		return color;
 	}
 
-	void asyncRenderAt(std::mutex& mtx, Renderer *renderer, SceneDesc& desc, int x, int y)
+	void asyncRenderAt(Color colors[], int idx, Renderer *renderer, SceneDesc& desc, int x, int y)
 	{
 		Color c = renderer->rayTraceAt(desc, x, y);
-		std::lock_guard<std::mutex> lock(mtx);
+		colors[idx] = c;
 		//desc.film->set(x, y, 255,0,0);
-		desc.film->set(x, y, c.rInt(), c.gInt(), c.bInt());
+		//desc.film->set(x, y, c.rInt(), c.gInt(), c.bInt());
 		//printf("%d,%d = %d,%d,%d\n", x, y, c.rInt(), c.gInt(), c.bInt());
 	}
 
@@ -215,6 +216,7 @@ namespace renderer {
 		int total = desc.width * desc.height;
 		int pos[4] = { 0,1,2,3 };
 		//printf("p=%d total=%d\n", p, total);
+		Color colors[4];
 		if(p < total){
 			std::thread* *threads = new std::thread*[4];
 			for (int i = 0; i < 4; i++) {
@@ -223,7 +225,7 @@ namespace renderer {
 					break;
 				int x = _p % desc.width, y = _p / desc.width;
 				std::thread* t = new std::thread(asyncRenderAt,
-					std::ref(mtx), this, std::ref(desc),
+					std::ref(colors), i, this, std::ref(desc),
 					x, y);
 				threads[i] = t;
 			}
@@ -231,6 +233,22 @@ namespace renderer {
 				threads[i]->join();
 				delete threads[i];
 			}
+			std::lock_guard<std::mutex> lock(mtx);
+			SDL_Rect& rect = static_cast<SDLFilm*>(desc.film)->lockRect;
+			rect.x = p % desc.width;
+			rect.y = p / desc.width;
+			rect.w = 4;
+			rect.h = 1;
+			desc.film->beforeSet();
+			for (int i = 0; i < 4; i++) {
+				int _p = p + i;
+				if (_p >= total)
+					break;
+				int x = _p % desc.width, y = _p / desc.width;
+				Color& c = colors[i];
+				desc.film->set(x, y, c.rInt(), c.gInt(), c.bInt());
+			}
+			desc.film->afterSet();
 		}
 	}
 	void renderArea(Renderer *renderer, SceneDesc& desc, int x, int y, int w, int h)

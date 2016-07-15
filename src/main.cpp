@@ -6,6 +6,7 @@
 #include "curve.hpp"
 #include "film.hpp"
 #include "draw.hpp"
+#include "profiler.hpp"
 
 using namespace renderer;
 
@@ -127,7 +128,9 @@ int main(int argc, char *argv[])
 	desc.setFilm(&film);
 	Renderer renderer;
 	//renderer.renderScene(desc);
-	bitmapTex = SDL_CreateTextureFromSurface(rendererSDL, film.img);
+	bitmapTex = SDL_CreateTexture(rendererSDL, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, width, height);
+	//bitmapTex = SDL_CreateTextureFromSurface(rendererSDL, film.img);
+	film.texture = bitmapTex;
 	/*
 	{
 		SDL_Surface *bitmapSurface = SDL_LoadBMP("hello.bmp");
@@ -161,20 +164,23 @@ int main(int argc, char *argv[])
 				break;
 			}
 		}
-		renderer.asyncRender(desc, mtx, p);
-
+		//{
+			//Profiler pp("asyncRender");
+			renderer.asyncRender(desc, mtx, p);
+		//}
+		checkSDLError(__LINE__);
 		glClearColor(1.0, 1.0, 1.0, 1.0);
-		glClear(GL_COLOR_BUFFER_BIT);
-			SDL_Rect rect;//2row
-			rect.x = 0;
-			rect.y = p / desc.width;
-			rect.w = desc.width;
-			rect.h = 2;
-			//int ret = SDL_UpdateTexture(bitmapTex, &rect, film.img->pixels, 3);
-			//printf("ret=%d\n", ret);
-			SDL_Texture * bitmapTex = SDL_CreateTextureFromSurface(rendererSDL, film.img);
-			ret = SDL_RenderCopy(rendererSDL, bitmapTex, NULL, NULL);// &rect, &rect);
-			SDL_DestroyTexture(bitmapTex); 
+		glClear(GL_COLOR_BUFFER_BIT); 
+		SDL_Rect rect;//2row
+		rect.x = p % desc.width;
+		rect.y = p / desc.width;
+		rect.w = 4;
+		rect.h = 1;
+		double angle = 0;
+		SDL_Point screenCenter = { width / 2, height / 2 };
+		SDL_RendererFlip flip = SDL_FLIP_NONE;
+		SDL_RenderCopyEx(rendererSDL, bitmapTex, &rect, &rect, angle, &screenCenter, flip);
+		//SDL_RenderCopy(rendererSDL, bitmapTex, NULL, NULL);
 		p += 4;
 		SDL_RenderPresent(rendererSDL);
 		SDL_Delay(1);

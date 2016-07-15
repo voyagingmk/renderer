@@ -13,6 +13,8 @@ namespace renderer {
 		Film(int xres, int yres)
 			: xResolution(xres), yResolution(yres) { }
 		virtual ~Film() {};
+		virtual void beforeSet() = 0;
+		virtual void afterSet() = 0;
 		virtual void set(int x, int y, int r, int g, int b)= 0;
 		virtual void resize(int xres, int yres) = 0;
 		inline int width() { return xResolution; }
@@ -27,6 +29,8 @@ namespace renderer {
 		// Film Interface
 		ImageFilm(int xres, int yres, Image* image): Film(xres, yres),img(image) {}
 		virtual ~ImageFilm() {};
+		virtual void beforeSet() override;
+		virtual void afterSet() override;
 		virtual void set(int x, int y, int r, int g, int b) override;
 		virtual void resize(int xres, int yres) override;
 	};
@@ -34,10 +38,17 @@ namespace renderer {
 	class SDLFilm : public Film {
 	public:
 		SDL_Surface* img;
+		SDL_Texture* texture;
+		SDL_PixelFormat* pixelFormat;
+		Uint32* pixels;
+		int pitch;
+		SDL_Rect lockRect;
 	public:
 		// Film Interface
 		SDLFilm(int xres, int yres);
 		virtual ~SDLFilm() {};
+		void beforeSet() override;
+		void afterSet() override;
 		virtual void set(int x, int y, int r, int g, int b) override;
 		virtual void resize(int xres, int yres) override;
 	};
