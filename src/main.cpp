@@ -11,10 +11,7 @@
 using namespace renderer;
 using json = nlohmann::json;
 
-#define PROGRAM_NAME "Tutorial1"
 
-/* A simple function that prints a message, the error code returned by SDL,
-* and quits the application */
 void SDLExit(const char *msg)
 {
 	printf("%s: %s\n", msg, SDL_GetError());
@@ -22,66 +19,8 @@ void SDLExit(const char *msg)
 	exit(1);
 }
 
-
-
-
-
-int main3(int argc, char *argv[]) {
-	SDL_Window *win = NULL;
-	SDL_Renderer *rendererSDL = NULL;
-	SDL_Texture *texture = NULL;
-	int width = 512, height = 512;
-
-	if (SDL_Init(SDL_INIT_VIDEO) < 0)
-		SDLExit("Unable to initialize SDL");
-
-	checkSDLError(__LINE__);
-
-	using json = nlohmann::json;
-	json config = readJson("config.json");
-	width = config["width"], height = config["height"];
-
-	win = SDL_CreateWindow("Renderer", 
-		SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 
-		width, height, 0);
-	
-	if (!win) /* Die if creation failed */
-		SDLExit("Unable to create window");
-
-	rendererSDL = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
-
-	SDLFilm film(width, height);
-	SceneParser parser; 
-	SceneDesc desc = parser.parse(config);
-	desc.setFilm(&film);
-	Renderer renderer;
-	renderer.renderScene(desc);
-	texture = SDL_CreateTextureFromSurface(rendererSDL, film.img);
-
-	SDL_RenderClear(rendererSDL);
-	SDL_RenderCopy(rendererSDL, texture, NULL, NULL);
-	SDL_RenderPresent(rendererSDL);
-	while (1) {
-		SDL_Event e;
-		if (SDL_PollEvent(&e)) {
-			if (e.type == SDL_QUIT) {
-				break;
-			}
-		}
-		SDL_RenderPresent(rendererSDL);
-		SDL_Delay(30);
-
-	}
-	SDL_DestroyTexture(texture);
-	SDL_DestroyRenderer(rendererSDL);
-	SDL_DestroyWindow(win);
-
-	SDL_Quit();
-
-	return 0;
-}
-/* Our program's entry point */
 //https://www.opengl.org/wiki/Tutorial1:_Creating_a_Cross_Platform_OpenGL_3.2_Context_in_SDL_(C_/_SDL)
+
 int main(int argc, char *argv[])
 {
 	SDL_Window * win = nullptr;
@@ -90,32 +29,22 @@ int main(int argc, char *argv[])
 
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 		SDLExit("Unable to initialize SDL");
-
 	checkSDLError(__LINE__);//on Win7 would cause a ERROR about SHCore.dll, just ignore it.
-
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
-
 	checkSDLError(__LINE__);
-
-	/* Turn on double buffering with a 24bit Z buffer.
-	* You may need to change this to 16 or 32 for your system */
-	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-
 	checkSDLError(__LINE__);
 
 	json config = readJson("config.json");
 	width = config["width"], height = config["height"];
+	std::string title = config["title"];
 
-	win = SDL_CreateWindow(PROGRAM_NAME, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+	win = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
 		width, height, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
 	if (!win)
 		SDLExit("Unable to create window");
 
-	checkSDLError(__LINE__);
-
-	/* Create our opengl context and attach it to our window */
 	SDL_GLContext glContext = SDL_GL_CreateContext(win);
 	checkSDLError(__LINE__);
 
@@ -124,37 +53,20 @@ int main(int argc, char *argv[])
 	SceneDesc desc = parser.parse(config);
 	desc.setFilm(&film);
 	desc.init();
-
 	SDL_SetWindowSize(win, desc.width, desc.height);
 	rendererSDL = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
-	Renderer renderer;
-	//renderer.renderScene(desc);
 	SDL_Texture* texture = SDL_CreateTexture(rendererSDL, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, desc.width, desc.height);
 	checkSDLError(__LINE__);
-	
-	//texture = SDL_CreateTextureFromSurface(rendererSDL, film.img);
 	film.texture = texture;
-	/*
-	{
-		SDL_Surface *bitmapSurface = SDL_LoadBMP("hello.bmp");
-		texture = SDL_CreateTextureFromSurface(renderer, bitmapSurface);
-		SDL_FreeSurface(bitmapSurface);
-	}*/
-	/* This makes our buffer swap syncronized with the monitor's vertical refresh */
-	//SDL_GL_SetSwapInterval(1);
-
-	/* Clear our buffer with a red background */
-	glClearColor(1.0, 1.0,1.0, 1.0);
-	glClear(GL_COLOR_BUFFER_BIT);
-	//SDL_SetRenderDrawColor(rendererSDL, 255, 255, 255, SDL_ALPHA_OPAQUE);
-	//SDL_RenderClear(rendererSDL);
-	//SDL_RenderPresent(rendererSDL);
-	
-	/* Swap our back buffer to the front */
-	//SDL_GL_SwapWindow(win);
-
 	std::mutex mtx;
 	int p = 0;
+	double angle = 0;
+	Renderer renderer;
+	SDL_Rect updatedRect;
+	updatedRect.w = desc.threadsNum();
+	updatedRect.h = 1;
+	SDL_Point screenCenter = { width / 2, height / 2 };
+	SDL_RendererFlip flip = SDL_FLIP_NONE;
 	while (1) {
 		SDL_Event e;
 		if (SDL_PollEvent(&e)) {
@@ -164,26 +76,16 @@ int main(int argc, char *argv[])
 		}
 		//Profiler pp("asyncRender");
 		renderer.asyncRender(desc, mtx, p);
-		checkSDLError(__LINE__);
+		updatedRect.x = p % desc.width;
+		updatedRect.y = p / desc.width;
 		glClearColor(1.0, 1.0, 1.0, 1.0);
 		glClear(GL_COLOR_BUFFER_BIT); 
-		SDL_Rect rect;//2row
-		rect.x = p % desc.width;
-		rect.y = p / desc.width;
-		rect.w = desc.threadsNum();
-		rect.h = 1;
-		double angle = 0;
-		SDL_Point screenCenter = { width / 2, height / 2 };
-		SDL_RendererFlip flip = SDL_FLIP_NONE;
-		int ret = SDL_RenderCopyEx(rendererSDL, texture, &rect, &rect, angle, &screenCenter, flip);
+		int ret = SDL_RenderCopyEx(rendererSDL, texture, &updatedRect, &updatedRect, angle, &screenCenter, flip);
 		if (ret == -1)
 			SDLExit("SDL_RenderCopy failed");
-		//SDL_RenderCopy(rendererSDL, texture, NULL, NULL);
 		p += desc.threadsNum();
 		SDL_RenderPresent(rendererSDL);
-
 		SDL_Delay(0);
-
 	}
 	SDL_DestroyTexture(texture);
 	SDL_DestroyRenderer(rendererSDL);
@@ -194,16 +96,10 @@ int main(int argc, char *argv[])
 	return 0;
 }
 
-void drawPixel(SDL_Renderer * rendererSDL, Color c, int x, int y) {
-	SDL_SetRenderDrawColor(rendererSDL, c.rInt(), c.gInt(), c.bInt(), SDL_ALPHA_OPAQUE);
-	SDL_RenderDrawPoint(rendererSDL, x, y);
-}
 
-void renderScene(SDLFilm * film) {
-
-}
 
 /*
+Render Spline
 
 int main(int argc, char ** argv) {
 
