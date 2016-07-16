@@ -27,7 +27,7 @@ namespace renderer {
 		desc.matDict = std::move(matDict);
 		desc.width = config["width"];
 		desc.height = config["height"];
-		desc.threadsPow = config["multithread"];
+		desc.threadsPow = config["threadsPow"];
 		desc.maxReflect = config["maxReflect"];
 		parseLights(config, desc.lights, desc.matDict);
 		return desc;

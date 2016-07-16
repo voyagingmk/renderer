@@ -9,12 +9,13 @@
 #include "profiler.hpp"
 
 using namespace renderer;
+using json = nlohmann::json;
 
 #define PROGRAM_NAME "Tutorial1"
 
 /* A simple function that prints a message, the error code returned by SDL,
 * and quits the application */
-void sdldie(const char *msg)
+void SDLExit(const char *msg)
 {
 	printf("%s: %s\n", msg, SDL_GetError());
 	SDL_Quit();
@@ -28,11 +29,11 @@ void sdldie(const char *msg)
 int main3(int argc, char *argv[]) {
 	SDL_Window *win = NULL;
 	SDL_Renderer *rendererSDL = NULL;
-	SDL_Texture *bitmapTex = NULL;
+	SDL_Texture *texture = NULL;
 	int width = 512, height = 512;
 
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
-		sdldie("Unable to initialize SDL");
+		SDLExit("Unable to initialize SDL");
 
 	checkSDLError(__LINE__);
 
@@ -45,7 +46,7 @@ int main3(int argc, char *argv[]) {
 		width, height, 0);
 	
 	if (!win) /* Die if creation failed */
-		sdldie("Unable to create window");
+		SDLExit("Unable to create window");
 
 	rendererSDL = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
 
@@ -55,10 +56,10 @@ int main3(int argc, char *argv[]) {
 	desc.setFilm(&film);
 	Renderer renderer;
 	renderer.renderScene(desc);
-	bitmapTex = SDL_CreateTextureFromSurface(rendererSDL, film.img);
+	texture = SDL_CreateTextureFromSurface(rendererSDL, film.img);
 
 	SDL_RenderClear(rendererSDL);
-	SDL_RenderCopy(rendererSDL, bitmapTex, NULL, NULL);
+	SDL_RenderCopy(rendererSDL, texture, NULL, NULL);
 	SDL_RenderPresent(rendererSDL);
 	while (1) {
 		SDL_Event e;
@@ -71,7 +72,7 @@ int main3(int argc, char *argv[]) {
 		SDL_Delay(30);
 
 	}
-	SDL_DestroyTexture(bitmapTex);
+	SDL_DestroyTexture(texture);
 	SDL_DestroyRenderer(rendererSDL);
 	SDL_DestroyWindow(win);
 
@@ -83,18 +84,14 @@ int main3(int argc, char *argv[]) {
 //https://www.opengl.org/wiki/Tutorial1:_Creating_a_Cross_Platform_OpenGL_3.2_Context_in_SDL_(C_/_SDL)
 int main(int argc, char *argv[])
 {
-	SDL_Window *win = NULL;
-	SDL_GLContext glContext = NULL; /* Our opengl context handle */
+	SDL_Window * win = nullptr;
+	SDL_Renderer * rendererSDL = nullptr;
 	int width = 512, height = 512;
 
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
-		sdldie("Unable to initialize SDL");
+		SDLExit("Unable to initialize SDL");
 
 	checkSDLError(__LINE__);//on Win7 would cause a ERROR about SHCore.dll, just ignore it.
-
-	using json = nlohmann::json;
-	json config = readJson("config.json");
-	width = config["width"], height = config["height"];
 
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
@@ -108,55 +105,56 @@ int main(int argc, char *argv[])
 
 	checkSDLError(__LINE__);
 
+	json config = readJson("config.json");
+	width = config["width"], height = config["height"];
+
 	win = SDL_CreateWindow(PROGRAM_NAME, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
 		width, height, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
 	if (!win)
-		sdldie("Unable to create window");
+		SDLExit("Unable to create window");
 
 	checkSDLError(__LINE__);
 
 	/* Create our opengl context and attach it to our window */
-	glContext = SDL_GL_CreateContext(win);
+	SDL_GLContext glContext = SDL_GL_CreateContext(win);
 	checkSDLError(__LINE__);
 
-	SDL_Renderer * rendererSDL = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
-	
-	SDL_Texture *bitmapTex;
 	SDLFilm film(width, height);
 	SceneParser parser;
 	SceneDesc desc = parser.parse(config);
 	desc.setFilm(&film);
+	desc.init();
+
+	SDL_SetWindowSize(win, desc.width, desc.height);
+	rendererSDL = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
 	Renderer renderer;
 	//renderer.renderScene(desc);
-	bitmapTex = SDL_CreateTexture(rendererSDL, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, width, height);
-	//bitmapTex = SDL_CreateTextureFromSurface(rendererSDL, film.img);
-	film.texture = bitmapTex;
+	SDL_Texture* texture = SDL_CreateTexture(rendererSDL, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, desc.width, desc.height);
+	checkSDLError(__LINE__);
+	
+	//texture = SDL_CreateTextureFromSurface(rendererSDL, film.img);
+	film.texture = texture;
 	/*
 	{
 		SDL_Surface *bitmapSurface = SDL_LoadBMP("hello.bmp");
-		bitmapTex = SDL_CreateTextureFromSurface(renderer, bitmapSurface);
+		texture = SDL_CreateTextureFromSurface(renderer, bitmapSurface);
 		SDL_FreeSurface(bitmapSurface);
 	}*/
-	checkSDLError(__LINE__);
 	/* This makes our buffer swap syncronized with the monitor's vertical refresh */
-	SDL_GL_SetSwapInterval(1);
+	//SDL_GL_SetSwapInterval(1);
 
 	/* Clear our buffer with a red background */
 	glClearColor(1.0, 1.0,1.0, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT);
-	SDL_SetRenderDrawColor(rendererSDL, 255, 255, 255, SDL_ALPHA_OPAQUE);
-	SDL_RenderClear(rendererSDL);
-	int ret = SDL_RenderCopy(rendererSDL, bitmapTex, NULL, NULL);
-	if (ret == -1)
-		sdldie("SDL_RenderCopy failed");
-	SDL_RenderPresent(rendererSDL);
+	//SDL_SetRenderDrawColor(rendererSDL, 255, 255, 255, SDL_ALPHA_OPAQUE);
+	//SDL_RenderClear(rendererSDL);
+	//SDL_RenderPresent(rendererSDL);
 	
 	/* Swap our back buffer to the front */
 	//SDL_GL_SwapWindow(win);
 
 	std::mutex mtx;
 	int p = 0;
-	renderer.initRenderDesc(desc);
 	while (1) {
 		SDL_Event e;
 		if (SDL_PollEvent(&e)) {
@@ -172,19 +170,22 @@ int main(int argc, char *argv[])
 		SDL_Rect rect;//2row
 		rect.x = p % desc.width;
 		rect.y = p / desc.width;
-		rect.w = 4;
+		rect.w = desc.threadsNum();
 		rect.h = 1;
 		double angle = 0;
 		SDL_Point screenCenter = { width / 2, height / 2 };
 		SDL_RendererFlip flip = SDL_FLIP_NONE;
-		SDL_RenderCopyEx(rendererSDL, bitmapTex, &rect, &rect, angle, &screenCenter, flip);
-		//SDL_RenderCopy(rendererSDL, bitmapTex, NULL, NULL);
-		p += 4;
+		int ret = SDL_RenderCopyEx(rendererSDL, texture, &rect, &rect, angle, &screenCenter, flip);
+		if (ret == -1)
+			SDLExit("SDL_RenderCopy failed");
+		//SDL_RenderCopy(rendererSDL, texture, NULL, NULL);
+		p += desc.threadsNum();
 		SDL_RenderPresent(rendererSDL);
+
 		SDL_Delay(0);
 
 	}
-	SDL_DestroyTexture(bitmapTex);
+	SDL_DestroyTexture(texture);
 	SDL_DestroyRenderer(rendererSDL);
 	SDL_GL_DeleteContext(glContext);
 	SDL_DestroyWindow(win);

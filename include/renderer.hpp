@@ -48,6 +48,10 @@ namespace renderer {
 			film = nullptr;
 		}
 		void setFilm(Film* f);
+		int threadsNum() {
+			return std::pow(2, threadsPow);
+		}
+		void init();
 	};
 
 	class Renderer {
@@ -58,7 +62,6 @@ namespace renderer {
 		Color rayTraceRecursive(Shape* scene, Ray& ray, Lights&, int maxReflect);
 		void rayTraceReflection(Film*, Shape* scene, PerspectiveCamera& camera, Lights&, int maxReflect, int x = 0, int y = 0, int w = 0, int h = 0);
 		void rayTraceConcurrence(SceneDesc&);
-		void initRenderDesc(SceneDesc&);
 		void asyncRender(SceneDesc& desc, std::mutex& mtx, int p);
 		Color rayTraceAt(SceneDesc&, int x, int y);
 		void renderScene(SceneDesc&);

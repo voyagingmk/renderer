@@ -1,7 +1,7 @@
 {
-    "width": 512,
+    "width": 515,
     "height": 512,
-    "multithread": 3,
+    "threadsPow": 3,
     "camera": {
         "eye": [0, 5, 15],
         "front": [0, 0, -1],

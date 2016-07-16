@@ -20,6 +20,22 @@ namespace renderer {
 			film->resize(width, height);
 	}
 
+	void SceneDesc::init() {
+		//no more than 16 threads
+		if (threadsPow > 4)
+			threadsPow = 4;
+		int num = threadsNum();
+		//make sure width is times of threadsNum
+		if (num != 0 && width / num) {
+			width -= width % num;
+		}
+		film->resize(width, height);
+		shapeUnion.Init();
+		camera.Init();
+	}
+
+
+
 	void Renderer::renderDepth(Film *film, Shape& scene, PerspectiveCamera& camera, float maxDepth) {
 		int w = film->width(), h = film->height();
 		IntersectResult result;
@@ -183,11 +199,6 @@ namespace renderer {
 			}
 		}
 	}
-	
-	void Renderer::initRenderDesc(SceneDesc& desc) {
-		desc.shapeUnion.Init();
-		desc.camera.Init();
-	}
 
 	Color Renderer::rayTraceAt(SceneDesc& desc, int x, int y) {
 		int w = 1, 
@@ -214,12 +225,11 @@ namespace renderer {
 	void Renderer::asyncRender(SceneDesc& desc, std::mutex& mtx, int p)
 	{
 		int total = desc.width * desc.height;
-		int pos[4] = { 0,1,2,3 };
-		//printf("p=%d total=%d\n", p, total);
-		Color colors[4];
+		int threadsNum = desc.threadsNum();
+		Color colors[16];
 		if(p < total){
-			std::thread* *threads = new std::thread*[4];
-			for (int i = 0; i < 4; i++) {
+			std::thread* *threads = new std::thread*[threadsNum];
+			for (int i = 0; i < threadsNum; i++) {
 				int _p = p + i;
 				if (_p >= total)
 					break;
@@ -229,7 +239,7 @@ namespace renderer {
 					x, y);
 				threads[i] = t;
 			}
-			for (int i = 0; i < 4; i++) {
+			for (int i = 0; i < threadsNum; i++) {
 				threads[i]->join();
 				delete threads[i];
 			}
@@ -237,10 +247,10 @@ namespace renderer {
 			SDL_Rect& rect = static_cast<SDLFilm*>(desc.film)->lockRect;
 			rect.x = p % desc.width;
 			rect.y = p / desc.width;
-			rect.w = 4;
+			rect.w = threadsNum;
 			rect.h = 1;
 			desc.film->beforeSet();
-			for (int i = 0; i < 4; i++) {
+			for (int i = 0; i < threadsNum; i++) {
 				int _p = p + i;
 				if (_p >= total)
 					break;
@@ -277,10 +287,6 @@ namespace renderer {
 	}
 
 	void Renderer::renderScene(SceneDesc& desc) {
-		//printf("[renderScene] film = [w: %d, h: %d] multithread = %d \n", desc.width, desc.height, int(pow(2.0, desc.threadsPow)));
-		initRenderDesc(desc);
-
-		auto time_begin = std::chrono::system_clock::now();
 		if (desc.threadsPow == 0) {
 			rayTrace(desc.film, desc.shapeUnion, desc.camera, desc.lights);
 			rayTraceReflection(desc.film, &desc.shapeUnion, desc.camera, std::ref(desc.lights), 4);
@@ -289,9 +295,5 @@ namespace renderer {
 			rayTraceConcurrence(desc);
 		}
 		//parserObj(config["obj"]);
-		auto time_end = std::chrono::system_clock::now();
-		auto time_cost = std::chrono::duration_cast<std::chrono::milliseconds>(time_end - time_begin).count();
-		printf("[renderScene] time cost: %lldms\n", time_cost);
-		//img.display("");
 	}
 }
