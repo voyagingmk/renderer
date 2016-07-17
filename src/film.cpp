@@ -24,12 +24,14 @@ namespace renderer {
 		texture(nullptr),
 		pixelFormat(nullptr)
 	{
-		img = SDL_CreateRGBSurface(0, xres, yres, 24, 0, 0, 0, 0);
 	}
 
 	void SDLFilm::beforeSet() {
+		if (!texture)
+			return;
 		int w, h;
 		Uint32 format;
+		int pitch;
 		SDL_QueryTexture(texture, &format, nullptr, &w, &h);
 		if (SDL_LockTexture(texture, &lockRect, (void**)&pixels, &pitch)) {
 			checkSDLError(__LINE__);
@@ -39,26 +41,23 @@ namespace renderer {
 	}
 
 	void SDLFilm::afterSet() {
+		if (!texture)
+			return; 
 		SDL_FreeFormat(pixelFormat);
 		pixelFormat = nullptr;
 		pixels = nullptr;
-		pitch = 0;
 		SDL_UnlockTexture(texture);
 	}
 
 	void SDLFilm::set(int x, int y, int r, int g, int b) {
-		if (!pixelFormat || !pixels)
+		if (!texture || !pixelFormat || !pixels)
 			return;
 		Uint32 color = SDL_MapRGBA(pixelFormat, r, g, b, 255);
 		Uint32 pixelPosition = x - lockRect.x;
 		pixels[pixelPosition] = color;
-		//SDL_Rect rect = { x, y, 1, 1 };
-		//int ret = SDL_FillRect(img, &rect, color);
 	}
 
 	void SDLFilm::resize(int w, int h) {
-		SDL_FreeSurface(img);
-		img = SDL_CreateRGBSurface(0, w, h, 24, 0, 0, 0, 0);
 	}
 }
 

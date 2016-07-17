@@ -37,11 +37,9 @@ namespace renderer {
 
 	class SDLFilm : public Film {
 	public:
-		SDL_Surface* img;
 		SDL_Texture* texture;
 		SDL_PixelFormat* pixelFormat;
 		Uint32* pixels;
-		int pitch;
 		SDL_Rect lockRect;
 	public:
 		// Film Interface
