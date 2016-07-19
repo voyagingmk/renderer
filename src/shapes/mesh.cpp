@@ -68,7 +68,7 @@ namespace renderer {
 		return BBox(p0, p1).Union(p2);
 	}
 
-	BBox Mesh::WorldBound() const {
+	BBox Triangle::WorldBound() const {
 		return (*o2w)(Bound());
 	}
 

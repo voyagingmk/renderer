@@ -42,7 +42,7 @@ namespace renderer {
 		return BBox(Vector3dF(-r, -r, -r), Vector3dF(r, r, r));
 	}
 
-	BBox Mesh::WorldBound() const {
+	BBox Sphere::WorldBound() const {
 		return (*o2w)(Bound());
 	}
 }
