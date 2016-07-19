@@ -10,34 +10,17 @@
         "fov": 90
     },
     "maxReflect": 3,
-    "obj": "test.obj",
-    "scene": [{
-        "type": "DirectionLight",
-        "dir": [0, -1, 0],
-        "softshadow": false,
-        "color": [255, 255, 255]
+	"obj":[{
+		"Id": 1,
+		"type": "Sphere",
+		"transform": [
+			["t", [-10, 10, -10]],
+			["r", [0, 1, 0, 90]]
+		],
+		"radius": 10,
+		"matId": 1
     }, {
-        "type": "PointLight",
-        "pos": [0, 30, -30],
-        "radius": 5,
-        "shadowrays": 16,
-        "shadow": true,
-        "softshadow": true,
-        "color": [255, 255, 255]
-    }, {
-        "type": "PointLight0",
-        "pos": [-5, 10, 10],
-        "radius": 15,
-        "shadowrays": 16,
-        "shadow": true,
-        "softshadow": false,
-        "color": [255, 255, 255]
-    },  {
-        "type": "Sphere",
-        "pos": [-10, 10, -10],
-        "radius": 10,
-        "matId": 1
-    }, {
+		"Id": 2,
         "type": "Mesh",
         "vertices": [
             [ 0, 2, -5],
@@ -45,35 +28,11 @@
             [ 10, 2, -5],
             [ 5, 12, -5]
         ],
-        "vertices_b": [
-            [0, 5, 0],
-            [10, 5, 0],
-            [0, 15, 0],
-            [10, 15, 0],
-            [0, 15, -10],
-            [10, 15, -10],
-            [0, 5, -10],
-            [10, 5, -10]
-        ],
         "indexes": [
             0, 2, 1,
             0,1,3,
             1,2,3,
             0,3,2
-        ],
-        "indexes_b": [
-            0, 1, 2,
-            3, 2, 1,
-            2, 3, 4,
-            5, 4, 3,
-            6, 4, 5,
-            7, 6, 5,
-            6, 7, 1,
-            0, 6, 1,
-            2, 6, 0,
-            4, 6, 2,
-            3, 1, 7,
-            3, 7, 5
         ],
         "normals": [
             [0, 0, 1],
@@ -95,38 +54,39 @@
             [0, 1],
             [1, 1]
         ],
-        "pos": [0, 10, -10],
+		"transform": [
+			["t", [0, 10, -10]],
+			["r", [0, 1, 0, 90]]
+		],
         "matId": 4
     }, {
+		"Id": 3,
         "type": "Plane",
         "normal": [0, 1, 0],
         "distance": 0,
         "matId": 3
+    }],
+    "light": [{
+        "type": "DirectionLight",
+        "dir": [0, -1, 0],
+        "softshadow": false,
+        "color": [255, 255, 255]
     }, {
-        "type": "Plane0",
-        "normal": [0, -1, 0],
-        "distance": 10,
-        "matId": 3
+        "type": "PointLight",
+        "pos": [0, 30, -30],
+        "radius": 5,
+        "shadowrays": 16,
+        "shadow": true,
+        "softshadow": true,
+        "color": [255, 255, 255]
     }, {
-        "type": "Plane0",
-        "normal": [1, 0, 0],
-        "distance": 10,
-        "matId": 3
-    }, {
-        "type": "Plane0",
-        "normal": [-1, 0, 0],
-        "distance": 10,
-        "matId": 3
-    }, {
-        "type": "Plane0",
-        "normal": [0, 0, 1],
-        "distance": 10,
-        "matId": 3
-    }, {
-        "type": "Plane0",
-        "normal": [0, 0, -1],
-        "distance": 10,
-        "matId": 3
+        "type": "PointLight0",
+        "pos": [-5, 10, 10],
+        "radius": 15,
+        "shadowrays": 16,
+        "shadow": true,
+        "softshadow": false,
+        "color": [255, 255, 255]
     }],
     "material": [{
         "id": 1,

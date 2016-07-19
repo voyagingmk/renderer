@@ -57,7 +57,7 @@ namespace renderer {
 	ShapeUnion SceneParser::parseShapes(nlohmann::json& config, MaterialDict& matDict)
 	{
 		Shapes shapes;
-		for (auto objinfo : config["scene"]) {
+		for (auto objinfo : config["obj"]) {
 			Shape* pShape = nullptr;
 			if (objinfo["type"] == "Sphere") {
 				auto pos = objinfo["pos"];
@@ -106,7 +106,7 @@ namespace renderer {
 
 	void SceneParser::parseLights(nlohmann::json& config, Lights& lights, MaterialDict& matDict)
 	{
-		for (auto objinfo : config["scene"]) {
+		for (auto objinfo : config["light"]) {
 			Light* pLight = nullptr;
 			if (objinfo["type"] == "DirectionLight") {
 				auto dir = objinfo["dir"];

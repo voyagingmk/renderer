@@ -5,11 +5,19 @@
 namespace renderer {
 
 
-	Ray::Ray(Vector3dF& origin, Vector3dF& direction) noexcept
+	Ray::Ray(const Vector3dF& origin, const Vector3dF& direction) noexcept
 		: o(origin)
 		, d(direction)
 		, mint(0.f)
 		, maxt(INFINITY)
+	{
+	}
+
+	Ray::Ray(const Ray& r) noexcept
+		:o(r.o)
+		, d(r.d)
+		, mint(r.mint)
+		, maxt(r.maxt)
 	{
 	}
 

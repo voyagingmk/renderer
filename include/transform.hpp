@@ -75,11 +75,11 @@ namespace renderer {
 
 		inline Vector3dF operator()(const Vector3dF &v) const;
 		inline Normal3dF operator()(const Normal3dF &v) const;
+		inline Ray operator()(const Ray &r) const;
 		/*
 		inline Vector3dF operator()(const Vector3dF &pt) const;
 		inline void operator()(const Vector3dF &pt, Vector3dF *ptrans) const;
 		inline void operator()(const Vector3dF &v, Vector3dF *vt) const;
-		inline Vector3dF operator()(const Vector3dF &) const;
 		inline void operator()(const Vector3dF &, Vector3dF *nt) const;
 		inline Ray operator()(const Ray &r) const;
 		inline void operator()(const Ray &r, Ray *rt) const;
@@ -102,6 +102,13 @@ namespace renderer {
 			mInv.at(0, 0) * x + mInv.at(1, 0) * y + mInv.at(2, 0) * z,
 			mInv.at(0, 1) * x + mInv.at(1, 1) * y + mInv.at(2, 1) * z,
 			mInv.at(0, 2) * x + mInv.at(1, 2) * y + mInv.at(2, 2) * z);
+	}
+
+	inline Ray Transform4x4::operator()(const Ray &r) const {
+		Ray ret(r);
+		ret.o = (*this)(ret.o);
+		ret.d = (*this)(ret.d);
+		return ret;
 	}
 
 	typedef Transform4x4 Transform;

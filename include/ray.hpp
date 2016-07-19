@@ -12,7 +12,8 @@ namespace renderer {
 		Vector3dF o;//origin
 		Vector3dF d;//direction
 	public:
-		Ray(Vector3dF& origin, Vector3dF& direction) noexcept;
+		Ray(const Vector3dF& origin, const Vector3dF& direction) noexcept;
+		Ray(const Ray& r) noexcept;
 		Vector3dF GetPoint(float t) noexcept;
 	};
 }
