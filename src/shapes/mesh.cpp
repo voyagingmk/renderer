@@ -68,7 +68,9 @@ namespace renderer {
 		return BBox(p0, p1).Union(p2);
 	}
 
-
+	BBox Mesh::WorldBound() const {
+		return (*o2w)(Bound());
+	}
 
 
 	Mesh::Mesh(const Mesh& m) {
@@ -125,5 +127,9 @@ namespace renderer {
 
 	BBox Mesh::Bound() const {
 		return bbox;
+	}
+
+	BBox Mesh::WorldBound() const {
+		return (*o2w)(bbox);
 	}
 }

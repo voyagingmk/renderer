@@ -18,7 +18,8 @@ namespace renderer {
 		Triangle operator = (const Triangle&);
 		virtual void Init() override;
 		virtual int Intersect(Ray&, IntersectResult*) override;		
-		virtual BBox Bound() const override;
+		virtual BBox Bound() const override; 
+		virtual BBox WorldBound() const override;
 	};
 
 	class Mesh: public Shape {
@@ -36,6 +37,7 @@ namespace renderer {
 		virtual int Intersect(Ray&, IntersectResult*) override;
 		void initBound();
 		virtual BBox Bound() const override;
+		virtual BBox WorldBound() const override;
 	};
 
 }

@@ -37,7 +37,12 @@ namespace renderer {
 		result = &IntersectResult::NoHit;
 		return 0;
 	}
+
 	BBox Sphere::Bound() const {
 		return BBox(Vector3dF(-r, -r, -r), Vector3dF(r, r, r));
+	}
+
+	BBox Mesh::WorldBound() const {
+		return (*o2w)(Bound());
 	}
 }

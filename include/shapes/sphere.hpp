@@ -19,6 +19,7 @@ namespace renderer {
 		virtual void Init() override;
 		virtual int Intersect(Ray&, IntersectResult*) override;
 		virtual BBox Bound() const override;
+		virtual BBox WorldBound() const override;
 	};
 }
 

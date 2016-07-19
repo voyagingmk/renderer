@@ -39,4 +39,8 @@ namespace renderer {
 	BBox Plane::Bound() const {
 		return BBox(Vector3dF(0, 0, 0), Vector3dF(1, 1, 1));
 	}
+
+	BBox Mesh::WorldBound() const {
+		return (*o2w)(Bound());
+	}
 }
