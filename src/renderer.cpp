@@ -213,13 +213,9 @@ namespace renderer {
 		return color;
 	}
 
-	void asyncRenderAt(Color colors[], int idx, Renderer *renderer, SceneDesc& desc, int x, int y)
+	void rayTraceAt(Color colors[], int idx, Renderer *renderer, SceneDesc& desc, int x, int y)
 	{
-		Color c = renderer->rayTraceAt(desc, x, y);
-		colors[idx] = c;
-		//desc.film->set(x, y, 255,0,0);
-		//desc.film->set(x, y, c.rInt(), c.gInt(), c.bInt());
-		//printf("%d,%d = %d,%d,%d\n", x, y, c.rInt(), c.gInt(), c.bInt());
+		colors[idx] = renderer->rayTraceAt(desc, x, y);
 	}
 
 	void Renderer::asyncRender(SceneDesc& desc, std::mutex& mtx, int p)
@@ -234,7 +230,7 @@ namespace renderer {
 				if (_p >= total)
 					break;
 				int x = _p % desc.width, y = _p / desc.width;
-				std::thread* t = new std::thread(asyncRenderAt,
+				std::thread* t = new std::thread(rayTraceAt,
 					std::ref(colors), i, this, std::ref(desc),
 					x, y);
 				threads[i] = t;
