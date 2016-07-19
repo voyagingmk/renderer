@@ -76,15 +76,7 @@ namespace renderer {
 		inline Vector3dF operator()(const Vector3dF &v) const;
 		inline Normal3dF operator()(const Normal3dF &v) const;
 		inline Ray operator()(const Ray &r) const;
-		/*
-		inline Vector3dF operator()(const Vector3dF &pt) const;
-		inline void operator()(const Vector3dF &pt, Vector3dF *ptrans) const;
-		inline void operator()(const Vector3dF &v, Vector3dF *vt) const;
-		inline void operator()(const Vector3dF &, Vector3dF *nt) const;
-		inline Ray operator()(const Ray &r) const;
-		inline void operator()(const Ray &r, Ray *rt) const;
-		BBox operator()(const BBox &b) const;
-		*/
+		inline BBox operator()(const BBox &b) const;
 		Transform4x4 operator*(const Transform4x4 &t2) const;
 	};
 
@@ -106,8 +98,22 @@ namespace renderer {
 
 	inline Ray Transform4x4::operator()(const Ray &r) const {
 		Ray ret(r);
-		ret.o = (*this)(ret.o);
-		ret.d = (*this)(ret.d);
+		const Transform &T = *this;
+		ret.o = T(ret.o);
+		ret.d = T(ret.d);
+		return ret;
+	}
+
+	inline BBox Transform4x4::operator()(const BBox &b) const {
+		const Transform &T = *this;
+		BBox ret(T(Vector3dF(b.pMin.x, b.pMin.y, b.pMin.z)));
+		ret = Union(ret, T(Vector3dF(b.pMax.x, b.pMin.y, b.pMin.z)));
+		ret = Union(ret, T(Vector3dF(b.pMin.x, b.pMax.y, b.pMin.z)));
+		ret = Union(ret, T(Vector3dF(b.pMin.x, b.pMin.y, b.pMax.z)));
+		ret = Union(ret, T(Vector3dF(b.pMin.x, b.pMax.y, b.pMax.z)));
+		ret = Union(ret, T(Vector3dF(b.pMax.x, b.pMax.y, b.pMin.z)));
+		ret = Union(ret, T(Vector3dF(b.pMax.x, b.pMin.y, b.pMax.z)));
+		ret = Union(ret, T(Vector3dF(b.pMax.x, b.pMax.y, b.pMax.z)));
 		return ret;
 	}
 
