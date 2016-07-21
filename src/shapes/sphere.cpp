@@ -19,7 +19,7 @@ namespace renderer {
 		sqrRadius = r * r;
 	}
 	int Sphere::Intersect(Ray& ray, IntersectResult* result) {
-		Vector3dF center = (*w2o)(Vector3dF(0,0,0));
+		Vector3dF center = (*o2w)(Vector3dF(0,0,0));
 		Vector3dF&& v = ray.o - center;
 		float a0 = v.LengthSquare() - sqrRadius;
 		float DdotV = ray.d.Dot(v);

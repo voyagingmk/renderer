@@ -83,9 +83,9 @@ namespace renderer {
 	inline Vector3dF Transform4x4::operator()(const Vector3dF &v) const {
 		float x = v.x, y = v.y, z = v.z;
 		return Vector3dF(
-			m.at(0, 0) * x + m.at(0, 1) * y + m.at(0, 2) * z,
-			m.at(1, 0) * x + m.at(1, 1) * y + m.at(1, 2) * z,
-			m.at(2, 0) * x + m.at(2, 1) * y + m.at(2, 2) * z);
+			m.at(0, 0) * x + m.at(0, 1) * y + m.at(0, 2) * z + m.at(0, 3),
+			m.at(1, 0) * x + m.at(1, 1) * y + m.at(1, 2) * z + m.at(1, 3),
+			m.at(2, 0) * x + m.at(2, 1) * y + m.at(2, 2) * z + m.at(2, 3));
 	}
 
 	inline Normal3dF Transform4x4::operator()(const Normal3dF &n) const {
