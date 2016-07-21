@@ -55,30 +55,36 @@ namespace renderer {
 		}
 	}
 
+	Transform* SceneParser::parseTransform(nlohmann::json& lst)
+	{
+		auto pool_Transform = GetPool<Transform>();
+		Transform* o2w = pool_Transform->newElement(Matrix4x4::newIdentity());
+		for (auto trans : lst) {
+			std::string type = trans[0];
+			auto data = trans[1];
+			Vector3dF v(data[0], data[1], data[2]);
+			Transform t;
+			if (type == "t") {
+				//translate
+				t = Translate(v);
+			}
+			else if (type == "r") {
+				//rotate
+				float angle = data[3];
+				t = Rotate(angle, v);
+			}
+			//TODO: scale
+			*o2w = (*o2w) * t;
+		}
+		return o2w;
+	}
+
 	ShapeUnion SceneParser::parseShapes(nlohmann::json& config, MaterialDict& matDict)
 	{
+		auto pool_Transform = GetPool<Transform>();
 		Shapes shapes;
 		for (auto objinfo : config["obj"]) {
-			auto lst = objinfo["transform"];
-			auto pool_Transform = GetPool<Transform>();
-			Transform* o2w = pool_Transform->newElement(Matrix4x4::newIdentity());
-			for(auto trans : lst) {
-				std::string type = trans[0];
-				auto data = trans[1];
-				Vector3dF v(data[0], data[1], data[2]);
-				if (type == "t") {
-					//translate
-					Transform t = Translate(v);
-					(*o2w) = (*o2w) * t;
-				}
-				else if (type == "r") {
-					//rotate
-					float angle = data[3];
-					Transform t = Rotate(angle, v);
-					(*o2w) = (*o2w) * t;
-				}
-			}
-
+			Transform* o2w = parseTransform(objinfo["transform"]);
 			Shape* pShape = nullptr;
 			if (objinfo["type"] == "Sphere") {
 				float radius  = objinfo["radius"];
