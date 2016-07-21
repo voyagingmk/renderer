@@ -71,6 +71,7 @@ namespace renderer {
 			else if (type == "r") {
 				//rotate
 				float angle = data[3];
+				v = v.Normalize();
 				t = Rotate(angle, v);
 			}
 			//TODO: scale
