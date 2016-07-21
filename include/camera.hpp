@@ -3,6 +3,7 @@
 
 #include "base.hpp"
 #include "geometry.hpp"
+#include "ray.hpp"
 
 namespace renderer {
 	class PerspectiveCamera {

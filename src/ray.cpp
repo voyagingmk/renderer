@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "ray.hpp"
-#include <geometry.hpp>
 
 namespace renderer {
 

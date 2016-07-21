@@ -213,12 +213,12 @@ namespace renderer {
 		return color;
 	}
 
-	void rayTraceAt(Color colors[], int idx, Renderer *renderer, SceneDesc& desc, int x, int y)
+	void _rayTraceAt(Color colors[], int idx, Renderer *renderer, SceneDesc& desc, int x, int y)
 	{
 		colors[idx] = renderer->rayTraceAt(desc, x, y);
 	}
 
-	void Renderer::asyncRender(SceneDesc& desc, std::mutex& mtx, int p)
+	void Renderer::asyncRender(SceneDesc& desc, int p)
 	{
 		int total = desc.width * desc.height;
 		int threadsNum = desc.threadsNum();
@@ -230,7 +230,7 @@ namespace renderer {
 				if (_p >= total)
 					break;
 				int x = _p % desc.width, y = _p / desc.width;
-				std::thread* t = new std::thread(rayTraceAt,
+				std::thread* t = new std::thread(_rayTraceAt,
 					std::ref(colors), i, this, std::ref(desc),
 					x, y);
 				threads[i] = t;
@@ -239,7 +239,6 @@ namespace renderer {
 				threads[i]->join();
 				delete threads[i];
 			}
-			std::lock_guard<std::mutex> lock(mtx);
 			SDL_Rect& rect = static_cast<SDLFilm*>(desc.film)->lockRect;
 			rect.x = p % desc.width;
 			rect.y = p / desc.width;

@@ -58,7 +58,6 @@ int main(int argc, char *argv[])
 	SDL_Texture* texture = SDL_CreateTexture(rendererSDL, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, desc.width, desc.height);
 	checkSDLError(__LINE__);
 	film.texture = texture;
-	std::mutex mtx;
 	int p = 0;
 	double angle = 0;
 	Renderer renderer;
@@ -75,7 +74,7 @@ int main(int argc, char *argv[])
 			}
 		}
 		//Profiler pp("asyncRender");
-		renderer.asyncRender(desc, mtx, p);
+		renderer.asyncRender(desc, p);
 		updatedRect.x = p % desc.width;
 		updatedRect.y = p / desc.width;
 		glClearColor(1.0, 1.0, 1.0, 1.0);

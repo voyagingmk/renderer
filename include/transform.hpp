@@ -98,14 +98,14 @@ namespace renderer {
 
 	inline Ray Transform4x4::operator()(const Ray &r) const {
 		Ray ret(r);
-		const Transform &T = *this;
+		const Transform4x4 &T = *this;
 		ret.o = T(ret.o);
 		ret.d = T(ret.d);
 		return ret;
 	}
 
 	inline BBox Transform4x4::operator()(const BBox &b) const {
-		const Transform &T = *this;
+		const Transform4x4 &T = *this;
 		BBox ret(T(Vector3dF(b.pMin.x, b.pMin.y, b.pMin.z)));
 		ret = Union(ret, T(Vector3dF(b.pMax.x, b.pMin.y, b.pMin.z)));
 		ret = Union(ret, T(Vector3dF(b.pMin.x, b.pMax.y, b.pMin.z)));
@@ -122,7 +122,7 @@ namespace renderer {
 	////////////////////////////////////////////////////
 	//  kinds of Transform
 	////////////////////////////////////////////////////
-	Transform Translate(const Vector3dF &v) {
+	static Transform Translate(const Vector3dF &v) {
 		Matrix4x4 m{ 
 			1, 0, 0, v.x,
 			0, 1, 0, v.y,
@@ -136,7 +136,7 @@ namespace renderer {
 		return Transform(m, mInv);
 	}
 
-	Transform Scale(float x, float y, float z) {
+	static Transform Scale(float x, float y, float z) {
 		Matrix4x4 m{ 
 			x, 0, 0, 0,
 			0, y, 0, 0,
@@ -150,7 +150,7 @@ namespace renderer {
 		return Transform(m, mInv);
 	}
 
-	Transform RotateX(float angle) {
+	static Transform RotateX(float angle) {
 		float sin_theta = sinf(Radians(angle));
 		float cos_theta = cosf(Radians(angle));
 		Matrix4x4 m{
@@ -161,7 +161,7 @@ namespace renderer {
 		return Transform(m, m.transpose());
 	}
 
-	Transform RotateY(float angle) {
+	static Transform RotateY(float angle) {
 		float sin_theta = sinf(Radians(angle));
 		float cos_theta = cosf(Radians(angle));
 		Matrix4x4 m{ 
@@ -172,7 +172,7 @@ namespace renderer {
 		return Transform(m, m.transpose());
 	}
 
-	Transform RotateZ(float angle) {
+	static Transform RotateZ(float angle) {
 		float sin_theta = sinf(Radians(angle));
 		float cos_theta = cosf(Radians(angle));
 		Matrix4x4 m{ 
@@ -183,7 +183,7 @@ namespace renderer {
 		return Transform(m, m.transpose());
 	}
 
-	Transform Rotate(float angle, const Vector3dF &axis) {
+	static Transform Rotate(float angle, const Vector3dF &axis) {
 		Vector3dF a = axis.Normalize();
 		float s = sinf(Radians(angle));
 		float c = cosf(Radians(angle));
@@ -211,7 +211,7 @@ namespace renderer {
 	}
 
 
-	Transform LookAt(const Vector3dF &eye, const Vector3dF &targetPos, const Vector3dF &up) {
+	static Transform LookAt(const Vector3dF &eye, const Vector3dF &targetPos, const Vector3dF &up) {
 		Vector3dF focal = -(targetPos - eye).Normalize();
 		Vector3dF right = (focal.Cross(up.Normalize())).Normalize();
 		Vector3dF newUp = focal.Cross(right);
