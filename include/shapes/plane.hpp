@@ -7,12 +7,11 @@
 #include "bbox.hpp"
 
 namespace renderer {
-	class Plane :public Shape {
-		Vector3dF normal;
+	class Plane: public Shape {
 		float distance;
 		Vector3dF position;
 	public:
-		Plane(Vector3dF& normal, float distance);
+		Plane(float distance);
 		Plane(const Plane &);
 		Plane operator = (const Plane&);
 		virtual void Init() override;

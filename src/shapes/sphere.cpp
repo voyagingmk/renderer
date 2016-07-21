@@ -6,21 +6,20 @@
 
 namespace renderer {
 
-	Sphere::Sphere(Vector3dF& center, float radius) :center(center), r(radius) {
+	Sphere::Sphere(float radius): r(radius) {
 	}
 	Sphere::Sphere(Sphere& s) {
-		center = s.center;
 		r = s.r;
 	}
 	Sphere Sphere::operator = (const Sphere& s) {
 		r = s.r;
-		center = s.center;
 		return *this;
 	}
 	void Sphere::Init() {
 		sqrRadius = r * r;
 	}
 	int Sphere::Intersect(Ray& ray, IntersectResult* result) {
+		Vector3dF center = (*w2o)(Vector3dF(0,0,0));
 		Vector3dF&& v = ray.o - center;
 		float a0 = v.LengthSquare() - sqrRadius;
 		float DdotV = ray.d.Dot(v);

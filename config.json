@@ -61,8 +61,10 @@
         "matId": 4
     }, {
 		"Id": 3,
-        "type": "Plane",
-        "normal": [0, 1, 0],
+        "type": "Plane",		
+		"transform": [
+			["t", [0, 0, 0]]
+		],
         "distance": 0,
         "matId": 3
     }],

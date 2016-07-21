@@ -6,25 +6,22 @@
 
 namespace renderer {
 
-	Plane::Plane(Vector3dF& normal, float distance) :
-		normal(normal),
-		distance(distance) {
-
-	};
+	Plane::Plane(float distance) :
+		distance(distance) 
+	{};
 
 	Plane::Plane(const Plane& p) {
-		normal = p.normal;
 		distance = p.distance;
 	}
 	Plane Plane::operator = (const Plane& p) {
-		normal = p.normal;
 		distance = p.distance;
 		return *this;
 	}
 	void Plane::Init() {
-		position = normal * distance;
+		position = Vector3dF(0,1,0) * distance;
 	}
 	int Plane::Intersect(Ray& ray, IntersectResult* result) {
+		Vector3dF normal(0, 1, 0);
 		float dotA = ray.d.Dot(normal);
 		if (dotA >= 0) {
 			result = &IntersectResult::NoHit;

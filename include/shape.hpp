@@ -7,6 +7,8 @@
 
 namespace renderer {
 	class Shape {
+		//default Normal = (0, 1, 0)
+		//default Position = (0, 0, 0)
 	public:
 		Transform4x4* o2w;
 		Transform4x4* w2o;

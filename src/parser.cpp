@@ -11,6 +11,7 @@
 #include "film.hpp"
 #include "mesh.hpp"
 #include "light.hpp"
+#include "transform.hpp"
 
 #define TINYOBJLOADER_IMPLEMENTATION // define this in only *one* .cc
 #include "tiny_obj_loader.h"
@@ -58,19 +59,37 @@ namespace renderer {
 	{
 		Shapes shapes;
 		for (auto objinfo : config["obj"]) {
+			auto lst = objinfo["transform"];
+			auto pool_Transform = GetPool<Transform>();
+			Transform* o2w = pool_Transform->newElement(Matrix4x4::newIdentity());
+			for(auto trans : lst) {
+				std::string type = trans[0];
+				auto data = trans[1];
+				Vector3dF v(data[0], data[1], data[2]);
+				if (type == "t") {
+					//translate
+					Transform t = Translate(v);
+					(*o2w) = (*o2w) * t;
+				}
+				else if (type == "r") {
+					//rotate
+					float angle = data[3];
+					Transform t = Rotate(angle, v);
+					(*o2w) = (*o2w) * t;
+				}
+			}
+
 			Shape* pShape = nullptr;
 			if (objinfo["type"] == "Sphere") {
-				auto pos = objinfo["pos"];
+				float radius  = objinfo["radius"];
 				auto pool = GetPool<Sphere>();
-				pShape = pool->newElement(Vector3dF(pos[0], pos[1], pos[2]),
-					objinfo["radius"]);
+				pShape = static_cast<Shape*>(pool->newElement(radius));
 				pShape->material = matDict[objinfo["matId"]];
 			}
 			else if (objinfo["type"] == "Plane") {
-				auto normal = objinfo["normal"];
 				auto pool = GetPool<Plane>();
-				pShape = pool->newElement(Vector3dF(normal[0], normal[1], normal[2]),
-					objinfo["distance"]);
+				float distance = objinfo["distance"];
+				pShape = static_cast<Shape*>(pool->newElement(distance));
 				pShape->material = matDict[objinfo["matId"]];
 			}
 			else if (objinfo["type"] == "Mesh") {
@@ -90,12 +109,14 @@ namespace renderer {
 				for (auto uv : objinfo["uvs"]) {
 					uvs.push_back(Vector2dF(uv[0], uv[1]));
 				}
-				pShape = pool->newElement(vertices, normals, indexes, uvs);
+				pShape = static_cast<Shape*>(pool->newElement(vertices, normals, indexes, uvs));
 				pShape->material = matDict[objinfo["matId"]];
 			}
 			else
 				continue;
 			if (pShape) {
+				pShape->o2w = o2w;
+				pShape->w2o = pool_Transform->newElement(o2w->mInv, o2w->m);
 				pShape->Init();
 				shapes.push_back(pShape);
 			}

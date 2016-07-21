@@ -8,12 +8,11 @@
 
 namespace renderer {
 
-	class Sphere :public Shape {
-		Vector3dF center;
+	class Sphere: public Shape {
 		float r;
 		float sqrRadius;
 	public:
-		Sphere(Vector3dF& center, float radius);
+		Sphere(float radius);
 		Sphere(Sphere &);
 		Sphere operator = (const Sphere&);
 		virtual void Init() override;
