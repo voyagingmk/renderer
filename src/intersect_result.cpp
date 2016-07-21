@@ -6,11 +6,10 @@ namespace renderer {
 	IntersectResult::IntersectResult() :
 		geometry(nullptr),
 		distance(0),
-		position(Const::Zero),
-		normal(Const::Zero) {
+		position(Const::Zero) {
 	};
 
-	IntersectResult::IntersectResult(Shape* pShape, float dis, Vector3dF& pos, Vector3dF& normal) :
+	IntersectResult::IntersectResult(Shape* pShape, float dis, Point3dF& pos, Normal3dF& normal) :
 		geometry(pShape),
 		distance(dis),
 		position(pos),

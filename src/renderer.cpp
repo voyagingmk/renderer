@@ -62,11 +62,11 @@ namespace renderer {
 				Ray&& ray = camera.GenerateRay(sx, sy);
 				scene.Intersect(ray, &result);
 				if (result.geometry) {
-					Vector3dF& pNormal = result.normal;
+					Normal3dF& n = result.normal;
 					film->set(x, y, 
-						(pNormal.x + 1.0f) * 128.0f,
-						(pNormal.y + 1.0f) * 128.0f,
-						(pNormal.z + 1.0f) * 128.0f);
+						(n.x + 1.0f) * 128.0f,
+						(n.y + 1.0f) * 128.0f,
+						(n.z + 1.0f) * 128.0f);
 				}
 			}
 		}

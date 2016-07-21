@@ -100,14 +100,15 @@ namespace renderer {
 			}
 			else if (objinfo["type"] == "Mesh") {
 				auto pool = GetPool<Mesh>();
-				VectorArray vertices, normals;
+				VectorArray vertices;
+				NormalArray normals;
 				UIntArray indexes;
 				UVArray uvs;
 				for (auto vertice : objinfo["vertices"]) {
 					vertices.push_back(Vector3dF(vertice[0], vertice[1], vertice[2]));
 				}
 				for (auto normal : objinfo["normals"]) {
-					normals.push_back(Vector3dF(normal[0], normal[1], normal[2]));
+					normals.push_back(Normal3dF(normal[0], normal[1], normal[2]));
 				}
 				for (auto index : objinfo["indexes"]) {
 					indexes.push_back(index);
@@ -168,8 +169,8 @@ namespace renderer {
 		auto up = config["camera"]["up"];
 
 		return PerspectiveCamera(Vector3dF(eye[0], eye[1], eye[2]),
-			Vector3dF(front[0], front[1], front[2]).Normalize(),
-			Vector3dF(up[0], up[1], up[2]).Normalize(),
+			Vector3dF(Vector3dF(front[0], front[1], front[2]).Normalize()),
+			Vector3dF(Vector3dF(up[0], up[1], up[2]).Normalize()),
 			config["camera"]["fov"]);
 	}
 

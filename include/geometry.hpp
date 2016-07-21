@@ -216,7 +216,6 @@ namespace renderer {
 	typedef Point3d<float> Point3dF;
 
 	using Vector2dF = Point2dF;
-	using Vector3dF = Point3dF;
 
 	template<typename T>
 	class Normal2d :public Point2d<T> {
@@ -224,8 +223,50 @@ namespace renderer {
 	};
 
 	template<typename T>
-	class Normal3d :public Point3d<T> {
+	class Vector3d :public Point3d<T> {
+	public:
 		using Point3d<T>::Point3d;
+		Vector3d() :
+			Point3d()
+		{
+		}
+
+		Vector3d(const Point3d<T> & p) {
+			x = p.x;
+			y = p.y;
+			z = p.z;
+		}
+
+		Vector3d<T>& operator = (const Point3d<T>& p) {
+			x = p.x;
+			y = p.y;
+			z = p.z;
+			return *this;
+		}
+	};
+	typedef Vector3d<float> Vector3dF;
+
+	template<typename T>
+	class Normal3d :public Point3d<T> {
+	public:
+		using Point3d<T>::Point3d;
+		Normal3d():
+			Point3d()
+		{
+		}
+
+		Normal3d(const Point3d<T> & p) {
+			x = p.x;
+			y = p.y;
+			z = p.z;
+		}
+
+		Normal3d<T>& operator = (const Point3d<T>& p) {
+			x = p.x;
+			y = p.y;
+			z = p.z;
+			return *this;
+		}
 	};
 
 	typedef Normal2d<float> Normal2dF;
@@ -236,6 +277,7 @@ namespace renderer {
 	}
 
 	typedef std::vector<Vector3dF> VectorArray;
+	typedef std::vector<Normal3dF> NormalArray;
 	typedef std::vector<Vector2dF> UVArray;
 	typedef std::vector<uint> UIntArray;
 

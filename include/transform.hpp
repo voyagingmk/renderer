@@ -72,7 +72,7 @@ namespace renderer {
 			return (NOT_ONE(la2) || NOT_ONE(lb2) || NOT_ONE(lc2));
 #undef NOT_ONE
 		}
-
+		inline Point3dF operator()(const Point3dF &v) const;
 		inline Vector3dF operator()(const Vector3dF &v) const;
 		inline Normal3dF operator()(const Normal3dF &v) const;
 		inline Ray operator()(const Ray &r) const;
@@ -80,12 +80,20 @@ namespace renderer {
 		Transform4x4 operator*(const Transform4x4 &t2) const;
 	};
 
-	inline Vector3dF Transform4x4::operator()(const Vector3dF &v) const {
+	inline Point3dF Transform4x4::operator()(const Point3dF &v) const {
 		float x = v.x, y = v.y, z = v.z;
-		return Vector3dF(
+		return Point3dF(
 			m.at(0, 0) * x + m.at(0, 1) * y + m.at(0, 2) * z + m.at(0, 3),
 			m.at(1, 0) * x + m.at(1, 1) * y + m.at(1, 2) * z + m.at(1, 3),
 			m.at(2, 0) * x + m.at(2, 1) * y + m.at(2, 2) * z + m.at(2, 3));
+	}
+
+	inline Vector3dF Transform4x4::operator()(const Vector3dF &v) const {
+		float x = v.x, y = v.y, z = v.z;
+		return Vector3dF(
+			m.at(0, 0) * x + m.at(0, 1) * y + m.at(0, 2) * z,
+			m.at(1, 0) * x + m.at(1, 1) * y + m.at(1, 2) * z,
+			m.at(2, 0) * x + m.at(2, 1) * y + m.at(2, 2) * z);
 	}
 
 	inline Normal3dF Transform4x4::operator()(const Normal3dF &n) const {

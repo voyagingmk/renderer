@@ -10,12 +10,12 @@ namespace renderer {
 	public:
 		Shape* geometry;
 		float distance;
-		Vector3dF position;
-		Vector3dF normal;
+		Point3dF position;
+		Normal3dF normal;
 		static IntersectResult NoHit;
 	public:
 		IntersectResult();
-		IntersectResult(Shape* pShape, float dis, Vector3dF& pos, Vector3dF& normal);
+		IntersectResult(Shape* pShape, float dis, Point3dF& pos, Normal3dF& normal);
 	};
 }
 

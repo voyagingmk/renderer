@@ -51,7 +51,7 @@ namespace renderer {
 		if (b2 < 0. || b1 + b2 > 1.)
 			return 0;
 		Vector3dF position = ray.GetPoint(t);
-		Vector3dF normal = (e1.Cross(e2)).Normalize();
+		Normal3dF normal = (e1.Cross(e2)).Normalize();
 		if (normal.Dot(ray.d) > 0) {
 			return 0;
 			normal = -normal;
@@ -93,9 +93,10 @@ namespace renderer {
 	}
 
 	int Mesh::Intersect(Ray& ray, IntersectResult* result) {
+		Ray r = (*w2o)(ray);
 		float minDistance = FLOAT_MAX;
 		float hitt0, hitt1;
-		if (!bbox.Intersect(ray, &hitt0, &hitt1))
+		if (!bbox.Intersect(r, &hitt0, &hitt1))
 			return 0;
 		Triangle tri(this);
 		for (int tri_idx = 0, tri_num = indexes.size()/3; tri_idx < tri_num; tri_idx += 1) {
@@ -103,12 +104,16 @@ namespace renderer {
 			tri.indexes[1] = indexes[tri_idx * 3 + 1];
 			tri.indexes[2] = indexes[tri_idx * 3 + 2];
 			IntersectResult resultTmp;
-			tri.Intersect(ray, &resultTmp);
+			tri.Intersect(r, &resultTmp);
 			if (resultTmp.geometry && resultTmp.distance < minDistance) {
 				minDistance = resultTmp.distance;
 				*result = resultTmp;
 				//printf("%f,%f,%f == %f,%f\n",ray->getDirection()->x(),ray->getDirection()->y(),ray->getDirection()->z(),minDistance, result->getGeometry()->getMaterial()->getReflectiveness());
 			}
+		}
+		if (result->geometry) {
+			result->normal = (*o2w)(result->normal);
+			result->position = (*o2w)(result->position);
 		}
 		return 0;
 	}

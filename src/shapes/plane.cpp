@@ -21,7 +21,7 @@ namespace renderer {
 		position = Vector3dF(0,1,0) * distance;
 	}
 	int Plane::Intersect(Ray& ray, IntersectResult* result) {
-		Vector3dF normal(0, 1, 0);
+		Normal3dF normal(0, 1, 0);
 		float dotA = ray.d.Dot(normal);
 		if (dotA >= 0) {
 			result = &IntersectResult::NoHit;

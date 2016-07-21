@@ -4,7 +4,7 @@
 namespace renderer {
 
 
-	Ray::Ray(const Vector3dF& origin, const Vector3dF& direction) noexcept
+	Ray::Ray(const Point3dF& origin, const Vector3dF& direction) noexcept
 		: o(origin)
 		, d(direction)
 		, mint(0.f)
@@ -20,7 +20,7 @@ namespace renderer {
 	{
 	}
 
-	Vector3dF Ray::GetPoint(float t) noexcept
+	Point3dF Ray::GetPoint(float t) noexcept
 	{
 		return o + d * t;
 	}

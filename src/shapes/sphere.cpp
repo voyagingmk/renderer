@@ -19,7 +19,7 @@ namespace renderer {
 		sqrRadius = r * r;
 	}
 	int Sphere::Intersect(Ray& ray, IntersectResult* result) {
-		Vector3dF center = (*o2w)(Vector3dF(0,0,0));
+		Point3dF center = (*o2w)(Point3dF(0,0,0));
 		Vector3dF&& v = ray.o - center;
 		float a0 = v.LengthSquare() - sqrRadius;
 		float DdotV = ray.d.Dot(v);
@@ -27,8 +27,8 @@ namespace renderer {
 			float discr = DdotV * DdotV - a0;
 			if (discr >= 0) {
 				float distance = -DdotV - float(sqrtf(discr));
-				Vector3dF position = ray.GetPoint(distance);
-				Vector3dF normal = (position - center).Normalize();
+				Point3dF position = ray.GetPoint(distance);
+				Normal3dF normal = (position - center).Normalize();
 				*result = IntersectResult(this, distance, position, normal);
 				return 0;
 			}

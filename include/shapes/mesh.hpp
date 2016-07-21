@@ -25,12 +25,12 @@ namespace renderer {
 	class Mesh: public Shape {
 	public:
 		VectorArray vertices;
-		VectorArray normals;
+		NormalArray normals;
 		UIntArray indexes;
 		UVArray uvs;
 		BBox bbox;
 	public:
-		Mesh(VectorArray& v, VectorArray& n, UIntArray& i, UVArray& uv):vertices(v),normals(n),indexes(i),uvs(uv){};
+		Mesh(VectorArray& v, NormalArray& n, UIntArray& i, UVArray& uv):vertices(v),normals(n),indexes(i),uvs(uv){};
 		Mesh(const Mesh&);
 		Mesh operator = (const Mesh&);
 		virtual void Init() override;
