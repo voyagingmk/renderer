@@ -108,11 +108,13 @@ namespace renderer {
 				for (auto vertice : objinfo["vertices"]) {
 					vertices.push_back(Vector3dF(vertice[0], vertice[1], vertice[2]));
 				}
-				for (auto normal : objinfo["normals"]) {
-					normals.push_back(Normal3dF(normal[0], normal[1], normal[2]));
-				}
 				for (auto index : objinfo["indexes"]) {
 					indexes.push_back(index);
+				}
+				normals.resize(indexes.size());
+				int idx = 0;
+				for (auto normal : objinfo["normals"]) {
+					normals[idx++] = Normal3dF(normal[0], normal[1], normal[2]);
 				}
 				for (auto uv : objinfo["uvs"]) {
 					uvs.push_back(Vector2dF(uv[0], uv[1]));

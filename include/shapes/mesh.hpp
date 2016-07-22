@@ -11,6 +11,7 @@ namespace renderer {
 	class Triangle : public Shape {
 	public:
 		Mesh* mesh;
+		int tri_idx;
 		int indexes[3];
 	public:
 		Triangle(Mesh* m):mesh(m), indexes{ 0,0,0 } {};

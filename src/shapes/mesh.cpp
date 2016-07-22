@@ -51,12 +51,20 @@ namespace renderer {
 		if (b2 < 0. || b1 + b2 > 1.)
 			return 0;
 		Vector3dF position = ray.GetPoint(t);
-		Normal3dF normal = (e1.Cross(e2)).Normalize();
-		if (normal.Dot(ray.d) > 0) {
-			return 0;
-			normal = -normal;
+		if (mesh->normals[tri_idx].isEmpty()) {
+			Normal3dF normal = (e1.Cross(e2)).Normalize();
+			mesh->normals[tri_idx] = normal;
+			if (normal.Dot(ray.d) >= 0) {
+				return 0;
+			}
 		}
-		*result = IntersectResult(mesh, t, position, normal);
+		else {
+			Normal3dF normal = mesh->normals[tri_idx];
+			if (normal.Dot(ray.d) >= 0) {
+				return 0;
+			}
+		}
+		*result = IntersectResult(mesh, t, position, mesh->normals[tri_idx]);
 		return 0;
 	}
 
@@ -100,6 +108,7 @@ namespace renderer {
 			return 0;
 		Triangle tri(this);
 		for (int tri_idx = 0, tri_num = indexes.size()/3; tri_idx < tri_num; tri_idx += 1) {
+			tri.tri_idx = tri_idx;
 			tri.indexes[0] = indexes[tri_idx * 3];
 			tri.indexes[1] = indexes[tri_idx * 3 + 1];
 			tri.indexes[2] = indexes[tri_idx * 3 + 2];

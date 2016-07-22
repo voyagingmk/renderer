@@ -175,6 +175,10 @@ namespace renderer {
 			return (&x)[i];
 		}
 
+		bool isEmpty() const {
+			return !(x || y || z);
+		}
+
 		T Dot(const Point3d<T>& p) const {
 			return x * p.x + y * p.y + z * p.z;
 		}
