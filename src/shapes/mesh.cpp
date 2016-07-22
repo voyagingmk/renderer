@@ -27,49 +27,48 @@ namespace renderer {
 
 	//http://www.qiujiawei.com/triangle-intersect/
 	int Triangle::Intersect(Ray& ray, IntersectResult* result) {
-		auto vertices = mesh->vertices;
-		Vector3dF p0 = vertices[indexes[0]];
-		Vector3dF p1 = vertices[indexes[1]];
-		Vector3dF p2 = vertices[indexes[2]];
-		Vector3dF e1 = p1 - p0;
-		Vector3dF e2 = p2 - p0;
-		Vector3dF s = ray.o - p0;
-		Vector3dF s1 = ray.d.Cross(e2);
-		Real d = s1.Dot(e1);
-		if (almost_equal(d, Real(0), 2))
-			return 0;
-		d = 1. / d;
-		Vector3dF s2 = s.Cross(e1);
-		Real r1 = s2.Dot(e2);
-		Real r2 = s1.Dot(s);
-		Real r3 = s2.Dot(ray.d);
-		Real t = r1 * d;
-		Real b1 = r2 * d;
-		if (b1 < 0. || b1 > 1.)
-			return 0;
-		Real b2 = r3 * d;
-		if (b2 < 0. || b1 + b2 > 1.)
-			return 0;
-		Vector3dF position = ray.GetPoint(t);
+		const VectorArray& vertices = mesh->vertices;
+		const Vector3dF& p0 = vertices[indexes[0]];
+		const Vector3dF& p1 = vertices[indexes[1]];
+		const Vector3dF& p2 = vertices[indexes[2]];
+		const Vector3dF&& e1 = p1 - p0;
+		const Vector3dF&& e2 = p2 - p0;
 		if (mesh->normals[tri_idx].isEmpty()) {
-			Normal3dF normal = (e1.Cross(e2)).Normalize();
-			mesh->normals[tri_idx] = normal;
-			if (normal.Dot(ray.d) >= 0) {
+			mesh->normals[tri_idx] = (e1.Cross(e2)).Normalize();
+			if (mesh->normals[tri_idx].Dot(ray.d) >= 0) {
 				return 0;
 			}
 		}
 		else {
-			Normal3dF normal = mesh->normals[tri_idx];
+			const Normal3dF& normal = mesh->normals[tri_idx];
 			if (normal.Dot(ray.d) >= 0) {
 				return 0;
 			}
 		}
-		*result = IntersectResult(mesh, t, position, mesh->normals[tri_idx]);
+		const Vector3dF& s = ray.o - p0;
+		const Vector3dF& s1 = ray.d.Cross(e2);
+		Real d = s1.Dot(e1);
+		if (almost_equal(d, Real(0), 2))
+			return 0;
+		d = 1. / d;
+		const Vector3dF& s2 = s.Cross(e1);
+		const Real& r1 = s2.Dot(e2);
+		const Real& r2 = s1.Dot(s);
+		const Real& r3 = s2.Dot(ray.d);
+		const Real& t = r1 * d;
+		const Real& b1 = r2 * d;
+		if (b1 < 0. || b1 > 1.)
+			return 0;
+		const Real& b2 = r3 * d;
+		if (b2 < 0. || b1 + b2 > 1.)
+			return 0;
+		const Vector3dF&& position = ray.GetPoint(t);
+		*result = IntersectResult(mesh, t, std::forward<const Vector3dF>(position), mesh->normals[tri_idx]);
 		return 0;
 	}
 
 	BBox Triangle::Bound() const {
-		auto vertices = mesh->vertices;
+		const VectorArray& vertices = mesh->vertices;
 		Vector3dF p0 = vertices[indexes[0]];
 		Vector3dF p1 = vertices[indexes[1]];
 		Vector3dF p2 = vertices[indexes[2]];

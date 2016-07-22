@@ -92,17 +92,30 @@ namespace renderer {
 	public:
 		T x, y, z;
 	public:
-		Point3d():x(0), y(0), z(0) {}
+		inline Point3d():x(0), y(0), z(0) {}
 
 		Point3d(const T x, const T y, const T z):x(x), y(y), z(z) {};
+		
+		Point3d(const Point3d<T>&& p) :
+			x(p.x),
+			y(p.y),
+			z(p.z) {
+		}
 
-		Point3d(const Point3d<T> & p) {
-			x = p.x;
-			y = p.y;
-			z = p.z;
+		Point3d(const Point3d<T> & p):
+			x(p.x),
+			y(p.y),
+			z(p.z) {
 		}
 
 		Point3d<T>& operator = (const Point3d<T>& p) {
+			x = p.x;
+			y = p.y;
+			z = p.z;
+			return *this;
+		}
+
+		Point3d<T>& operator = (const Point3d<T>&& p) {
 			x = p.x;
 			y = p.y;
 			z = p.z;
@@ -229,19 +242,46 @@ namespace renderer {
 	template<typename T>
 	class Vector3d :public Point3d<T> {
 	public:
-		using Point3d<T>::Point3d;
-		Vector3d() :
+		Vector3d():
 			Point3d()
-		{
-		}
+		{}
 
-		Vector3d(const Point3d<T> & p) {
+		Vector3d(const T x, const T y, const T z):
+			Point3d(x, y, z) 
+		{}
+
+		Vector3d(const Vector3d<T>&& p) {
 			x = p.x;
 			y = p.y;
 			z = p.z;
 		}
 
-		Vector3d<T>& operator = (const Point3d<T>& p) {
+		Vector3d(const Vector3d<T>& p) {
+			x = p.x;
+			y = p.y;
+			z = p.z;
+		}
+
+		Vector3d(const Point3d<T>&& p) {
+			x = p.x;
+			y = p.y;
+			z = p.z;
+		}
+
+		Vector3d(const Point3d<T>& p) :
+			x(p.x),
+			y(p.y),
+			z(p.z) 
+		{}
+
+		Vector3d<T>& operator = (const Vector3d<T>&& p) {
+			x = p.x;
+			y = p.y;
+			z = p.z;
+			return *this;
+		}
+
+		Vector3d<T>& operator = (const Vector3d<T>& p) {
 			x = p.x;
 			y = p.y;
 			z = p.z;
@@ -259,13 +299,48 @@ namespace renderer {
 		{
 		}
 
-		Normal3d(const Point3d<T> & p) {
+		Normal3d(const Normal3d<T>&& p) {
 			x = p.x;
 			y = p.y;
 			z = p.z;
 		}
 
-		Normal3d<T>& operator = (const Point3d<T>& p) {
+		Normal3d(const Normal3d<T>& p) {
+			x = p.x;
+			y = p.y;
+			z = p.z;
+		}
+
+		Normal3d(const Vector3d<T>&& p) {
+			x = p.x;
+			y = p.y;
+			z = p.z;
+		}
+
+		Normal3d(const Vector3d<T>& p) {
+			x = p.x;
+			y = p.y;
+			z = p.z;
+		}
+
+		Normal3d(const Point3d<T>&& p) {
+			x = p.x;
+			y = p.y;
+			z = p.z;
+		}
+
+		Normal3d(const Point3d<T>& p) {
+			x = p.x;
+			y = p.y;
+			z = p.z;
+		}
+		Normal3d<T>& operator = (const Normal3d<T>& p) {
+			x = p.x;
+			y = p.y;
+			z = p.z;
+			return *this;
+		}		
+		Normal3d<T>& operator = (const Normal3d<T>&& p) {
 			x = p.x;
 			y = p.y;
 			z = p.z;

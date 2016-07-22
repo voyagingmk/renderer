@@ -18,3 +18,7 @@ renderer.vcxproj.filters
 *.db
 *.opendb
 *.ipch
+*.xml
+*.codeanalysis
+*.codeanalysisast
+*.lastcodeanalysissucceeded

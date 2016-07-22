@@ -15,7 +15,7 @@ namespace renderer {
 		static IntersectResult NoHit;
 	public:
 		IntersectResult();
-		IntersectResult(Shape* pShape, float dis, Point3dF& pos, Normal3dF& normal);
+		IntersectResult(Shape* pShape, const float dis, const Point3dF& pos, const Normal3dF& normal);
 	};
 }
 
