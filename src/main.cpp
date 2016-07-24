@@ -61,11 +61,15 @@ int main(int argc, char *argv[])
 	int p = 0;
 	double angle = 0;
 	Renderer renderer;
-	SDL_Rect updatedRect;
-	updatedRect.w = desc.threadsNum();
-	updatedRect.h = 1;
 	SDL_Point screenCenter = { width / 2, height / 2 };
 	SDL_RendererFlip flip = SDL_FLIP_NONE;
+	int total = desc.width * desc.height;
+	renderer.colorArray = new Color[total];
+	renderer.flags = new bool[total];
+	for (int i = 0; i < total; i++) {
+		renderer.flags[i] = false;
+	}
+	renderer.asyncRender(desc);
 	while (1) {
 		SDL_Event e;
 		if (SDL_PollEvent(&e)) {
@@ -73,18 +77,43 @@ int main(int argc, char *argv[])
 				break;
 			}
 		}
-		//Profiler pp("asyncRender");
-		renderer.asyncRender(desc, p);
-		updatedRect.x = p % desc.width;
-		updatedRect.y = p / desc.width;
-		glClearColor(1.0, 1.0, 1.0, 1.0);
-		glClear(GL_COLOR_BUFFER_BIT); 
-		int ret = SDL_RenderCopyEx(rendererSDL, texture, &updatedRect, &updatedRect, angle, &screenCenter, flip);
-		if (ret == -1)
-			SDLExit("SDL_RenderCopy failed");
-		p += desc.threadsNum();
-		SDL_RenderPresent(rendererSDL);
-		SDL_Delay(0);
+		int p_new = renderer.getFinishedPixelsCount();
+		if (p_new >= total - 1) {
+			//printf("render ok");
+		}
+		if (p_new - p > 0) {
+
+			if (p_new / desc.width != p / desc.width) {
+				p_new = (1 + p / desc.width) * desc.width - 1;
+			}
+			if (p_new - p <= 0) {
+				p_new = p + 1;
+			}
+			SDL_Rect& rect = static_cast<SDLFilm*>(desc.film)->lockRect;
+			rect.x = p % desc.width;
+			rect.y = p / desc.width;
+			rect.w = std::min(p_new - p, desc.width);
+			rect.h = 1;
+			desc.film->beforeSet();
+			for (int i = 0, new_pixels = p_new - p; i < new_pixels; i++) {
+				int _p = p + i;
+				int x = _p % desc.width, y = _p / desc.width;
+				//printf("x y = %d %d \n ", x, y);
+				Color& c = renderer.colorArray[_p];
+				desc.film->set(x, y, c.rInt(), c.gInt(), c.bInt());
+			}
+			desc.film->afterSet();
+			SDL_Rect updatedRect = rect;
+			glClearColor(1.0, 1.0, 1.0, 1.0);
+			glClear(GL_COLOR_BUFFER_BIT);
+			//printf("rect %d,%d,%d,%d\n", rect.x, rect.y, rect.w, rect.h);
+			int ret = SDL_RenderCopyEx(rendererSDL, texture, &updatedRect, &updatedRect, angle, &screenCenter, flip);
+			if (ret == -1)
+				SDLExit("SDL_RenderCopy failed");
+			p = p_new + 1;
+			SDL_RenderPresent(rendererSDL);
+		}
+		//SDL_Delay(1);
 	}
 	SDL_DestroyTexture(texture);
 	SDL_DestroyRenderer(rendererSDL);

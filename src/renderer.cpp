@@ -213,47 +213,68 @@ namespace renderer {
 		return color;
 	}
 
-	void _rayTraceAt(Color colors[], int idx, Renderer *renderer, SceneDesc& desc, int x, int y)
-	{
-		colors[idx] = renderer->rayTraceAt(desc, x, y);
-	}
 
-	void Renderer::asyncRender(SceneDesc& desc, int p)
+
+	void _rayTraceTask(Renderer *renderer, SceneDesc& desc) 
 	{
 		int total = desc.width * desc.height;
+		const int count = 10;
+		Color colors[count];
+		int p = 0;
+		while (1) {
+			{
+				std::lock_guard<std::mutex> lock(renderer->mtx);
+				p = renderer->pixelsDispatched;
+				if (p >= total)
+					break;
+				renderer->pixelsDispatched += count;
+			}
+			for (int i = 0; i < count; i++) {
+				int _p = p + i;
+				if (_p >= total)
+					break;
+				int x = _p % desc.width, y = _p / desc.width;
+				colors[i] = renderer->rayTraceAt(desc, x, y);
+			}
+			{
+				for (int i = 0; i < count; i++) {
+					int _p = p + i;
+					renderer->colorArray[_p] = colors[i];
+					renderer->flags[_p] = true;
+				}
+				std::lock_guard<std::mutex> lock(renderer->mtx);
+				if (renderer->pixelsFinished >= renderer->pixelsDispatched)
+					continue;
+				int finished_count = 0;
+				for (int _p = renderer->pixelsFinished; _p < renderer->pixelsDispatched; _p++) {
+					if (!renderer->flags[_p]) {
+						//printf("not found _p=%d\n", _p);
+						break;
+					}
+					else {
+						finished_count++;
+					}
+				}
+				//printf("pixelsFinished %i  pixelsDispatched %i \n", renderer->pixelsFinished, renderer->pixelsDispatched);
+				if (finished_count > 0)
+					renderer->pixelsFinished += finished_count;
+			}
+		}
+	}
+
+	int Renderer::getFinishedPixelsCount()
+	{
+		std::lock_guard<std::mutex> lock(mtx);
+		return pixelsFinished;
+	}
+
+	void Renderer::asyncRender(SceneDesc& desc)
+	{
 		int threadsNum = desc.threadsNum();
 		Color colors[16];
-		if(p < total){
-			std::thread* *threads = new std::thread*[threadsNum];
-			for (int i = 0; i < threadsNum; i++) {
-				int _p = p + i;
-				if (_p >= total)
-					break;
-				int x = _p % desc.width, y = _p / desc.width;
-				std::thread* t = new std::thread(_rayTraceAt,
-					std::ref(colors), i, this, std::ref(desc),
-					x, y);
-				threads[i] = t;
-			}
-			for (int i = 0; i < threadsNum; i++) {
-				threads[i]->join();
-				delete threads[i];
-			}
-			SDL_Rect& rect = static_cast<SDLFilm*>(desc.film)->lockRect;
-			rect.x = p % desc.width;
-			rect.y = p / desc.width;
-			rect.w = threadsNum;
-			rect.h = 1;
-			desc.film->beforeSet();
-			for (int i = 0; i < threadsNum; i++) {
-				int _p = p + i;
-				if (_p >= total)
-					break;
-				int x = _p % desc.width, y = _p / desc.width;
-				Color& c = colors[i];
-				desc.film->set(x, y, c.rInt(), c.gInt(), c.bInt());
-			}
-			desc.film->afterSet();
+		threads.resize(threadsNum);
+		for (int i = 0; i < threadsNum; i++) {
+			threads[i] = new std::thread(_rayTraceTask, this, std::ref(desc));
 		}
 	}
 	void renderArea(Renderer *renderer, SceneDesc& desc, int x, int y, int w, int h)

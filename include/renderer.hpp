@@ -7,6 +7,7 @@
 #include "light.hpp"
 #include "camera.hpp"
 #include "shapes\union.hpp"
+#include <bitset>
 
 namespace renderer {
 	class Shape;
@@ -56,13 +57,39 @@ namespace renderer {
 
 	class Renderer {
 	public:
+		int pixelsFinished;
+		int pixelsDispatched;
+		bool* flags;
+		Color* colorArray;
+		std::mutex mtx;
+		std::vector<std::thread*> threads;
+		int getFinishedPixelsCount();
+	public:
+		Renderer():
+			pixelsFinished(0),
+			pixelsDispatched(0),
+			flags(nullptr),
+			colorArray(nullptr){}
+		~Renderer() {
+			if (threads.size()>0) {
+				for (int i = 0; i < threads.size(); i++)
+				{
+					delete threads[i];
+				}
+			}
+			if (flags)
+				delete flags;
+			if (colorArray)
+				delete colorArray;
+
+		}
 		void renderDepth(Film*, Shape&, PerspectiveCamera&, float maxDepth);
 		void renderNormal(Film*, Shape& scene, PerspectiveCamera& camera, float maxDepth);
 		void rayTrace(Film*, Shape& scene, PerspectiveCamera& camera, Lights&);
 		Color rayTraceRecursive(Shape* scene, Ray& ray, Lights&, int maxReflect);
 		void rayTraceReflection(Film*, Shape* scene, PerspectiveCamera& camera, Lights&, int maxReflect, int x = 0, int y = 0, int w = 0, int h = 0);
 		void rayTraceConcurrence(SceneDesc&);
-		void asyncRender(SceneDesc& desc, int p);
+		void asyncRender(SceneDesc& desc);
 		Color rayTraceAt(SceneDesc&, int x, int y);
 		void renderScene(SceneDesc&);
 	};
