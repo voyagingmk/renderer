@@ -218,7 +218,7 @@ namespace renderer {
 	void _rayTraceTask(Renderer *renderer, SceneDesc& desc) 
 	{
 		int total = desc.width * desc.height;
-		const int count = 10;
+		const int count = 16;
 		Color colors[count];
 		int p = 0;
 		while (1) {

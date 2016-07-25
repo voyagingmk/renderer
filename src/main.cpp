@@ -108,7 +108,7 @@ int main(int argc, char *argv[])
 			p = p_new + 1;
 			SDL_RenderPresent(rendererSDL);
 		}
-		//SDL_Delay(1);
+		SDL_Delay(1);
 	}
 	for (int i = 0; i < renderer.threads.size(); i++) {
 		renderer.threads[i]->join();
