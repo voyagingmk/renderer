@@ -225,8 +225,9 @@ namespace renderer {
 			{
 				std::lock_guard<std::mutex> lock(renderer->mtx);
 				p = renderer->pixelsDispatched;
-				if (p >= total)
+				if (p >= total - 1) {
 					break;
+				}
 				renderer->pixelsDispatched += count;
 			}
 			for (int i = 0; i < count; i++) {
@@ -239,6 +240,8 @@ namespace renderer {
 			{
 				for (int i = 0; i < count; i++) {
 					int _p = p + i;
+					if (_p >= total)
+						break; 
 					renderer->colorArray[_p] = colors[i];
 					renderer->flags[_p] = true;
 				}
@@ -248,14 +251,12 @@ namespace renderer {
 				int finished_count = 0;
 				for (int _p = renderer->pixelsFinished; _p < renderer->pixelsDispatched; _p++) {
 					if (!renderer->flags[_p]) {
-						//printf("not found _p=%d\n", _p);
 						break;
 					}
 					else {
 						finished_count++;
 					}
 				}
-				//printf("pixelsFinished %i  pixelsDispatched %i \n", renderer->pixelsFinished, renderer->pixelsDispatched);
 				if (finished_count > 0)
 					renderer->pixelsFinished += finished_count;
 			}
@@ -277,6 +278,7 @@ namespace renderer {
 			threads[i] = new std::thread(_rayTraceTask, this, std::ref(desc));
 		}
 	}
+
 	void renderArea(Renderer *renderer, SceneDesc& desc, int x, int y, int w, int h)
 	{
 		renderer->rayTraceReflection(desc.film, dynamic_cast<Shape*>(&desc.shapeUnion), desc.camera, desc.lights, desc.maxReflect, x, y, w, h);

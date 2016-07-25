@@ -60,15 +60,10 @@ int main(int argc, char *argv[])
 	film.texture = texture;
 	int p = 0;
 	double angle = 0;
-	Renderer renderer;
+	int total = desc.width * desc.height;
+	Renderer renderer(desc);
 	SDL_Point screenCenter = { width / 2, height / 2 };
 	SDL_RendererFlip flip = SDL_FLIP_NONE;
-	int total = desc.width * desc.height;
-	renderer.colorArray = new Color[total];
-	renderer.flags = new bool[total];
-	for (int i = 0; i < total; i++) {
-		renderer.flags[i] = false;
-	}
 	renderer.asyncRender(desc);
 	while (1) {
 		SDL_Event e;
@@ -114,6 +109,9 @@ int main(int argc, char *argv[])
 			SDL_RenderPresent(rendererSDL);
 		}
 		//SDL_Delay(1);
+	}
+	for (int i = 0; i < renderer.threads.size(); i++) {
+		renderer.threads[i]->join();
 	}
 	SDL_DestroyTexture(texture);
 	SDL_DestroyRenderer(rendererSDL);

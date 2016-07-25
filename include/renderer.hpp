@@ -65,22 +65,20 @@ namespace renderer {
 		std::vector<std::thread*> threads;
 		int getFinishedPixelsCount();
 	public:
-		Renderer():
+		Renderer(SceneDesc& desc):
 			pixelsFinished(0),
 			pixelsDispatched(0),
-			flags(nullptr),
-			colorArray(nullptr){}
+			flags(new bool[desc.width * desc.height]{ false }),
+			colorArray(new Color[desc.width * desc.height]){}
 		~Renderer() {
-			if (threads.size()>0) {
-				for (int i = 0; i < threads.size(); i++)
-				{
-					delete threads[i];
-				}
+			for (int i = 0; i < threads.size(); i++)
+			{
+				delete threads[i];
 			}
 			if (flags)
-				delete flags;
+				delete[] flags;
 			if (colorArray)
-				delete colorArray;
+				delete[] colorArray;
 
 		}
 		void renderDepth(Film*, Shape&, PerspectiveCamera&, float maxDepth);
