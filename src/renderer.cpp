@@ -219,37 +219,35 @@ namespace renderer {
 	{
 		int total = desc.width * desc.height;
 		const int count = 16;
-		Color colors[count];
 		int p = 0;
 		while (1) {
 			{
+				//get jobs
 				std::lock_guard<std::mutex> lock(renderer->mtx);
-				p = renderer->pixelsDispatched;
-				if (p >= total - 1) {
+				if (renderer->pDispatched >= total) {
+					//all jobs done
 					break;
 				}
-				renderer->pixelsDispatched += count;
+				p = renderer->pDispatched;
+				renderer->pDispatched += count;
+				if (renderer->pDispatched >= total) {
+					renderer->pDispatched = total;
+				}
 			}
 			for (int i = 0; i < count; i++) {
 				int _p = p + i;
-				if (_p >= total)
+				if (_p + 1 >= total)
 					break;
 				int x = _p % desc.width, y = _p / desc.width;
-				colors[i] = renderer->rayTraceAt(desc, x, y);
+				renderer->colorArray[_p] = renderer->rayTraceAt(desc, x, y);
+				renderer->flags[_p] = true;
 			}
 			{
-				for (int i = 0; i < count; i++) {
-					int _p = p + i;
-					if (_p >= total)
-						break; 
-					renderer->colorArray[_p] = colors[i];
-					renderer->flags[_p] = true;
-				}
 				std::lock_guard<std::mutex> lock(renderer->mtx);
-				if (renderer->pixelsFinished >= renderer->pixelsDispatched)
+				if (renderer->pRendered >= renderer->pDispatched)
 					continue;
 				int finished_count = 0;
-				for (int _p = renderer->pixelsFinished; _p < renderer->pixelsDispatched; _p++) {
+				for (int _p = renderer->pRendered; _p < renderer->pDispatched; _p++) {
 					if (!renderer->flags[_p]) {
 						break;
 					}
@@ -258,15 +256,15 @@ namespace renderer {
 					}
 				}
 				if (finished_count > 0)
-					renderer->pixelsFinished += finished_count;
+					renderer->pRendered += finished_count;
 			}
 		}
 	}
 
-	int Renderer::getFinishedPixelsCount()
+	int Renderer::countRenderedPixels()
 	{
 		std::lock_guard<std::mutex> lock(mtx);
-		return pixelsFinished;
+		return pRendered;
 	}
 
 	void Renderer::asyncRender(SceneDesc& desc)

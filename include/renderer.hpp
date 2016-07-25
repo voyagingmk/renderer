@@ -57,22 +57,25 @@ namespace renderer {
 
 	class Renderer {
 	public:
-		int pixelsFinished;
-		int pixelsDispatched;
+		int pRendered;   //rendered pixels 
+		int pDispatched; //dispatched pixels, means renderring
 		bool* flags;
 		Color* colorArray;
 		std::mutex mtx;
 		std::vector<std::thread*> threads;
-		int getFinishedPixelsCount();
+		int countRenderedPixels();
 	public:
 		Renderer(SceneDesc& desc):
-			pixelsFinished(0),
-			pixelsDispatched(0),
+			pRendered(0),
+			pDispatched(0),
 			flags(new bool[desc.width * desc.height]{ false }),
-			colorArray(new Color[desc.width * desc.height]){}
+			colorArray(new Color[desc.width * desc.height]) {
+			for (int i = 0; i < desc.width * desc.height; i++) {
+			//	colorArray[i].rgb[0] ;
+			}
+		}
 		~Renderer() {
-			for (int i = 0; i < threads.size(); i++)
-			{
+			for (int i = 0; i < threads.size(); i++) {
 				delete threads[i];
 			}
 			if (flags)

@@ -12,7 +12,7 @@
     "maxReflect": 3,
 	"obj":[{
 		"Id": 1,
-		"type": "Sphere",
+		"type": "Sphere0",
 		"transform": [
 			["t", [-10, 10, -10]],
 			["r", [0, 1, 0, 90]]
@@ -21,7 +21,7 @@
 		"matId": 1
     }, {
 		"Id": 2,
-        "type": "Mesh",
+        "type": "Mesh0",
         "vertices": [
             [-5, -5, -5],
             [ 0, -2,  0],
@@ -45,7 +45,7 @@
         "matId": 4
     }, {
 		"Id": 4,
-        "type": "Mesh0",
+        "type": "Mesh",
         "vertices": [
             [-5, 0,  5],
             [ 5, 0,  5],

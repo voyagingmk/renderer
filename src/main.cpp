@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
 	SDL_Texture* texture = SDL_CreateTexture(rendererSDL, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, desc.width, desc.height);
 	checkSDLError(__LINE__);
 	film.texture = texture;
-	int p = 0;
+	int preCount = 0, curRow = 0;
 	double angle = 0;
 	int total = desc.width * desc.height;
 	Renderer renderer(desc);
@@ -72,42 +72,40 @@ int main(int argc, char *argv[])
 				break;
 			}
 		}
-		int p_new = renderer.getFinishedPixelsCount();
-		if (p_new >= total - 1) {
-			//printf("render ok");
+		int newCount = renderer.countRenderedPixels();
+		bool move = false;
+		if (curRow * desc.width < newCount - desc.width) {
+			if(curRow + 1 < desc.height)
+				move = true;
 		}
-		if (p_new - p > 0) {
-
-			if (p_new / desc.width != p / desc.width) {
-				p_new = (1 + p / desc.width) * desc.width - 1;
-			}
-			if (p_new - p <= 0) {
-				p_new = p + 1;
-			}
-			SDL_Rect& rect = static_cast<SDLFilm*>(desc.film)->lockRect;
-			rect.x = p % desc.width;
-			rect.y = p / desc.width;
-			rect.w = std::min(p_new - p, desc.width);
-			rect.h = 1;
-			desc.film->beforeSet();
-			for (int i = 0, new_pixels = p_new - p; i < new_pixels; i++) {
-				int _p = p + i;
-				int x = _p % desc.width, y = _p / desc.width;
-				//printf("x y = %d %d \n ", x, y);
-				Color& c = renderer.colorArray[_p];
-				desc.film->set(x, y, c.rInt(), c.gInt(), c.bInt());
-			}
-			desc.film->afterSet();
-			SDL_Rect updatedRect = rect;
-			glClearColor(1.0, 1.0, 1.0, 1.0);
-			glClear(GL_COLOR_BUFFER_BIT);
-			//printf("rect %d,%d,%d,%d\n", rect.x, rect.y, rect.w, rect.h);
-			int ret = SDL_RenderCopyEx(rendererSDL, texture, &updatedRect, &updatedRect, angle, &screenCenter, flip);
-			if (ret == -1)
-				SDLExit("SDL_RenderCopy failed");
-			p = p_new + 1;
-			SDL_RenderPresent(rendererSDL);
+		SDL_Rect& rect = static_cast<SDLFilm*>(desc.film)->lockRect;
+		rect.x = 0;
+		rect.y = curRow;
+		rect.w = desc.width;
+		rect.h = 1;
+		if (!move) {
+			rect.x = preCount % desc.width;
+			rect.w = std::max(1,std::min(rect.w - rect.x, newCount - preCount));
 		}
+		//printf("row =%d\n", curRow);
+		desc.film->beforeSet();
+		for (int x = rect.x; x < rect.x + rect.w; x++) {
+			int _p = curRow * desc.width + x;
+			Color& c = renderer.colorArray[_p];
+			desc.film->set(x, curRow, c.rInt(), c.gInt(), c.bInt());
+		}
+		desc.film->afterSet();
+		SDL_Rect updatedRect = rect;
+		glClearColor(1.0, 1.0, 1.0, 1.0);
+		glClear(GL_COLOR_BUFFER_BIT);
+		//printf("rect %d,%d,%d,%d\n", rect.x, rect.y, rect.w, rect.h);
+		int ret = SDL_RenderCopyEx(rendererSDL, texture, &updatedRect, &updatedRect, angle, &screenCenter, flip);
+		if (ret == -1)
+			SDLExit("SDL_RenderCopy failed");
+		if(move)
+			curRow++;
+		SDL_RenderPresent(rendererSDL);
+		preCount = newCount;
 		SDL_Delay(1);
 	}
 	for (int i = 0; i < renderer.threads.size(); i++) {
