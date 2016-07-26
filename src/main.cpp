@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
 		rect.y = curRow;
 		rect.w = desc.width;
 		rect.h = 1;
-		if (!move) {
+		if (curRow != desc.height - 1 && !move) {
 			rect.x = preCount % desc.width;
 			rect.w = std::max(1,std::min(rect.w - rect.x, newCount - preCount));
 		}
