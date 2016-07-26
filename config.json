@@ -89,15 +89,15 @@
     "light": [{
         "type": "DirectionLight",
         "dir": [-1, -1, 0],
-        "softshadow": true,
+        "softshadow": false,
         "color": [255, 255, 255]
     }, {
         "type": "PointLight",
         "pos": [0, 30, -30],
         "radius": 5,
         "shadowrays": 16,
-        "shadow": true,
-        "softshadow": true,
+        "shadow": false,
+        "softshadow": false,
         "color": [255, 255, 255]
     }, {
         "type": "PointLight0",

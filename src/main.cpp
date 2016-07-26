@@ -58,13 +58,11 @@ int main(int argc, char *argv[])
 	SDL_Texture* texture = SDL_CreateTexture(rendererSDL, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, desc.width, desc.height);
 	checkSDLError(__LINE__);
 	film.texture = texture;
-	int preCount = 0, curRow = 0;
 	double angle = 0;
-	int total = desc.width * desc.height;
 	Renderer renderer(desc);
 	SDL_Point screenCenter = { width / 2, height / 2 };
 	SDL_RendererFlip flip = SDL_FLIP_NONE;
-	renderer.asyncRender(desc);
+	renderer.beginAsyncRender(desc);
 	while (1) {
 		SDL_Event e;
 		if (SDL_PollEvent(&e)) {
@@ -72,45 +70,24 @@ int main(int argc, char *argv[])
 				break;
 			}
 		}
-		int newCount = renderer.countRenderedPixels();
-		bool move = false;
-		if (curRow * desc.width < newCount - desc.width) {
-			if(curRow + 1 < desc.height)
-				move = true;
-		}
-		SDL_Rect& rect = static_cast<SDLFilm*>(desc.film)->lockRect;
-		rect.x = 0;
-		rect.y = curRow;
-		rect.w = desc.width;
-		rect.h = 1;
-		if (curRow != desc.height - 1 && !move) {
-			rect.x = preCount % desc.width;
-			rect.w = std::max(1,std::min(rect.w - rect.x, newCount - preCount));
-		}
-		//printf("row =%d\n", curRow);
+		SDL_Rect& updatedRect = static_cast<SDLFilm*>(desc.film)->lockRect;
+		renderer.getRenderRect(desc, &updatedRect.x, &updatedRect.y, &updatedRect.w, &updatedRect.h);
 		desc.film->beforeSet();
-		for (int x = rect.x; x < rect.x + rect.w; x++) {
-			int _p = curRow * desc.width + x;
+		for (int x = updatedRect.x; x < updatedRect.x + updatedRect.w; x++) {
+			int _p = updatedRect.y * desc.width + x;
 			Color& c = renderer.colorArray[_p];
-			desc.film->set(x, curRow, c.rInt(), c.gInt(), c.bInt());
+			desc.film->set(x, updatedRect.y, c.rInt(), c.gInt(), c.bInt());
 		}
 		desc.film->afterSet();
-		SDL_Rect updatedRect = rect;
 		glClearColor(1.0, 1.0, 1.0, 1.0);
 		glClear(GL_COLOR_BUFFER_BIT);
-		//printf("rect %d,%d,%d,%d\n", rect.x, rect.y, rect.w, rect.h);
 		int ret = SDL_RenderCopyEx(rendererSDL, texture, &updatedRect, &updatedRect, angle, &screenCenter, flip);
 		if (ret == -1)
 			SDLExit("SDL_RenderCopy failed");
-		if(move)
-			curRow++;
 		SDL_RenderPresent(rendererSDL);
-		preCount = newCount;
 		SDL_Delay(1);
 	}
-	for (int i = 0; i < renderer.threads.size(); i++) {
-		renderer.threads[i]->join();
-	}
+	renderer.endAsyncRender();
 	SDL_DestroyTexture(texture);
 	SDL_DestroyRenderer(rendererSDL);
 	SDL_GL_DeleteContext(glContext);

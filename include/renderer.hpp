@@ -56,6 +56,8 @@ namespace renderer {
 	};
 
 	class Renderer {
+		int preCount;
+		int curRow;
 	public:
 		int pRendered;   //rendered pixels 
 		int pDispatched; //dispatched pixels, means renderring
@@ -68,6 +70,8 @@ namespace renderer {
 		Renderer(SceneDesc& desc):
 			pRendered(0),
 			pDispatched(0),
+			preCount(0),
+			curRow(0),
 			flags(new bool[desc.width * desc.height]{ false }),
 			colorArray(new Color[desc.width * desc.height]) {
 			for (int i = 0; i < desc.width * desc.height; i++) {
@@ -90,7 +94,9 @@ namespace renderer {
 		Color rayTraceRecursive(Shape* scene, Ray& ray, Lights&, int maxReflect);
 		void rayTraceReflection(Film*, Shape* scene, PerspectiveCamera& camera, Lights&, int maxReflect, int x = 0, int y = 0, int w = 0, int h = 0);
 		void rayTraceConcurrence(SceneDesc&);
-		void asyncRender(SceneDesc& desc);
+		void beginAsyncRender(SceneDesc& desc);
+		void endAsyncRender();
+		void getRenderRect(SceneDesc& desc, int* x, int* y, int* w, int* h);
 		Color rayTraceAt(SceneDesc&, int x, int y);
 		void renderScene(SceneDesc&);
 	};

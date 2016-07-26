@@ -214,7 +214,6 @@ namespace renderer {
 	}
 
 
-
 	void _rayTraceTask(Renderer *renderer, SceneDesc& desc) 
 	{
 		int total = desc.width * desc.height;
@@ -267,13 +266,38 @@ namespace renderer {
 		return pRendered;
 	}
 
-	void Renderer::asyncRender(SceneDesc& desc)
+	void Renderer::getRenderRect(SceneDesc& desc, int* x, int* y, int* w, int* h) {
+		int newCount = countRenderedPixels();
+		bool move = false;
+		if (curRow * desc.width < newCount - desc.width) {
+			if (curRow + 1 < desc.height)
+				move = true;
+		}
+		*x = 0;
+		*y = curRow;
+		*w = desc.width;
+		*h = 1;
+		if (curRow != desc.height - 1 && !move) {
+			*x = preCount % desc.width;
+			*w = std::max(1, std::min(*w - *x, newCount - preCount));
+		}		
+		if (move)
+			curRow++;
+		preCount = newCount;
+	}
+
+	void Renderer::beginAsyncRender(SceneDesc& desc)
 	{
 		int threadsNum = desc.threadsNum();
-		Color colors[16];
 		threads.resize(threadsNum);
 		for (int i = 0; i < threadsNum; i++) {
 			threads[i] = new std::thread(_rayTraceTask, this, std::ref(desc));
+		}
+	}
+
+	void Renderer::endAsyncRender() {
+		for (int i = 0; i < threads.size(); i++) {
+			threads[i]->join();
 		}
 	}
 
