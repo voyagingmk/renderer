@@ -15,6 +15,11 @@ namespace renderer {
 		Material* material;
 	public:
 		Shape() noexcept :material(nullptr) {};
+		virtual ~Shape() noexcept{
+			o2w = nullptr;
+			w2o = nullptr;
+			material = nullptr;
+		};
 		virtual void Init() = 0;
 		virtual int Intersect(Ray&, IntersectResult*) = 0;
 		virtual BBox Bound() const = 0;

@@ -13,6 +13,10 @@ namespace renderer {
 		indexes[2] = tri.indexes[2];
 	}
 
+	Triangle::~Triangle() {
+		mesh = nullptr;
+	}
+
 	Triangle Triangle::operator = (const Triangle& tri) {
 		mesh = tri.mesh;
 		indexes[0] = tri.indexes[0];
@@ -79,12 +83,25 @@ namespace renderer {
 		return (*o2w)(Bound());
 	}
 
+	Mesh::Mesh(VectorArray& v, NormalArray& n, UIntArray& i, UVArray& uv) {
+		vertices = v;
+		normals = n;
+		indexes = i;
+		uvs = uv;
+	}
 
 	Mesh::Mesh(const Mesh& m) {
 		vertices = m.vertices;
 		normals = m.normals;
 		indexes = m.indexes;
 		uvs = m.uvs;
+	}
+
+	Mesh::~Mesh() {
+		vertices.clear();
+		normals.clear();
+		indexes.clear();
+		uvs.clear();
 	}
 
 	Mesh Mesh::operator = (const Mesh& m) {

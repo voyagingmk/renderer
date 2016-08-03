@@ -108,6 +108,10 @@ namespace renderer {
 			z(p.z) {
 		}
 
+		~Point3d() {
+
+		}
+
 		Point3d<T>& operator = (const Point3d<T>& p) {
 			x = p.x;
 			y = p.y;

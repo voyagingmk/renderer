@@ -15,6 +15,7 @@ namespace renderer {
 		int indexes[3];
 	public:
 		Triangle(Mesh* m):mesh(m), indexes{ 0,0,0 } {};
+		~Triangle();
 		Triangle(const Triangle&);
 		Triangle operator = (const Triangle&);
 		virtual void Init() override;
@@ -31,8 +32,10 @@ namespace renderer {
 		UVArray uvs;
 		BBox bbox;
 	public:
-		Mesh(VectorArray& v, NormalArray& n, UIntArray& i, UVArray& uv):vertices(v),normals(n),indexes(i),uvs(uv){};
+		Mesh() {}
+		Mesh(VectorArray& v, NormalArray& n, UIntArray& i, UVArray& uv);
 		Mesh(const Mesh&);
+		~Mesh();
 		Mesh operator = (const Mesh&);
 		virtual void Init() override;
 		virtual int Intersect(Ray&, IntersectResult*) override;
