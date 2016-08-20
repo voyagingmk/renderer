@@ -195,19 +195,24 @@ namespace renderer {
 			config["camera"]["fov"]);
 	}
 
-	Color SceneParser::parseColor(std::string c) {
-		if (c == "Red")
-			return Color::Red;
-		else if (c == "White")
-			return Color::White;
-		else if (c == "Black")
-			return Color::Black;
-		else if (c == "Green")
-			return Color::Green;
-		else if (c == "Blue")
-			return Color::Blue;
-		else
-			return Color::White;
+	Color SceneParser::parseColor(nlohmann::json& c) {
+		if (c.is_string()) {
+			if (c == "Red")
+				return Color::Red;
+			else if (c == "White")
+				return Color::White;
+			else if (c == "Black")
+				return Color::Black;
+			else if (c == "Green")
+				return Color::Green;
+			else if (c == "Blue")
+				return Color::Blue;
+			else
+				return Color::White;
+		}
+		else {
+			return Color(c[0] / 255.0f, c[1] / 255.0f, c[2] / 255.0f);
+		}
 	}
 
 	void SceneParser::parserObj(std::string inputfile) {

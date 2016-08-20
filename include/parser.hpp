@@ -17,7 +17,7 @@ namespace renderer {
 		Transform* parseTransform(nlohmann::json& config);
 		ShapeUnion parseShapes(nlohmann::json& config, MaterialDict& matDict);
 		void parseLights(nlohmann::json& config, Lights& lights, MaterialDict& matDict);
-		Color parseColor(std::string c);
+		Color parseColor(nlohmann::json& c);
 		void parserObj(std::string inputfile);
 		template<typename T>
 		Color parseColor(T& colorInfo, const Color& defaultColor) {

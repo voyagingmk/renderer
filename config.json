@@ -134,9 +134,9 @@
         "uvs": [
         ],
 		"transform": [
-			["t", [0, 80, 0]]
+			["t", [0, 80, -100]]
 		],
-        "matId": 4
+        "matId": 101
     }, {
 		"Id": 102,
         "type": "Mesh",
@@ -156,10 +156,77 @@
         "uvs": [
         ],
 		"transform": [
-			["t", [0, -20, 0]]
+			["t", [0, -100, -100]]
 		],
-        "matId": 4
-    },{
+        "matId": 102
+    }, {
+		"Id": 103,
+        "type": "Mesh",
+		"desc": "back",
+        "vertices": [
+            [-100, -100, 0],
+            [ 100, -100, 0],
+            [ 100,  100, 0],
+            [-100,  100, 0]
+        ],
+        "indexes": [
+			0,1,3,
+            1,2,3
+        ],
+        "normals": [
+        ],
+        "uvs": [
+        ],
+		"transform": [
+			["t", [0, 0, -200]]
+		],
+        "matId": 103
+    }, {
+		"Id": 104,
+        "type": "Mesh",
+		"desc": "left",
+        "vertices": [
+            [0,-100, 100],
+            [0,-100,-100],
+            [0, 100,-100],
+            [0, 100, 100]
+        ],
+        "indexes": [
+			0,1,3,
+            1,2,3
+        ],
+        "normals": [
+        ],
+        "uvs": [
+        ],
+		"transform": [
+			["t", [-100, 0, -100]]
+		],
+        "matId": 104
+    }, {
+		"Id": 105,
+        "type": "Mesh",
+		"desc": "right",
+		"reverse": true,
+        "vertices": [
+            [0,-100, 100],
+            [0,-100,-100],
+            [0, 100,-100],
+            [0, 100, 100]
+        ],
+        "indexes": [
+			0,1,3,
+            1,2,3
+        ],
+        "normals": [
+        ],
+        "uvs": [
+        ],
+		"transform": [
+			["t", [100, 0, -100]]
+		],
+        "matId": 105
+    }, {
 		"Id": 3,
         "type": "Plane0",		
 		"transform": [
@@ -180,7 +247,7 @@
         "shadowrays": 16,
         "shadow": true,
         "softshadow": false,
-        "color": [255, 255, 255]
+        "color": [255, 255, 0]
     }, {
         "type": "PointLight0",
         "pos": [-5, 10, 10],
@@ -212,11 +279,39 @@
         "color1": "Red",
         "color2": "White"
     }, {
-        "id": 4,
+        "id": 101,
         "type": "Phone",
-        "diffuse": "Blue",
+        "diffuse": [165,42,42],
         "specular": "White",
         "shininess": 16,
         "reflectiveness": 0.2
+    }, {
+        "id": 102,
+        "type": "Phone",
+        "diffuse": [184, 134, 11],
+        "specular": "White",
+        "shininess": 16,
+        "reflectiveness": 0
+    }, {
+        "id": 103,
+        "type": "Phone",
+        "diffuse": [219,112,147],
+        "specular": "White",
+        "shininess": 16,
+        "reflectiveness": 0
+    }, {
+        "id": 104,
+        "type": "Phone",
+        "diffuse": [46,139,87],
+        "specular": "White",
+        "shininess": 16,
+        "reflectiveness": 0
+    }, {
+        "id": 105,
+        "type": "Phone",
+        "diffuse": [147,112,219],
+        "specular": "White",
+        "shininess": 16,
+        "reflectiveness": 0
     }]
 }
