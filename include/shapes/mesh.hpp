@@ -31,6 +31,8 @@ namespace renderer {
 		UIntArray indexes;
 		UVArray uvs;
 		BBox bbox;
+		int face = 0;
+		bool reverse = false;
 	public:
 		Mesh() {}
 		Mesh(VectorArray& v, NormalArray& n, UIntArray& i, UVArray& uv);

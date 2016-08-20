@@ -1,6 +1,6 @@
 {
 	"title":"Test Scene",
-    "width": 515,
+    "width": 512,
     "height": 512,
     "threadsPow": 3,
     "camera": {
@@ -12,16 +12,16 @@
     "maxReflect": 3,
 	"obj":[{
 		"Id": 1,
-		"type": "Sphere",
+		"type": "Sphere0",
 		"transform": [
-			["t", [-10, 10, -10]],
-			["r", [0, 1, 0, 90]]
+			["t", [-10, 0, -30]]
 		],
 		"radius": 10,
 		"matId": 1
     }, {
 		"Id": 2,
-        "type": "Mesh",
+        "type": "Mesh0",
+		"face":"front",
         "vertices": [
             [-5, -5, -5],
             [ 0, -2,  0],
@@ -66,7 +66,9 @@
             3,4,7,
 			3,7,0,
 			2,1,6,
-			2,6,5
+			2,6,5,
+			0,6,1,
+			0,7,6
         ],
         "normals": [
         ],
@@ -77,9 +79,89 @@
 			["r", [0, 1, 0, 30]]
 		],
         "matId": 4
+    }, {
+		"Id": 99,
+        "type": "Mesh0",
+		"reverse": true,
+        "vertices": [
+            [-40, 0,  40],
+            [ 40, 0,  40],
+            [ 40, 100, 40],
+            [-40, 100, 40],
+			[-40, 100,-40],
+            [ 40, 100,-40],
+            [ 40, 0, -40],
+            [-40, 0, -40]
+        ],
+        "indexes": [
+
+			3,2,4,
+			4,2,5,
+			4,5,6,
+			4,6,7,
+            3,4,7,
+			3,7,0,
+			2,1,6,
+			2,6,5,
+			0,6,1,
+			0,7,6
+        ],
+        "normals": [
+        ],
+        "uvs": [
+        ],
+		"transform": [
+			["t", [0, -20, -50]]
+		],
+        "matId": 4
+    }, {
+		"Id": 101,
+        "type": "Mesh",
+		"desc": "up",
+		"reverse": true,
+        "vertices": [
+            [-100, 0, 100],
+            [ 100, 0, 100],
+            [ 100, 0, -100],
+            [-100, 0, -100]
+        ],
+        "indexes": [
+			0,1,3,
+            1,2,3
+        ],
+        "normals": [
+        ],
+        "uvs": [
+        ],
+		"transform": [
+			["t", [0, 80, 0]]
+		],
+        "matId": 4
+    }, {
+		"Id": 102,
+        "type": "Mesh",
+		"desc": "down",
+        "vertices": [
+            [-100, 0, 100],
+            [ 100, 0, 100],
+            [ 100, 0, -100],
+            [-100, 0, -100]
+        ],
+        "indexes": [
+			0,1,3,
+            1,2,3
+        ],
+        "normals": [
+        ],
+        "uvs": [
+        ],
+		"transform": [
+			["t", [0, -20, 0]]
+		],
+        "matId": 4
     },{
 		"Id": 3,
-        "type": "Plane",		
+        "type": "Plane0",		
 		"transform": [
 			["t", [0, 0, 0]]
 		],
@@ -93,11 +175,11 @@
         "color": [255, 255, 255]
     }, {
         "type": "PointLight",
-        "pos": [0, 30, -30],
+        "pos": [0, 0, 30],
         "radius": 5,
         "shadowrays": 16,
         "shadow": true,
-        "softshadow": true,
+        "softshadow": false,
         "color": [255, 255, 255]
     }, {
         "type": "PointLight0",

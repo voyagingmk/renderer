@@ -39,16 +39,26 @@ namespace renderer {
 		const Vector3dF&& e2 = p2 - p0;
 		if (mesh->normals[tri_idx].isEmpty()) {
 			mesh->normals[tri_idx] = (e1.Cross(e2)).Normalize();
-			if (mesh->normals[tri_idx].Dot(ray.d) >= 0) {
+			if (mesh->reverse) {
+				mesh->normals[tri_idx] = -mesh->normals[tri_idx];
+			
+			}
+			
+		}
+		const Normal3dF& normal = mesh->normals[tri_idx];
+		float nDotRay = normal.Dot(ray.d);
+		if (mesh->face == 0) { //only front face
+			if (nDotRay >= 0) {
 				return 0;
 			}
 		}
-		else {
-			const Normal3dF& normal = mesh->normals[tri_idx];
-			if (normal.Dot(ray.d) >= 0) {
+		else if (mesh->face == 1) { //only back face
+			if (nDotRay <= 0) {
 				return 0;
 			}
 		}
+		//printf("nDotRay %.1f ray.d: %.2f,%.2f,%.2f len:%.1f  n: %.1f,%.1f,%.1f\n", nDotRay, ray.d.x, ray.d.y, ray.d.z, ray.d.Length(), normal.x, normal.y, normal.z);
+
 		const Vector3dF& s = ray.o - p0;
 		const Vector3dF& s1 = ray.d.Cross(e2);
 		Real d = s1.Dot(e1);
@@ -67,7 +77,7 @@ namespace renderer {
 		if (b2 < 0. || b1 + b2 > 1.)
 			return 0;
 		const Vector3dF&& position = ray.GetPoint(t);
-		*result = IntersectResult(mesh, t, std::forward<const Vector3dF>(position), mesh->normals[tri_idx]);
+		*result = IntersectResult(mesh, t, std::forward<const Vector3dF>(position), normal);
 		return 0;
 	}
 

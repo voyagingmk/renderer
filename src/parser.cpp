@@ -119,7 +119,23 @@ namespace renderer {
 				for (auto uv : objinfo["uvs"]) {
 					uvs.push_back(Vector2dF(uv[0], uv[1]));
 				}
-				pShape = static_cast<Shape*>(pool->newElement(vertices, normals, indexes, uvs));
+				Mesh* pMesh = pool->newElement(vertices, normals, indexes, uvs);
+				if (!objinfo["face"].is_null()) {
+					auto face = objinfo["face"];
+					if (face == "front") {
+						pMesh->face = 0;
+					}
+					else if (face == "back") {
+						pMesh->face = 1;
+					}
+					else if(face == "both"){
+						pMesh->face = 2;
+					}
+				}
+				if (objinfo["reverse"].is_boolean()) {
+					pMesh->reverse = objinfo["reverse"];
+				}
+				pShape = static_cast<Shape*>(pMesh);
 				pShape->material = matDict[objinfo["matId"]];
 			}
 			else
