@@ -144,6 +144,7 @@ namespace renderer {
 				auto color = objinfo["color"];
 				auto pool = GetPool<DirectionLight>();
 				pLight = static_cast<Light*>(pool->newElement(Vector3dF(dir[0], dir[1], dir[2])));
+				pLight->lightType = LightType_Direction;
 			}
 			else if (objinfo["type"] == "PointLight") {
 				auto pos = objinfo["pos"];
@@ -159,6 +160,7 @@ namespace renderer {
 					softshadow,
 					radius,
 					shadowrays));
+				pLight->lightType = LightType_Point;
 			}
 			if (pLight)
 				lights.push_back(pLight);

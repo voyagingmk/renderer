@@ -5,12 +5,17 @@
 #include "geometry.hpp"
 
 namespace renderer {
+	constexpr int LightType_Default = 0;
+	constexpr int LightType_Direction = 1;
+	constexpr int LightType_Point = 2;
+
 	class Light {
 	public:
 		bool shadow;
 		bool softshadow;
 		float radius;
 		int shadowrays;
+		int lightType = LightType_Default;
 	public:
 		Light() noexcept;
 		Light(bool s, bool ss, float r, int rays) noexcept;

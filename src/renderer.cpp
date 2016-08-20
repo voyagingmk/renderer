@@ -110,21 +110,23 @@ namespace renderer {
 			std::mt19937 eng(4029349);
 			std::uniform_real_distribution<float> fraction_dist;
 			for (int i = 0; i < lights.size(); i++) {
+				Light* pLight = lights[i];
 				Color c;
-				if (!lights[i]->shadow) {
-					Vector3dF incidenceNormal = lights[i]->incidenceNormal(result.position);
+				if (!pLight->shadow) {
+					//no shadow
+					Vector3dF incidenceNormal = pLight->incidenceNormal(result.position);
 					c = pMaterial->Sample(ray, result.position, result.normal, incidenceNormal);
-				} else if (lights[i]->softshadow) {
-					Vector3dF incidenceCenter = lights[i]->incidence(result.position);
+				} else if (pLight->softshadow) {
+					Vector3dF incidenceCenter = pLight->incidence(result.position);
 					Vector3dF incidenceNormal = incidenceCenter.Normalize();
 					Vector3dF rayNormal(-incidenceCenter.y, incidenceCenter.x, 0);
 					rayNormal = rayNormal.Normalize();
 					int hitTimes = 0;
-					int raysPerFan = lights[i]->shadowrays / 4;
+					int raysPerFan = pLight->shadowrays / 4;
 					for (int quadrant = 0; quadrant < 4; quadrant++) {
 						for (int r = 0; r < raysPerFan; r++) {
 							float angle = quadrant * 90.0f + fraction_dist(eng) * 90.f;
-							float dis = fraction_dist(eng) * lights[i]->radius;
+							float dis = fraction_dist(eng) * pLight->radius;
 							//printf("<%.1f, %.1f> ", angle, dis);
 							Vector3dF d = rayNormal.rotate(incidenceNormal, PI * angle / 180.f);
 							Ray shadowrays(result.position, (-incidenceCenter) + d * dis);
@@ -141,22 +143,34 @@ namespace renderer {
 					c = pMaterial->Sample(ray, result.position, result.normal, incidenceNormal);
 					if (hitTimes > 0) {
 						//printf("%d\n", hitTimes);
-						float black_ratio = hitTimes / (float)lights[i]->shadowrays;
+						float black_ratio = hitTimes / (float)pLight->shadowrays;
 						//c = c * ( 1.0f - black_ratio) + Color::Black * black_ratio;
 						c = c.Modulate(Color::White * (1.0f - black_ratio));
 						c = c.clamp();
 					}
 				}
 				else {
-					Vector3dF incidenceNormal = lights[i]->incidenceNormal(result.position);
+					//normal shadow
+					Vector3dF incidenceNormal = pLight->incidenceNormal(result.position);
 					//Is this light visible 
 					Ray shadowrays(result.position, -incidenceNormal);
 					IntersectResult _result;
 					scene->Intersect(shadowrays, &_result);
+					bool canSample = true;
 					if (_result.geometry) {
-						c = Color::Black;
+						if (pLight->lightType == LightType_Point) {
+							float disToLight = (dynamic_cast<PointLight*>(pLight)->pos - result.position).Length();
+							if (disToLight >= _result.distance) {
+								canSample = false;
+								c = Color::Black;
+							}
+						}
+						else if (pLight->lightType == LightType_Direction) {
+							canSample = false;
+							c = Color::Black;
+						}
 					}
-					else {
+					if(canSample){
 						c = pMaterial->Sample(ray, result.position, result.normal, incidenceNormal);
 					}
 				}
