@@ -2,6 +2,7 @@
 #define RENDERER_COLOR_HPP
 
 #include "base.hpp"
+
 namespace renderer {
 	class Color {
 		float rgb[3] = { 0 };
@@ -23,15 +24,9 @@ namespace renderer {
 		inline float r() const { return rgb[0]; };
 		inline float g() const { return rgb[1]; };
 		inline float b() const { return rgb[2]; };
-		inline int rInt() const {
-			return min(int(r() * 255), 255);
-		}
-		inline int gInt() const {
-			return min(int(g() * 255), 255);
-		}
-		inline int bInt() const {
-			return min(int(b() * 255), 255);
-		}
+		int rInt() const;
+		int gInt() const;
+		int bInt() const;
 	public:
 		static const Color Black;
 		static const Color White;

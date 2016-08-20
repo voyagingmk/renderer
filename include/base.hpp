@@ -29,7 +29,6 @@
 #include "stdafx.h"
 
 
-
 #define DEFINE_SHARE_PTR(name) typedef std::shared_ptr<name> Ptr#name;
 #define FLOAT_MAX (std::numeric_limits<float>::max())
 
@@ -98,6 +97,21 @@ namespace renderer {
 		static std::mt19937 eng(time(0));
 		static std::uniform_real_distribution<float> fraction_dist;
 		return fraction_dist(eng);
+	}
+
+	inline float GammaCorrect(float value) {
+		if (value <= 0.0031308f) return 12.92f * value;
+		return 1.055f * std::pow(value, (float)(1.f / 2.4f)) - 0.055f;
+	}
+
+	template <typename T>
+	inline T Clamp(T val, T low, T high) {
+		if (val < low)
+			return low;
+		else if (val > high)
+			return high;
+		else
+			return val;
 	}
 
 	template <class T, class Q>

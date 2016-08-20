@@ -153,6 +153,7 @@
     <ClCompile Include="src\bbox.cpp" />
     <ClCompile Include="src\color.cpp" />
     <ClCompile Include="src\common.cpp" />
+    <ClCompile Include="src\defines.cpp" />
     <ClCompile Include="src\film.cpp" />
     <ClCompile Include="src\light.cpp" />
     <ClCompile Include="src\profiler.cpp" />
@@ -180,6 +181,7 @@
     <ClInclude Include="include\color.hpp" />
     <ClInclude Include="include\common.hpp" />
     <ClInclude Include="include\curve.hpp" />
+    <ClInclude Include="include\defines.hpp" />
     <ClInclude Include="include\draw.hpp" />
     <ClInclude Include="include\error.hpp" />
     <ClInclude Include="include\film.hpp" />
