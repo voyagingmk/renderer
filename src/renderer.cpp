@@ -121,6 +121,10 @@ namespace renderer {
 					Vector3dF incidenceNormal = incidenceCenter.Normalize();
 					Vector3dF rayNormal(-incidenceCenter.y, incidenceCenter.x, 0);
 					rayNormal = rayNormal.Normalize();
+					float disToLight = 0;
+					if (pLight->lightType == LightType_Point) {
+						disToLight = (dynamic_cast<PointLight*>(pLight)->pos - result.position).Length();
+					}
 					int hitTimes = 0;
 					int raysPerFan = pLight->shadowrays / 4;
 					for (int quadrant = 0; quadrant < 4; quadrant++) {
@@ -134,6 +138,9 @@ namespace renderer {
 							IntersectResult _result;
 							scene->Intersect(shadowrays, &_result);
 							if (_result.geometry) {
+								if (disToLight && _result.distance >= disToLight) {
+									continue;
+								}
 								hitTimes++;
 							}
 						}

@@ -12,11 +12,11 @@
     "maxReflect": 3,
 	"obj":[{
 		"Id": 1,
-		"type": "Sphere0",
+		"type": "Sphere",
 		"transform": [
-			["t", [-10, 0, -30]]
+			["t", [-20, -50, -120]]
 		],
-		"radius": 10,
+		"radius": 40,
 		"matId": 1
     }, {
 		"Id": 2,
@@ -162,6 +162,29 @@
     }, {
 		"Id": 103,
         "type": "Mesh",
+		"desc": "front",
+		"reverse": true,
+        "vertices": [
+            [-100, -100, 0],
+            [ 100, -100, 0],
+            [ 100,  100, 0],
+            [-100,  100, 0]
+        ],
+        "indexes": [
+			0,1,3,
+            1,2,3
+        ],
+        "normals": [
+        ],
+        "uvs": [
+        ],
+		"transform": [
+			["t", [0, 0, 0]]
+		],
+        "matId": 103
+    }, {
+		"Id": 104,
+        "type": "Mesh",
 		"desc": "back",
         "vertices": [
             [-100, -100, 0],
@@ -180,9 +203,9 @@
 		"transform": [
 			["t", [0, 0, -200]]
 		],
-        "matId": 103
+        "matId": 104
     }, {
-		"Id": 104,
+		"Id": 105,
         "type": "Mesh",
 		"desc": "left",
         "vertices": [
@@ -202,9 +225,9 @@
 		"transform": [
 			["t", [-100, 0, -100]]
 		],
-        "matId": 104
+        "matId": 105
     }, {
-		"Id": 105,
+		"Id": 106,
         "type": "Mesh",
 		"desc": "right",
 		"reverse": true,
@@ -236,23 +259,23 @@
         "matId": 3
     }],
     "light": [{
-        "type": "DirectionLight",
+        "type": "DirectionLight0",
         "dir": [-1, -1, 0],
         "softshadow": false,
         "color": [255, 255, 255]
     }, {
         "type": "PointLight",
-        "pos": [0, 0, 30],
-        "radius": 5,
-        "shadowrays": 16,
+        "pos": [30, 30, -80],
+        "radius": 30,
+        "shadowrays": 32,
         "shadow": true,
-        "softshadow": false,
+        "softshadow": true,
         "color": [255, 255, 0]
     }, {
         "type": "PointLight0",
         "pos": [-5, 10, 10],
-        "radius": 15,
-        "shadowrays": 16,
+        "radius": 50,
+        "shadowrays": 64,
         "shadow": true,
         "softshadow": false,
         "color": [255, 255, 255]
@@ -260,7 +283,7 @@
     "material": [{
         "id": 1,
         "type": "Phone",
-        "diffuse": "Red",
+        "diffuse": "White",
         "specular": "White",
         "shininess": 16,
         "reflectiveness": 0.25
@@ -308,6 +331,13 @@
         "reflectiveness": 0
     }, {
         "id": 105,
+        "type": "Phone",
+        "diffuse": [147,112,219],
+        "specular": "White",
+        "shininess": 16,
+        "reflectiveness": 0
+    }, {
+        "id": 106,
         "type": "Phone",
         "diffuse": [147,112,219],
         "specular": "White",
