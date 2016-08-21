@@ -86,10 +86,7 @@ namespace renderer {
 				delete[] flags;
 			if (colorArray)
 				delete[] colorArray;
-
 		}
-		void renderDepth(Film*, Shape&, PerspectiveCamera&, float maxDepth);
-		void renderNormal(Film*, Shape& scene, PerspectiveCamera& camera, float maxDepth);
 		void rayTrace(Film*, Shape& scene, PerspectiveCamera& camera, Lights&);
 		Color rayTraceRecursive(Shape* scene, Ray& ray, Lights&, int maxReflect);
 		void rayTraceReflection(Film*, Shape* scene, PerspectiveCamera& camera, Lights&, int maxReflect, int x = 0, int y = 0, int w = 0, int h = 0);

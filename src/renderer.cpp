@@ -11,6 +11,7 @@
 #include "light.hpp"
 #include "shapes/union.hpp"
 #include "profiler.hpp"
+#include "defines.hpp"
 
 namespace renderer {
 
@@ -33,45 +34,6 @@ namespace renderer {
 		shapeUnion.Init();
 		camera.Init();
 	}
-
-
-
-	void Renderer::renderDepth(Film *film, Shape& scene, PerspectiveCamera& camera, float maxDepth) {
-		int w = film->width(), h = film->height();
-		IntersectResult result;
-		for (int y = 0; y < h; y++) {
-			float sy = 1.0f - (float)y / h;
-			for (int x = 0; x < w; x++) {
-				float sx = (float)x / w;
-				Ray& ray = camera.GenerateRay(sx, sy);
-				scene.Intersect(ray, &result);
-				if (result.geometry) {
-					int depth = int(255.0f - min((result.distance / maxDepth) * 255.0f, 255.0f));
-					film->set(x, y, depth, depth, depth);
-				}
-			}
-		}
-	}
-	void Renderer::renderNormal(Film *film, Shape& scene, PerspectiveCamera& camera, float maxDepth) {
-		int w = film->width(), h = film->height();
-		IntersectResult result;
-		for (int y = 0; y < h; y++) {
-			float sy = 1.0f - (float)y / h;
-			for (int x = 0; x < w; x++) {
-				float sx = (float)x / w;
-				Ray&& ray = camera.GenerateRay(sx, sy);
-				scene.Intersect(ray, &result);
-				if (result.geometry) {
-					Normal3dF& n = result.normal;
-					film->set(x, y, 
-						(n.x + 1.0f) * 128.0f,
-						(n.y + 1.0f) * 128.0f,
-						(n.z + 1.0f) * 128.0f);
-				}
-			}
-		}
-	};
-
 
 	void Renderer::rayTrace(Film *film, Shape& scene, PerspectiveCamera& camera, Lights& lights) {
 		int w = film->width(), h = film->height();
@@ -230,10 +192,41 @@ namespace renderer {
 		float sx = (float)x / img_width;
 		Ray& ray = desc.camera.GenerateRay(sx, sy);
 		//printf("x,y = %d,%d, sx,sy = %.3f,%.3f   %d,%d\n", x,y, sx, sy, img_width, img_height);
-		Color color = rayTraceRecursive(&desc.shapeUnion, ray, desc.lights, desc.maxReflect);
-		return color;
+		switch (RenderType) {
+		case RenderType_Default:
+			return rayTraceRecursive(&desc.shapeUnion, ray, desc.lights, desc.maxReflect);
+			break;
+		case RenderType_DepthMap:
+			{
+				IntersectResult result;
+				desc.shapeUnion.Intersect(ray, &result);
+				if (result.geometry) {
+					float depth = min((result.distance / 200.f), 1.0f);
+					return Color(depth, depth, depth).clamp();
+				}
+				else {
+					return Color::Black;
+				}
+				break;
+			}
+		case RenderType_NormalMap: 
+			{
+				IntersectResult result;
+				desc.shapeUnion.Intersect(ray, &result);
+				if (result.geometry) {
+					Normal3dF& n = result.normal;
+					return Color(
+						(n.x + 1.0f) * 0.5f,
+						(n.y + 1.0f) * 0.5f,
+						(n.z + 1.0f) * 0.5f);
+				}
+				else {
+					return Color::Black;
+				}
+				break;
+			}
+		}
 	}
-
 
 	void _rayTraceTask(Renderer *renderer, SceneDesc& desc) 
 	{

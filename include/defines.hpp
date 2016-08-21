@@ -3,4 +3,10 @@
 
 extern const bool Enable_GammaCorrect;
 
+#define RenderType_Default 0
+#define RenderType_DepthMap 1
+#define RenderType_NormalMap 2
+
+extern const int RenderType;
+
 #endif // RENDERER_DEFINES_HPP
