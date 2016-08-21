@@ -73,11 +73,8 @@ namespace renderer {
 			preCount(0),
 			curRow(0),
 			flags(new bool[desc.width * desc.height]{ false }),
-			colorArray(new Color[desc.width * desc.height]) {
-			for (int i = 0; i < desc.width * desc.height; i++) {
-			//	colorArray[i].rgb[0] ;
-			}
-		}
+			colorArray(new Color[desc.width * desc.height]) 
+		{}
 		~Renderer() {
 			for (int i = 0; i < threads.size(); i++) {
 				delete threads[i];
