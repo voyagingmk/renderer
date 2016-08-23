@@ -3,4 +3,4 @@
 
 const bool Enable_GammaCorrect = true;
 
-const int RenderType = RenderType_NormalMap;
+const int RenderType = RenderType_Default;

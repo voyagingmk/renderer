@@ -62,6 +62,28 @@ namespace renderer {
 		}
 	}
 
+	void createCoordinateSystem(const Vector3dF &N, Vector3dF &Nt, Vector3dF &Nb)
+	{
+		if (std::fabs(N.x) > std::fabs(N.y))
+			Nt = Vector3dF(N.z, 0, -N.x) / sqrtf(N.x * N.x + N.z * N.z);
+		else
+			Nt = Vector3dF(0, -N.z, N.y) / sqrtf(N.y * N.y + N.z * N.z);
+		Nb = N.Cross(Nt);
+		Nt = N.Cross(Nb);
+	}
+
+	Vector3dF uniformSampleHemisphere(const float &r1, const float &r2)
+	{
+		// cos(theta) = r1 = y
+		// cos^2(theta) + sin^2(theta) = 1 -> sin(theta) = srtf(1 - cos^2(theta))
+		float sinTheta = sqrtf(1 - r1 * r1);
+		float phi = 2 * M_PI * r2;
+		float x = sinTheta * cosf(phi);
+		float z = sinTheta * sinf(phi);
+		return Vector3dF(x, r1, z);
+	}
+
+
 	Color Renderer::rayTraceRecursive(Shape* scene, Ray& ray, Lights& lights, int maxReflect) {
 		IntersectResult result;
 		scene->Intersect(ray, &result);
@@ -70,7 +92,7 @@ namespace renderer {
 			float reflectiveness = pMaterial->reflectiveness;
 			Color color(0, 0, 0);
 			std::mt19937 eng(4029349);
-			std::uniform_real_distribution<float> fraction_dist;
+			std::uniform_real_distribution<float> distribution(0, 1);
 			for (int i = 0; i < lights.size(); i++) {
 				Light* pLight = lights[i];
 				Color c;
@@ -81,30 +103,35 @@ namespace renderer {
 				} else if (pLight->softshadow) {
 					Vector3dF incidenceCenter = pLight->incidence(result.position);
 					Vector3dF incidenceNormal = incidenceCenter.Normalize();
-					Vector3dF rayNormal(-incidenceCenter.y, incidenceCenter.x, 0);
-					rayNormal = rayNormal.Normalize();
 					float disToLight = 0;
 					if (pLight->lightType == LightType_Point) {
 						disToLight = (dynamic_cast<PointLight*>(pLight)->pos - result.position).Length();
 					}
+					int N = pLight->shadowrays;
 					int hitTimes = 0;
-					int raysPerFan = pLight->shadowrays / 4;
-					for (int quadrant = 0; quadrant < 4; quadrant++) {
-						for (int r = 0; r < raysPerFan; r++) {
-							float angle = quadrant * 90.0f + fraction_dist(eng) * 90.f;
-							float dis = fraction_dist(eng) * pLight->radius;
-							//printf("<%.1f, %.1f> ", angle, dis);
-							Vector3dF d = rayNormal.rotate(incidenceNormal, PI * angle / 180.f);
-							Ray shadowrays(result.position, (-incidenceCenter) + d * dis);
-							shadowrays.d = shadowrays.d.Normalize();
-							IntersectResult _result;
-							scene->Intersect(shadowrays, &_result);
-							if (_result.geometry) {
-								if (disToLight && _result.distance >= disToLight) {
-									continue;
-								}
-								hitTimes++;
+					Vector3dF Nt, Nb;
+					createCoordinateSystem(incidenceNormal, Nt, Nb);
+					for (int i = 0; i < N; i++) {
+						float r1 = distribution(eng);
+						float r2 = distribution(eng);
+						Vector3dF sample = uniformSampleHemisphere(r1, r2);
+						Vector3dF sampleWorld(
+							sample.x * Nb.x + sample.y * incidenceNormal.x + sample.z * Nt.x,
+							sample.x * Nb.y + sample.y * incidenceNormal.y + sample.z * Nt.y,
+							sample.x * Nb.z + sample.y * incidenceNormal.z + sample.z * Nt.z);
+						//float angle = quadrant * 90.0f + distribution(eng) * 90.f;
+						//float dis = distribution(eng) * pLight->radius;
+						//printf("<%.1f, %.1f> ", angle, dis);
+						//Vector3dF d = rayNormal.rotate(incidenceNormal, PI * angle / 180.f);
+						Ray shadowrays(result.position, (-incidenceCenter) + sampleWorld * (dynamic_cast<PointLight*>(pLight))->radius);
+						shadowrays.d = shadowrays.d.Normalize();
+						IntersectResult _result;
+						scene->Intersect(shadowrays, &_result);
+						if (_result.geometry && _result.geometry != result.geometry) {
+							if (disToLight && _result.distance >= disToLight) {
+								continue;
 							}
+							hitTimes++;
 						}
 						//printf("\n");
 					}
@@ -112,7 +139,7 @@ namespace renderer {
 					c = pMaterial->Sample(ray, result.position, result.normal, incidenceNormal);
 					if (hitTimes > 0) {
 						//printf("%d\n", hitTimes);
-						float black_ratio = hitTimes / (float)pLight->shadowrays;
+						float black_ratio = hitTimes / (float)N;
 						//c = c * ( 1.0f - black_ratio) + Color::Black * black_ratio;
 						c = c.Modulate(Color::White * (1.0f - black_ratio));
 						c = c.clamp();
