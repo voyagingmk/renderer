@@ -272,16 +272,17 @@ namespace renderer {
 			z = p.z;
 		}
 
-		Vector3d(const Point3d<T>& p) :
-			x(p.x),
-			y(p.y),
-			z(p.z) 
-		{}
+		Vector3d(const Point3d<T>& p)
+		{
+			x = p.x;
+			y = p.y;
+			z = p.z;
+		}
 
 		Vector3d<T>& operator = (const Vector3d<T>&& p) {
 			x = p.x;
 			y = p.y;
-			z = p.z;
+			z = p.z; 
 			return *this;
 		}
 

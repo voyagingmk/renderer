@@ -62,14 +62,15 @@ namespace renderer {
 		}
 	}
 
-	void createCoordinateSystem(const Vector3dF &N, Vector3dF &Nt, Vector3dF &Nb)
+	void createCoordinateSystem(const Vector3dF &axisY, Vector3dF &axisZ, Vector3dF &axisX)
 	{
-		if (std::fabs(N.x) > std::fabs(N.y))
-			Nt = Vector3dF(N.z, 0, -N.x) / sqrtf(N.x * N.x + N.z * N.z);
+		if (std::fabs(axisY.x) > std::fabs(axisY.y))
+			axisZ = Vector3dF(axisY.z, 0, -axisY.x) / sqrtf(axisY.x * axisY.x + axisY.z * axisY.z);
 		else
-			Nt = Vector3dF(0, -N.z, N.y) / sqrtf(N.y * N.y + N.z * N.z);
-		Nb = N.Cross(Nt);
-		Nt = N.Cross(Nb);
+			axisZ = Vector3dF(0, -axisY.z, axisY.y) / sqrtf(axisY.y * axisY.y + axisY.z * axisY.z);
+		axisZ = -axisZ; //trans to left handness
+		axisX = axisY.Cross(axisZ);
+		axisZ = axisY.Cross(axisX);//make it orthogonal
 	}
 
 	Vector3dF uniformSampleHemisphere(const float &r1, const float &r2)
@@ -83,108 +84,129 @@ namespace renderer {
 		return Vector3dF(x, r1, z);
 	}
 
-
+	std::mt19937 eng(4029349);
 	Color Renderer::rayTraceRecursive(Shape* scene, Ray& ray, Lights& lights, int maxReflect) {
 		IntersectResult result;
 		scene->Intersect(ray, &result);
-		if (result.geometry) {
-			Material* pMaterial = result.geometry->material;
-			float reflectiveness = pMaterial->reflectiveness;
-			Color color(0, 0, 0);
-			std::mt19937 eng(4029349);
-			std::uniform_real_distribution<float> distribution(0, 1);
-			for (int i = 0; i < lights.size(); i++) {
-				Light* pLight = lights[i];
-				Color c;
-				if (!pLight->shadow) {
-					//no shadow
-					Vector3dF incidenceNormal = pLight->incidenceNormal(result.position);
-					c = pMaterial->Sample(ray, result.position, result.normal, incidenceNormal);
-				} else if (pLight->softshadow) {
-					Vector3dF incidenceCenter = pLight->incidence(result.position);
-					Vector3dF incidenceNormal = incidenceCenter.Normalize();
-					float disToLight = 0;
-					if (pLight->lightType == LightType_Point) {
-						disToLight = (dynamic_cast<PointLight*>(pLight)->pos - result.position).Length();
-					}
-					int N = pLight->shadowrays;
-					int hitTimes = 0;
-					Vector3dF Nt, Nb;
-					createCoordinateSystem(incidenceNormal, Nt, Nb);
-					for (int i = 0; i < N; i++) {
-						float r1 = distribution(eng);
-						float r2 = distribution(eng);
-						Vector3dF sample = uniformSampleHemisphere(r1, r2);
-						Vector3dF sampleWorld(
-							sample.x * Nb.x + sample.y * incidenceNormal.x + sample.z * Nt.x,
-							sample.x * Nb.y + sample.y * incidenceNormal.y + sample.z * Nt.y,
-							sample.x * Nb.z + sample.y * incidenceNormal.z + sample.z * Nt.z);
-						//float angle = quadrant * 90.0f + distribution(eng) * 90.f;
-						//float dis = distribution(eng) * pLight->radius;
-						//printf("<%.1f, %.1f> ", angle, dis);
-						//Vector3dF d = rayNormal.rotate(incidenceNormal, PI * angle / 180.f);
-						Ray shadowrays(result.position, (-incidenceCenter) + sampleWorld * (dynamic_cast<PointLight*>(pLight))->radius);
-						shadowrays.d = shadowrays.d.Normalize();
-						IntersectResult _result;
-						scene->Intersect(shadowrays, &_result);
-						if (_result.geometry && _result.geometry != result.geometry) {
-							if (disToLight && _result.distance >= disToLight) {
-								continue;
-							}
-							hitTimes++;
-						}
-						//printf("\n");
-					}
-					//printf("\n");
-					c = pMaterial->Sample(ray, result.position, result.normal, incidenceNormal);
-					if (hitTimes > 0) {
-						//printf("%d\n", hitTimes);
-						float black_ratio = hitTimes / (float)N;
-						//c = c * ( 1.0f - black_ratio) + Color::Black * black_ratio;
-						c = c.Modulate(Color::White * (1.0f - black_ratio));
-						c = c.clamp();
-					}
+		if (!result.geometry)
+			return Color::Black;
+		Material* pMaterial = result.geometry->material;
+		float reflectiveness = pMaterial->reflectiveness;
+		Color color(0, 0, 0);
+		
+		std::uniform_real_distribution<float> distribution(0, 1);
+		for (int i = 0; i < lights.size(); i++) {
+			Light* pLight = lights[i];
+			Color c;
+			if (!pLight->shadow) {
+				//no shadow
+				Vector3dF incidenceNormal = pLight->incidenceNormal(result.position);
+				c = pMaterial->Sample(ray, result.position, result.normal, incidenceNormal);
+			} else if (pLight->softshadow) {
+				Vector3dF incidenceCenter = pLight->incidence(result.position);
+				Vector3dF incidenceNormal = incidenceCenter.Normalize();
+				float disToLight = 0;
+				if (pLight->lightType == LightType_Point) {
+					disToLight = (dynamic_cast<PointLight*>(pLight)->pos - result.position).Length();
 				}
-				else {
-					//normal shadow
-					Vector3dF incidenceNormal = pLight->incidenceNormal(result.position);
-					//Is this light visible 
-					Ray shadowrays(result.position, -incidenceNormal);
+				int N = pLight->shadowrays;
+				int hitTimes = 0;
+				Vector3dF axisZ, axisX;
+				Vector3dF& axisY = incidenceNormal;
+				createCoordinateSystem(axisY, axisZ, axisX);
+				for (int i = 0; i < N; i++) {
+					float r1 = distribution(eng);
+					float r2 = distribution(eng);
+					Vector3dF sample = uniformSampleHemisphere(r1, r2);
+					Vector3dF sampleWorld(
+						sample.x * axisX.x + sample.y * axisY.x + sample.z * axisZ.x,
+						sample.x * axisX.y + sample.y * axisY.y + sample.z * axisZ.y,
+						sample.x * axisX.z + sample.y * axisY.z + sample.z * axisZ.z);
+					Ray shadowrays(result.position, (-incidenceCenter) + sampleWorld * (dynamic_cast<PointLight*>(pLight))->radius);
+					shadowrays.d = shadowrays.d.Normalize();
 					IntersectResult _result;
 					scene->Intersect(shadowrays, &_result);
-					bool canSample = true;
-					if (_result.geometry) {
-						if (pLight->lightType == LightType_Point) {
-							float disToLight = (dynamic_cast<PointLight*>(pLight)->pos - result.position).Length();
-							if (disToLight >= _result.distance) {
-								canSample = false;
-								c = Color::Black;
-							}
+					if (_result.geometry && _result.geometry != result.geometry) {
+						if (disToLight && _result.distance >= disToLight) {
+							continue;
 						}
-						else if (pLight->lightType == LightType_Direction) {
+						hitTimes++;
+					}
+					//printf("\n");
+				}
+				//printf("\n");
+				c = pMaterial->Sample(ray, result.position, result.normal, incidenceNormal);
+				if (hitTimes > 0) {
+					//printf("%d\n", hitTimes);
+					float black_ratio = hitTimes / (float)N;
+					//c = c * ( 1.0f - black_ratio) + Color::Black * black_ratio;
+					c = c.Modulate(Color::White * (1.0f - black_ratio));
+					c = c.clamp();
+					//c *= 1.0f - black_ratio;
+				}
+			}
+			else {
+				//normal shadow
+				Vector3dF incidenceNormal = pLight->incidenceNormal(result.position);
+				//Is this light visible 
+				Ray shadowrays(result.position, -incidenceNormal);
+				IntersectResult _result;
+				scene->Intersect(shadowrays, &_result);
+				bool canSample = true;
+				if (_result.geometry) {
+					if (pLight->lightType == LightType_Point) {
+						float disToLight = (dynamic_cast<PointLight*>(pLight)->pos - result.position).Length();
+						if (disToLight >= _result.distance) {
 							canSample = false;
 							c = Color::Black;
 						}
 					}
-					if(canSample){
-						c = pMaterial->Sample(ray, result.position, result.normal, incidenceNormal);
+					else if (pLight->lightType == LightType_Direction) {
+						canSample = false;
+						c = Color::Black;
 					}
 				}
-				color = color + c;
+				if(canSample){
+					c = pMaterial->Sample(ray, result.position, result.normal, incidenceNormal);
+				}
 			}
-			color = Color(color * (1.0f - reflectiveness));
-
-			if (reflectiveness > 0 && maxReflect > 0) {
-				Vector3dF r = Vector3dF(result.normal * (-2 * (result.normal.Dot(ray.d))) + ray.d);
-				Ray new_ray(result.position, r);
-				Color reflectedColor = rayTraceRecursive(scene, new_ray, lights, maxReflect - 1);
-				assert(reflectedColor.r() >= 0 && reflectedColor.g() >= 0 && reflectedColor.b() >= 0);
-				color = color + reflectedColor * reflectiveness;
-			}
-			return color;
+			color = color + c;
 		}
-		else
-			return Color::Black;
+		
+		if (Enable_IndirectDiffuse && maxReflect == sceneDesc->maxReflect) {
+			Color indirectDiffuse;
+			Vector3dF axisZ, axisX;
+			Normal3dF& axisY = result.normal;
+			createCoordinateSystem(axisY, axisZ, axisX);
+			for (uint32_t n = 0; n < SampleNum_IndirectDiffuse; ++n) {
+				float r1 = distribution(eng); // cos(theta) = N.Light Direction 
+				float r2 = distribution(eng);
+				Vector3dF sample = uniformSampleHemisphere(r1, r2);
+				//    axisX
+				//M = axisY
+				//	  axisZ
+				//vector_local * M = vector_world
+				Vector3dF sampleWorld(
+					sample.x * axisX.x + sample.y *  axisY.x + sample.z * axisZ.x,
+					sample.x * axisX.y + sample.y *  axisY.y + sample.z * axisZ.y,
+					sample.x * axisX.z + sample.y *  axisY.z + sample.z * axisZ.z);
+				Ray indirect_ray(result.position, sampleWorld);
+				indirectDiffuse += rayTraceRecursive(scene, indirect_ray, lights, 0) * r1;
+			}
+			// divide by N and the constant PDF
+			indirectDiffuse = indirectDiffuse / (float(SampleNum_IndirectDiffuse) * (1.0 / (2.0 * M_PI)));
+			color += indirectDiffuse / M_PI;
+		}
+		color = color * (1.0f - reflectiveness);
+			
+		if (reflectiveness > 0 && maxReflect > 0) {
+			Vector3dF d = Vector3dF(result.normal * (-2 * (result.normal.Dot(ray.d))) + ray.d);
+			Ray new_ray(result.position, d);
+			Color reflectedColor = rayTraceRecursive(scene, new_ray, lights, maxReflect - 1);
+			assert(reflectedColor.r() >= 0 && reflectedColor.g() >= 0 && reflectedColor.b() >= 0);
+			color += reflectedColor * reflectiveness;
+		}
+		return color;
 	}
 
 	void Renderer::rayTraceReflection(Film *film, Shape* scene, PerspectiveCamera& camera, Lights& lights, int maxReflect, int px, int py, int pw, int ph) {

@@ -9,6 +9,7 @@ namespace renderer {
 	constexpr int LightType_Direction = 1;
 	constexpr int LightType_Point = 2;
 
+
 	class Light {
 	public:
 		bool shadow;
@@ -22,6 +23,7 @@ namespace renderer {
 		//incidence: lightPos towards targetPos
 		virtual Normal3dF incidenceNormal(Point3dF& targetPos) = 0;
 		virtual Vector3dF incidence(Point3dF& targetPos) = 0;
+		virtual Color sample_L(Vector3dF& pos) = 0;
 		virtual void Init() = 0;
 	};
 
@@ -36,6 +38,7 @@ namespace renderer {
 		virtual Vector3dF incidence(Point3dF& targetPos) override {
 			return dir;
 		}
+		virtual Color sample_L(Vector3dF& pos) override;
 		virtual void Init() override;
 	};
 
@@ -54,6 +57,7 @@ namespace renderer {
 		virtual Vector3dF incidence(Point3dF& targetPos) override {
 			return targetPos - pos;
 		}
+		virtual Color sample_L(Vector3dF& pos) override;
 		virtual void Init() override;
 	};
 

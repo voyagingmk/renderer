@@ -55,9 +55,24 @@ namespace renderer {
 		return Color(rgb[0] / f, rgb[1] / f, rgb[2] / f);
 	};
 
+	Color& Color::operator += (const Color& c) {
+		rgb[0] += c.rgb[0];
+		rgb[1] += c.rgb[1];
+		rgb[2] += c.rgb[2];
+		return *this;
+	}
+
+	Color& Color::operator *= (float f) {
+		rgb[0] *= f;
+		rgb[1] *= f;
+		rgb[2] *= f;
+		return *this;
+	}
+
 	bool Color::operator == (const Color& c) {
 		return rgb[0] == c.r() && rgb[1] == c.g() && rgb[2] == c.b();
 	};
+
 	Color Color::Modulate(const Color& c) const {
 		return Color(rgb[0] * c.r(), rgb[1] * c.g(), rgb[2] * c.b());
 	};

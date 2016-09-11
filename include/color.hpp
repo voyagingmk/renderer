@@ -18,6 +18,8 @@ namespace renderer {
 		Color operator - (const Color&) const;
 		Color operator * (float f) const;
 		Color operator / (float f) const;
+		Color& operator += (const Color& p);
+		Color& operator *= (float f);
 		bool operator == (const Color&);
 		Color Modulate (const Color&) const;
 		Color clamp() const;

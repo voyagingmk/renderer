@@ -63,17 +63,19 @@ namespace renderer {
 		int pDispatched; //dispatched pixels, means renderring
 		bool* flags;
 		Color* colorArray;
+		SceneDesc * sceneDesc;
 		std::mutex mtx;
 		std::vector<std::thread*> threads;
 		int countRenderedPixels();
 	public:
-		Renderer(SceneDesc& desc):
+		Renderer(SceneDesc* desc):
 			pRendered(0),
 			pDispatched(0),
 			preCount(0),
 			curRow(0),
-			flags(new bool[desc.width * desc.height]{ false }),
-			colorArray(new Color[desc.width * desc.height]) 
+			sceneDesc(desc),
+			flags(new bool[desc->width * desc->height]{ false }),
+			colorArray(new Color[desc->width * desc->height]) 
 		{}
 		~Renderer() {
 			for (int i = 0; i < threads.size(); i++) {

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "light.hpp"
 #include <geometry.hpp>
+#include "color.hpp"
 
 namespace renderer {
 
@@ -31,6 +32,12 @@ namespace renderer {
 	void DirectionLight::Init() {
 	}
 
+	Color DirectionLight::sample_L(Vector3dF& pos) {
+		return Color::Black;
+	};
+
+
+
 	PointLight::PointLight(Vector3dF& p,
 		bool s, 
 		bool ss,
@@ -41,4 +48,8 @@ namespace renderer {
 
 	void PointLight::Init() {
 	}
+
+	Color PointLight::sample_L(Vector3dF& pos) {
+		return Color::Black;
+	};
 }
