@@ -29,6 +29,8 @@ namespace renderer {
 		int rInt() const;
 		int gInt() const;
 		int bInt() const;
+	private:
+		int toInt(float v) const;
 	public:
 		static const Color Black;
 		static const Color White;

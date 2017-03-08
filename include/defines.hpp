@@ -2,6 +2,7 @@
 #define RENDERER_DEFINES_HPP
 
 extern const bool Enable_GammaCorrect;
+extern const bool Enable_HDR;
 extern const bool Enable_IndirectDiffuse;
 extern const int SampleNum_IndirectDiffuse;
 

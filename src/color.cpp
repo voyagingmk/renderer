@@ -69,12 +69,13 @@ namespace renderer {
 		return *this;
 	}
 
+	// TODO float comparison
 	bool Color::operator == (const Color& c) {
-		return rgb[0] == c.r() && rgb[1] == c.g() && rgb[2] == c.b();
+		return r() == c.r() && g() == c.g() && b() == c.b();
 	};
 
 	Color Color::Modulate(const Color& c) const {
-		return Color(rgb[0] * c.r(), rgb[1] * c.g(), rgb[2] * c.b());
+		return Color(r() * c.r(), g() * c.g(), b() * c.b());
 	};
 	Color Color::clamp() const {
 		return Color(
@@ -84,19 +85,31 @@ namespace renderer {
 	};
 
 	int Color::rInt() const {
-		if (Enable_GammaCorrect)
-			return Clamp(255.f * GammaCorrect(rgb[0]), 0.f, 255.f);
-		return min(int(r() * 255), 255);
+		return toInt(r());
 	}
 	int Color::gInt() const {
-		if (Enable_GammaCorrect)
-			return Clamp(255.f * GammaCorrect(rgb[1]), 0.f, 255.f);
-		return min(int(g() * 255), 255);
+		return toInt(g());
 	}
 	int Color::bInt() const {
-		if (Enable_GammaCorrect)
-			return Clamp(255.f * GammaCorrect(rgb[2]), 0.f, 255.f);
-		return min(int(b() * 255), 255);
+		return toInt(b());
+	}
+
+	int Color::toInt(float v) const {
+		if (Enable_GammaCorrect) {
+			return Clamp(255.f * GammaCorrect(v), 0.f, 255.f);
+		}
+		if (Enable_HDR) {
+			// ACESToneMapping
+			const float adapted_lum = 1.f;
+			const float A = 2.51f;
+			const float B = 0.03f;
+			const float C = 2.43f;
+			const float D = 0.59f;
+			const float E = 0.14f;
+			v *= adapted_lum;
+			v = (v * (A * v + B)) / (v * (C * v + D) + E);
+		}
+		return min(int(v * 255), 255);
 	}
 
 	const Color Color::Black = Color(0.f, 0.f, 0.f);

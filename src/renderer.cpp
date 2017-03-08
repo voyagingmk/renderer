@@ -138,11 +138,11 @@ namespace renderer {
 				c = pMaterial->Sample(ray, result.position, result.normal, incidenceNormal);
 				if (hitTimes > 0) {
 					//printf("%d\n", hitTimes);
-					float black_ratio = hitTimes / (float)N;
-					//c = c * ( 1.0f - black_ratio) + Color::Black * black_ratio;
-					c = c.Modulate(Color::White * (1.0f - black_ratio));
-					c = c.clamp();
-					//c *= 1.0f - black_ratio;
+					float black_ratio = (float)hitTimes / (float)N;
+					// c = c * ( 1.0f - black_ratio) + Color::Black * black_ratio;
+					// c = c.Modulate(Color::White * (1.0f - black_ratio));
+					// c = c.clamp();
+					c *= 1.0f - black_ratio;
 				}
 			}
 			else {
@@ -329,7 +329,7 @@ namespace renderer {
 		return pRendered;
 	}
 
-	void Renderer::getRenderRect(SceneDesc& desc, int* x, int* y, int* w, int* h) {
+	int Renderer::getRenderRect(SceneDesc& desc, int* x, int* y, int* w, int* h) {
 		int newCount = countRenderedPixels();
 		bool move = false;
 		if (curRow * desc.width < newCount - desc.width) {
@@ -347,6 +347,7 @@ namespace renderer {
 		if (move)
 			curRow++;
 		preCount = newCount;
+		return newCount;
 	}
 
 	void Renderer::beginAsyncRender(SceneDesc& desc)

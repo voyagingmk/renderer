@@ -71,7 +71,9 @@ int main(int argc, char *argv[])
 			}
 		}
 		SDL_Rect& updatedRect = static_cast<SDLFilm*>(desc.film)->lockRect;
-		renderer.getRenderRect(desc, &updatedRect.x, &updatedRect.y, &updatedRect.w, &updatedRect.h);
+		int pCount = renderer.getRenderRect(desc, &updatedRect.x, &updatedRect.y, &updatedRect.w, &updatedRect.h);
+		float percent = 0.01f * ceil(10000.0f * float(pCount) / float(renderer.sceneDesc->width * renderer.sceneDesc->height));
+		SDL_SetWindowTitle(win, (std::to_string(percent).substr(0,4) + "%").c_str());
 		desc.film->beforeSet();
 		for (int x = updatedRect.x; x < updatedRect.x + updatedRect.w; x++) {
 			int _p = updatedRect.y * desc.width + x;

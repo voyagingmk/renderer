@@ -92,7 +92,7 @@ namespace renderer {
 		void rayTraceConcurrence(SceneDesc&);
 		void beginAsyncRender(SceneDesc& desc);
 		void endAsyncRender();
-		void getRenderRect(SceneDesc& desc, int* x, int* y, int* w, int* h);
+		int getRenderRect(SceneDesc& desc, int* x, int* y, int* w, int* h);
 		Color rayTraceAt(SceneDesc&, int x, int y);
 		void renderScene(SceneDesc&);
 	};
