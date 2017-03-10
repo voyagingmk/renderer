@@ -7,7 +7,7 @@
 #include "film.hpp"
 #include "draw.hpp"
 #include "profiler.hpp"
-
+#include <chrono>
 using namespace renderer;
 using json = nlohmann::json;
 
@@ -62,6 +62,8 @@ int main(int argc, char *argv[])
 	double angle = 0;
 	SDL_Point screenCenter = { width / 2, height / 2 };
 	SDL_RendererFlip flip = SDL_FLIP_NONE;
+	bool isFinished = false;
+	auto t1 = std::chrono::system_clock::now();
 	renderer.beginAsyncRender(desc);
 	while (1) {
 		SDL_Event e;
@@ -72,8 +74,19 @@ int main(int argc, char *argv[])
 		}
 		SDL_Rect& updatedRect = static_cast<SDLFilm*>(desc.film)->lockRect;
 		int pCount = renderer.getRenderRect(desc, &updatedRect.x, &updatedRect.y, &updatedRect.w, &updatedRect.h);
-		float percent = 0.01f * ceil(10000.0f * float(pCount) / float(renderer.sceneDesc->width * renderer.sceneDesc->height));
-		SDL_SetWindowTitle(win, (std::to_string(percent).substr(0,4) + "%").c_str());
+		if (!isFinished) {
+			float percent = 0.01f * ceil(10000.0f * float(pCount) / float(renderer.sceneDesc->width * renderer.sceneDesc->height));
+			if (percent >= 100.0f) {
+				isFinished = true;
+				auto t2 = std::chrono::system_clock::now();
+				int us = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
+				int s = us / (1000 * 1000);
+				SDL_SetWindowTitle(win, ("total time:" + std::to_string(s) + " s").c_str());
+			}
+			else {
+				SDL_SetWindowTitle(win, (std::to_string(percent).substr(0, 5) + "%").c_str());
+			}
+		}
 		desc.film->beforeSet();
 		for (int x = updatedRect.x; x < updatedRect.x + updatedRect.w; x++) {
 			int _p = updatedRect.y * desc.width + x;

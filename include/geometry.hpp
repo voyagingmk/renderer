@@ -112,29 +112,29 @@ namespace renderer {
 
 		}
 
-		Point3d<T>& operator = (const Point3d<T>& p) {
+		inline Point3d<T>& operator = (const Point3d<T>& p) {
 			x = p.x;
 			y = p.y;
 			z = p.z;
 			return *this;
 		}
 
-		Point3d<T>& operator = (const Point3d<T>&& p) {
+		inline Point3d<T>& operator = (const Point3d<T>&& p) {
 			x = p.x;
 			y = p.y;
 			z = p.z;
 			return *this;
 		}
 
-		Point3d<T> operator + (const Point3d<T>& p) const {
+		inline Point3d<T> operator + (const Point3d<T>& p) const {
 			return Point3d<T>(x + p.x, y + p.y, z + p.z);
 		}
 
-		Point3d<T> operator - (const Point3d<T>& p) const {
+		inline Point3d<T> operator - (const Point3d<T>& p) const {
 			return Point3d<T>(x - p.x, y - p.y, z - p.z);
 		}
 
-		Point3d<T> operator * (T f) const {
+		inline Point3d<T> operator * (T f) const {
 			return Point3d<T>(x * f, y * f, z * f);
 		}
 
@@ -142,61 +142,61 @@ namespace renderer {
 			return Point3d<T>(p.x * f, p.y * f, p.z * f);
 		}
 
-		Point3d<T> operator / (T f) const {
+		inline Point3d<T> operator / (T f) const {
 			if (f == 0)
 				throw "[Point /] f = 0";
 			return Point3d<T>(x / f, y / f, z / f);
 		}
 
-		Point3d<T>& operator += (const Point3d<T>& p) {
+		inline Point3d<T>& operator += (const Point3d<T>& p) {
 			x += p.x;
 			y += p.y;
 			z += p.z;
 			return *this;
 		}
 
-		Point3d<T>& operator -= (const Point3d<T>& p) {
+		inline Point3d<T>& operator -= (const Point3d<T>& p) {
 			x -= p.x;
 			y -= p.y;
 			z -= p.z;
 			return *this;
 		}
 
-		Point3d<T>& operator *= (const T f) const {
+		inline Point3d<T>& operator *= (const T f) const {
 			x *= f;
 			y *= f;
 			z *= f;
 			return *this;
 		}
 
-		Point3d<T>& operator /= (const T f) const {
+		inline Point3d<T>& operator /= (const T f) const {
 			x /= f;
 			y /= f;
 			z /= f;
 			return *this;
 		}
 
-		Point3d<T> operator - () const {
+		inline Point3d<T> operator - () const {
 			return Point3d<T>(-x, -y, -z);
 		}
 
-		bool operator == (const Point3d<T>& p) const {
+		inline bool operator == (const Point3d<T>& p) const {
 			return x == p.x && y == p.y && z == p.z;
 		}
 
-		T operator[](int i) const {
+		inline T operator[](int i) const {
 			return (&x)[i];
 		}
 
-		T &operator[](int i) {
+		inline T &operator[](int i) {
 			return (&x)[i];
 		}
 
-		bool isEmpty() const {
+		inline bool isEmpty() const {
 			return !(x || y || z);
 		}
 
-		T Dot(const Point3d<T>& p) const {
+		inline T Dot(const Point3d<T>& p) const {
 			return x * p.x + y * p.y + z * p.z;
 		}
 

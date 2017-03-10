@@ -249,7 +249,7 @@
         "type": "PointLight",
         "pos": [30, 30, -80],
         "radius": 10,
-        "shadowrays": 16,
+        "shadowrays": 300,
         "shadow": true,
         "softshadow": true,
         "color": [255, 255, 0]

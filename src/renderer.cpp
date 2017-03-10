@@ -114,6 +114,7 @@ namespace renderer {
 				Vector3dF axisZ, axisX;
 				Vector3dF& axisY = incidenceNormal;
 				createCoordinateSystem(axisY, axisZ, axisX);
+				float lightRadius = (dynamic_cast<PointLight*>(pLight))->radius;
 				for (int i = 0; i < N; i++) {
 					float r1 = distribution(eng);
 					float r2 = distribution(eng);
@@ -122,7 +123,7 @@ namespace renderer {
 						sample.x * axisX.x + sample.y * axisY.x + sample.z * axisZ.x,
 						sample.x * axisX.y + sample.y * axisY.y + sample.z * axisZ.y,
 						sample.x * axisX.z + sample.y * axisY.z + sample.z * axisZ.z);
-					Ray shadowrays(result.position, (-incidenceCenter) + sampleWorld * (dynamic_cast<PointLight*>(pLight))->radius);
+					Ray shadowrays(result.position, (-incidenceCenter) + sampleWorld * lightRadius);
 					shadowrays.d = shadowrays.d.Normalize();
 					IntersectResult _result;
 					scene->Intersect(shadowrays, &_result);
@@ -172,7 +173,8 @@ namespace renderer {
 			}
 			color = color + c;
 		}
-		
+
+		color = color * (1.0f - reflectiveness);
 		if (Enable_IndirectDiffuse && maxReflect == sceneDesc->maxReflect) {
 			Color indirectDiffuse;
 			Vector3dF axisZ, axisX;
@@ -197,7 +199,6 @@ namespace renderer {
 			indirectDiffuse = indirectDiffuse / (float(SampleNum_IndirectDiffuse) * (1.0 / (2.0 * M_PI)));
 			color += indirectDiffuse / M_PI;
 		}
-		color = color * (1.0f - reflectiveness);
 			
 		if (reflectiveness > 0 && maxReflect > 0) {
 			Vector3dF d = Vector3dF(result.normal * (-2 * (result.normal.Dot(ray.d))) + ray.d);

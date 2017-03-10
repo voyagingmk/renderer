@@ -52,7 +52,8 @@ namespace renderer {
 	};
 
 	Color Color::operator / (float f) const {
-		return Color(rgb[0] / f, rgb[1] / f, rgb[2] / f);
+		const float _f = 1.0f / f;
+		return Color(rgb[0] * _f, rgb[1] * _f, rgb[2] * _f);
 	};
 
 	Color& Color::operator += (const Color& c) {
