@@ -28,7 +28,6 @@
 #include <chrono>
 #include "stdafx.h"
 
-
 #define DEFINE_SHARE_PTR(name) typedef std::shared_ptr<name> Ptr#name;
 #define FLOAT_MAX (std::numeric_limits<float>::max())
 
@@ -84,12 +83,17 @@ namespace renderer {
 			|| std::abs(x - y) < std::numeric_limits<T>::min();
 	}
 
-	static nlohmann::json readJson(const char * filepath) {
-		using json = nlohmann::json;
+	static std::string readFile(const char * filepath) {
 		std::ifstream f(filepath);
 		std::string s((std::istreambuf_iterator<char>(f)),
 			(std::istreambuf_iterator<char>()));
 		f.close();
+		return s;
+	}
+
+	static nlohmann::json readJson(const char * filepath) {
+		using json = nlohmann::json;
+		const std::string& s = readFile(filepath);
 		json j = json::parse(s);
 		return j;
 	}

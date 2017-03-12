@@ -4,6 +4,7 @@
 #include "base.hpp"
 #include "renderer.hpp"
 
+
 namespace renderer {
 	class Film;
 
@@ -18,7 +19,6 @@ namespace renderer {
 		ShapeUnion parseShapes(nlohmann::json& config, MaterialDict& matDict);
 		void parseLights(nlohmann::json& config, Lights& lights, MaterialDict& matDict);
 		Color parseColor(nlohmann::json& c);
-		void parserObj(std::string inputfile);
 		template<typename T>
 		Color parseColor(T& colorInfo, const Color& defaultColor) {
 			if (!colorInfo.is_null()) {

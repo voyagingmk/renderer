@@ -17,6 +17,8 @@
 #include "tiny_obj_loader.h"
 
 namespace renderer {
+	bool parserObj(const std::string& objFilePath, std::vector<tinyobj::shape_t>& shapes, std::vector<tinyobj::material_t>& materials);
+
 
 	SceneDesc SceneParser::parse(nlohmann::json& config) {
 		return parseSceneDesc(config);
@@ -87,7 +89,53 @@ namespace renderer {
 		for (auto objinfo : config["obj"]) {
 			Transform* o2w = parseTransform(objinfo["transform"]);
 			Shape* pShape = nullptr;
-			if (objinfo["type"] == "Sphere") {
+			if (objinfo["type"] == "3dsMax") {
+				const std::string& filepath = objinfo["filepath"];
+				std::vector<tinyobj::shape_t> shapes;
+				std::vector<tinyobj::material_t> materials;
+				parserObj(filepath, shapes, materials);
+				for (size_t i = 0; i < shapes.size(); i++) {
+					auto pool = GetPool<Mesh>();
+					VectorArray vertices;
+					NormalArray normals;
+					UIntArray indexes;
+					UVArray uvs;
+					// printf("shape[%ld].vertices: %ld\n", i, shapes[i].mesh.positions.size());
+					// assert((shapes[i].mesh.positions.size() % 3) == 0);
+					auto positions = shapes[i].mesh.positions;
+					for (size_t v = 0; v < shapes[i].mesh.positions.size() / 3; v++) {
+						// x->z y->x z->y
+						// 0->2 1->0 2->1
+						float z = positions[3 * v + 0];
+						float x = positions[3 * v + 1];
+						float y = positions[3 * v + 2];
+						vertices.push_back(Vector3dF(x, y, z));
+						printf("v[%d] = %.1f, %.1f, %.1f\n", v, x, y, z);
+					}
+					// assert((shapes[i].mesh.indices.size() % 3) == 0);
+					// printf("Size of shape[%ld].indices: %ld\n", i, shapes[i].mesh.indices.size());
+					auto indices = shapes[i].mesh.indices;
+					for (size_t f = 0; f < shapes[i].mesh.indices.size() / 3; f++) {
+						indexes.push_back(indices[3 * f + 0]);
+						indexes.push_back(indices[3 * f + 1]);
+						indexes.push_back(indices[3 * f + 2]);
+						
+						printf("idx[%ld] = %d, %d, %d\n", f, shapes[i].mesh.indices[3 * f + 0] + 1, 
+							shapes[i].mesh.indices[3 * f + 1] + 1, shapes[i].mesh.indices[3 * f + 2] + 1);
+					}
+					normals.resize(vertices.size());
+					/*
+					int idx = 0;
+					for (auto normal : objinfo["normals"]) {
+						normals[idx++] = Normal3dF(normal[0], normal[1], normal[2]);
+					}
+					*/
+					Mesh* pMesh = pool->newElement(vertices, normals, indexes, uvs);
+					pShape = static_cast<Shape*>(pMesh);
+				}
+				pShape->material = matDict[objinfo["matId"]];
+			}
+			else if (objinfo["type"] == "Sphere") {
 				float radius  = objinfo["radius"];
 				auto pool = GetPool<Sphere>();
 				pShape = static_cast<Shape*>(pool->newElement(radius));
@@ -215,19 +263,16 @@ namespace renderer {
 		}
 	}
 
-	void SceneParser::parserObj(std::string inputfile) {
-		std::vector<tinyobj::shape_t> shapes;
-		std::vector<tinyobj::material_t> materials;
-
+	bool parserObj(const std::string& objFilePath, std::vector<tinyobj::shape_t>& shapes, std::vector<tinyobj::material_t>& materials) {
 		std::string err;
-		bool ret = tinyobj::LoadObj(shapes, materials, err, inputfile.c_str());
+		bool ret = tinyobj::LoadObj(shapes, materials, err, objFilePath.c_str(), "./");
 
 		if (!err.empty()) { // `err` may contain warning message.
 			std::cerr << err << std::endl;
 		}
 
 		if (!ret) {
-			exit(1);
+			return false;
 		}
 
 		std::cout << "# of shapes    : " << shapes.size() << std::endl;
@@ -273,7 +318,8 @@ namespace renderer {
 				printf("  material.%s = %s\n", it->first.c_str(), it->second.c_str());
 			}
 			printf("\n");
-		}
+		}	
+		return true;
 	}
 
 }

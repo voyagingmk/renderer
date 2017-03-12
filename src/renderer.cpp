@@ -399,6 +399,5 @@ namespace renderer {
 		else {
 			rayTraceConcurrence(desc);
 		}
-		//parserObj(config["obj"]);
 	}
 }
