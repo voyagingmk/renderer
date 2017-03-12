@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "base.hpp"
 #include "renderer.hpp"
 #include "camera.hpp"
 #include "shape.hpp"
@@ -241,7 +242,9 @@ namespace renderer {
 		float sy = 1.0f - (float)y / img_height;
 		float sx = (float)x / img_width;
 		Ray& ray = desc.camera.GenerateRay(sx, sy);
-		//printf("x,y = %d,%d, sx,sy = %.3f,%.3f   %d,%d\n", x,y, sx, sy, img_width, img_height);
+		if (Enable_DebugPixcel) {
+			printf("x,y = %d,%d, sx,sy = %.3f,%.3f   %d,%d\n", x,y, sx, sy, img_width, img_height);
+		}
 		switch (RenderType) {
 		case RenderType_Default:
 			return rayTraceRecursive(&desc.shapeUnion, ray, desc.lights, desc.maxReflect);

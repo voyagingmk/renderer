@@ -62,6 +62,7 @@ namespace renderer {
 	class Union;
 	class Color;
 	class Ray;
+;
 
 	template<class T>
 	static MemoryPool<T>* GetPool() {

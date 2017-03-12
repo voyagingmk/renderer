@@ -104,10 +104,10 @@ namespace renderer {
 					// assert((shapes[i].mesh.positions.size() % 3) == 0);
 					auto positions = shapes[i].mesh.positions;
 					for (size_t v = 0; v < shapes[i].mesh.positions.size() / 3; v++) {
-						// x->z y->x z->y
+						// x->x -y->z z->y
 						// 0->2 1->0 2->1
-						float z = positions[3 * v + 0];
-						float x = positions[3 * v + 1];
+						float x = positions[3 * v + 0];
+						float z = -positions[3 * v + 1];
 						float y = positions[3 * v + 2];
 						vertices.push_back(Vector3dF(x, y, z));
 						printf("v[%d] = %.1f, %.1f, %.1f\n", v, x, y, z);
@@ -131,6 +131,7 @@ namespace renderer {
 					}
 					*/
 					Mesh* pMesh = pool->newElement(vertices, normals, indexes, uvs);
+					pMesh->reverse = true;
 					pShape = static_cast<Shape*>(pMesh);
 				}
 				pShape->material = matDict[objinfo["matId"]];

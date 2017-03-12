@@ -3,6 +3,7 @@
 #include "geometry.hpp"
 #include "ray.hpp"
 #include "intersect_result.hpp"
+#include "defines.hpp"
 
 namespace renderer {
 
@@ -57,8 +58,7 @@ namespace renderer {
 				return 0;
 			}
 		}
-		//printf("nDotRay %.1f ray.d: %.2f,%.2f,%.2f len:%.1f  n: %.1f,%.1f,%.1f\n", nDotRay, ray.d.x, ray.d.y, ray.d.z, ray.d.Length(), normal.x, normal.y, normal.z);
-
+		logDebug("nDotRay %.1f ray.d: %.2f,%.2f,%.2f len:%.1f  n: %.1f,%.1f,%.1f\n", nDotRay, ray.d.x, ray.d.y, ray.d.z, ray.d.Length(), normal.x, normal.y, normal.z);
 		const Vector3dF& s = ray.o - p0;
 		const Vector3dF& s1 = ray.d.Cross(e2);
 		Real d = s1.Dot(e1);

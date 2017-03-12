@@ -7,7 +7,8 @@
 #include "film.hpp"
 #include "draw.hpp"
 #include "profiler.hpp"
-#include <chrono>
+#include "defines.hpp"
+
 using namespace renderer;
 using json = nlohmann::json;
 
@@ -64,12 +65,21 @@ int main(int argc, char *argv[])
 	SDL_RendererFlip flip = SDL_FLIP_NONE;
 	bool isFinished = false;
 	auto t1 = std::chrono::system_clock::now();
+
 	renderer.beginAsyncRender(desc);
 	while (1) {
 		SDL_Event e;
 		if (SDL_PollEvent(&e)) {
 			if (e.type == SDL_QUIT) {
 				break;
+			}
+			if (e.type == SDL_MOUSEBUTTONDOWN) {
+				int x = e.button.x;
+				int y = e.button.y;
+				Enable_DebugPixcel = true;
+				printf("debug pixel %d,%d\n", x, y);
+				renderer.rayTraceAt(desc, x, y);
+				Enable_DebugPixcel = false;
 			}
 		}
 		SDL_Rect& updatedRect = static_cast<SDLFilm*>(desc.film)->lockRect;

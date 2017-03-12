@@ -8,3 +8,5 @@ const int SampleNum_IndirectDiffuse = 300;
 
 
 const int RenderType = RenderType_Default;
+
+bool Enable_DebugPixcel = false;

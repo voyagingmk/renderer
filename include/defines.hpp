@@ -12,4 +12,17 @@ extern const int SampleNum_IndirectDiffuse;
 
 extern const int RenderType;
 
+extern bool Enable_DebugPixcel;
+
+static int logDebug(char const* const _Format, ...) {
+	if(Enable_DebugPixcel){
+		int _Result;
+		va_list _ArgList;
+		__crt_va_start(_ArgList, _Format);
+		_Result = _vfprintf_l(stdout, _Format, NULL, _ArgList);
+		__crt_va_end(_ArgList);
+		return _Result;
+	}
+}
+
 #endif // RENDERER_DEFINES_HPP
