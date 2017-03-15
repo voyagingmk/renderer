@@ -89,8 +89,11 @@ namespace renderer {
 	Color Renderer::rayTraceRecursive(Shape* scene, Ray& ray, Lights& lights, int maxReflect) {
 		IntersectResult result;
 		scene->Intersect(ray, &result);
-		if (!result.geometry)
+		if (!result.geometry) {
+			logDebug("rayTraceRecursive, no geometry\n\n");
 			return Color::Black;
+		}
+		logDebug("rayTraceRecursive, hit geometry\n\n");
 		Material* pMaterial = result.geometry->material;
 		float reflectiveness = pMaterial->reflectiveness;
 		Color color(0, 0, 0);
@@ -106,6 +109,7 @@ namespace renderer {
 			} else if (pLight->softshadow) {
 				Vector3dF incidenceCenter = pLight->incidence(result.position);
 				Vector3dF incidenceNormal = incidenceCenter.Normalize();
+				c = pMaterial->Sample(ray, result.position, result.normal, incidenceNormal);
 				float disToLight = 0;
 				if (pLight->lightType == LightType_Point) {
 					disToLight = (dynamic_cast<PointLight*>(pLight)->pos - result.position).Length();
@@ -136,8 +140,7 @@ namespace renderer {
 					}
 					//printf("\n");
 				}
-				//printf("\n");
-				c = pMaterial->Sample(ray, result.position, result.normal, incidenceNormal);
+				logDebug("hitTimes:%d\n", hitTimes);
 				if (hitTimes > 0) {
 					//printf("%d\n", hitTimes);
 					float black_ratio = (float)hitTimes / (float)N;
@@ -155,7 +158,8 @@ namespace renderer {
 				IntersectResult _result;
 				scene->Intersect(shadowrays, &_result);
 				bool canSample = true;
-				if (_result.geometry) {
+				if (_result.geometry && _result.geometry != result.geometry) {
+					logDebug("shadowed, id1: %d id2: %d \n", _result.geometry->id, result.geometry->id);
 					if (pLight->lightType == LightType_Point) {
 						float disToLight = (dynamic_cast<PointLight*>(pLight)->pos - result.position).Length();
 						if (disToLight >= _result.distance) {
@@ -168,6 +172,7 @@ namespace renderer {
 						c = Color::Black;
 					}
 				}
+				logDebug("canSample %d", int(canSample));
 				if(canSample){
 					c = pMaterial->Sample(ray, result.position, result.normal, incidenceNormal);
 				}

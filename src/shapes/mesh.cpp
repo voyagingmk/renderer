@@ -48,6 +48,10 @@ namespace renderer {
 		}
 		const Normal3dF& normal = mesh->normals[tri_idx];
 		float nDotRay = normal.Dot(ray.d);
+		logDebug("tri_idx:%d, v:%d,%d,%d\n", tri_idx, indexes[0], indexes[1], indexes[2]);
+		logDebug("nDotRay %.1f mesh->face %d ray.d: %.2f,%.2f,%.2f len:%.1f  n: %.1f,%.1f,%.1f\n",
+			nDotRay, mesh->face,
+			ray.d.x, ray.d.y, ray.d.z, ray.d.Length(), normal.x, normal.y, normal.z);
 		if (mesh->face == 0) { //only front face
 			if (nDotRay >= 0) {
 				return 0;
@@ -58,7 +62,6 @@ namespace renderer {
 				return 0;
 			}
 		}
-		logDebug("nDotRay %.1f ray.d: %.2f,%.2f,%.2f len:%.1f  n: %.1f,%.1f,%.1f\n", nDotRay, ray.d.x, ray.d.y, ray.d.z, ray.d.Length(), normal.x, normal.y, normal.z);
 		const Vector3dF& s = ray.o - p0;
 		const Vector3dF& s1 = ray.d.Cross(e2);
 		Real d = s1.Dot(e1);
@@ -127,6 +130,7 @@ namespace renderer {
 	}
 
 	int Mesh::Intersect(Ray& ray, IntersectResult* result) {
+		logDebug("Mesh.Intersect: %f, %f\n", ray.o.x, ray.o.y);
 		Ray r = (*w2o)(ray);
 		float minDistance = FLOAT_MAX;
 		float hitt0, hitt1;
@@ -143,7 +147,8 @@ namespace renderer {
 			if (resultTmp.geometry && resultTmp.distance < minDistance) {
 				minDistance = resultTmp.distance;
 				*result = resultTmp;
-				//printf("%f,%f,%f == %f,%f\n",ray->getDirection()->x(),ray->getDirection()->y(),ray->getDirection()->z(),minDistance, result->getGeometry()->getMaterial()->getReflectiveness());
+				logDebug("%d, ray:%f,%f,%f min: %f\n", tri_idx,
+					ray.d.x, ray.d.y, ray.d.z, minDistance);
 			}
 		}
 		if (result->geometry) {

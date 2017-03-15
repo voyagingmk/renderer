@@ -10,6 +10,7 @@ namespace renderer {
 		//default Normal = (0, 1, 0)
 		//default Position = (0, 0, 0)
 	public:
+		int id;
 		Transform4x4* o2w;
 		Transform4x4* w2o;
 		Material* material;

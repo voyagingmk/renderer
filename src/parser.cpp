@@ -86,7 +86,17 @@ namespace renderer {
 	{
 		auto pool_Transform = GetPool<Transform>();
 		Shapes shapes;
+		auto addShape = [&](Shape* pShape, int objID, Transform* o2w) {
+			if (pShape) {
+				pShape->id = objID;
+				pShape->o2w = o2w;
+				pShape->w2o = pool_Transform->newElement(o2w->mInv, o2w->m);
+				pShape->Init();
+				shapes.push_back(pShape);
+			}
+		};
 		for (auto objinfo : config["obj"]) {
+			int objID = objinfo["Id"];
 			Transform* o2w = parseTransform(objinfo["transform"]);
 			Shape* pShape = nullptr;
 			if (objinfo["type"] == "3dsMax") {
@@ -110,7 +120,7 @@ namespace renderer {
 						float z = -positions[3 * v + 1];
 						float y = positions[3 * v + 2];
 						vertices.push_back(Vector3dF(x, y, z));
-						printf("v[%d] = %.1f, %.1f, %.1f\n", v, x, y, z);
+						// printf("v[%d] = %.1f, %.1f, %.1f\n", v, x, y, z);
 					}
 					// assert((shapes[i].mesh.indices.size() % 3) == 0);
 					// printf("Size of shape[%ld].indices: %ld\n", i, shapes[i].mesh.indices.size());
@@ -120,10 +130,10 @@ namespace renderer {
 						indexes.push_back(indices[3 * f + 1]);
 						indexes.push_back(indices[3 * f + 2]);
 						
-						printf("idx[%ld] = %d, %d, %d\n", f, shapes[i].mesh.indices[3 * f + 0] + 1, 
-							shapes[i].mesh.indices[3 * f + 1] + 1, shapes[i].mesh.indices[3 * f + 2] + 1);
+						// printf("idx[%ld] = %d, %d, %d\n", f, shapes[i].mesh.indices[3 * f + 0] + 1, 
+						//	shapes[i].mesh.indices[3 * f + 1] + 1, shapes[i].mesh.indices[3 * f + 2] + 1);
 					}
-					normals.resize(vertices.size());
+					normals.resize(shapes[i].mesh.indices.size() / 3);
 					/*
 					int idx = 0;
 					for (auto normal : objinfo["normals"]) {
@@ -131,10 +141,11 @@ namespace renderer {
 					}
 					*/
 					Mesh* pMesh = pool->newElement(vertices, normals, indexes, uvs);
-					pMesh->reverse = true;
+					// pMesh->reverse = true;
 					pShape = static_cast<Shape*>(pMesh);
+					pShape->material = matDict[objinfo["matId"]];
+					addShape(pShape, objID, o2w);
 				}
-				pShape->material = matDict[objinfo["matId"]];
 			}
 			else if (objinfo["type"] == "Sphere") {
 				float radius  = objinfo["radius"];
@@ -190,10 +201,7 @@ namespace renderer {
 			else
 				continue;
 			if (pShape) {
-				pShape->o2w = o2w;
-				pShape->w2o = pool_Transform->newElement(o2w->mInv, o2w->m);
-				pShape->Init();
-				shapes.push_back(pShape);
+				addShape(pShape, objID, o2w);
 			}
 
 		}
