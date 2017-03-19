@@ -113,13 +113,21 @@ namespace renderer {
 					// printf("shape[%ld].vertices: %ld\n", i, shapes[i].mesh.positions.size());
 					// assert((shapes[i].mesh.positions.size() % 3) == 0);
 					auto positions = shapes[i].mesh.positions;
+					std::vector<float>& meshNormals = shapes[i].mesh.normals;
 					for (size_t v = 0; v < shapes[i].mesh.positions.size() / 3; v++) {
 						// x->x -y->z z->y
 						// 0->2 1->0 2->1
 						float x = positions[3 * v + 0];
 						float z = -positions[3 * v + 1];
 						float y = positions[3 * v + 2];
-						vertices.push_back(Vector3dF(x, y, z));
+						assert(x != z);
+						assert(x != y);
+						assert(y != z);
+						vertices.push_back(Vector3dF(x, y, z)); 
+						float nx = meshNormals[3 * v + 0];
+						float nz = -meshNormals[3 * v + 1];
+						float ny = meshNormals[3 * v + 2];
+						normals.push_back(Vector3dF(nx, ny, nz));
 						// printf("v[%d] = %.1f, %.1f, %.1f\n", v, x, y, z);
 					}
 					// assert((shapes[i].mesh.indices.size() % 3) == 0);
@@ -129,7 +137,6 @@ namespace renderer {
 						indexes.push_back(indices[3 * f + 0]);
 						indexes.push_back(indices[3 * f + 1]);
 						indexes.push_back(indices[3 * f + 2]);
-						
 						// printf("idx[%ld] = %d, %d, %d\n", f, shapes[i].mesh.indices[3 * f + 0] + 1, 
 						// shapes[i].mesh.indices[3 * f + 1] + 1, shapes[i].mesh.indices[3 * f + 2] + 1);
 					}
@@ -284,16 +291,17 @@ namespace renderer {
 			printf("Size of shape[%ld].material_ids: %ld\n", i, shapes[i].mesh.material_ids.size());
 			assert((shapes[i].mesh.indices.size() % 3) == 0);
 			for (size_t f = 0; f < shapes[i].mesh.indices.size() / 3; f++) {
-				printf("  idx[%ld] = %d, %d, %d. mat_id = %d\n", f, shapes[i].mesh.indices[3 * f + 0], shapes[i].mesh.indices[3 * f + 1], shapes[i].mesh.indices[3 * f + 2], shapes[i].mesh.material_ids[f]);
+				// printf("  idx[%ld] = %d, %d, %d. mat_id = %d\n", f, shapes[i].mesh.indices[3 * f + 0], shapes[i].mesh.indices[3 * f + 1], shapes[i].mesh.indices[3 * f + 2], shapes[i].mesh.material_ids[f]);
 			}
 
 			printf("shape[%ld].vertices: %ld\n", i, shapes[i].mesh.positions.size());
 			assert((shapes[i].mesh.positions.size() % 3) == 0);
 			for (size_t v = 0; v < shapes[i].mesh.positions.size() / 3; v++) {
-				printf("  v[%ld] = (%f, %f, %f)\n", v,
+				/*printf("  v[%ld] = (%f, %f, %f)\n", v,
 					shapes[i].mesh.positions[3 * v + 0],
 					shapes[i].mesh.positions[3 * v + 1],
 					shapes[i].mesh.positions[3 * v + 2]);
+					*/
 			}
 		}
 

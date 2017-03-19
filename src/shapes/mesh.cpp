@@ -38,6 +38,9 @@ namespace renderer {
 		const Vector3dF& p2 = vertices[indexes[2]];
 		const Vector3dF&& e1 = p1 - p0;
 		const Vector3dF&& e2 = p2 - p0;
+		if (e1.isEmpty() || e2.isEmpty()) {
+			return 0;
+		}
 		Normal3dF faceNormal = (e1.Cross(e2)).Normalize();
 		if (mesh->reverse) {
 			faceNormal = -faceNormal;
