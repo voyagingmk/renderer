@@ -79,7 +79,7 @@ namespace renderer {
 		Normal3dF normal = (1 - b1 - b2) * mesh->vnormals[indexes[0]] + 
 			b1 * mesh->vnormals[indexes[1]] + 
 			b2 * mesh->vnormals[indexes[2]];
-		*result = IntersectResult(mesh, t, std::forward<const Vector3dF>(position), normal);
+		*result = IntersectResult(mesh, t, std::forward<const Vector3dF>(position), normal.Normalize());
 		return 0;
 	}
 
@@ -142,6 +142,9 @@ namespace renderer {
 			tri.indexes[0] = indexes[tri_idx * 3];
 			tri.indexes[1] = indexes[tri_idx * 3 + 1];
 			tri.indexes[2] = indexes[tri_idx * 3 + 2];
+			if (!tri.Bound().Intersect(r, &hitt0, &hitt1)) {
+				continue;
+			}
 			IntersectResult resultTmp;
 			tri.Intersect(r, &resultTmp);
 			if (resultTmp.geometry && resultTmp.distance < minDistance) {
@@ -172,6 +175,9 @@ namespace renderer {
 	void Mesh::initVertexNormals() {
 		if (vnormals.size() == 0) {
 			vnormals.resize(vertices.size());
+			for (int vIdx = 0; vIdx < vertices.size(); vIdx++) {
+				vnormals[vIdx] = Vector3dF(0.f, 0.f, 0.f);
+			}
 			for (int tri_idx = 0, tri_num = indexes.size() / 3; tri_idx < tri_num; tri_idx += 1) {
 				int vIdxes[3];
 				vIdxes[0] = indexes[tri_idx * 3];
@@ -182,7 +188,7 @@ namespace renderer {
 				const Vector3dF& p2 = vertices[vIdxes[2]];
 				const Vector3dF&& e1 = p1 - p0;
 				const Vector3dF&& e2 = p2 - p0;
-				const Vector3dF&& faceNormal = (e1.Cross(e2)).Normalize();
+				const Vector3dF&& faceNormal = (e1.Cross(e2));
 				vnormals[vIdxes[0]] += faceNormal;
 				vnormals[vIdxes[1]] += faceNormal;
 				vnormals[vIdxes[2]] += faceNormal;

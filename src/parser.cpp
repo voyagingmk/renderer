@@ -123,7 +123,7 @@ namespace renderer {
 						// printf("v[%d] = %.1f, %.1f, %.1f\n", v, x, y, z);
 					}
 					// assert((shapes[i].mesh.indices.size() % 3) == 0);
-					// printf("Size of shape[%ld].indices: %ld\n", i, shapes[i].mesh.indices.size());
+					printf("Size of shape[%ld].triangles: %ld\n", i, shapes[i].mesh.indices.size() / 3);
 					auto indices = shapes[i].mesh.indices;
 					for (size_t f = 0; f < shapes[i].mesh.indices.size() / 3; f++) {
 						indexes.push_back(indices[3 * f + 0]);
@@ -131,14 +131,8 @@ namespace renderer {
 						indexes.push_back(indices[3 * f + 2]);
 						
 						// printf("idx[%ld] = %d, %d, %d\n", f, shapes[i].mesh.indices[3 * f + 0] + 1, 
-						//	shapes[i].mesh.indices[3 * f + 1] + 1, shapes[i].mesh.indices[3 * f + 2] + 1);
+						// shapes[i].mesh.indices[3 * f + 1] + 1, shapes[i].mesh.indices[3 * f + 2] + 1);
 					}
-					/*
-					int idx = 0;
-					for (auto normal : objinfo["normals"]) {
-						normals[idx++] = Normal3dF(normal[0], normal[1], normal[2]);
-					}
-					*/
 					Mesh* pMesh = pool->newElement(vertices, normals, indexes, uvs);
 					// pMesh->reverse = true;
 					pShape = static_cast<Shape*>(pMesh);

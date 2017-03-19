@@ -66,7 +66,7 @@
         "matId": 102
     }, {
         "Id": 103,
-        "type": "Mesh0",
+        "type": "Mesh",
         "desc": "front",
         "reverse": true,
         "vertices": [
