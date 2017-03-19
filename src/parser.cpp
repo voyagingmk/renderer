@@ -133,7 +133,6 @@ namespace renderer {
 						// printf("idx[%ld] = %d, %d, %d\n", f, shapes[i].mesh.indices[3 * f + 0] + 1, 
 						//	shapes[i].mesh.indices[3 * f + 1] + 1, shapes[i].mesh.indices[3 * f + 2] + 1);
 					}
-					normals.resize(shapes[i].mesh.indices.size() / 3);
 					/*
 					int idx = 0;
 					for (auto normal : objinfo["normals"]) {
@@ -162,24 +161,22 @@ namespace renderer {
 			else if (objinfo["type"] == "Mesh") {
 				auto pool = GetPool<Mesh>();
 				VectorArray vertices;
-				NormalArray normals;
+				NormalArray vnormals;
 				UIntArray indexes;
 				UVArray uvs;
 				for (auto vertice : objinfo["vertices"]) {
 					vertices.push_back(Vector3dF(vertice[0], vertice[1], vertice[2]));
 				}
+				for (auto normal : objinfo["vnormals"]) {
+					vnormals.push_back(Normal3dF(normal[0], normal[1], normal[2]));
+				}
 				for (auto index : objinfo["indexes"]) {
 					indexes.push_back(index);
-				}
-				normals.resize(indexes.size());
-				int idx = 0;
-				for (auto normal : objinfo["normals"]) {
-					normals[idx++] = Normal3dF(normal[0], normal[1], normal[2]);
 				}
 				for (auto uv : objinfo["uvs"]) {
 					uvs.push_back(Vector2dF(uv[0], uv[1]));
 				}
-				Mesh* pMesh = pool->newElement(vertices, normals, indexes, uvs);
+				Mesh* pMesh = pool->newElement(vertices, vnormals, indexes, uvs);
 				if (!objinfo["face"].is_null()) {
 					auto face = objinfo["face"];
 					if (face == "front") {

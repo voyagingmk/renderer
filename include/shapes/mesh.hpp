@@ -27,7 +27,7 @@ namespace renderer {
 	class Mesh: public Shape {
 	public:
 		VectorArray vertices;
-		NormalArray normals;
+		NormalArray vnormals;
 		UIntArray indexes;
 		UVArray uvs;
 		BBox bbox;
@@ -42,6 +42,7 @@ namespace renderer {
 		virtual void Init() override;
 		virtual int Intersect(Ray&, IntersectResult*) override;
 		void initBound();
+		void initVertexNormals();
 		virtual BBox Bound() const override;
 		virtual BBox WorldBound() const override;
 	};

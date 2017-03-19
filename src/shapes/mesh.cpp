@@ -38,20 +38,15 @@ namespace renderer {
 		const Vector3dF& p2 = vertices[indexes[2]];
 		const Vector3dF&& e1 = p1 - p0;
 		const Vector3dF&& e2 = p2 - p0;
-		if (mesh->normals[tri_idx].isEmpty()) {
-			mesh->normals[tri_idx] = (e1.Cross(e2)).Normalize();
-			if (mesh->reverse) {
-				mesh->normals[tri_idx] = -mesh->normals[tri_idx];
-			
-			}
-			
+		Normal3dF faceNormal = (e1.Cross(e2)).Normalize();
+		if (mesh->reverse) {
+			faceNormal = -faceNormal;
 		}
-		const Normal3dF& normal = mesh->normals[tri_idx];
-		float nDotRay = normal.Dot(ray.d);
+		float nDotRay = faceNormal.Dot(ray.d);
 		logDebug("tri_idx:%d, v:%d,%d,%d\n", tri_idx, indexes[0], indexes[1], indexes[2]);
 		logDebug("nDotRay %.1f mesh->face %d ray.d: %.2f,%.2f,%.2f len:%.1f  n: %.1f,%.1f,%.1f\n",
 			nDotRay, mesh->face,
-			ray.d.x, ray.d.y, ray.d.z, ray.d.Length(), normal.x, normal.y, normal.z);
+			ray.d.x, ray.d.y, ray.d.z, ray.d.Length(), faceNormal.x, faceNormal.y, faceNormal.z);
 		if (mesh->face == 0) { //only front face
 			if (nDotRay >= 0) {
 				return 0;
@@ -80,6 +75,10 @@ namespace renderer {
 		if (b2 < 0. || b1 + b2 > 1.)
 			return 0;
 		const Vector3dF&& position = ray.GetPoint(t);
+		// interpolated normal
+		Normal3dF normal = (1 - b1 - b2) * mesh->vnormals[indexes[0]] + 
+			b1 * mesh->vnormals[indexes[1]] + 
+			b2 * mesh->vnormals[indexes[2]];
 		*result = IntersectResult(mesh, t, std::forward<const Vector3dF>(position), normal);
 		return 0;
 	}
@@ -98,28 +97,28 @@ namespace renderer {
 
 	Mesh::Mesh(VectorArray& v, NormalArray& n, UIntArray& i, UVArray& uv) {
 		vertices = v;
-		normals = n;
+		vnormals = n;
 		indexes = i;
 		uvs = uv;
 	}
 
 	Mesh::Mesh(const Mesh& m) {
 		vertices = m.vertices;
-		normals = m.normals;
+		vnormals = m.vnormals;
 		indexes = m.indexes;
 		uvs = m.uvs;
 	}
 
 	Mesh::~Mesh() {
 		vertices.clear();
-		normals.clear();
+		vnormals.clear();
 		indexes.clear();
 		uvs.clear();
 	}
 
 	Mesh Mesh::operator = (const Mesh& m) {
 		vertices = m.vertices;
-		normals = m.normals;
+		vnormals = m.vnormals;
 		indexes = m.indexes;
 		uvs = m.uvs;
 		return *this;
@@ -127,6 +126,7 @@ namespace renderer {
 
 	void Mesh::Init() {
 		initBound();
+		initVertexNormals();
 	}
 
 	int Mesh::Intersect(Ray& ray, IntersectResult* result) {
@@ -166,6 +166,32 @@ namespace renderer {
 				tri.indexes[1] = indexes[tri_idx * 3 + 1];
 				tri.indexes[2] = indexes[tri_idx * 3 + 2];
 				bbox = Union(bbox, tri.Bound());
+			}
+		}
+	}
+	void Mesh::initVertexNormals() {
+		if (vnormals.size() == 0) {
+			vnormals.resize(vertices.size());
+			for (int tri_idx = 0, tri_num = indexes.size() / 3; tri_idx < tri_num; tri_idx += 1) {
+				int vIdxes[3];
+				vIdxes[0] = indexes[tri_idx * 3];
+				vIdxes[1] = indexes[tri_idx * 3 + 1];
+				vIdxes[2] = indexes[tri_idx * 3 + 2];
+				const Vector3dF& p0 = vertices[vIdxes[0]];
+				const Vector3dF& p1 = vertices[vIdxes[1]];
+				const Vector3dF& p2 = vertices[vIdxes[2]];
+				const Vector3dF&& e1 = p1 - p0;
+				const Vector3dF&& e2 = p2 - p0;
+				const Vector3dF&& faceNormal = (e1.Cross(e2)).Normalize();
+				vnormals[vIdxes[0]] += faceNormal;
+				vnormals[vIdxes[1]] += faceNormal;
+				vnormals[vIdxes[2]] += faceNormal;
+			}
+			for (int vIdx = 0; vIdx < vertices.size(); vIdx++) {
+				vnormals[vIdx] = vnormals[vIdx].Normalize();
+				if (reverse) {
+					vnormals[vIdx] = -vnormals[vIdx];
+				}
 			}
 		}
 	}
