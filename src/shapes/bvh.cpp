@@ -127,7 +127,6 @@ namespace renderer {
 
 	int BVHTree::Intersect(Ray& ray, IntersectResult* result) {
 		if (!root) return 0;
-		bool isHit = false;
 		Vector3dF invDir(1 / ray.d.x, 1 / ray.d.y, 1 / ray.d.z);
 		int dirIsNeg[3] = { invDir.x < 0, invDir.y < 0, invDir.z < 0 };
 		std::list<BVHNode*> stack;
@@ -137,7 +136,8 @@ namespace renderer {
 			stack.pop_back();
 			// Check ray against BVH node
 			float hit0, hit1;
-			if (node->bound.Intersect(ray, &hit0, &hit1)) {
+			bool isHit = node->bound.Intersect(ray, &hit0, &hit1);
+			if (isHit && ray.tMax > hit0) {
 				if (node->shapes.size() > 0) { // leaf
 					for (auto shape : node->shapes) {
 						IntersectResult resultTmp;

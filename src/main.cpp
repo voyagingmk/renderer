@@ -8,6 +8,7 @@
 #include "draw.hpp"
 #include "profiler.hpp"
 #include "defines.hpp"
+#include "bvh.hpp"
 
 using namespace renderer;
 using json = nlohmann::json;
@@ -54,6 +55,9 @@ int main(int argc, char *argv[])
 	SceneDesc desc = parser.parse(config);
 	desc.setFilm(&film);
 	desc.init();
+	// BVHTree tree(desc.shapeUnion->geometries);
+	// tree.Init();
+
 	SDL_SetWindowSize(win, desc.width, desc.height);
 	rendererSDL = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
 	SDL_Texture* texture = SDL_CreateTexture(rendererSDL, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, desc.width, desc.height);
