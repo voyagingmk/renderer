@@ -12,6 +12,8 @@
 #include "mesh.hpp"
 #include "light.hpp"
 #include "transform.hpp"
+#include "bvh.hpp"
+
 
 #define TINYOBJLOADER_IMPLEMENTATION // define this in only *one* .cc
 #include "tiny_obj_loader.h"
@@ -82,7 +84,7 @@ namespace renderer {
 		return o2w;
 	}
 
-	ShapeUnion SceneParser::parseShapes(nlohmann::json& config, MaterialDict& matDict)
+	ShapeUnion* SceneParser::parseShapes(nlohmann::json& config, MaterialDict& matDict)
 	{
 		auto pool_Transform = GetPool<Transform>();
 		Shapes shapes;
@@ -145,6 +147,7 @@ namespace renderer {
 					pShape = static_cast<Shape*>(pMesh);
 					pShape->material = matDict[objinfo["matId"]];
 					addShape(pShape, objID, o2w);
+					pShape = nullptr;
 				}
 			}
 			else if (objinfo["type"] == "Sphere") {
@@ -203,7 +206,10 @@ namespace renderer {
 			}
 
 		}
-		return ShapeUnion(shapes);
+		 auto unionPool = GetPool<BVHTree>();
+		// auto unionPool = GetPool<ShapeUnion>();
+		auto unionObj = unionPool->newElement(shapes);
+		return unionObj;
 	}
 
 	void SceneParser::parseLights(nlohmann::json& config, Lights& lights, MaterialDict& matDict)

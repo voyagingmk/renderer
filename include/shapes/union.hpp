@@ -6,7 +6,7 @@
 
 
 namespace renderer {
-	class ShapeUnion :public Shape {
+	class ShapeUnion: public Shape {
 	public:
 		Shapes geometries;
 		BBox bbox;

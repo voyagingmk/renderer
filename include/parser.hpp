@@ -16,7 +16,7 @@ namespace renderer {
 		PerspectiveCamera parsePerspectiveCamera(nlohmann::json& config);
 		void parseMaterials(nlohmann::json& config, MaterialDict& matDict);
 		Transform* parseTransform(nlohmann::json& config);
-		ShapeUnion parseShapes(nlohmann::json& config, MaterialDict& matDict);
+		ShapeUnion* parseShapes(nlohmann::json& config, MaterialDict& matDict);
 		void parseLights(nlohmann::json& config, Lights& lights, MaterialDict& matDict);
 		Color parseColor(nlohmann::json& c);
 		template<typename T>

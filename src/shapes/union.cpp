@@ -35,7 +35,7 @@ namespace renderer {
 	}
 
 	BBox ShapeUnion::Bound() const {
-		return BBox(Vector3dF(0, 0, 0), Vector3dF(1, 1, 1));
+		return bbox;
 	}
 
 	BBox ShapeUnion::WorldBound() const {

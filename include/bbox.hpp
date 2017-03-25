@@ -27,7 +27,7 @@ namespace renderer {
 		void Expand(float delta);
 		float SurfaceArea() const;
 		float Volume() const;
-		int MaximumExtent() const;
+		Axis MaximumExtent() const;
 		Vector3dF Lerp(float tx, float ty, float tz) const;
 		Vector3dF Offset(const Vector3dF &p) const; 
 		void BoundingSphere(Vector3dF *c, float *rad) const;

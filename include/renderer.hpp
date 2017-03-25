@@ -25,12 +25,12 @@ namespace renderer {
 		Film* film;
 		PerspectiveCamera camera;
 		MaterialDict matDict;
-		ShapeUnion shapeUnion;
+		ShapeUnion* shapeUnion;
 		Lights lights;
-		SceneDesc(const PerspectiveCamera& c, ShapeUnion&& s) :
+		SceneDesc(const PerspectiveCamera& c, ShapeUnion* s) :
 			threadsPow(0), width(1), height(1),
 			maxReflect(0), film(nullptr), camera(c),
-			shapeUnion(std::forward<ShapeUnion>(s)) {
+			shapeUnion(s) {
 		}
 		SceneDesc(SceneDesc&& s):
 			threadsPow(s.threadsPow),
@@ -86,7 +86,7 @@ namespace renderer {
 			if (colorArray)
 				delete[] colorArray;
 		}
-		void rayTrace(Film*, Shape& scene, PerspectiveCamera& camera, Lights&);
+		void rayTrace(Film*, Shape* scene, PerspectiveCamera& camera, Lights&);
 		Color rayTraceRecursive(Shape* scene, Ray& ray, Lights&, int maxReflect);
 		void rayTraceReflection(Film*, Shape* scene, PerspectiveCamera& camera, Lights&, int maxReflect, int x = 0, int y = 0, int w = 0, int h = 0);
 		void rayTraceConcurrence(SceneDesc&);

@@ -165,6 +165,7 @@
     <ClCompile Include="src\camera.cpp" />
     <ClCompile Include="src\ray.cpp" />
     <ClCompile Include="src\renderer.cpp" />
+    <ClCompile Include="src\shapes\bvh.cpp" />
     <ClCompile Include="src\shapes\mesh.cpp" />
     <ClCompile Include="src\shapes\plane.cpp" />
     <ClCompile Include="src\shapes\sphere.cpp" />
@@ -195,6 +196,7 @@
     <ClInclude Include="include\parser.hpp" />
     <ClInclude Include="include\ray.hpp" />
     <ClInclude Include="include\renderer.hpp" />
+    <ClInclude Include="include\shapes\bvh.hpp" />
     <ClInclude Include="include\shapes\mesh.hpp" />
     <ClInclude Include="include\shapes\plane.hpp" />
     <ClInclude Include="include\shapes\sphere.hpp" />

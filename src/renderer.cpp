@@ -32,11 +32,11 @@ namespace renderer {
 			width -= width % num;
 		}
 		film->resize(width, height);
-		shapeUnion.Init();
+		shapeUnion->Init();
 		camera.Init();
 	}
 
-	void Renderer::rayTrace(Film *film, Shape& scene, PerspectiveCamera& camera, Lights& lights) {
+	void Renderer::rayTrace(Film *film, Shape* scene, PerspectiveCamera& camera, Lights& lights) {
 		int w = film->width(), h = film->height();
 		IntersectResult result;
 		for (int y = 0; y < h; y++) {
@@ -44,7 +44,7 @@ namespace renderer {
 			for (int x = 0; x < w; x++) {
 				float sx = (float)x / w;
 				Ray& ray = camera.GenerateRay(sx, sy);
-				scene.Intersect(ray, &result);
+				scene->Intersect(ray, &result);
 				if (result.geometry) {
 					Material* pMaterial = result.geometry->material;
 					Color color(0, 0, 0);
@@ -252,12 +252,12 @@ namespace renderer {
 		}
 		switch (RenderType) {
 		case RenderType_Default:
-			return rayTraceRecursive(&desc.shapeUnion, ray, desc.lights, desc.maxReflect);
+			return rayTraceRecursive(desc.shapeUnion, ray, desc.lights, desc.maxReflect);
 			break;
 		case RenderType_DepthMap:
 			{
 				IntersectResult result;
-				desc.shapeUnion.Intersect(ray, &result);
+				desc.shapeUnion->Intersect(ray, &result);
 				if (result.geometry) {
 					float depth = min((result.distance / 200.f), 1.0f);
 					return Color(depth, depth, depth).clamp();
@@ -270,7 +270,7 @@ namespace renderer {
 		case RenderType_NormalMap: 
 			{
 				IntersectResult result;
-				desc.shapeUnion.Intersect(ray, &result);
+				desc.shapeUnion->Intersect(ray, &result);
 				if (result.geometry) {
 					Normal3dF& n = result.normal;
 					return Color(
@@ -376,7 +376,7 @@ namespace renderer {
 
 	void renderArea(Renderer *renderer, SceneDesc& desc, int x, int y, int w, int h)
 	{
-		renderer->rayTraceReflection(desc.film, dynamic_cast<Shape*>(&desc.shapeUnion), desc.camera, desc.lights, desc.maxReflect, x, y, w, h);
+		renderer->rayTraceReflection(desc.film, desc.shapeUnion, desc.camera, desc.lights, desc.maxReflect, x, y, w, h);
 	}
 
 	void Renderer::rayTraceConcurrence(SceneDesc& desc)
@@ -402,7 +402,7 @@ namespace renderer {
 	void Renderer::renderScene(SceneDesc& desc) {
 		if (desc.threadsPow == 0) {
 			rayTrace(desc.film, desc.shapeUnion, desc.camera, desc.lights);
-			rayTraceReflection(desc.film, &desc.shapeUnion, desc.camera, std::ref(desc.lights), 4);
+			rayTraceReflection(desc.film, desc.shapeUnion, desc.camera, std::ref(desc.lights), 4);
 		}
 		else {
 			rayTraceConcurrence(desc);

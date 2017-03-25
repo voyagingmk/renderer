@@ -62,7 +62,12 @@ namespace renderer {
 	class Union;
 	class Color;
 	class Ray;
-;
+
+	enum Axis {
+		x = 0,
+		y = 1,
+		z = 2
+	};
 
 	template<class T>
 	static MemoryPool<T>* GetPool() {

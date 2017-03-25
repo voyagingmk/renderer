@@ -99,14 +99,14 @@ namespace renderer {
 		return d.x * d.y * d.z;
 	}
 
-	int BBox::MaximumExtent() const {
+	Axis BBox::MaximumExtent() const {
 		Vector3dF diag = pMax - pMin;
 		if (diag.x > diag.y && diag.x > diag.z)
-			return 0;
+			return Axis::x;
 		else if (diag.y > diag.z)
-			return 1;
+			return Axis::y;
 		else
-			return 2;
+			return Axis::z;
 	}
 
 	Vector3dF BBox::Lerp(float tx, float ty, float tz) const {

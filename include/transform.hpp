@@ -114,14 +114,14 @@ namespace renderer {
 
 	inline BBox Transform4x4::operator()(const BBox &b) const {
 		const Transform4x4 &T = *this;
-		BBox ret(T(Vector3dF(b.pMin.x, b.pMin.y, b.pMin.z)));
-		ret = Union(ret, T(Vector3dF(b.pMax.x, b.pMin.y, b.pMin.z)));
-		ret = Union(ret, T(Vector3dF(b.pMin.x, b.pMax.y, b.pMin.z)));
-		ret = Union(ret, T(Vector3dF(b.pMin.x, b.pMin.y, b.pMax.z)));
-		ret = Union(ret, T(Vector3dF(b.pMin.x, b.pMax.y, b.pMax.z)));
-		ret = Union(ret, T(Vector3dF(b.pMax.x, b.pMax.y, b.pMin.z)));
-		ret = Union(ret, T(Vector3dF(b.pMax.x, b.pMin.y, b.pMax.z)));
-		ret = Union(ret, T(Vector3dF(b.pMax.x, b.pMax.y, b.pMax.z)));
+		BBox ret(T(Point3dF(b.pMin.x, b.pMin.y, b.pMin.z)));
+		ret = ret.Union(T(Point3dF(b.pMax.x, b.pMin.y, b.pMin.z)));
+		ret = ret.Union(T(Point3dF(b.pMin.x, b.pMax.y, b.pMin.z)));
+		ret = ret.Union(T(Point3dF(b.pMin.x, b.pMin.y, b.pMax.z)));
+		ret = ret.Union(T(Point3dF(b.pMin.x, b.pMax.y, b.pMax.z)));
+		ret = ret.Union(T(Point3dF(b.pMax.x, b.pMax.y, b.pMin.z)));
+		ret = ret.Union(T(Point3dF(b.pMax.x, b.pMin.y, b.pMax.z)));
+		ret = ret.Union(T(Point3dF(b.pMax.x, b.pMax.y, b.pMax.z)));
 		return ret;
 	}
 
