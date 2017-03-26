@@ -150,8 +150,8 @@ namespace renderer {
 			}
 			IntersectResult resultTmp;
 			tri.Intersect(r, &resultTmp);
-			if (resultTmp.geometry && resultTmp.distance < minDistance) {
-				minDistance = resultTmp.distance;
+			if (resultTmp.geometry && resultTmp.tHit < minDistance) {
+				minDistance = resultTmp.tHit;
 				*result = resultTmp;
 				logDebug("%d, ray:%f,%f,%f min: %f\n", tri_idx,
 					ray.d.x, ray.d.y, ray.d.z, minDistance);

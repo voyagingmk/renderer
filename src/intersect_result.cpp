@@ -5,13 +5,13 @@
 namespace renderer {
 	IntersectResult::IntersectResult() :
 		geometry(nullptr),
-		distance(0),
+		tHit(0),
 		position(Const::Zero) {
 	};
 
-	IntersectResult::IntersectResult(Shape* pShape, const float dis, const Point3dF& pos, const Normal3dF& normal) :
+	IntersectResult::IntersectResult(Shape* pShape, const float t, const Point3dF& pos, const Normal3dF& normal) :
 		geometry(pShape),
-		distance(dis),
+		tHit(t),
 		position(pos),
 		normal(normal) {
 	};

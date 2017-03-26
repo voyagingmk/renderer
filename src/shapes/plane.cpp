@@ -28,8 +28,8 @@ namespace renderer {
 			return 0;
 		}
 		float dotB = normal.Dot(ray.o - position);
-		float distance = -dotB / dotA;
-		*result = IntersectResult(this, distance, ray.GetPoint(distance), normal);
+		float tHit = -dotB / dotA;
+		*result = IntersectResult(this, tHit, ray.GetPoint(tHit), normal);
 		return 0;
 	}	
 	

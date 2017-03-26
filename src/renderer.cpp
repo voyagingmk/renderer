@@ -133,7 +133,7 @@ namespace renderer {
 					IntersectResult _result;
 					scene->Intersect(shadowrays, &_result);
 					if (_result.geometry && _result.geometry != result.geometry) {
-						if (disToLight && _result.distance >= disToLight) {
+						if (disToLight && _result.tHit >= disToLight) {
 							continue;
 						}
 						hitTimes++;
@@ -162,7 +162,7 @@ namespace renderer {
 					logDebug("shadowed, id1: %d id2: %d \n", _result.geometry->id, result.geometry->id);
 					if (pLight->lightType == LightType_Point) {
 						float disToLight = (dynamic_cast<PointLight*>(pLight)->pos - result.position).Length();
-						if (disToLight >= _result.distance) {
+						if (disToLight >= _result.tHit) {
 							canSample = false;
 							c = Color::Black;
 						}
@@ -259,7 +259,7 @@ namespace renderer {
 				IntersectResult result;
 				desc.shapeUnion->Intersect(ray, &result);
 				if (result.geometry) {
-					float depth = min((result.distance / 200.f), 1.0f);
+					float depth = min((result.tHit / 200.f), 1.0f);
 					return Color(depth, depth, depth).clamp();
 				}
 				else {

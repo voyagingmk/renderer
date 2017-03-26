@@ -144,7 +144,7 @@ namespace renderer {
 						logDebug("check shape, id:%d \n", shape->id);
 						shape->Intersect(ray, &resultTmp);
 						if (!result->geometry ||
-							(resultTmp.geometry && resultTmp.distance < result->distance)) {
+							(resultTmp.geometry && resultTmp.tHit < result->tHit)) {
 							*result = resultTmp;
 						}
 					}

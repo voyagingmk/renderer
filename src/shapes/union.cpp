@@ -25,8 +25,8 @@ namespace renderer {
 		for (auto p : geometries) {
 			IntersectResult resultTmp;
 			p->Intersect(ray, &resultTmp);
-			if (resultTmp.geometry && resultTmp.distance < minDistance) {
-				minDistance = resultTmp.distance;
+			if (resultTmp.geometry && resultTmp.tHit < minDistance) {
+				minDistance = resultTmp.tHit;
 				*minResult = resultTmp;
 				//printf("%f,%f,%f == %f,%f\n",ray->getDirection()->x(),ray->getDirection()->y(),ray->getDirection()->z(),minDistance, result->getGeometry()->getMaterial()->getReflectiveness());
 			}

@@ -9,7 +9,7 @@ namespace renderer {
 	class IntersectResult {
 	public:
 		Shape* geometry;
-		float distance;
+		float tHit;
 		Point3dF position;
 		Normal3dF normal;
 		static IntersectResult NoHit;

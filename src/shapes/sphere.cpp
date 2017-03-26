@@ -26,10 +26,10 @@ namespace renderer {
 		if (DdotV <= 0) {
 			float discr = DdotV * DdotV - a0;
 			if (discr >= 0) {
-				float distance = -DdotV - float(sqrtf(discr));
-				Point3dF position = ray.GetPoint(distance);
+				float tHit = -DdotV - float(sqrtf(discr));
+				Point3dF position = ray.GetPoint(tHit);
 				Normal3dF normal = (position - center).Normalize();
-				*result = IntersectResult(this, distance, position, normal);
+				*result = IntersectResult(this, tHit, position, normal);
 				return 0;
 			}
 		}
