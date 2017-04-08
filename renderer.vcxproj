@@ -189,6 +189,7 @@
     <ClInclude Include="include\light.hpp" />
     <ClInclude Include="include\MemoryPool.h" />
     <ClInclude Include="include\profiler.hpp" />
+    <ClInclude Include="include\quaternion.hpp" />
     <ClInclude Include="include\shape.hpp" />
     <ClInclude Include="include\intersect_result.hpp" />
     <ClInclude Include="include\json.hpp" />
