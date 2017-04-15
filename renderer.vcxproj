@@ -156,6 +156,7 @@
     <ClCompile Include="src\defines.cpp" />
     <ClCompile Include="src\film.cpp" />
     <ClCompile Include="src\light.cpp" />
+    <ClCompile Include="src\main_raytrace.cpp" />
     <ClCompile Include="src\profiler.cpp" />
     <ClCompile Include="src\shape.cpp" />
     <ClCompile Include="src\intersect_result.cpp" />
@@ -190,6 +191,7 @@
     <ClInclude Include="include\MemoryPool.h" />
     <ClInclude Include="include\profiler.hpp" />
     <ClInclude Include="include\quaternion.hpp" />
+    <ClInclude Include="include\main_raytrace.hpp" />
     <ClInclude Include="include\shape.hpp" />
     <ClInclude Include="include\intersect_result.hpp" />
     <ClInclude Include="include\json.hpp" />
