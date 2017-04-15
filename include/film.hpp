@@ -35,6 +35,7 @@ namespace renderer {
 		virtual void resize(int xres, int yres) override;
 	};
 
+#ifdef _SDL_H
 	class SDLFilm : public Film {
 	public:
 		SDL_Texture* texture;
@@ -50,6 +51,8 @@ namespace renderer {
 		virtual void set(int x, int y, int r, int g, int b) override;
 		virtual void resize(int xres, int yres) override;
 	};
+#endif
+
 };
 
 #endif

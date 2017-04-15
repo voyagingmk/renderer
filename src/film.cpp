@@ -18,6 +18,8 @@ namespace renderer {
 		img->resize(w, h, 1,3);
 	}
 
+#ifdef _SDL_H
+
 	SDLFilm::SDLFilm(int xres, int yres):
 		Film(xres, yres),
 		pixels(nullptr),
@@ -59,5 +61,9 @@ namespace renderer {
 
 	void SDLFilm::resize(int w, int h) {
 	}
+
+#endif
+
 }
+
 

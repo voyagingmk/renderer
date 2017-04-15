@@ -14,6 +14,13 @@
 using namespace renderer;
 using json = nlohmann::json;
 
+#ifndef _SDL_H
+
+int rayTraceMain(int argc, char *argv[]) {
+	return 0;
+}
+
+#else 
 
 void SDLExit(const char *msg)
 {
@@ -168,3 +175,5 @@ int main(int argc, char ** argv) {
 	return 0;
 }
 */
+
+#endif

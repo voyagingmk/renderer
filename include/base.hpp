@@ -8,7 +8,7 @@
 #endif 
 #include <algorithm>
 #include <memory>
-#include <SDL/SDL.h>
+// #include <SDL/SDL.h>
 #include <GL/GL.h>
 #include <stdio.h>
 #include <string>
@@ -30,6 +30,10 @@
 
 #define DEFINE_SHARE_PTR(name) typedef std::shared_ptr<name> Ptr#name;
 #define FLOAT_MAX (std::numeric_limits<float>::max())
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 
 #define DEBUG_RENDERER
 
@@ -138,6 +142,8 @@ namespace renderer {
 		return (180.f / (float)M_PI) * radian;
 	}
 
+#ifdef _SDL_H
+
 	static void checkSDLError(int line = -1)
 	{
 #ifndef NDEBUG
@@ -151,6 +157,8 @@ namespace renderer {
 		}
 #endif
 	}
+
+#endif
 }
 
 #endif // BASE_HPP
