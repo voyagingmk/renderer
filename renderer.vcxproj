@@ -138,7 +138,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>glew32sd.lib;glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glew32sd.lib;glfw3.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>Debug</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
@@ -161,6 +161,7 @@
     <ClCompile Include="src\light.cpp" />
     <ClCompile Include="src\main_raytrace.cpp" />
     <ClCompile Include="src\profiler.cpp" />
+    <ClCompile Include="src\realtime\shadermgr.cpp" />
     <ClCompile Include="src\shape.cpp" />
     <ClCompile Include="src\intersect_result.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -195,6 +196,8 @@
     <ClInclude Include="include\profiler.hpp" />
     <ClInclude Include="include\quaternion.hpp" />
     <ClInclude Include="include\main_raytrace.hpp" />
+    <ClInclude Include="include\realtime\glutils.hpp" />
+    <ClInclude Include="include\realtime\shadermgr.hpp" />
     <ClInclude Include="include\shape.hpp" />
     <ClInclude Include="include\intersect_result.hpp" />
     <ClInclude Include="include\json.hpp" />

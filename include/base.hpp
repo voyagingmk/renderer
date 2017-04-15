@@ -6,10 +6,22 @@
 #else
 
 #endif 
+
+#define REALTIME
+
+#ifdef REALTIME
+#define GLEW_STATIC
+#include "GL/glew.h" // include GLEW and new version of GL on Windows
+// #define GLFW_DLL
+#include "GLFW/glfw3.h" // GLFW helper library
+#include <GL/GL.h>
+#include <GL/GLU.h>
+#else
+#include <SDL/SDL.h>
+#endif
+
 #include <algorithm>
 #include <memory>
-// #include <SDL/SDL.h>
-#include <GL/GL.h>
 #include <stdio.h>
 #include <string>
 #include <math.h>
