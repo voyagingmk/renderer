@@ -161,6 +161,7 @@
     <ClCompile Include="src\light.cpp" />
     <ClCompile Include="src\main_raytrace.cpp" />
     <ClCompile Include="src\profiler.cpp" />
+    <ClCompile Include="src\realtime\context.cpp" />
     <ClCompile Include="src\realtime\shadermgr.cpp" />
     <ClCompile Include="src\shape.cpp" />
     <ClCompile Include="src\intersect_result.cpp" />
@@ -196,7 +197,9 @@
     <ClInclude Include="include\profiler.hpp" />
     <ClInclude Include="include\quaternion.hpp" />
     <ClInclude Include="include\main_raytrace.hpp" />
+    <ClInclude Include="include\realtime\context.hpp" />
     <ClInclude Include="include\realtime\glutils.hpp" />
+    <ClInclude Include="include\realtime\renderer.hpp" />
     <ClInclude Include="include\realtime\shadermgr.hpp" />
     <ClInclude Include="include\shape.hpp" />
     <ClInclude Include="include\intersect_result.hpp" />

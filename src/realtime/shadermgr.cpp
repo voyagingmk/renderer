@@ -88,6 +88,16 @@ ShaderProgramHDL ShaderMgrOpenGL::createShaderProgram(ShaderSet shaderSet) {
 	return hdl;
 }
 
+ShaderProgramHDL ShaderMgrOpenGL::createShaderProgram(ShaderFileNames names) {
+	ShaderSet shaderSet;
+	for (auto pair: names) {
+		ShaderHDL hdl = loadShaderFromFile(pair.first, pair.second.c_str());
+		shaderSet[pair.first] = hdl;
+	}
+	return createShaderProgram(shaderSet);
+}
+
+
 void ShaderMgrOpenGL::deleteShaderProgram(ShaderProgramHDL hdl) {
 	if (glIsProgram(hdl)) {
 		glDeleteProgram(hdl);

@@ -13,6 +13,7 @@ namespace renderer {
 	typedef int ShaderHDL;
 	typedef int ShaderProgramHDL;
 
+	typedef std::map<ShaderType, std::string> ShaderFileNames;
 	typedef std::map<ShaderType, ShaderHDL> ShaderSet;
 
 	class ShaderMgrBase {
@@ -29,6 +30,7 @@ namespace renderer {
 		ShaderHDL loadShaderFromFile(ShaderType, const char* filename);
 		virtual ShaderHDL loadShaderFromStr(ShaderType, const char* str) { return 0; }
 		virtual void deleteShader(ShaderHDL shaderHDL) {}
+		virtual ShaderProgramHDL createShaderProgram(ShaderFileNames) { return 0; }
 		virtual ShaderProgramHDL createShaderProgram(ShaderSet) { return 0; }
 		virtual void deleteShaderProgram(ShaderProgramHDL){}
 		virtual void useShaderProgram(ShaderProgramHDL hdl) {}
@@ -49,6 +51,7 @@ namespace renderer {
 		// override
 		virtual ShaderHDL loadShaderFromStr(ShaderType, const char* filename) override;
 		virtual void deleteShader(ShaderHDL shaderHDL) override;
+		virtual ShaderProgramHDL createShaderProgram(ShaderFileNames) override;
 		virtual ShaderProgramHDL createShaderProgram(ShaderSet) override;
 		virtual void deleteShaderProgram(ShaderProgramHDL) override;
 		virtual void useShaderProgram(ShaderProgramHDL hdl) override;

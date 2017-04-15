@@ -22,6 +22,7 @@
 
 #include <algorithm>
 #include <memory>
+#include <functional>
 #include <stdio.h>
 #include <string>
 #include <math.h>
