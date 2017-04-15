@@ -72,14 +72,14 @@ int rayTraceMain(int argc, char *argv[])
 	SDL_Texture* texture = SDL_CreateTexture(rendererSDL, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, desc.width, desc.height);
 	checkSDLError(__LINE__);
 	film.texture = texture;
-	Renderer renderer(&desc);
+	RayTracer raytracer(&desc);
 	double angle = 0;
 	SDL_Point screenCenter = { width / 2, height / 2 };
 	SDL_RendererFlip flip = SDL_FLIP_NONE;
 	bool isFinished = false;
 	auto t1 = std::chrono::system_clock::now();
 
-	renderer.beginAsyncRender(desc);
+	raytracer.beginAsyncRender(desc);
 	while (1) {
 		SDL_Event e;
 		if (SDL_PollEvent(&e)) {
@@ -91,14 +91,14 @@ int rayTraceMain(int argc, char *argv[])
 				int y = e.button.y;
 				Enable_DebugPixcel = true;
 				printf("debug pixel %d,%d\n", x, y);
-				renderer.rayTraceAt(desc, x, y);
+				raytracer.rayTraceAt(desc, x, y);
 				Enable_DebugPixcel = false;
 			}
 		}
 		SDL_Rect& updatedRect = static_cast<SDLFilm*>(desc.film)->lockRect;
-		int pCount = renderer.getRenderRect(desc, &updatedRect.x, &updatedRect.y, &updatedRect.w, &updatedRect.h);
+		int pCount = raytracer.getRenderRect(desc, &updatedRect.x, &updatedRect.y, &updatedRect.w, &updatedRect.h);
 		if (!isFinished) {
-			float percent = 0.01f * ceil(10000.0f * float(pCount) / float(renderer.sceneDesc->width * renderer.sceneDesc->height));
+			float percent = 0.01f * ceil(10000.0f * float(pCount) / float(raytracer.sceneDesc->width * raytracer.sceneDesc->height));
 			if (percent >= 100.0f) {
 				isFinished = true;
 				auto t2 = std::chrono::system_clock::now();
@@ -113,7 +113,7 @@ int rayTraceMain(int argc, char *argv[])
 		desc.film->beforeSet();
 		for (int x = updatedRect.x; x < updatedRect.x + updatedRect.w; x++) {
 			int _p = updatedRect.y * desc.width + x;
-			Color& c = renderer.colorArray[_p];
+			Color& c = raytracer.colorArray[_p];
 			desc.film->set(x, updatedRect.y, c.rInt(), c.gInt(), c.bInt());
 		}
 		desc.film->afterSet();
@@ -125,7 +125,7 @@ int rayTraceMain(int argc, char *argv[])
 		SDL_RenderPresent(rendererSDL);
 		SDL_Delay(1);
 	}
-	renderer.endAsyncRender();
+	raytracer.endAsyncRender();
 	SDL_DestroyTexture(texture);
 	SDL_DestroyRenderer(rendererSDL);
 	SDL_GL_DeleteContext(glContext);

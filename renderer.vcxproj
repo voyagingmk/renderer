@@ -169,7 +169,7 @@
     <ClCompile Include="src\parser.cpp" />
     <ClCompile Include="src\camera.cpp" />
     <ClCompile Include="src\ray.cpp" />
-    <ClCompile Include="src\renderer.cpp" />
+    <ClCompile Include="src\raytracer.cpp" />
     <ClCompile Include="src\shapes\bvh.cpp" />
     <ClCompile Include="src\shapes\mesh.cpp" />
     <ClCompile Include="src\shapes\plane.cpp" />
@@ -204,7 +204,7 @@
     <ClInclude Include="include\material.hpp" />
     <ClInclude Include="include\parser.hpp" />
     <ClInclude Include="include\ray.hpp" />
-    <ClInclude Include="include\renderer.hpp" />
+    <ClInclude Include="include\raytracer.hpp" />
     <ClInclude Include="include\shapes\bvh.hpp" />
     <ClInclude Include="include\shapes\mesh.hpp" />
     <ClInclude Include="include\shapes\plane.hpp" />

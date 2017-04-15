@@ -1,5 +1,5 @@
-#ifndef RENDERER_RENDERER_HPP
-#define RENDERER_RENDERER_HPP
+#ifndef RENDERER_RAYTRACER_HPP
+#define RENDERER_RAYTRACER_HPP
 
 #include "base.hpp"
 #include "geometry.hpp"
@@ -55,7 +55,7 @@ namespace renderer {
 		void init();
 	};
 
-	class Renderer {
+	class RayTracer {
 		int preCount;
 		int curRow;
 	public:
@@ -68,7 +68,7 @@ namespace renderer {
 		std::vector<std::thread*> threads;
 		int countRenderedPixels();
 	public:
-		Renderer(SceneDesc* desc):
+		RayTracer(SceneDesc* desc):
 			pRendered(0),
 			pDispatched(0),
 			preCount(0),
@@ -77,7 +77,7 @@ namespace renderer {
 			flags(new bool[desc->width * desc->height]{ false }),
 			colorArray(new Color[desc->width * desc->height]) 
 		{}
-		~Renderer() {
+		~RayTracer() {
 			for (int i = 0; i < threads.size(); i++) {
 				delete threads[i];
 			}
@@ -99,4 +99,4 @@ namespace renderer {
 }
 
 
-#endif // RENDERER_RENDERER_HPP
+#endif // RENDERER_RAYTRACER_HPP

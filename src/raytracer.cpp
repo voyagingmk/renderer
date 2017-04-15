@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "base.hpp"
-#include "renderer.hpp"
+#include "raytracer.hpp"
 #include "camera.hpp"
 #include "shape.hpp"
 #include "intersect_result.hpp"
@@ -36,7 +36,7 @@ namespace renderer {
 		camera.Init();
 	}
 
-	void Renderer::rayTrace(Film *film, Shape* scene, PerspectiveCamera& camera, Lights& lights) {
+	void RayTracer::rayTrace(Film *film, Shape* scene, PerspectiveCamera& camera, Lights& lights) {
 		int w = film->width(), h = film->height();
 		IntersectResult result;
 		for (int y = 0; y < h; y++) {
@@ -86,7 +86,7 @@ namespace renderer {
 	}
 
 	std::mt19937 eng(4029349);
-	Color Renderer::rayTraceRecursive(Shape* scene, Ray& ray, Lights& lights, int maxReflect) {
+	Color RayTracer::rayTraceRecursive(Shape* scene, Ray& ray, Lights& lights, int maxReflect) {
 		IntersectResult result;
 		scene->Intersect(ray, &result);
 		if (!result.geometry) {
@@ -216,7 +216,7 @@ namespace renderer {
 		return color;
 	}
 
-	void Renderer::rayTraceReflection(Film *film, Shape* scene, PerspectiveCamera& camera, Lights& lights, int maxReflect, int px, int py, int pw, int ph) {
+	void RayTracer::rayTraceReflection(Film *film, Shape* scene, PerspectiveCamera& camera, Lights& lights, int maxReflect, int px, int py, int pw, int ph) {
 		int w = pw, h = ph, img_width = film->width(), img_height = film->height();
 		if (w == 0)
 			w = img_width;
@@ -239,7 +239,7 @@ namespace renderer {
 		}
 	}
 
-	Color Renderer::rayTraceAt(SceneDesc& desc, int x, int y) {
+	Color RayTracer::rayTraceAt(SceneDesc& desc, int x, int y) {
 		int w = 1, 
 			h = 1,
 			img_width = desc.film->width(),
@@ -286,7 +286,7 @@ namespace renderer {
 		}
 	}
 
-	void _rayTraceTask(Renderer *renderer, SceneDesc& desc) 
+	void _rayTraceTask(RayTracer *renderer, SceneDesc& desc) 
 	{
 		int total = desc.width * desc.height;
 		const int count = 16;
@@ -332,13 +332,13 @@ namespace renderer {
 		}
 	}
 
-	int Renderer::countRenderedPixels()
+	int RayTracer::countRenderedPixels()
 	{
 		std::lock_guard<std::mutex> lock(mtx);
 		return pRendered;
 	}
 
-	int Renderer::getRenderRect(SceneDesc& desc, int* x, int* y, int* w, int* h) {
+	int RayTracer::getRenderRect(SceneDesc& desc, int* x, int* y, int* w, int* h) {
 		int newCount = countRenderedPixels();
 		bool move = false;
 		if (curRow * desc.width < newCount - desc.width) {
@@ -359,7 +359,7 @@ namespace renderer {
 		return newCount;
 	}
 
-	void Renderer::beginAsyncRender(SceneDesc& desc)
+	void RayTracer::beginAsyncRender(SceneDesc& desc)
 	{
 		int threadsNum = desc.threadsNum();
 		threads.resize(threadsNum);
@@ -368,18 +368,18 @@ namespace renderer {
 		}
 	}
 
-	void Renderer::endAsyncRender() {
+	void RayTracer::endAsyncRender() {
 		for (int i = 0; i < threads.size(); i++) {
 			threads[i]->join();
 		}
 	}
 
-	void renderArea(Renderer *renderer, SceneDesc& desc, int x, int y, int w, int h)
+	void renderArea(RayTracer *renderer, SceneDesc& desc, int x, int y, int w, int h)
 	{
 		renderer->rayTraceReflection(desc.film, desc.shapeUnion, desc.camera, desc.lights, desc.maxReflect, x, y, w, h);
 	}
 
-	void Renderer::rayTraceConcurrence(SceneDesc& desc)
+	void RayTracer::rayTraceConcurrence(SceneDesc& desc)
 	{
 		int threads_num = int(pow(2.0, desc.threadsPow));
 		std::thread* *threads = new std::thread*[threads_num];
@@ -399,7 +399,7 @@ namespace renderer {
 		}
 	}
 
-	void Renderer::renderScene(SceneDesc& desc) {
+	void RayTracer::renderScene(SceneDesc& desc) {
 		if (desc.threadsPow == 0) {
 			rayTrace(desc.film, desc.shapeUnion, desc.camera, desc.lights);
 			rayTraceReflection(desc.film, desc.shapeUnion, desc.camera, std::ref(desc.lights), 4);

@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "parser.hpp"
 #include "geometry.hpp"
-#include "renderer.hpp"
+#include "raytracer.hpp"
 #include "sphere.hpp"
 #include "camera.hpp"
 #include "material.hpp"

@@ -2,7 +2,7 @@
 #define RENDERER_PARSER_HPP
 
 #include "base.hpp"
-#include "renderer.hpp"
+#include "raytracer.hpp"
 
 
 namespace renderer {

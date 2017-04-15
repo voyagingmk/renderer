@@ -35,7 +35,7 @@ int main2(int argc, char *argv[])
 	// get version info
 	const GLubyte* renderer = glGetString(GL_RENDERER); // get renderer string
 	const GLubyte* version = glGetString(GL_VERSION); // version as a string
-	printf("Renderer: %s\n", renderer);
+	printf("RayTracer: %s\n", renderer);
 	printf("OpenGL version supported %s\n", version);
 
 	// tell GL to only draw onto a pixel if the shape is closer to the viewer
