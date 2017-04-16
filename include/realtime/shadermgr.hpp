@@ -39,6 +39,7 @@ namespace renderer {
 	};
 
 
+#ifdef USE_GLEW
 
 	class ShaderMgrOpenGL : public ShaderMgrBase {
 	private:
@@ -58,8 +59,9 @@ namespace renderer {
 		virtual bool isShader(ShaderHDL) override;
 	};
 
+#endif
 
-	using ShaderMgr = ShaderMgrOpenGL;
+	// using ShaderMgr = ShaderMgrOpenGL;
 };
 
 #endif

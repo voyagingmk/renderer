@@ -25,6 +25,10 @@ void ShaderMgrBase::release() {
 	vsHDLs.clear();
 }
 
+
+
+#ifdef USE_GLEW
+
 ShaderHDL ShaderMgrOpenGL::loadShaderFromStr(ShaderType type, const char* source) {
 	const GLchar* src = source;
 	GLuint shaderHDL;
@@ -113,3 +117,5 @@ void ShaderMgrOpenGL::useShaderProgram(ShaderProgramHDL hdl) {
 bool ShaderMgrOpenGL::isShader(ShaderHDL hdl) { 
 	return glIsShader(hdl);
 }
+
+#endif

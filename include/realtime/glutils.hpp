@@ -3,6 +3,7 @@
 
 #include "base.hpp"
 
+#ifdef USE_GLEW
 bool checkGLError() {
 	GLenum err = glGetError();
 	if (err != GL_NO_ERROR) {
@@ -12,4 +13,6 @@ bool checkGLError() {
 	}
 	return true;
 }
+#endif
+
 #endif

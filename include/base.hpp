@@ -7,9 +7,12 @@
 
 #endif 
 
-#define REALTIME
+// #define USE_GLEW
 
-#ifdef REALTIME
+#include <algorithm>
+#include <memory>
+
+#ifdef USE_GLEW
 #define GLEW_STATIC
 #include "GL/glew.h" // include GLEW and new version of GL on Windows
 // #define GLFW_DLL
@@ -18,10 +21,10 @@
 #include <GL/GLU.h>
 #else
 #include <SDL/SDL.h>
+#include <GL/GL.h>
 #endif
 
-#include <algorithm>
-#include <memory>
+
 #include <functional>
 #include <stdio.h>
 #include <string>
