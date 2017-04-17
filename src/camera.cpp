@@ -1,12 +1,11 @@
 #include "stdafx.h"
 #include "camera.hpp"
-#include <cmath>
-#include <geometry.hpp>
-#include <ray.hpp>
+#include "geometry.hpp"
+#include "ray.hpp"
 
 namespace renderer {
 
-	PerspectiveCamera::PerspectiveCamera(Vector3dF& eye, Vector3dF& front, Vector3dF& up, float fov)
+	PerspectiveCamera::PerspectiveCamera(const Vector3dF& eye, const Vector3dF& front, const Vector3dF& up, const float fov)
 		: eye(eye)
 		, front(front)
 		, refUp(up)

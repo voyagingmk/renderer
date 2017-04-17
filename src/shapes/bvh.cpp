@@ -151,7 +151,7 @@ namespace renderer {
 					if (stack.size() == 0) break;
 				}
 				else { // interior
-					if (dirIsNeg[node->splitAxis]) {
+					if (dirIsNeg[static_cast<int>(node->splitAxis)]) {
 						stack.push_back(node->right);
 						stack.push_back(node->left);
 					}

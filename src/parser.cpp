@@ -272,7 +272,7 @@ namespace renderer {
 				return Color::White;
 		}
 		else {
-			return Color(c[0] / 255.0f, c[1] / 255.0f, c[2] / 255.0f);
+			return Color((float)c[0] / 255.0f, (float)c[1] / 255.0f, (float)c[2] / 255.0f);
 		}
 	}
 

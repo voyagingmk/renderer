@@ -75,7 +75,8 @@ namespace renderer {
 		
 		//access only
 		inline V& operator [] (const int i) const {
-			return static_cast<V>(*((V*)data + i)); 
+            V* const p = (V*)data + i;
+			return *p;
 		}
 	
 		inline const V at(int r, int c) const {

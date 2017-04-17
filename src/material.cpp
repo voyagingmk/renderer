@@ -18,7 +18,7 @@ namespace renderer {
 	};
 
 
-	PhongMaterial::PhongMaterial(Color& diffuse, Color& specular, int shininess, float reflectiveness) :
+	PhongMaterial::PhongMaterial(const Color& diffuse, const Color& specular, const int shininess, const float reflectiveness) :
 		Material(reflectiveness),
 		diffuse(diffuse),
 		specular(specular),

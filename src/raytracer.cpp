@@ -10,7 +10,7 @@
 #include "ray.hpp"
 #include "film.hpp"
 #include "light.hpp"
-#include "shapes/union.hpp"
+#include "union.hpp"
 #include "profiler.hpp"
 #include "defines.hpp"
 
@@ -43,7 +43,7 @@ namespace renderer {
 			float sy = 1.0f - (float)y / h;
 			for (int x = 0; x < w; x++) {
 				float sx = (float)x / w;
-				Ray& ray = camera.GenerateRay(sx, sy);
+				Ray ray = camera.GenerateRay(sx, sy);
 				scene->Intersect(ray, &result);
 				if (result.geometry) {
 					Material* pMaterial = result.geometry->material;
@@ -227,7 +227,7 @@ namespace renderer {
 			for (int x = px, xMax = px + w; x < xMax; x++) {
 				float sx = (float)x / img_width;
 				//printf("sx,sy=%f,%f\n",sx,sy);
-				Ray& ray = camera.GenerateRay(sx, sy);
+				Ray ray = camera.GenerateRay(sx, sy);
 				Color color = rayTraceRecursive(&(*scene), ray, lights, maxReflect);
 				int r = min(int(color.r() * 255), 255),
 					g = min(int(color.g() * 255), 255),
@@ -246,7 +246,7 @@ namespace renderer {
 			img_height = desc.film->height();
 		float sy = 1.0f - (float)y / img_height;
 		float sx = (float)x / img_width;
-		Ray& ray = desc.camera.GenerateRay(sx, sy);
+		Ray ray = desc.camera.GenerateRay(sx, sy);
 		if (Enable_DebugPixcel) {
 			printf("x,y = %d,%d, sx,sy = %.3f,%.3f   %d,%d\n", x,y, sx, sy, img_width, img_height);
 		}
@@ -283,8 +283,11 @@ namespace renderer {
 				}
 				break;
 			}
+        default:
+            break;
 		}
-	}
+        return Color();
+    }
 
 	void _rayTraceTask(RayTracer *renderer, SceneDesc& desc) 
 	{

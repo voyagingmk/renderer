@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "light.hpp"
-#include <geometry.hpp>
+#include "geometry.hpp"
 #include "color.hpp"
 
 namespace renderer {
@@ -25,7 +25,7 @@ namespace renderer {
 	void Light::Init() {
 	}
 
-	DirectionLight::DirectionLight(Vector3dF& d) noexcept
+	DirectionLight::DirectionLight(const Vector3dF& d) noexcept
 		: dir(d)
 	{}
 
@@ -38,11 +38,11 @@ namespace renderer {
 
 
 
-	PointLight::PointLight(Vector3dF& p,
-		bool s, 
-		bool ss,
-		float r,
-		int rays) noexcept
+	PointLight::PointLight(const Vector3dF& p,
+		const bool s,
+		const bool ss,
+		const float r,
+		const int rays) noexcept
 		: Light(s, ss, r, rays), pos(p)
 	{}
 

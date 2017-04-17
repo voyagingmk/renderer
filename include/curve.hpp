@@ -73,10 +73,9 @@ namespace renderer {
 			if (order < 2) throw "order must be at least 2 (linear)";
 			if (order > n) throw "order must be less than point count";
 
-			int domain[] = {
-				order - 1,
-				knots.size() - 1 - (order - 1) // = n
-			};
+            auto k = knots.size() - 1 - (order - 1); // = n
+
+			int domain[] = { order - 1, static_cast<int>(k) };
 
 			// remap t to the domain where the spline is defined
 			float low = knots[domain[0]];

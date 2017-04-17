@@ -20,6 +20,8 @@ namespace renderer {
 		inline int width() { return xResolution; }
 		inline int height() { return yResolution; }
 	};
+    
+#ifdef cimg_OS
 
 	class ImageFilm: public Film {
 	public:
@@ -34,6 +36,8 @@ namespace renderer {
 		virtual void set(int x, int y, int r, int g, int b) override;
 		virtual void resize(int xres, int yres) override;
 	};
+    
+#endif
 
 #ifdef _SDL_H
 	class SDLFilm : public Film {

@@ -15,7 +15,7 @@ namespace renderer {
 		float fov;
 		float fovScale;
 	public:
-		PerspectiveCamera(Vector3dF& eye, Vector3dF& front, Vector3dF& up, float fov);
+		PerspectiveCamera(const Vector3dF& eye,const Vector3dF& front, const Vector3dF& up, const float fov);
 		PerspectiveCamera(const PerspectiveCamera& c) {
 			*this = c;
 		}

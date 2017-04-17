@@ -30,7 +30,7 @@ namespace renderer {
 		Color diffuse, specular;
 		int shininess;
 	public:
-		PhongMaterial(Color& diffuse, Color& specular, int shininess, float reflectiveness = 0);
+		PhongMaterial(const Color& diffuse, const Color& specular, const int shininess, const float reflectiveness = 0);
 		Color Sample(Ray& ray, Point3dF& position, Normal3dF& normal, Vector3dF& lightDir);
 	};
 

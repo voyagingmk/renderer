@@ -39,10 +39,10 @@
 #else
 #define PRINTF_FUNC
 #endif // __GNUG__
-void Info(const char *, ...) PRINTF_FUNC;
-void Warning(const char *, ...) PRINTF_FUNC;
-void Error(const char *, ...) PRINTF_FUNC;
-void Severe(const char *, ...) PRINTF_FUNC;
+static void Info(const char *, ...) PRINTF_FUNC;
+static void Warning(const char *, ...) PRINTF_FUNC;
+static void Error(const char *, ...) PRINTF_FUNC;
+static void Severe(const char *, ...) PRINTF_FUNC;
 
 
 
@@ -111,9 +111,7 @@ static void processError(const char *format, va_list args,
 		fputs("\n", stderr);
 	}
 	if (disposition == PBRT_ERROR_ABORT) {
-#if !defined(_MSC_VER)
-		__debugbreak();
-#else
+#if defined(_MSC_VER)
 		abort();
 #endif
 	}

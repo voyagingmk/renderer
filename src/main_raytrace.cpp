@@ -10,6 +10,7 @@
 #include "defines.hpp"
 #include "bvh.hpp"
 #include "main_raytrace.hpp"
+#include "SDL_opengles.h"
 
 using namespace renderer;
 using json = nlohmann::json;
@@ -36,23 +37,29 @@ int rayTraceMain(int argc, char *argv[])
 
 	SDL_Window * win = nullptr;
 	SDL_Renderer * rendererSDL = nullptr;
-	int width = 512, height = 512;
-
+    int width = 512, height = 512; // default
+    printf("SDL_VideoInit ok\n");
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 		SDLExit("Unable to initialize SDL");
+    
+    printf("SDL_Init ok\n");
 	checkSDLError(__LINE__);//on Win7 would cause a ERROR about SHCore.dll, just ignore it.
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+    // SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 1);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
 	checkSDLError(__LINE__);
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 	checkSDLError(__LINE__);
-
+    printf("readJson\n");
 	json config = readJson("config.json");
-	width = config["width"], height = config["height"];
+    printf("readJson ok\n");
+    width = config["width"], height = config["height"];
 	std::string title = config["title"];
 
 	win = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
 		width, height, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+    
+    printf("SDL_CreateWindow ok\n");
 	if (!win)
 		SDLExit("Unable to create window");
 
@@ -67,8 +74,10 @@ int rayTraceMain(int argc, char *argv[])
 	// BVHTree tree(desc.shapeUnion->geometries);
 	// tree.Init();
 
-	SDL_SetWindowSize(win, desc.width, desc.height);
-	rendererSDL = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
+    SDL_SetWindowSize(win, desc.width, desc.height);
+    checkSDLError(__LINE__);
+    rendererSDL = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
+    checkSDLError(__LINE__);
 	SDL_Texture* texture = SDL_CreateTexture(rendererSDL, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, desc.width, desc.height);
 	checkSDLError(__LINE__);
 	film.texture = texture;
@@ -78,7 +87,9 @@ int rayTraceMain(int argc, char *argv[])
 	SDL_RendererFlip flip = SDL_FLIP_NONE;
 	bool isFinished = false;
 	auto t1 = std::chrono::system_clock::now();
-
+    
+    glClearColor(1.0, 1.0, 1.0, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT);
 	raytracer.beginAsyncRender(desc);
 	while (1) {
 		SDL_Event e;
@@ -117,8 +128,8 @@ int rayTraceMain(int argc, char *argv[])
 			desc.film->set(x, updatedRect.y, c.rInt(), c.gInt(), c.bInt());
 		}
 		desc.film->afterSet();
-		glClearColor(1.0, 1.0, 1.0, 1.0);
-		glClear(GL_COLOR_BUFFER_BIT);
+		//glClearColor(1.0, 1.0, 1.0, 1.0);
+		//glClear(GL_COLOR_BUFFER_BIT);
 		int ret = SDL_RenderCopyEx(rendererSDL, texture, &updatedRect, &updatedRect, angle, &screenCenter, flip);
 		if (ret == -1)
 			SDLExit("SDL_RenderCopy failed");

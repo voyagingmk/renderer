@@ -41,5 +41,6 @@ namespace renderer {
 		}
 		bool Intersect(const Ray &ray, float *hitt0, float *hitt1) const;
 	};
+    BBox Union(const BBox &b1, const BBox &b2);
 }
 #endif // BBOX_HPP

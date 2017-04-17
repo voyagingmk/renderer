@@ -31,7 +31,7 @@ namespace renderer {
 	public:
 		Vector3dF dir;
 	public:
-		DirectionLight(Vector3dF& dir) noexcept;
+		DirectionLight(const Vector3dF& dir) noexcept;
 		virtual Normal3dF incidenceNormal(Point3dF& targetPos) override {
 			return dir.Normalize();
 		}
@@ -46,11 +46,11 @@ namespace renderer {
 	public:
 		Vector3dF pos;
 	public:
-		PointLight(Vector3dF& pos,
-			bool shadow,
-			bool softshadow,
-			float radius,
-			int shadowrays) noexcept;
+		PointLight(const Vector3dF& pos,
+			const bool shadow,
+			const bool softshadow,
+			const float radius,
+			const int shadowrays) noexcept;
 		virtual Normal3dF incidenceNormal(Point3dF& targetPos) override {
 			return (targetPos - pos).Normalize();
 		}		

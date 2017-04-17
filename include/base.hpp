@@ -20,8 +20,7 @@
 #include <GL/GL.h>
 #include <GL/GLU.h>
 #else
-#include <SDL/SDL.h>
-#include <GL/GL.h>
+#include "SDL.h"
 #endif
 
 
@@ -83,7 +82,7 @@ namespace renderer {
 	class Color;
 	class Ray;
 
-	enum Axis {
+	enum class Axis {
 		x = 0,
 		y = 1,
 		z = 2
@@ -120,6 +119,10 @@ namespace renderer {
 	static nlohmann::json readJson(const char * filepath) {
 		using json = nlohmann::json;
 		const std::string& s = readFile(filepath);
+        if(s.size() <= 0) {
+            printf("[readJson] no such file: %s\n", filepath);
+            return json();
+        }
 		json j = json::parse(s);
 		return j;
 	}

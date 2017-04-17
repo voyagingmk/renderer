@@ -1,6 +1,6 @@
 #include "stdafx.h"
-#include "realtime/shadermgr.hpp"
-#include "realtime/glutils.hpp"
+#include "shadermgr.hpp"
+#include "glutils.hpp"
 
 using namespace renderer;
 

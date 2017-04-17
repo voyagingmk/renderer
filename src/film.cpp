@@ -3,7 +3,8 @@
 #include "profiler.hpp"
 
 namespace renderer {
-	void ImageFilm::beforeSet() {
+#ifdef cimg_OS
+    	void ImageFilm::beforeSet() {
 	}
 
 	void ImageFilm::afterSet() {
@@ -17,6 +18,7 @@ namespace renderer {
 	void ImageFilm::resize(int w, int h) {
 		img->resize(w, h, 1,3);
 	}
+#endif
 
 #ifdef _SDL_H
 

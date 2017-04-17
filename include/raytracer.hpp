@@ -6,7 +6,7 @@
 #include "material.hpp"
 #include "light.hpp"
 #include "camera.hpp"
-#include "shapes\union.hpp"
+#include "shapes/union.hpp"
 #include <bitset>
 
 namespace renderer {
