@@ -23,6 +23,9 @@
 #include "SDL.h"
 #endif
 
+#if _MSC_VER
+#include <GL/GL.h>
+#endif
 
 #include <functional>
 #include <stdio.h>

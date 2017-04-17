@@ -10,7 +10,10 @@
 #include "defines.hpp"
 #include "bvh.hpp"
 #include "main_raytrace.hpp"
+
+#ifdef __IPHONEOS__
 #include "SDL_opengles.h"
+#endif
 
 using namespace renderer;
 using json = nlohmann::json;

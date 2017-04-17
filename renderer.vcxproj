@@ -81,7 +81,7 @@
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>src;include;include/shapes;src/shapes;$(SolutionDIr);$(IncludePath)</IncludePath>
+    <IncludePath>src;include;include/shapes;src/shapes;$(SolutionDIr);$(SolutionDIr)/SDL;$(SolutionDIr)/include/realtime;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDIr)lib;$(SolutionDIr)lib\64;$(SolutionDIr)lib\64\debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -153,6 +153,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="include\tiny_obj_loader.cc" />
     <ClCompile Include="src\bbox.cpp" />
     <ClCompile Include="src\color.cpp" />
     <ClCompile Include="src\common.cpp" />
@@ -216,6 +217,7 @@
     <ClInclude Include="include\shapes\union.hpp" />
     <ClInclude Include="include\stdafx.h" />
     <ClInclude Include="include\matrix.hpp" />
+    <ClInclude Include="include\tiny_obj_loader.h" />
     <ClInclude Include="include\transform.hpp" />
   </ItemGroup>
   <ItemGroup>

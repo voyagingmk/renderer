@@ -1,6 +1,4 @@
-#ifndef TINYOBJLOADER_IMPLEMENTATION
-
-#define TINYOBJLOADER_IMPLEMENTATION
+#include "stdafx.h"
 #include "tiny_obj_loader.h"
 #include <cstdlib>
 #include <cstring>
@@ -8,14 +6,12 @@
 #include <cmath>
 #include <cstddef>
 #include <cctype>
-
 #include <string>
 #include <vector>
 #include <map>
 #include <fstream>
 #include <sstream>
 
-#include "tiny_obj_loader.h"
 
 namespace tinyobj {
     
@@ -902,6 +898,3 @@ namespace tinyobj {
     
 } // namespace
 
-
-
-#endif
