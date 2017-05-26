@@ -1,5 +1,5 @@
 #include "stdafx.h"
-// #include "main_raytrace.hpp"
+#include "main_raytrace.hpp"
 #include "realtime/shadermgr.hpp"
 #include "realtime/context.hpp"
 
@@ -20,6 +20,9 @@ public:
 
 
 int main(int argc, char *argv[]) {
+    rayTraceMain(argc, argv);
+    return 0;
+    printf("aa");
 	MyContext context;
 	context.setup(800, 600);
 	context.loop();

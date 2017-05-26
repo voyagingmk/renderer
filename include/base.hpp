@@ -1,18 +1,21 @@
 #ifndef BASE_HPP
 #define BASE_HPP
 
-#if _MSC_VER
 
-#else
-
-#endif 
-
-// #define USE_GLEW
+#define USE_GL
 
 #include <algorithm>
 #include <memory>
 
-#ifdef USE_GLEW
+
+#ifdef __APPLE__
+#include "SDL.h"
+#endif
+
+
+#ifdef USE_GL
+
+#ifdef _MSC_VER
 #define GLEW_STATIC
 #include "GL/glew.h" // include GLEW and new version of GL on Windows
 // #define GLFW_DLL
@@ -20,11 +23,12 @@
 #include <GL/GL.h>
 #include <GL/GLU.h>
 #else
-#include "SDL.h"
+#ifdef __APPLE__
+#include <OpenGL/GL.h>
+#include <OpenGL/glu.h>
+#endif
 #endif
 
-#if _MSC_VER
-#include <GL/GL.h>
 #endif
 
 #include <functional>
