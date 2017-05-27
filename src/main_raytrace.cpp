@@ -131,8 +131,8 @@ int rayTraceMain(int argc, char *argv[])
 			desc.film->set(x, updatedRect.y, c.rInt(), c.gInt(), c.bInt());
 		}
 		desc.film->afterSet();
-		//glClearColor(1.0, 1.0, 1.0, 1.0);
-		//glClear(GL_COLOR_BUFFER_BIT);
+		// glClearColor(1.0, 1.0, 1.0, 1.0);
+		// glClear(GL_COLOR_BUFFER_BIT);
 		int ret = SDL_RenderCopyEx(rendererSDL, texture, &updatedRect, &updatedRect, angle, &screenCenter, flip);
 		if (ret == -1)
 			SDLExit("SDL_RenderCopy failed");

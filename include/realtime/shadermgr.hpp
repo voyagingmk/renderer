@@ -39,7 +39,7 @@ namespace renderer {
 	};
 
 
-#ifdef USE_GLEW
+#ifdef USE_GL
 
 	class ShaderMgrOpenGL : public ShaderMgrBase {
 	private:

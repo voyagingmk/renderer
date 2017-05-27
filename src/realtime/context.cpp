@@ -38,11 +38,11 @@ void RendererContextSDL::setup(size_t w, size_t h) {
 	if (!win)
 		shutdown("Unable to create window");
 
-
-
 	rendererSDL = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
 	glContext = SDL_GL_CreateContext(win);
 	checkSDLError(__LINE__);
+    
+    onCustomSetup();
 }
 
 void RendererContextSDL::loop() {
@@ -64,7 +64,8 @@ void RendererContextSDL::onPoll() {
 }
 
 void RendererContextSDL::shutdown(const char *msg) {
-	printf("%s: %s\n", msg ? msg : "no msg", SDL_GetError());
+    onCustomDestroy();
+    printf("%s: %s\n", msg ? msg : "no msg", SDL_GetError());
 	if (rendererSDL) {
 		SDL_DestroyRenderer(rendererSDL);
 	}

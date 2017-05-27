@@ -27,7 +27,7 @@ void ShaderMgrBase::release() {
 
 
 
-#ifdef USE_GLEW
+#ifdef USE_GL
 
 ShaderHDL ShaderMgrOpenGL::loadShaderFromStr(ShaderType type, const char* source) {
 	const GLchar* src = source;
