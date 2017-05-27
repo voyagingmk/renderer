@@ -9,6 +9,7 @@ namespace renderer {
 	public:
 		size_t winWidth, winHeight;
 	public:
+        RendererContextBase(): winWidth(0), winHeight(0) {}
 		virtual void setTitle(const char* title) {}
 		virtual void setup(size_t w, size_t h) {}
         virtual void onCustomSetup() {}
@@ -23,12 +24,17 @@ namespace renderer {
 
 	class RendererContextSDL: public RendererContextBase {
 	protected:
-		bool shouldExit = false;
+		bool shouldExit;
 	public:
-		SDL_Window * win = nullptr;
-		SDL_Renderer * rendererSDL = nullptr;
-		SDL_GLContext glContext = nullptr;
+		SDL_Window * win;
+		SDL_Renderer * rendererSDL;
+		SDL_GLContext glContext;
 	public:
+        RendererContextSDL():
+            shouldExit(false),
+            win(nullptr),
+            rendererSDL(nullptr),
+            glContext(nullptr) {}
 		virtual void setTitle(const char* title) override;
 		virtual void setup(size_t w, size_t h) override;
 		virtual void loop() override;

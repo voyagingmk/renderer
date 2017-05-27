@@ -10,6 +10,7 @@
 
 #ifdef __APPLE__
 #include "SDL.h"
+// #include "SDL_opengl.h"
 #endif
 
 
@@ -24,8 +25,10 @@
 #include <GL/GLU.h>
 #else
 #ifdef __APPLE__
-#include <OpenGL/GL.h>
+#include <OpenGL/OpenGL.h>
 #include <OpenGL/glu.h>
+#define GL3_PROTOTYPES 1
+#include <OpenGL/gl3.h>
 #endif
 #endif
 
