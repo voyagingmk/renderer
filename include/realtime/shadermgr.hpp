@@ -35,6 +35,8 @@ namespace renderer {
 		virtual void deleteShaderProgram(ShaderProgramHDL){}
 		virtual void useShaderProgram(ShaderProgramHDL hdl) {}
 		virtual bool isShader(ShaderHDL) { return false; }
+        virtual int32_t getUniformLocation(ShaderProgramHDL, const char* name) { return 0; }
+        virtual void setUniform4f(int32_t loc, float f1, float f2, float f3, float f4) {}
 		void release();
 	};
 
@@ -57,6 +59,8 @@ namespace renderer {
 		virtual void deleteShaderProgram(ShaderProgramHDL) override;
 		virtual void useShaderProgram(ShaderProgramHDL hdl) override;
 		virtual bool isShader(ShaderHDL) override;
+        int32_t getUniformLocation(ShaderProgramHDL, const char* name) override;
+        virtual void setUniform4f(int32_t loc, float f1, float f2, float f3, float f4) override;
 	};
 
 #endif

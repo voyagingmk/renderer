@@ -104,6 +104,10 @@ namespace renderer {
 		static MemoryPool<T> pool;
 		return &pool;
 	}
+    
+    static size_t getTimeMS() {
+    return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch()).count();
+    }
 
 	constexpr float PI = 3.141592653589793238463f;
 

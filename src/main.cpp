@@ -31,10 +31,10 @@ public:
             { ShaderType::Fragment, "test1.fs"}
         });
         GLfloat vertices[] = {
-            0.5f,  0.5f, 0.0f,  // Top Right
-            0.5f, -0.5f, 0.0f,  // Bottom Right
-            -0.5f, -0.5f, 0.0f,  // Bottom Left
-            -0.5f,  0.5f, 0.0f   // Top Left
+            0.5f,  0.5f, 0.0f,  1.0f, 0.0f, 0.0f, // Top Right
+            0.5f, -0.5f, 0.0f,  1.0f, 1.0f, 0.0f, // Bottom Right
+            -0.5f,-0.5f, 0.0f,  1.0f, 0.0f, 1.0f, // Bottom Left
+            -0.5f, 0.5f, 0.0f,  0.0f, 0.0f, 1.0f, // Top Left
         };
         GLuint indices[] = {  // Note that we start from 0!
             0, 1, 3,  // First Triangle
@@ -52,8 +52,12 @@ public:
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
         
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+        // Position attribute
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)0);
         glEnableVertexAttribArray(0);
+        // Color attribute
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+        glEnableVertexAttribArray(1);
         
         glBindBuffer(GL_ARRAY_BUFFER, 0); // Note that this is allowed, the call to glVertexAttribPointer registered VBO as the currently bound vertex buffer object so afterwards we can safely unbind
         
@@ -69,9 +73,13 @@ public:
         ShaderMgrOpenGL& shaderMgr = ShaderMgrOpenGL::getInstance();
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
-        
-        // Draw our first triangle
+        // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         shaderMgr.useShaderProgram(shaderProgramHDL);
+        
+        GLfloat greenValue = (sin(getTimeMS() * 0.002) / 2) + 0.5;
+        GLint colorLoc = shaderMgr.getUniformLocation(shaderProgramHDL, "ourColor");
+        shaderMgr.setUniform4f(colorLoc, 0.0f, greenValue, 0.0f, 1.0f);
+        
         glBindVertexArray(VAO);
         //glDrawArrays(GL_TRIANGLES, 0, 6);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);

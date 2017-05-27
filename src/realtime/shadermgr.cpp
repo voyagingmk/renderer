@@ -118,4 +118,12 @@ bool ShaderMgrOpenGL::isShader(ShaderHDL hdl) {
 	return glIsShader(hdl);
 }
 
+int32_t ShaderMgrOpenGL::getUniformLocation(ShaderProgramHDL hdl, const char* name) {
+    return (int32_t)glGetUniformLocation(hdl, name);
+}
+void ShaderMgrOpenGL::setUniform4f(int32_t loc, float f1, float f2, float f3, float f4) {
+   glUniform4f(loc, f1, f2, f3, f4);
+}
+
+
 #endif

@@ -58,6 +58,9 @@ void RendererContextSDL::setup(size_t w, size_t h) {
     } else {
         cout << "GLSL version error " << endl;
     }
+    GLint nrAttributes;
+    glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
+    cout << "Maximum nr of vertex attributes supported: " << nrAttributes << endl;
     /* TODO prevent downgrade the GL version
     rendererSDL = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
     if(!rendererSDL) {
