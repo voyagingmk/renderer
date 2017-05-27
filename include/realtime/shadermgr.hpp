@@ -9,9 +9,10 @@ namespace renderer {
 		Vertex = 1,
 		Fragment = 2
 	};
-
-	typedef int ShaderHDL;
-	typedef int ShaderProgramHDL;
+    
+    typedef int32_t UniLoc;
+	typedef int32_t ShaderHDL;
+	typedef int32_t ShaderProgramHDL;
 
 	typedef std::map<ShaderType, std::string> ShaderFileNames;
 	typedef std::map<ShaderType, ShaderHDL> ShaderSet;
@@ -60,7 +61,8 @@ namespace renderer {
 		virtual void useShaderProgram(ShaderProgramHDL hdl) override;
 		virtual bool isShader(ShaderHDL) override;
         int32_t getUniformLocation(ShaderProgramHDL, const char* name) override;
-        virtual void setUniform4f(int32_t loc, float f1, float f2, float f3, float f4) override;
+        virtual void setUniform4f(UniLoc loc, float f1, float f2, float f3, float f4) override;
+        void setUniform1i(UniLoc loc, int val);
 	};
 
 #endif

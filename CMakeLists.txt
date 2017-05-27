@@ -26,6 +26,7 @@ include_directories("${PROJECT_SOURCE_DIR}")
 include_directories("${PROJECT_SOURCE_DIR}/include")
 include_directories("${PROJECT_SOURCE_DIR}/include/realtime")
 include_directories("${PROJECT_SOURCE_DIR}/include/shapes")
+include_directories("${PROJECT_SOURCE_DIR}/SOIL")
 include_directories("${PROJECT_SOURCE_DIR}/GL")
 include_directories("${PROJECT_SOURCE_DIR}/SDL")
 include_directories("${PROJECT_SOURCE_DIR}/src")
@@ -73,7 +74,9 @@ ENDIF (APPLE)
 link_directories(
     "./"
 )
+
 set (EXTRA_LIBS ${EXTRA_LIBS} SDL2)
+set (EXTRA_LIBS ${EXTRA_LIBS} SOIL)
 
 add_executable(renderer ${BASE_SOURCERS} ${PROJECT_SOURCE_DIR})
 

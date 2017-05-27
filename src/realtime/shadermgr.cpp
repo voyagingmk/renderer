@@ -12,6 +12,10 @@ ShaderMgrBase::~ShaderMgrBase() {
 ShaderHDL ShaderMgrBase::loadShaderFromFile(ShaderType type, const char* filename) {
 	auto path = dirpath + std::string(filename);
 	std::string source = readFile(path.c_str());
+    if (source.length() == 0) {
+        std::cout << "[ShaderMgr] err, loadShaderFromFile failed: wrong file\n" << std::endl;
+        return 0;
+    }
 	return loadShaderFromStr(type, source.c_str());
 }
 
@@ -44,13 +48,14 @@ ShaderHDL ShaderMgrOpenGL::loadShaderFromStr(ShaderType type, const char* source
 	}
 	glShaderSource(shaderHDL, 1, &src, NULL);
 	glCompileShader(shaderHDL);
+    checkGLError();
 	// Check for compile time errors
 	GLint success;
 	glGetShaderiv(shaderHDL, GL_COMPILE_STATUS, &success);
 	if (!success) {
 		GLchar infoLog[512];
 		glGetShaderInfoLog(shaderHDL, 512, NULL, infoLog);
-		std::cout << "err: shader compile failed: \n" << infoLog << std::endl;
+		std::cout << "[ShaderMgr] err, shader compile failed: \n" << infoLog << std::endl;
 		return 0;
 	}
 	return shaderHDL;
@@ -64,7 +69,7 @@ ShaderProgramHDL ShaderMgrOpenGL::createShaderProgram(ShaderSet shaderSet) {
 	for (auto pair: shaderSet) {
 		ShaderHDL shaderHDL = pair.second;
 		if (!isShader(shaderHDL)) {
-			std::cout << "err: linkShaders, invalid shader hdl:" << shaderHDL << std::endl;
+			std::cout << "[ShaderMgr] err, invalid shader hdl:" << shaderHDL << std::endl;
 			return 0;
 		}
 	}
@@ -81,7 +86,7 @@ ShaderProgramHDL ShaderMgrOpenGL::createShaderProgram(ShaderSet shaderSet) {
 	if (!success) {
 		GLchar infoLog[512]; 
 		glGetProgramInfoLog(hdl, 512, NULL, infoLog);
-		std::cout << "err: shader link failed: \n" << infoLog << std::endl;
+		std::cout << "[ShaderMgr] err, shader link failed: \n" << infoLog << std::endl;
 		return 0;
 	}
 	for (auto pair : shaderSet) {
@@ -121,9 +126,15 @@ bool ShaderMgrOpenGL::isShader(ShaderHDL hdl) {
 int32_t ShaderMgrOpenGL::getUniformLocation(ShaderProgramHDL hdl, const char* name) {
     return (int32_t)glGetUniformLocation(hdl, name);
 }
-void ShaderMgrOpenGL::setUniform4f(int32_t loc, float f1, float f2, float f3, float f4) {
+
+void ShaderMgrOpenGL::setUniform4f(UniLoc loc, float f1, float f2, float f3, float f4) {
    glUniform4f(loc, f1, f2, f3, f4);
 }
+
+void ShaderMgrOpenGL::setUniform1i(UniLoc loc, int val) {
+    glUniform1i(loc, val);
+}
+
 
 
 #endif

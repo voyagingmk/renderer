@@ -4,7 +4,7 @@
 #include "base.hpp"
 
 #ifdef USE_GL
-bool checkGLError() {
+static bool checkGLError() {
 	GLenum err = glGetError();
 	if (err != GL_NO_ERROR) {
 		const GLubyte* errString = gluErrorString(err);

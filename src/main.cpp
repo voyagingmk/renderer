@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "main_raytrace.hpp"
 #include "realtime/shadermgr.hpp"
+#include "realtime/texturemgr.hpp"
 #include "realtime/context.hpp"
 
 
@@ -12,33 +13,41 @@ using namespace renderer;
 class MyContext : public RendererContextSDL {
     ShaderProgramHDL shaderProgramHDL;
     GLuint VBO, VAO, EBO;
+    texID texID1, texID2;
 public:
     MyContext():
         shaderProgramHDL(0),
         VBO(0),
         VAO(0),
-        EBO(0) {}
+        EBO(0),
+        texID1(0), texID2(0) {}
 	virtual void onSDLEvent(SDL_Event& e) override {
 		if (e.type == SDL_QUIT) {
 			shouldExit = true;
 		}
 	}
     virtual void onCustomSetup() override {
+        TextureMgrOpenGL& texMgr = TextureMgrOpenGL::getInstance();
         ShaderMgrOpenGL& shaderMgr = ShaderMgrOpenGL::getInstance();
+        texMgr.setTextureDirPath("assets/images/");
         shaderMgr.setShaderFileDirPath("assets/shaders/");
         shaderProgramHDL = shaderMgr.createShaderProgram({
             { ShaderType::Vertex, "test1.vs" },
             { ShaderType::Fragment, "test1.fs"}
         });
+        texID1 = texMgr.loadTexture("container.jpg", "container");
+        texID2 = texMgr.loadTexture("face.png", "face");
+        // Set up vertex data (and buffer(s)) and attribute pointers
         GLfloat vertices[] = {
-            0.5f,  0.5f, 0.0f,  1.0f, 0.0f, 0.0f, // Top Right
-            0.5f, -0.5f, 0.0f,  1.0f, 1.0f, 0.0f, // Bottom Right
-            -0.5f,-0.5f, 0.0f,  1.0f, 0.0f, 1.0f, // Bottom Left
-            -0.5f, 0.5f, 0.0f,  0.0f, 0.0f, 1.0f, // Top Left
+            // Positions          // Colors           // Texture Coords
+            0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // Top Right
+            0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // Bottom Right
+            -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // Bottom Left
+            -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // Top Left
         };
         GLuint indices[] = {  // Note that we start from 0!
-            0, 1, 3,  // First Triangle
-            1, 2, 3   // Second Triangle
+            0, 1, 3, // First Triangle
+            1, 2, 3  // Second Triangle
         };
         glGenVertexArrays(1, &VAO);
         glGenBuffers(1, &VBO);
@@ -53,11 +62,14 @@ public:
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
         
         // Position attribute
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)0);
         glEnableVertexAttribArray(0);
         // Color attribute
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
         glEnableVertexAttribArray(1);
+        // TexCoord attribute
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(6 * sizeof(GLfloat)));
+        glEnableVertexAttribArray(2);
         
         glBindBuffer(GL_ARRAY_BUFFER, 0); // Note that this is allowed, the call to glVertexAttribPointer registered VBO as the currently bound vertex buffer object so afterwards we can safely unbind
         
@@ -76,9 +88,22 @@ public:
         // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         shaderMgr.useShaderProgram(shaderProgramHDL);
         
+        // Bind Textures using texture units
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texID1);
+        UniLoc loc1 = shaderMgr.getUniformLocation(shaderProgramHDL, "ourTexture1");
+        shaderMgr.setUniform1i(loc1, 0);
+
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, texID2);
+        UniLoc loc2 = shaderMgr.getUniformLocation(shaderProgramHDL, "ourTexture2");
+        shaderMgr.setUniform1i(loc2, 1);
+
+        /*
         GLfloat greenValue = (sin(getTimeMS() * 0.002) / 2) + 0.5;
-        GLint colorLoc = shaderMgr.getUniformLocation(shaderProgramHDL, "ourColor");
+        UniLoc colorLoc = shaderMgr.getUniformLocation(shaderProgramHDL, "ourColor");
         shaderMgr.setUniform4f(colorLoc, 0.0f, greenValue, 0.0f, 1.0f);
+        */
         
         glBindVertexArray(VAO);
         //glDrawArrays(GL_TRIANGLES, 0, 6);
