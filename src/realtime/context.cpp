@@ -13,14 +13,13 @@ void RendererContextSDL::setTitle(const char* title) {
 void RendererContextSDL::setup(size_t w, size_t h) {
 	winWidth = w;
 	winHeight = h;
-
     SDL_SetMainReady();
-	if (SDL_Init(SDL_INIT_VIDEO) < 0)
+	if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
 		shutdown("Unable to initialize SDL");
-
+   
     checkSDLError(__LINE__);
   	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 	checkSDLError(__LINE__);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
     checkSDLError(__LINE__);//on Win7 would cause a ERROR about SHCore.dll, just ignore it.
@@ -37,10 +36,16 @@ void RendererContextSDL::setup(size_t w, size_t h) {
 		SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
 	if (!win)
         shutdown("Unable to create window");
-	rendererSDL = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
-	glContext = SDL_GL_CreateContext(win);
-	checkSDLError(__LINE__);
-    
+    glContext = SDL_GL_CreateContext(win);
+    if(gl3wInit() == -1) {
+        shutdown("gl3wInit failed");
+        return;
+    }
+    if (!gl3wIsSupported(3, 2)) {
+        shutdown("OpenGL 3.2 not supported");
+        return;
+    }
+    checkSDLError(__LINE__);
     const char* ogl_version = (const char*)glGetString(GL_VERSION);
     const char* glsl_version = (const char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
     if (ogl_version) {
@@ -53,6 +58,13 @@ void RendererContextSDL::setup(size_t w, size_t h) {
     } else {
         cout << "GLSL version error " << endl;
     }
+    /* TODO prevent downgrade the GL version
+    rendererSDL = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
+    if(!rendererSDL) {
+        checkSDLError(__LINE__);
+        shutdown("SDL_CreateRenderer failed");
+        return;
+    }*/
     onCustomSetup();
 }
 
@@ -66,7 +78,8 @@ void RendererContextSDL::loop() {
 			break;
 		}
 		onPoll();
-		SDL_RenderPresent(rendererSDL);
+        SDL_GL_SwapWindow(win);
+		// SDL_RenderPresent(rendererSDL);
 	}
 }
 
@@ -76,7 +89,7 @@ void RendererContextSDL::onPoll() {
 
 void RendererContextSDL::shutdown(const char *msg) {
     onCustomDestroy();
-    printf("%s: %s\n", msg ? msg : "no msg", SDL_GetError());
+    printf("%s, SDLErr: %s\n", msg ? msg : "no msg", SDL_GetError());
 	if (rendererSDL) {
 		SDL_DestroyRenderer(rendererSDL);
 	}

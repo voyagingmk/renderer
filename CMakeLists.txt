@@ -22,9 +22,11 @@ set(EXECUTABLE_OUTPUT_PATH "${PROJECT_BINARY_DIR}/bin")
 FILE(GLOB_RECURSE MY_HEADERS "${PROJECT_SOURCE_DIR}/include/*.h")
 source_group("My Headers" FILES ${MY_HEADERS})
 
+include_directories("${PROJECT_SOURCE_DIR}")
 include_directories("${PROJECT_SOURCE_DIR}/include")
 include_directories("${PROJECT_SOURCE_DIR}/include/realtime")
 include_directories("${PROJECT_SOURCE_DIR}/include/shapes")
+include_directories("${PROJECT_SOURCE_DIR}/GL")
 include_directories("${PROJECT_SOURCE_DIR}/SDL")
 include_directories("${PROJECT_SOURCE_DIR}/src")
 include_directories("${PROJECT_SOURCE_DIR}/src/realtime")
@@ -35,6 +37,7 @@ FILE(GLOB_RECURSE BASE_SOURCERS
   ${PROJECT_SOURCE_DIR}/src/*.cpp
   ${PROJECT_SOURCE_DIR}/src/realtime/*.cpp
   ${PROJECT_SOURCE_DIR}/src/shapes/*.cpp
+  ${PROJECT_SOURCE_DIR}/GL/*.c
   )
 
 FILE(GLOB_RECURSE MAIN_SOURCERS ${PROJECT_SOURCE_DIR}/main/*.cpp)

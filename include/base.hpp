@@ -25,6 +25,7 @@
 #include <GL/GLU.h>
 #else
 #ifdef __APPLE__
+#include "GL/gl3w.h"
 #include <OpenGL/OpenGL.h>
 #include <OpenGL/glu.h>
 #define GL3_PROTOTYPES 1
