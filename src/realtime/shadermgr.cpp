@@ -135,6 +135,9 @@ void ShaderMgrOpenGL::setUniform1i(UniLoc loc, int val) {
     glUniform1i(loc, val);
 }
 
+void ShaderMgrOpenGL::setUniformMatrix4f(UniLoc loc, Matrix4x4 mat) {
+    glUniformMatrix4fv(loc, 1, GL_FALSE, mat.data->data);
+}
 
 
 #endif

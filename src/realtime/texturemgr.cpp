@@ -36,7 +36,7 @@ texID TextureMgrOpenGL::loadTexture(const char* filename, const char* aliasname)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     // Set texture filtering
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     // Load, create texture and generate mipmaps
     int width, height;
     unsigned char* image = SOIL_load_image((dirpath + std::string(filename)).c_str(), &width, &height, 0, SOIL_LOAD_RGB);
@@ -47,6 +47,11 @@ texID TextureMgrOpenGL::loadTexture(const char* filename, const char* aliasname)
     glBindTexture(GL_TEXTURE_2D, 0); // Unbind texture when done, so we won't accidentily mess up our texture.
     texDict.insert({aliasname, texID});
     return texID;
+}
+
+void TextureMgrOpenGL::activateTexture(uint32_t idx, texID texID) {
+    glActiveTexture(GL_TEXTURE0 + idx);
+    glBindTexture(GL_TEXTURE_2D, texID);
 }
 
 void TextureMgrOpenGL::destroyTexture(texID texID) {

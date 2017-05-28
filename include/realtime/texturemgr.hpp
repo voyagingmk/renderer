@@ -39,6 +39,7 @@ namespace renderer {
 			return mgr;
 		}
         virtual texID loadTexture(const char* filename, const char* aliasname);
+        void activateTexture(uint32_t idx, texID texID);
         virtual void destroyTexture(texID texID);
 	};
 
