@@ -5,6 +5,7 @@
 #include "realtime/context.hpp"
 #include "transform.hpp"
 #include "geometry.cpp"
+#include "quaternion.hpp"
 
 
 
@@ -114,7 +115,7 @@ public:
         angle += 1.0;
         Transform4x4 trans3 = RotateY(angle);
         Transform4x4 modelTrans = trans1 * trans2 * trans3;
-        Transform4x4 projTrans = Perspective(45.0, 1.0, 0.1, 100.0);
+        Transform4x4 projTrans = Perspective(45.0, winWidth / (float)winHeight, 0.1, 100.0);
         Transform4x4 viewTrans = LookAt(Vector3dF(0.0, 0.0, 1.0), Vector3dF(0.0, 0.0, 0.0), Vector3dF(0.0,1.0,0.0));
         // Matrix4x4::newIdentity();
         shaderMgr.setUniformTransform4f(locModel, modelTrans);
@@ -126,7 +127,6 @@ public:
         UniLoc colorLoc = shaderMgr.getUniformLocation(shaderProgramHDL, "ourColor");
         shaderMgr.setUniform4f(colorLoc, 0.0f, greenValue, 0.0f, 1.0f);
         */
-        
         glBindVertexArray(VAO);
         //glDrawArrays(GL_TRIANGLES, 0, 6);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -139,7 +139,7 @@ int main(int argc, char *argv[]) {
     // rayTraceMain(argc, argv);
     // return 0;
 	MyContext context;
-	context.setup(600, 600);
+	context.setup(800, 600);
 	context.loop();
 	return 0;
 }

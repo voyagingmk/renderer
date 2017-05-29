@@ -13,7 +13,7 @@ namespace renderer {
 			s(0),x(0),y(0),z(0) {}
 		Quaternion(const T s, const T x, const T y, const T z):
 			s(s), x(x), y(y), z(z) {}
-		Quaternion(const Quaternion<T> & p) {
+		Quaternion(const Quaternion<T> & q) {
 			s = q.s;
 			x = q.x;
 			y = q.y;
