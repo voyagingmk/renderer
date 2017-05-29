@@ -6,6 +6,11 @@
 #include "transform.hpp"
 #include "geometry.cpp"
 #include "quaternion.hpp"
+#include "buffermgr.hpp"
+
+#define TINYOBJLOADER_IMPLEMENTATION // define this in only *one* .cc
+#include "tiny_obj_loader.h"
+
 
 
 
@@ -15,14 +20,10 @@ using namespace renderer;
 
 class MyContext : public RendererContextSDL {
     ShaderProgramHDL shaderProgramHDL;
-    GLuint VBO, VAO, EBO;
     texID texID1, texID2;
 public:
     MyContext():
         shaderProgramHDL(0),
-        VBO(0),
-        VAO(0),
-        EBO(0),
         texID1(0), texID2(0) {}
 	virtual void onSDLEvent(SDL_Event& e) override {
 		if (e.type == SDL_QUIT) {
@@ -32,6 +33,7 @@ public:
     virtual void onCustomSetup() override {
         TextureMgrOpenGL& texMgr = TextureMgrOpenGL::getInstance();
         ShaderMgrOpenGL& shaderMgr = ShaderMgrOpenGL::getInstance();
+        BufferMgrOpenGL& bufferMgr = BufferMgrOpenGL::getInstance();
         texMgr.setTextureDirPath("assets/images/");
         shaderMgr.setShaderFileDirPath("assets/shaders/");
         shaderProgramHDL = shaderMgr.createShaderProgram({
@@ -40,6 +42,7 @@ public:
         });
         texID1 = texMgr.loadTexture("container.jpg", "container");
         texID2 = texMgr.loadTexture("face.png", "face");
+        /*
         // Set up vertex data (and buffer(s)) and attribute pointers
         GLfloat vertices[] = {
             // Positions          // Colors           // Texture Coords
@@ -77,6 +80,7 @@ public:
         glBindBuffer(GL_ARRAY_BUFFER, 0); // Note that this is allowed, the call to glVertexAttribPointer registered VBO as the currently bound vertex buffer object so afterwards we can safely unbind
         
         glBindVertexArray(0); // Unbind VAO (it's always a good thing to unbind any buffer/array to prevent strange bugs), remember: do NOT unbind the EBO, keep it bound to this VAO
+        */
         
         
         // Uncommenting this call will result in wireframe polygons.
@@ -86,14 +90,30 @@ public:
         // Setup OpenGL options
         glEnable(GL_DEPTH_TEST);
         
+        const std::string filepath = "./assets/models/cube.obj";
+        std::vector<tinyobj::shape_t> shapes;
+        std::vector<tinyobj::material_t> materials;
+        std::string err;
+        tinyobj::LoadObj(shapes, materials, err, filepath.c_str(), "./assets/models/");
+        if (!err.empty()) {
+            // `err` may contain warning message.
+            std::cerr << err << std::endl;
+            return;
+        }
+        auto mesh = shapes[0].mesh;
+        bufferMgr.CreateBuffer("cube", mesh.positions, mesh.texcoords, mesh.indices);
+    
     }
+            
     virtual void onPoll() override
     {
         ShaderMgrOpenGL& shaderMgr = ShaderMgrOpenGL::getInstance();
         TextureMgrOpenGL& texMgr = TextureMgrOpenGL::getInstance();
+        BufferMgrOpenGL& bufferMgr = BufferMgrOpenGL::getInstance();
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         shaderMgr.useShaderProgram(shaderProgramHDL);
         
         // Bind Textures using texture units
@@ -119,6 +139,7 @@ public:
         QuaternionF rotY = QuaternionF::RotateY(pitch);
         QuaternionF rotZ = QuaternionF::RotateZ(pitch);
         QuaternionF rot = rotX * rotY * rotZ;
+        Transform4x4 trans3 = RotateY(pitch);
         Transform4x4 modelTrans = trans1 * trans2 * Transform4x4(rot.toMatrix4x4());
         Transform4x4 projTrans = Perspective(45.0, winWidth / (float)winHeight, 0.1, 100.0);
 
@@ -127,16 +148,7 @@ public:
         shaderMgr.setUniformTransform4f(locModel, modelTrans);
         shaderMgr.setUniformTransform4f(locView, viewTrans);
         shaderMgr.setUniformTransform4f(locProj, projTrans);
-
-        /*
-        GLfloat greenValue = (sin(getTimeMS() * 0.002) / 2) + 0.5;
-        UniLoc colorLoc = shaderMgr.getUniformLocation(shaderProgramHDL, "ourColor");
-        shaderMgr.setUniform4f(colorLoc, 0.0f, greenValue, 0.0f, 1.0f);
-        */
-        glBindVertexArray(VAO);
-        //glDrawArrays(GL_TRIANGLES, 0, 6);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        glBindVertexArray(0);
+        bufferMgr.DrawBuffer("cube");
     }
 };
 
