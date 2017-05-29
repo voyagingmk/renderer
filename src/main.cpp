@@ -3,6 +3,8 @@
 #include "realtime/shadermgr.hpp"
 #include "realtime/texturemgr.hpp"
 #include "realtime/context.hpp"
+#include "transform.hpp"
+#include "geometry.cpp"
 
 
 
@@ -40,10 +42,10 @@ public:
         // Set up vertex data (and buffer(s)) and attribute pointers
         GLfloat vertices[] = {
             // Positions          // Colors           // Texture Coords
-            0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // Top Right
-            0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // Bottom Right
-            -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // Bottom Left
-            -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // Top Left
+            0.5f,  0.5f, 0.5f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // Top Right
+            0.5f, -0.5f, 0.5f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // Bottom Right
+            -0.5f, -0.5f, 0.5f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // Bottom Left
+            -0.5f,  0.5f, 0.5f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // Top Left
         };
         GLuint indices[] = {  // Note that we start from 0!
             0, 1, 3, // First Triangle
@@ -83,21 +85,33 @@ public:
     virtual void onPoll() override
     {
         ShaderMgrOpenGL& shaderMgr = ShaderMgrOpenGL::getInstance();
+        TextureMgrOpenGL& texMgr = TextureMgrOpenGL::getInstance();
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
         // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         shaderMgr.useShaderProgram(shaderProgramHDL);
         
         // Bind Textures using texture units
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texID1);
+        texMgr.activateTexture(0, texID1);
         UniLoc loc1 = shaderMgr.getUniformLocation(shaderProgramHDL, "ourTexture1");
         shaderMgr.setUniform1i(loc1, 0);
 
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, texID2);
+        texMgr.activateTexture(1, texID2);
         UniLoc loc2 = shaderMgr.getUniformLocation(shaderProgramHDL, "ourTexture2");
         shaderMgr.setUniform1i(loc2, 1);
+        
+        
+        UniLoc loc3 = shaderMgr.getUniformLocation(shaderProgramHDL, "transform");
+        float x = sin(getTimeMS()*0.001) * 1.0f;
+        Transform4x4 trans1 = Translate(Vector3dF(x, 0.0, 0.0));
+        Transform4x4 trans2 = Scale(0.5, 0.5, 0.5);
+        static float angle = 45.0;
+        angle += 0.3;
+        Transform4x4 trans3 = RotateZ(angle);
+        Transform4x4 projTrans = Perspective(45.0f, 1.0f, -1.0f, 100.0f);
+        // projTrans.m.debug();
+        Transform4x4 trans = projTrans * trans1 * trans2 * trans3;
+        shaderMgr.setUniformMatrix4f(loc3, trans.GetMatrix().transpose());
 
         /*
         GLfloat greenValue = (sin(getTimeMS() * 0.002) / 2) + 0.5;
@@ -117,7 +131,7 @@ int main(int argc, char *argv[]) {
     // rayTraceMain(argc, argv);
     // return 0;
 	MyContext context;
-	context.setup(800, 600);
+	context.setup(600, 600);
 	context.loop();
 	return 0;
 }
