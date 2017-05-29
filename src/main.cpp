@@ -110,8 +110,8 @@ public:
         Transform4x4 trans3 = RotateZ(angle);
         Transform4x4 projTrans = Perspective(45.0f, 1.0f, -1.0f, 100.0f);
         // projTrans.m.debug();
-        Transform4x4 trans = projTrans * trans1 * trans2 * trans3;
-        shaderMgr.setUniformMatrix4f(loc3, trans.GetMatrix().transpose());
+        Transform4x4 trans = trans1 * trans2 * trans3;
+        shaderMgr.setUniformTransform4f(loc3, trans);
 
         /*
         GLfloat greenValue = (sin(getTimeMS() * 0.002) / 2) + 0.5;

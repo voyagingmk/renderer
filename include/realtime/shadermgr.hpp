@@ -3,6 +3,7 @@
 
 #include "base.hpp"
 #include "matrix.hpp"
+#include "transform.hpp"
 
 namespace renderer {
 
@@ -65,6 +66,7 @@ namespace renderer {
         virtual void setUniform4f(UniLoc loc, float f1, float f2, float f3, float f4) override;
         void setUniform1i(UniLoc loc, int val);
         void setUniformMatrix4f(UniLoc loc, Matrix4x4 mat);
+        void setUniformTransform4f(UniLoc loc, Transform4x4 trans);
 	};
 
 #endif
