@@ -42,10 +42,10 @@ public:
         // Set up vertex data (and buffer(s)) and attribute pointers
         GLfloat vertices[] = {
             // Positions          // Colors           // Texture Coords
-            0.5f,  0.5f, 0.5f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // Top Right
-            0.5f, -0.5f, 0.5f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // Bottom Right
-            -0.5f, -0.5f, 0.5f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // Bottom Left
-            -0.5f,  0.5f, 0.5f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // Top Left
+            0.5f,  0.5f,  0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // Top Right
+            0.5f, -0.5f,  0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // Bottom Right
+            -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // Bottom Left
+            -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // Top Left
         };
         GLuint indices[] = {  // Note that we start from 0!
             0, 1, 3, // First Triangle
@@ -81,13 +81,17 @@ public:
         // Uncommenting this call will result in wireframe polygons.
         //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         
+        glViewport(0, 0, winWidth, winHeight);
+        // Setup OpenGL options
+        glEnable(GL_DEPTH_TEST);
+        
     }
     virtual void onPoll() override
     {
         ShaderMgrOpenGL& shaderMgr = ShaderMgrOpenGL::getInstance();
         TextureMgrOpenGL& texMgr = TextureMgrOpenGL::getInstance();
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         shaderMgr.useShaderProgram(shaderProgramHDL);
         
@@ -100,18 +104,22 @@ public:
         UniLoc loc2 = shaderMgr.getUniformLocation(shaderProgramHDL, "ourTexture2");
         shaderMgr.setUniform1i(loc2, 1);
         
-        
-        UniLoc loc3 = shaderMgr.getUniformLocation(shaderProgramHDL, "transform");
-        float x = sin(getTimeMS()*0.001) * 1.0f;
-        Transform4x4 trans1 = Translate(Vector3dF(x, 0.0, 0.0));
+        UniLoc locModel = shaderMgr.getUniformLocation(shaderProgramHDL, "model");
+        UniLoc locView = shaderMgr.getUniformLocation(shaderProgramHDL, "view");
+        UniLoc locProj = shaderMgr.getUniformLocation(shaderProgramHDL, "proj");
+        float x = sin(getTimeMS()*0.001) * 0.5f;
+        Transform4x4 trans1 = Translate(Vector3dF(x, 0.0, -2.0));
         Transform4x4 trans2 = Scale(0.5, 0.5, 0.5);
-        static float angle = 45.0;
-        angle += 0.3;
-        Transform4x4 trans3 = RotateZ(angle);
-        Transform4x4 projTrans = Perspective(45.0f, 1.0f, -1.0f, 100.0f);
-        // projTrans.m.debug();
-        Transform4x4 trans = trans1 * trans2 * trans3;
-        shaderMgr.setUniformTransform4f(loc3, trans);
+        static float angle = 0.0;
+        angle += 1.0;
+        Transform4x4 trans3 = RotateY(angle);
+        Transform4x4 modelTrans = trans1 * trans2 * trans3;
+        Transform4x4 projTrans = Perspective(45.0, 1.0, 0.1, 100.0);
+        Transform4x4 viewTrans = LookAt(Vector3dF(0.0, 0.0, 1.0), Vector3dF(0.0, 0.0, 0.0), Vector3dF(0.0,1.0,0.0));
+        // Matrix4x4::newIdentity();
+        shaderMgr.setUniformTransform4f(locModel, modelTrans);
+        shaderMgr.setUniformTransform4f(locView, viewTrans);
+        shaderMgr.setUniformTransform4f(locProj, projTrans);
 
         /*
         GLfloat greenValue = (sin(getTimeMS() * 0.002) / 2) + 0.5;
