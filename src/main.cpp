@@ -109,14 +109,20 @@ public:
         UniLoc locView = shaderMgr.getUniformLocation(shaderProgramHDL, "view");
         UniLoc locProj = shaderMgr.getUniformLocation(shaderProgramHDL, "proj");
         float x = sin(getTimeMS()*0.001) * 0.5f;
-        Transform4x4 trans1 = Translate(Vector3dF(x, 0.0, -2.0));
+        Transform4x4 trans1 = Translate(Vector3dF(0.0, 0.0, -2.0));
         Transform4x4 trans2 = Scale(0.5, 0.5, 0.5);
-        static float angle = 0.0;
-        angle += 1.0;
-        Transform4x4 trans3 = RotateY(angle);
-        Transform4x4 modelTrans = trans1 * trans2 * trans3;
+        static float pitch = 0.0, yaw = 0.0, roll = 0.0;
+        pitch += 4.0f;
+        yaw += 2.0f;
+        roll += 3.0f;
+        QuaternionF rotX = QuaternionF::RotateX(pitch);
+        QuaternionF rotY = QuaternionF::RotateY(pitch);
+        QuaternionF rotZ = QuaternionF::RotateZ(pitch);
+        QuaternionF rot = rotX * rotY * rotZ;
+        Transform4x4 modelTrans = trans1 * trans2 * Transform4x4(rot.toMatrix4x4());
         Transform4x4 projTrans = Perspective(45.0, winWidth / (float)winHeight, 0.1, 100.0);
-        Transform4x4 viewTrans = LookAt(Vector3dF(0.0, 0.0, 1.0), Vector3dF(0.0, 0.0, 0.0), Vector3dF(0.0,1.0,0.0));
+
+        Transform4x4 viewTrans = LookAt(Vector3dF(0.0, 0.0, 1.0), Vector3dF(0.0, 0.0, -1.0), Vector3dF(0.0,1.0,0.0));
         // Matrix4x4::newIdentity();
         shaderMgr.setUniformTransform4f(locModel, modelTrans);
         shaderMgr.setUniformTransform4f(locView, viewTrans);

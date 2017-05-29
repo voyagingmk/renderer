@@ -3,10 +3,12 @@
 
 #include "base.hpp"
 #include "geometry.hpp"
+#include "matrix.hpp"
 
 namespace renderer {
 	template<typename T>
 	class Quaternion {
+    public:
 		float s, x, y, z;
 	public:
 		Quaternion():
@@ -119,7 +121,7 @@ namespace renderer {
 				sinTheta * normAxis.x, 
 				sinTheta * normAxis.y, 
 				sinTheta * normAxis.z);
-			Quaternion<T> rotQInv(rotQ.s, -rotQ.x, -rotQ.y, -rotQ.z);
+			Quaternion<T> rotQInv = rotQ.Conjugate();
 			return rotQ * (*this) * rotQInv;
 		}
 		Quaternion<T> Exp() {
@@ -132,7 +134,42 @@ namespace renderer {
 		Quaternion<T> Slerp() {
 
 		}
+        
+        // x-axis clockwise
+        static Quaternion<T> RotateX(T angle) {
+            float pitchRadian = T(0.5) * Radians(angle);
+            return Quaternion<T>{T(cos(pitchRadian)), T(sin(pitchRadian)), T(0.0), T(0.0)};
+        }
+        // y-axis clockwise
+        static Quaternion<T> RotateY(T angle) {
+            T yawRadian = T(0.5) * Radians(angle);
+            return Quaternion<T>{T(cos(yawRadian)), T(0.0), T(sin(yawRadian)), T(0.0)};
+        }
+        // z-axis clockwise
+        static Quaternion<T> RotateZ(T angle) {
+            T rollRadian = T(0.5) * Radians(angle);
+            return Quaternion<T>{T(cos(rollRadian)), T(0.0), T(0.0), T(sin(rollRadian))};
+        }
+        
+        Matrix4x4 toMatrix4x4() {
+            float xy = x * y;
+            float yz = y * z;
+            float xz = x * z;
+            float xs = x * s;
+            float ys = y * s;
+            float zs = z * s;
+            float x2 = x * x;
+            float y2 = y * y;
+            float z2 = z * z;
+            return Matrix4x4{
+                1.0f - 2.0f*(y2 + z2), 2.0f*(xy - zs), 2.0f*(xz + ys), 0.0f,
+                2.0f*(xy + zs), 1.0f - 2.0f*(x2 + z2), 2.0f*(yz - xs), 0.0f,
+                2.0f*(xz - ys), 2.0f*(yz + xs), 1.0f - 2.0f*(x2 + y2), 0.0f,
+                0.0f, 0.0f, 0.0f, 1.0f};
+        }
 	};
+    
+    typedef Quaternion<float> QuaternionF;
 }
 
 #endif
