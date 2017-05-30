@@ -91,8 +91,12 @@ namespace renderer {
 		bool operator == (const Quaternion<T> q) {
 			return s == q.s && x == q.x && y == q.y && z == q.z;
 		}
-		T Norm() {
-			return sqrt(s * s, x * x, y * y, z * z);
+        Quaternion<T>& operator *= (Quaternion<T>& q) {
+            *this = (*this) * q;
+            return *this;
+        }
+        T Norm() {
+			return sqrt(s * s + x * x + y * y + z * z);
 		}
 		Quaternion<T> Normalize() {
 			T n = Norm();
@@ -151,6 +155,7 @@ namespace renderer {
             return Quaternion<T>{T(cos(rollRadian)), T(0.0), T(0.0), T(sin(rollRadian))};
         }
         
+        // *this must be normalized
         Matrix4x4 toMatrix4x4() {
             float xy = x * y;
             float yz = y * z;
