@@ -108,10 +108,8 @@ namespace renderer {
 				parserObj(filepath, shapes, materials);
 				for (size_t i = 0; i < shapes.size(); i++) {
 					auto pool = GetPool<Mesh>();
-					VectorArray vertices;
-					NormalArray normals;
+					Vertices vertices;
 					UIntArray indexes;
-					UVArray uvs;
 					// printf("shape[%ld].vertices: %ld\n", i, shapes[i].mesh.positions.size());
 					// assert((shapes[i].mesh.positions.size() % 3) == 0);
 					auto positions = shapes[i].mesh.positions;
@@ -122,14 +120,13 @@ namespace renderer {
 						float x = positions[3 * v + 0];
 						float z = -positions[3 * v + 1];
 						float y = positions[3 * v + 2];
-						assert(x != z);
-						assert(x != y);
-						assert(y != z);
-						vertices.push_back(Vector3dF(x, y, z)); 
 						float nx = meshNormals[3 * v + 0];
 						float nz = -meshNormals[3 * v + 1];
 						float ny = meshNormals[3 * v + 2];
-						normals.push_back(Vector3dF(nx, ny, nz));
+						vertices.push_back({
+							Vector3dF(x, y, z),
+							Normal3dF(nx, ny, nz),
+						});
 						// printf("v[%d] = %.1f, %.1f, %.1f\n", v, x, y, z);
 					}
 					// assert((shapes[i].mesh.indices.size() % 3) == 0);
@@ -142,7 +139,7 @@ namespace renderer {
 						// printf("idx[%ld] = %d, %d, %d\n", f, shapes[i].mesh.indices[3 * f + 0] + 1, 
 						// shapes[i].mesh.indices[3 * f + 1] + 1, shapes[i].mesh.indices[3 * f + 2] + 1);
 					}
-					Mesh* pMesh = pool->newElement(vertices, normals, indexes, uvs);
+					Mesh* pMesh = pool->newElement(vertices,indexes);
 					// pMesh->reverse = true;
 					pShape = static_cast<Shape*>(pMesh);
 					pShape->material = matDict[objinfo["matId"]];
@@ -164,23 +161,22 @@ namespace renderer {
 			}
 			else if (objinfo["type"] == "Mesh") {
 				auto pool = GetPool<Mesh>();
-				VectorArray vertices;
-				NormalArray vnormals;
+				Vertices vertices;
 				UIntArray indexes;
-				UVArray uvs;
-				for (auto vertice : objinfo["vertices"]) {
-					vertices.push_back(Vector3dF(vertice[0], vertice[1], vertice[2]));
-				}
-				for (auto normal : objinfo["vnormals"]) {
-					vnormals.push_back(Normal3dF(normal[0], normal[1], normal[2]));
+				for(auto i = 0; i < objinfo["vertices"].size(); i++) {
+					auto position = objinfo["vertices"][i];
+					auto normal = objinfo["vnormals"][i];
+					auto uv = objinfo["uvs"][i];
+					vertices.push_back({
+						Vector3dF(position[0], position[1], position[2]),
+						Normal3dF(normal[0], normal[1], normal[2]),
+						Vector2dF(uv[0], uv[1])
+					});
 				}
 				for (auto index : objinfo["indexes"]) {
 					indexes.push_back(index);
 				}
-				for (auto uv : objinfo["uvs"]) {
-					uvs.push_back(Vector2dF(uv[0], uv[1]));
-				}
-				Mesh* pMesh = pool->newElement(vertices, vnormals, indexes, uvs);
+				Mesh* pMesh = pool->newElement(vertices, indexes);
 				if (!objinfo["face"].is_null()) {
 					auto face = objinfo["face"];
 					if (face == "front") {

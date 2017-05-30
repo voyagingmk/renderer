@@ -24,18 +24,26 @@ namespace renderer {
 		virtual BBox WorldBound() const override;
 	};
 
+	struct Vertex {
+		// Position
+		Vector3dF position;
+		// Normal
+		Normal3dF normal;
+		// TexCoords
+		Vector2dF texCoords;
+	};
+	typedef std::vector<Vertex> Vertices;
+
 	class Mesh: public Shape {
 	public:
-		VectorArray vertices;
-		NormalArray vnormals;
+		Vertices vertices;
 		UIntArray indexes;
-		UVArray uvs;
 		BBox bbox;
 		int face = 0;
 		bool reverse = false;
 	public:
 		Mesh() {}
-		Mesh(VectorArray& v, NormalArray& n, UIntArray& i, UVArray& uv);
+		Mesh(Vertices& v, UIntArray& i);
 		Mesh(const Mesh&);
 		~Mesh();
 		Mesh operator = (const Mesh&);

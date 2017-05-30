@@ -312,7 +312,13 @@ namespace renderer {
 			Point3d<T>()
 		{
 		}
-
+        
+        Normal3d(const T x, const T y, const T z) {
+            Point3d<T>::x = x;
+            Point3d<T>::y = y;
+            Point3d<T>::z = z;
+        };
+        
 		Normal3d(const Normal3d<T>&& p) {
 			Point3d<T>::x = p.x;
 			Point3d<T>::y = p.y;

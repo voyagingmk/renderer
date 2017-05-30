@@ -33,10 +33,14 @@ namespace renderer {
 
 	//http://www.qiujiawei.com/triangle-intersect/
 	int Triangle::Intersect(Ray& ray, IntersectResult* result) {
-		const VectorArray& vertices = mesh->vertices;
-		const Vector3dF& p0 = vertices[indexes[0]];
-		const Vector3dF& p1 = vertices[indexes[1]];
-		const Vector3dF& p2 = vertices[indexes[2]];
+		const Vertices& vertices = mesh->vertices;
+		const Vertex& v0 = vertices[indexes[0]];
+		const Vertex& v1 = vertices[indexes[1]];
+		const Vertex& v2 = vertices[indexes[2]];
+
+		const Vector3dF& p0 = v0.position;
+		const Vector3dF& p1 = v1.position;
+		const Vector3dF& p2 = v2.position;
 		const Vector3dF&& e1 = p1 - p0;
 		const Vector3dF&& e2 = p2 - p0;
 		if (e1.isEmpty() || e2.isEmpty()) {
@@ -80,18 +84,18 @@ namespace renderer {
 			return 0;
 		const Vector3dF&& position = ray.GetPoint(t);
 		// interpolated normal
-		Normal3dF normal = (1 - b1 - b2) * mesh->vnormals[indexes[0]] + 
-			b1 * mesh->vnormals[indexes[1]] + 
-			b2 * mesh->vnormals[indexes[2]];
+		Normal3dF normal = (1 - b1 - b2) * v0.normal + 
+			b1 * v1.normal + 
+			b2 * v2.normal;
 		*result = IntersectResult(mesh, t, std::forward<const Vector3dF>(position), normal.Normalize());
 		return 0;
 	}
 
 	BBox Triangle::Bound() const {
-		const VectorArray& vertices = mesh->vertices;
-		Vector3dF p0 = vertices[indexes[0]];
-		Vector3dF p1 = vertices[indexes[1]];
-		Vector3dF p2 = vertices[indexes[2]];
+		const Vertices& vertices = mesh->vertices;
+		const Vector3dF& p0 = vertices[indexes[0]].position;
+		const Vector3dF& p1 = vertices[indexes[1]].position;
+		const Vector3dF& p2 = vertices[indexes[2]].position;
 		return BBox(p0, p1).Union(p2);
 	}
 
@@ -99,32 +103,24 @@ namespace renderer {
 		return (*o2w)(Bound());
 	}
 
-	Mesh::Mesh(VectorArray& v, NormalArray& n, UIntArray& i, UVArray& uv) {
+	Mesh::Mesh(Vertices& v, UIntArray& i) {
 		vertices = v;
-		vnormals = n;
 		indexes = i;
-		uvs = uv;
 	}
 
 	Mesh::Mesh(const Mesh& m) {
 		vertices = m.vertices;
-		vnormals = m.vnormals;
 		indexes = m.indexes;
-		uvs = m.uvs;
 	}
 
 	Mesh::~Mesh() {
 		vertices.clear();
-		vnormals.clear();
 		indexes.clear();
-		uvs.clear();
 	}
 
 	Mesh Mesh::operator = (const Mesh& m) {
 		vertices = m.vertices;
-		vnormals = m.vnormals;
 		indexes = m.indexes;
-		uvs = m.uvs;
 		return *this;
 	}
 
@@ -177,33 +173,36 @@ namespace renderer {
 		}
 	}
 	void Mesh::initVertexNormals() {
-		if (vnormals.size() == 0) {
-			vnormals.resize(vertices.size());
-			for (int vIdx = 0; vIdx < vertices.size(); vIdx++) {
-				vnormals[vIdx] = Vector3dF(0.f, 0.f, 0.f);
-			}
-			for (int tri_idx = 0, tri_num = indexes.size() / 3; tri_idx < tri_num; tri_idx += 1) {
-				int vIdxes[3];
-				vIdxes[0] = indexes[tri_idx * 3];
-				vIdxes[1] = indexes[tri_idx * 3 + 1];
-				vIdxes[2] = indexes[tri_idx * 3 + 2];
-				const Vector3dF& p0 = vertices[vIdxes[0]];
-				const Vector3dF& p1 = vertices[vIdxes[1]];
-				const Vector3dF& p2 = vertices[vIdxes[2]];
-				const Vector3dF&& e1 = p1 - p0;
-				const Vector3dF&& e2 = p2 - p0;
-				const Vector3dF&& faceNormal = (e1.Cross(e2));
-				vnormals[vIdxes[0]] += faceNormal;
-				vnormals[vIdxes[1]] += faceNormal;
-				vnormals[vIdxes[2]] += faceNormal;
-			}
-			for (int vIdx = 0; vIdx < vertices.size(); vIdx++) {
-				vnormals[vIdx] = vnormals[vIdx].Normalize();
-				if (reverse) {
-					vnormals[vIdx] = -vnormals[vIdx];
-				}
-			}
+        const Normal3dF emptyNormal = Normal3dF(0.f, 0.f, 0.f);
+		for (int vIdx = 0; vIdx < vertices.size(); vIdx++) {
+            Vertex& v = vertices[vIdx];
+            v.normal = emptyNormal;
 		}
+		for (int tri_idx = 0, tri_num = indexes.size() / 3; tri_idx < tri_num; tri_idx += 1) {
+			int vIdxes[3];
+			vIdxes[0] = indexes[tri_idx * 3];
+			vIdxes[1] = indexes[tri_idx * 3 + 1];
+			vIdxes[2] = indexes[tri_idx * 3 + 2];
+            Vertex& v0 = vertices[vIdxes[0]];
+            Vertex& v1 = vertices[vIdxes[1]];
+            Vertex& v2 = vertices[vIdxes[2]];
+			const Vector3dF& p0 = v0.position;
+			const Vector3dF& p1 = v1.position;
+			const Vector3dF& p2 = v2.position;
+			const Vector3dF&& e1 = p1 - p0;
+			const Vector3dF&& e2 = p2 - p0;
+			const Vector3dF&& faceNormal = (e1.Cross(e2));
+			v0.normal += faceNormal;
+			v1.normal += faceNormal;
+			v2.normal += faceNormal;
+		}
+		for (int vIdx = 0; vIdx < vertices.size(); vIdx++) {
+            Vertex& v = vertices[vIdx];
+			v.normal = v.normal.Normalize();
+			if (reverse) {
+				v.normal = -v.normal;
+			}
+			}
 	}
 
 	BBox Mesh::Bound() const {
