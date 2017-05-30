@@ -72,17 +72,58 @@ namespace renderer {
 			return (NOT_ONE(la2) || NOT_ONE(lb2) || NOT_ONE(lc2));
 #undef NOT_ONE
 		}
+        
 		inline Point3dF operator()(const Point3dF &v) const;
+        
 		inline Vector3dF operator()(const Vector3dF &v) const;
+        
 		inline Normal3dF operator()(const Normal3dF &v) const;
+        
 		inline Ray operator()(const Ray &r) const;
+        
 		inline BBox operator()(const BBox &b) const;
+        
         Transform4x4 operator*(const Transform4x4 &t) const{
             return Transform4x4(m * t.m, t.mInv * mInv);
         }
-	};
-
-	inline Point3dF Transform4x4::operator()(const Point3dF &v) const {
+        
+        ////////////////////////////////////////////////////
+        //  kinds of Transform
+        ////////////////////////////////////////////////////
+        static Transform4x4 Translate(const Vector3dF &v) {
+            return Transform4x4(
+                renderer::Translate<Matrix4x4>(v),
+                renderer::TranslateInv<Matrix4x4>(v));
+        }
+        
+        static Transform4x4 Scale(const Vector3dF &v) {
+            return Transform4x4(
+                renderer::Scale<Matrix4x4>(v),
+                renderer::ScaleInv<Matrix4x4>(v));
+        }
+        
+        static Transform4x4 RotateX(float angle) {
+            auto m = renderer::RotateX<Matrix4x4>(angle);
+            return Transform4x4(m, m.transpose());
+        }
+        
+        static Transform4x4 RotateY(float angle) {
+            auto m = renderer::RotateY<Matrix4x4>(angle);
+            return Transform4x4(m, m.transpose());
+        }
+        
+        static Transform4x4 RotateZ(float angle) {
+            auto m = renderer::RotateZ<Matrix4x4>(angle);
+            return Transform4x4(m, m.transpose());
+        }
+        
+        static Transform4x4 Rotate(float angle, const Vector3dF &axis) {
+            auto m = renderer::Rotate<Matrix4x4>(angle, axis);
+            return Transform4x4(m, m.transpose());
+        }
+    };
+    
+    inline Point3dF Transform4x4::operator()(const Point3dF &v) const {
 		float x = v.x, y = v.y, z = v.z;
 		return Point3dF(
 			m.at(0, 0) * x + m.at(0, 1) * y + m.at(0, 2) * z + m.at(0, 3),
@@ -128,125 +169,6 @@ namespace renderer {
 	}
 
 	typedef Transform4x4 Transform;
-
-	////////////////////////////////////////////////////
-	//  kinds of Transform
-	////////////////////////////////////////////////////
-	static Transform Translate(const Vector3dF &v) {
-		Matrix4x4 m{ 
-			1, 0, 0, v.x,
-			0, 1, 0, v.y,
-			0, 0, 1, v.z,
-			0, 0, 0, 1 };
-		Matrix4x4 mInv{ 
-			1, 0, 0, -v.x,
-			0, 1, 0, -v.y,
-			0, 0, 1, -v.z,
-			0, 0, 0, 1 };
-		return Transform(m, mInv);
-	}
-
-	static Transform Scale(float x, float y, float z) {
-		Matrix4x4 m{ 
-			x, 0, 0, 0,
-			0, y, 0, 0,
-			0, 0, z, 0,
-			0, 0, 0, 1 };
-		Matrix4x4 mInv{ 
-			1.f / x, 0, 0, 0,
-			0, 1.f / y, 0, 0,
-			0, 0, 1.f / z, 0,
-			0, 0, 0, 1 };
-		return Transform(m, mInv);
-	}
-
-	static Transform RotateX(float angle) {
-		float sin_theta = sinf(Radians(angle));
-		float cos_theta = cosf(Radians(angle));
-		Matrix4x4 m{
-			1, 0, 0, 0,
-			0, cos_theta, sin_theta, 0,
-			0, -sin_theta, cos_theta, 0,
-			0, 0, 0, 1 };
-		return Transform(m, m.transpose());
-	}
-
-	static Transform RotateY(float angle) {
-		float sin_theta = sinf(Radians(angle));
-		float cos_theta = cosf(Radians(angle));
-		Matrix4x4 m{ 
-			cos_theta, 0, -sin_theta, 0,
-			0, 1, 0, 0,
-			sin_theta, 0, cos_theta, 0,
-			0, 0, 0, 1 };
-		return Transform(m, m.transpose());
-	}
-
-	static Transform RotateZ(float angle) {
-		float sin_theta = sinf(Radians(angle));
-		float cos_theta = cosf(Radians(angle));
-		Matrix4x4 m{ 
-			cos_theta, sin_theta, 0, 0,
-			-sin_theta, cos_theta, 0, 0,
-			0, 0, 1, 0,
-			0, 0, 0, 1 };
-		return Transform(m, m.transpose());
-	}
-
-	static Transform Rotate(float angle, const Vector3dF &axis) {
-		Vector3dF a = axis.Normalize();
-		float s = sinf(Radians(angle));
-		float c = cosf(Radians(angle));
-		Matrix4x4 mat{
-			a.x * a.x * (1.f - c) + c,
-			a.x * a.y * (1.f - c) - a.z * s,
-			a.x * a.z * (1.f - c) - a.y * s,
-			0,
-
-			a.x * a.y * (1.f - c) - a.z * s,
-			a.y * a.y * (1.f - c) + c,
-			a.y * a.z * (1.f - c) + a.x * s,
-			0,
-
-			a.x * a.z * (1.f - c) + a.y * s,
-			a.y * a.z * (1.f - c) - a.x * s,
-			a.z * a.z * (1.f - c) + c,
-			0,
-
-			0,
-			0,
-			0,
-			1 };
-		return Transform(mat, mat.transpose());
-	}
-
-    static Matrix4x4 Perspective(float fovy, float aspect, float n, float f)
-    {
-        float q = 1.0f / tan(Radians(0.5f * fovy));
-        float B = (n + f) / (n - f);
-        float C = (2.0f * n * f) / (n - f);
-        
-        return Matrix4x4{
-            q / aspect, 0.0f,   0.0f,   0.0f,
-            0.0f,       q,      0.0f,   0.0f,
-            0.0f,       0.0f,   B,      C,
-            0.0f,       0.0f,   -1.0f,  0.0f
-        };
-    }
-    
-    static Matrix4x4 LookAt(const Vector3dF &eye, const Vector3dF &targetPos, const Vector3dF &up) {
-		Vector3dF focal = -(targetPos - eye).Normalize();
-		Vector3dF right = (focal.Cross(up.Normalize())).Normalize();
-		Vector3dF newUp = focal.Cross(right);
-		return Matrix4x4{
-			right.x, right.y, right.z, -right.Dot(eye),
-			newUp.x, newUp.y, newUp.z, -newUp.Dot(eye),
-			focal.x, focal.y, focal.z, -focal.Dot(eye),
-			0,			0,			0,		1
-		};
-	}
-
-
 }
 
 #endif

@@ -2,6 +2,7 @@
 #define RENDERER_MATRIX_HPP
 
 #include "base.hpp"
+#include "geometry.hpp"
 
 namespace renderer {
 
@@ -522,8 +523,7 @@ namespace renderer {
 			};
 			return result;
 		}
-
-
+ 
 		//debug
 		void debug() const {
 			int rowNum = row(), colNum = col();
@@ -551,6 +551,129 @@ namespace renderer {
 
 	typedef MxN<double, 3, 3> Matrix3x3ValueD;
 	typedef Matrix<Matrix3x3ValueD> Matrix3x3D;
+    
+    
+    template<class T>
+    static T Translate(const Vector3dF &v) {
+        return T{
+            1, 0, 0, v.x,
+            0, 1, 0, v.y,
+            0, 0, 1, v.z,
+            0, 0, 0, 1 };
+    }
+    
+    template<class T>
+    static T TranslateInv(const Vector3dF &v) {
+        return T{
+            1, 0, 0, -v.x,
+            0, 1, 0, -v.y,
+            0, 0, 1, -v.z,
+            0, 0, 0, 1 };
+    }
+    
+    template<class T>
+    static T Scale(const Vector3dF &v) {
+        return T{
+            v.x, 0, 0, 0,
+            0, v.y, 0, 0,
+            0, 0, v.z, 0,
+            0, 0, 0, 1.0 };
+    }
+    
+    template<class T>
+    static T ScaleInv(const Vector3dF &v) {
+        return T{
+            1.0f / v.x, 0.f, 0.f, 0.f,
+            0.f, 1.0f / v.y, 0.f, 0.f,
+            0.f, 0.f, 1.0f / v.z, 0.f,
+            0.f, 0.f, 0, 1.0f };
+    }
+    
+    template<class T>
+    static T RotateX(float angle) {
+        float sin_theta = sinf(Radians(angle));
+        float cos_theta = cosf(Radians(angle));
+        return T{
+            1, 0, 0, 0,
+            0, cos_theta, sin_theta, 0,
+            0, -sin_theta, cos_theta, 0,
+            0, 0, 0, 1 };
+    }
+    
+    template<class T>
+    static T RotateY(float angle) {
+        float sin_theta = sinf(Radians(angle));
+        float cos_theta = cosf(Radians(angle));
+        return T{
+            cos_theta, 0, -sin_theta, 0,
+            0, 1, 0, 0,
+            sin_theta, 0, cos_theta, 0,
+            0, 0, 0, 1 };
+    }
+    
+    template<class T>
+    static T RotateZ(float angle) {
+        float sin_theta = sinf(Radians(angle));
+        float cos_theta = cosf(Radians(angle));
+        return T{
+            cos_theta, sin_theta, 0, 0,
+            -sin_theta, cos_theta, 0, 0,
+            0, 0, 1, 0,
+            0, 0, 0, 1 };
+    }
+    
+    template<class T>
+    static T Rotate(float angle, const Vector3dF &axis) {
+        Vector3dF a = axis.Normalize();
+        float s = sinf(Radians(angle));
+        float c = cosf(Radians(angle));
+        return T{
+            a.x * a.x * (1.f - c) + c,
+            a.x * a.y * (1.f - c) - a.z * s,
+            a.x * a.z * (1.f - c) - a.y * s,
+            0,
+            
+            a.x * a.y * (1.f - c) - a.z * s,
+            a.y * a.y * (1.f - c) + c,
+            a.y * a.z * (1.f - c) + a.x * s,
+            0,
+            
+            a.x * a.z * (1.f - c) + a.y * s,
+            a.y * a.z * (1.f - c) - a.x * s,
+            a.z * a.z * (1.f - c) + c,
+            0,
+            
+            0,
+            0,
+            0,
+            1 };
+    }
+    
+    static Matrix4x4 Perspective(float fovy, float aspect, float n, float f)
+    {
+        float q = 1.0f / tan(Radians(0.5f * fovy));
+        float B = (n + f) / (n - f);
+        float C = (2.0f * n * f) / (n - f);
+        
+        return Matrix4x4{
+            q / aspect, 0.0f,   0.0f,   0.0f,
+            0.0f,       q,      0.0f,   0.0f,
+            0.0f,       0.0f,   B,      C,
+            0.0f,       0.0f,   -1.0f,  0.0f
+        };
+    }
+    
+    static Matrix4x4 LookAt(const Vector3dF &eye, const Vector3dF &targetPos, const Vector3dF &up) {
+        Vector3dF focal = -(targetPos - eye).Normalize();
+        Vector3dF right = (focal.Cross(up.Normalize())).Normalize();
+        Vector3dF newUp = focal.Cross(right);
+        return Matrix4x4{
+            right.x, right.y, right.z, -right.Dot(eye),
+            newUp.x, newUp.y, newUp.z, -newUp.Dot(eye),
+            focal.x, focal.y, focal.z, -focal.Dot(eye),
+            0,			0,			0,		1
+        };
+    }
 
 }
 

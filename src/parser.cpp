@@ -70,13 +70,13 @@ namespace renderer {
 			Transform t;
 			if (type == "t") {
 				//translate
-				t = Translate(v);
+                t = Transform::Translate(v);
 			}
 			else if (type == "r") {
 				//rotate
 				float angle = data[3];
 				v = v.Normalize();
-				t = Rotate(angle, v);
+				t = Transform::Rotate(angle, v);
 			}
 			//TODO: scale
 			*o2w = (*o2w) * t;

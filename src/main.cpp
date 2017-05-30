@@ -155,10 +155,10 @@ public:
         UniLoc locView = shaderMgr.getUniformLocation(shaderProgramHDL, "view");
         UniLoc locProj = shaderMgr.getUniformLocation(shaderProgramHDL, "proj");
         
-        Transform4x4 trans1 = Translate(Vector3dF(0.0, 10.0, -40.0));
-        Transform4x4 trans2 = Scale(0.1, 0.1, 0.1);
+        Matrix4x4 T = Translate<Matrix4x4>({0.0f, 10.0f, -40.0f});
+        Matrix4x4 S = Scale<Matrix4x4>({0.1f, 0.1f, 0.1f});
         
-        const float pitch = 0.0f, yaw = 2.0f, roll = 0.0f;
+        const float pitch = 1.0f, yaw = 2.0f, roll = 3.0f;
         
         static QuaternionF orientation = {0.0, 0.0, 0.0, 1.0};
         QuaternionF rotX = QuaternionF::RotateX(pitch); // x
@@ -167,22 +167,13 @@ public:
         QuaternionF diff = rotZ * rotY * rotX;
         orientation *= diff;
         orientation = orientation.Normalize();
-        Transform4x4 modelTrans = trans1 * trans2;
-        Transform4x4 trans3 = Transform4x4(orientation.toMatrix4x4());
-        modelTrans = modelTrans * trans3;
-        auto E = trans3.GetMatrix() * trans3.GetInverseMatrix();
-        if(!E.IsIdentity()){
-            trans3.GetMatrix().debug();
-            trans3.GetInverseMatrix().debug();
-            E.debug();
-            assert(false);
-        }
-        
-        Matrix4x4 normalTrans = modelTrans.GetInverseMatrix();
+        Matrix4x4 R = orientation.toMatrix4x4();
+        Matrix4x4 modelTrans = T * S * R;
+        Matrix4x4 normalTrans = modelTrans.inverse();
         Matrix4x4 projTrans = Perspective(45.0, winWidth / (float)winHeight, 0.1, 100.0);
         Matrix4x4 viewTrans = LookAt(Vector3dF(0.0, 0.0, 1.0), Vector3dF(0.0, 0.0, -1.0), Vector3dF(0.0,1.0,0.0));
 
-        shaderMgr.setUniformTransform4f(locModel, modelTrans);
+        shaderMgr.setUniformMatrix4f(locModel, modelTrans);
         shaderMgr.setUniformMatrix4f(locNormal, normalTrans);
         shaderMgr.setUniformMatrix4f(locView, viewTrans);
         shaderMgr.setUniformMatrix4f(locProj, projTrans);
