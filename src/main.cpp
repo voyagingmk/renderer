@@ -7,15 +7,83 @@
 #include "geometry.cpp"
 #include "quaternion.hpp"
 #include "buffermgr.hpp"
-
-#define TINYOBJLOADER_IMPLEMENTATION // define this in only *one* .cc
-#include "tiny_obj_loader.h"
-
-
+#include <assimp/Importer.hpp>      // C++ importer interface
+#include <assimp/scene.h>           // Output data structure
+#include <assimp/postprocess.h>     // Post processing flags
 
 
 using namespace std;
 using namespace renderer;
+
+
+bool importModel( const std::string& pFile)
+{
+    // Create an instance of the Importer class
+    Assimp::Importer importer;
+    
+    // And have it read the given file with some example postprocessing
+    // Usually - if speed is not the most important aspect for you - you'll
+    // propably to request more postprocessing than we do in this example.
+    const aiScene* scene = importer.ReadFile( pFile,
+                                             aiProcess_CalcTangentSpace       |
+                                             aiProcess_Triangulate            |
+                                             aiProcess_JoinIdenticalVertices  |
+                                             aiProcess_SortByPType);
+    
+    // If the import failed, report it
+    if( !scene)
+    {
+        cout << importer.GetErrorString() << endl;
+        return false;
+    }
+    
+    // Now we can access the file's contents.
+    BufferMgrOpenGL& bufferMgr = BufferMgrOpenGL::getInstance();
+    Mesh mesh;
+    aiMesh* aimesh = scene->mMeshes[0];
+    // Walk through each of the mesh's vertices
+    for(uint32_t i = 0; i < aimesh->mNumVertices; i++)
+    {
+        Vertex v;
+        Vector3dF p;
+        p.x = aimesh->mVertices[i].x;
+        p.y = aimesh->mVertices[i].y;
+        p.z = aimesh->mVertices[i].z;
+        v.position = p;
+        // Normals
+        p.x = aimesh->mNormals[i].x;
+        p.y = aimesh->mNormals[i].y;
+        p.z = aimesh->mNormals[i].z;
+        v.normal = p;
+        // Texture Coordinates
+        if(aimesh->mTextureCoords[0]) // Does the mesh contain texture coordinates?
+        {
+            Vector2dF uv;
+            // A vertex can contain up to 8 different texture coordinates. We thus make the assumption that we won't
+            // use models where a vertex can have multiple texture coordinates so we always take the first set (0).
+            uv.x = aimesh->mTextureCoords[0][i].x;
+            uv.y = aimesh->mTextureCoords[0][i].y;
+            v.texCoords = uv;
+        }
+        else
+            v.texCoords = Vector2dF(0.0f, 0.0f);
+         mesh.vertices.push_back(v);
+    }
+    // Now wak through each of the mesh's faces (a face is a mesh its triangle) and retrieve the corresponding vertex indices.
+    for(GLuint i = 0; i < aimesh->mNumFaces; i++)
+    {
+        aiFace face = aimesh->mFaces[i];
+        // Retrieve all indices of the face and store them in the indices vector
+        for(GLuint j = 0; j < face.mNumIndices; j++)
+           mesh.indexes.push_back(face.mIndices[j]);
+    }
+    
+    bufferMgr.CreateBuffer("cube", mesh);
+    
+    // We're done. Everything will be cleaned up by the importer destructor
+    return true;
+}
+
 
 
 class MyContext : public RendererContextSDL {
@@ -42,47 +110,7 @@ public:
         });
         texID1 = texMgr.loadTexture("container.jpg", "container");
         texID2 = texMgr.loadTexture("face.png", "face");
-        /*
-        // Set up vertex data (and buffer(s)) and attribute pointers
-        GLfloat vertices[] = {
-            // Positions          // Colors           // Texture Coords
-            0.5f,  0.5f,  0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // Top Right
-            0.5f, -0.5f,  0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // Bottom Right
-            -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // Bottom Left
-            -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // Top Left
-        };
-        GLuint indices[] = {  // Note that we start from 0!
-            0, 1, 3, // First Triangle
-            1, 2, 3  // Second Triangle
-        };
-        glGenVertexArrays(1, &VAO);
-        glGenBuffers(1, &VBO);
-        glGenBuffers(1, &EBO);
-        // Bind the Vertex Array Object first, then bind and set vertex buffer(s) and attribute pointer(s).
-        glBindVertexArray(VAO);
-        
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-        
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-        
-        // Position attribute
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)0);
-        glEnableVertexAttribArray(0);
-        // Color attribute
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
-        glEnableVertexAttribArray(1);
-        // TexCoord attribute
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(6 * sizeof(GLfloat)));
-        glEnableVertexAttribArray(2);
-        
-        glBindBuffer(GL_ARRAY_BUFFER, 0); // Note that this is allowed, the call to glVertexAttribPointer registered VBO as the currently bound vertex buffer object so afterwards we can safely unbind
-        
-        glBindVertexArray(0); // Unbind VAO (it's always a good thing to unbind any buffer/array to prevent strange bugs), remember: do NOT unbind the EBO, keep it bound to this VAO
-        */
-        
-        
+
         // Uncommenting this call will result in wireframe polygons.
         //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         
@@ -90,19 +118,7 @@ public:
         // Setup OpenGL options
         glEnable(GL_DEPTH_TEST);
         
-        const std::string filepath = "./assets/models/cube.obj";
-        std::vector<tinyobj::shape_t> shapes;
-        std::vector<tinyobj::material_t> materials;
-        std::string err;
-        tinyobj::LoadObj(shapes, materials, err, filepath.c_str(), "./assets/models/");
-        if (!err.empty()) {
-            // `err` may contain warning message.
-            std::cerr << err << std::endl;
-            return;
-        }
-        auto mesh = shapes[0].mesh;
-        bufferMgr.CreateBuffer("cube", mesh.positions, mesh.texcoords, mesh.indices);
-    
+        importModel("./assets/models/cube.obj");
     }
             
     virtual void onPoll() override

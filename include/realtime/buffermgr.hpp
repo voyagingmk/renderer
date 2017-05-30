@@ -4,6 +4,7 @@
 #include "base.hpp"
 #include "matrix.hpp"
 #include "transform.hpp"
+#include "mesh.hpp"
 
 namespace renderer {
     
@@ -26,7 +27,7 @@ namespace renderer {
         BufferSet GetBufferSet(const char * aliasname) {
             return bufferDict[aliasname];
         }
-        virtual BufferSet CreateBuffer(const char* aliasname, std::vector<float>& vertexes, std::vector<float>& texcoords, std::vector<unsigned int>& indices) {
+        virtual BufferSet CreateBuffer(const char* aliasname, Mesh& mesh) {
             return BufferSet();
         }
         virtual void DrawBuffer(const char* aliasname) {}
@@ -44,7 +45,7 @@ namespace renderer {
             return mgr;
         }
         // override
-        virtual BufferSet CreateBuffer(const char* aliasname, std::vector<float>& vertices, std::vector<float>& texcoords, std::vector<unsigned int>& indices);
+        virtual BufferSet CreateBuffer(const char* aliasname, Mesh& mesh);
         virtual void DrawBuffer(const char* aliasname);
     };
 #endif
