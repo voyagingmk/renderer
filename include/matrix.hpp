@@ -257,11 +257,7 @@ namespace renderer {
 					}
 					//printf("tmp = %f\n", tmp);
 					//printf("(E[idx] - tmp)/ (*this)[r * colNum + r] = (%f - %f)/%f\n", E[idx],tmp, (*this)[r * colNum + r]);
-                    if(self[r * colNum + r] == 0) {
-                        dataOfResult[idx] = 0;
-                    } else {
-                        dataOfResult[idx] = (E[idx] - tmp)/ self[r * colNum + r];
-                    }
+                    dataOfResult[idx] = (E[idx] - tmp)/ self[r * colNum + r];
 					//printf("=> %f\n\n", dataOfResult[idx]);
 				}
 			}
@@ -305,6 +301,7 @@ namespace renderer {
 			return E;
 		}
 
+        /*
 		void LUP( Matrix<T>* retL, Matrix<T>* retU, Matrix<T>* retP) const { //LUP Decomposition
 			if (!isSquare()) {
 				return;
@@ -313,7 +310,13 @@ namespace renderer {
 			Matrix<T> L;
 			Matrix<T> U;
 			Matrix<T> P = pivotize();
+            printf("P:\n");
+            P.debug();
+            printf("this:\n");
+            this->debug();
             Matrix<T> PA = P.multiply(*this);
+            printf("PA:\n");
+            PA.debug();
 
 			for (int j = 0; j < n; j++) {
 				L[j * n + j] = 1;
@@ -327,17 +330,18 @@ namespace renderer {
 					V s2 = 0;
 					for (int k = 0; k < j; k++)
 						s2 += U[k * n + j] * L[i * n + k];
-                    if (U[j * n + j] == 0) {
-                        L[i * n + j] = 0;
-                    } else {
-                        L[i * n + j] = (PA[i * n + j] - s2) / U[j * n + j];
-                    }
+                    L[i * n + j] = (PA[i * n + j] - s2) / U[j * n + j];
                 };
 			}
+            printf("L:\n");
+            L.debug();
+            printf("U:\n");
+            U.debug();
 			*retP = P;
 			*retL = L;
 			*retU = U;
 		}
+        */
 		V diagonalMul() {
 			V total = 1;
 			for (int r = 0; r <T::row; r++) {
