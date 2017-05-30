@@ -56,6 +56,18 @@ namespace renderer {
 			auto pool = GetPool<T>();
 			pool->deleteElement(data);
 		}
+        
+        bool validate() const {
+            int rowNum = row(), colNum = col();
+            for (int i = 0; i < rowNum; i++) {
+                for (int j = 0; j < colNum; j++) {
+                    if(std::isnan((*this)[i * colNum + j])) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
 
 		inline int row() const {
 			return T::row;
@@ -181,13 +193,11 @@ namespace renderer {
 		template<int M, int N>
 		Matrix<T> multiply(const Matrix<MxN<V, M, N>>& m) const {
 			Matrix<MxN<V, T::row, N>> result;
-			int rowNum = row(), colNum = col();
-			int idx;
 			for (int i = 0; i < m.row(); i++) {
 				for (int j = 0; j < m.col(); j++) {
 					V total = 0;
-					for (int k = 0; k < colNum; k++) {
-						total += (*this)[i * colNum + k] * m[k * m.col() + j];
+					for (int k = 0; k < col(); k++) {
+						total += (*this)[i * col() + k] * m[k * m.col() + j];
 					}
 					result[i * m.col() + j] = total;
 				}
@@ -247,7 +257,11 @@ namespace renderer {
 					}
 					//printf("tmp = %f\n", tmp);
 					//printf("(E[idx] - tmp)/ (*this)[r * colNum + r] = (%f - %f)/%f\n", E[idx],tmp, (*this)[r * colNum + r]);
-					dataOfResult[idx] = (E[idx] - tmp)/ self[r * colNum + r];
+                    if(self[r * colNum + r] == 0) {
+                        dataOfResult[idx] = 0;
+                    } else {
+                        dataOfResult[idx] = (E[idx] - tmp)/ self[r * colNum + r];
+                    }
 					//printf("=> %f\n\n", dataOfResult[idx]);
 				}
 			}
@@ -261,7 +275,7 @@ namespace renderer {
 			LUP(&L, &U, &P);
 			Matrix<T> invL = L.inverseAsTriangular();
 			Matrix<T> invU = U.inverseAsTriangular();
-			Matrix<T> result = invU * invL * P;
+            Matrix<T> result = invU * invL * P;
 			return result;
 		}
 
@@ -299,7 +313,7 @@ namespace renderer {
 			Matrix<T> L;
 			Matrix<T> U;
 			Matrix<T> P = pivotize();
-			Matrix<T> PA = P.multiply(*this);
+            Matrix<T> PA = P.multiply(*this);
 
 			for (int j = 0; j < n; j++) {
 				L[j * n + j] = 1;
@@ -308,13 +322,17 @@ namespace renderer {
 					for (int k = 0; k < j; k++)
 						s1 += U[k * n + j] * L[i * n + k];
 					U[i * n + j] = PA[i * n + j] - s1;
-				}
+                }
 				for (int i = j; i < n; i++) {
 					V s2 = 0;
 					for (int k = 0; k < j; k++)
 						s2 += U[k * n + j] * L[i * n + k];
-					L[i * n + j] = (PA[i * n + j] - s2) / U[j * n + j];
-				}
+                    if (U[j * n + j] == 0) {
+                        L[i * n + j] = 0;
+                    } else {
+                        L[i * n + j] = (PA[i * n + j] - s2) / U[j * n + j];
+                    }
+                };
 			}
 			*retP = P;
 			*retL = L;
@@ -408,7 +426,7 @@ namespace renderer {
 
 
 		//debug
-		void debug() {
+		void debug() const {
 			int rowNum = row(), colNum = col();
 			int idx;
 			for (int i = 0; i < rowNum; i++) {

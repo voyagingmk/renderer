@@ -7,6 +7,8 @@
 #include "geometry.cpp"
 #include "quaternion.hpp"
 #include "buffermgr.hpp"
+#include "realtime/glutils.hpp"
+
 #include <assimp/Importer.hpp>      // C++ importer interface
 #include <assimp/scene.h>           // Output data structure
 #include <assimp/postprocess.h>     // Post processing flags
@@ -108,8 +110,8 @@ public:
             { ShaderType::Vertex, "test1.vs" },
             { ShaderType::Fragment, "test1.fs"}
         });
-        texID1 = texMgr.loadTexture("container.jpg", "container");
-        texID2 = texMgr.loadTexture("face.png", "face");
+        texID1 = texMgr.loadTexture("dog.png", "tex1");
+        texID2 = texMgr.loadTexture("face.png", "tex2");
 
         // Uncommenting this call will result in wireframe polygons.
         //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -118,7 +120,10 @@ public:
         // Setup OpenGL options
         glEnable(GL_DEPTH_TEST);
         
-        importModel("./assets/models/cube.obj");
+        importModel("./assets/models/dog.obj");
+        
+        checkSDLError();
+        checkGLError();
     }
             
     virtual void onPoll() override
@@ -141,17 +146,19 @@ public:
         UniLoc loc2 = shaderMgr.getUniformLocation(shaderProgramHDL, "ourTexture2");
         shaderMgr.setUniform1i(loc2, 1);
         
+        Vector3dF lightPos(100.0f, 100.0f, 100.0f);
+        int32_t lightPosLoc = shaderMgr.getUniformLocation(shaderProgramHDL, "lightPos");
+        shaderMgr.setUniform3f(lightPosLoc, lightPos.x, lightPos.y, lightPos.z);
+        
+        UniLoc locNormal = shaderMgr.getUniformLocation(shaderProgramHDL, "normalMat");
         UniLoc locModel = shaderMgr.getUniformLocation(shaderProgramHDL, "model");
         UniLoc locView = shaderMgr.getUniformLocation(shaderProgramHDL, "view");
         UniLoc locProj = shaderMgr.getUniformLocation(shaderProgramHDL, "proj");
-        float x = sin(getTimeMS()*0.001) * 0.5f;
         
+        Transform4x4 trans1 = Translate(Vector3dF(0.0, 10.0, -40.0));
+        Transform4x4 trans2 = Scale(0.1, 0.1, 0.1);
         
-        Transform4x4 trans1 = Translate(Vector3dF(0.0, 0.0, -2.0));
-        Transform4x4 trans2 = Scale(0.5, 0.5, 0.5);
-        
-
-        const float pitch = 1.0f, yaw = 2.0f, roll = 3.0f;
+        const float pitch = 0.0f, yaw = 2.0f, roll = 0.0f;
         
         static QuaternionF orientation = {0.0, 0.0, 0.0, 1.0};
         QuaternionF rotX = QuaternionF::RotateX(pitch); // x
@@ -160,21 +167,22 @@ public:
         QuaternionF diff = rotZ * rotY * rotX;
         orientation *= diff;
         orientation = orientation.Normalize();
-        Transform4x4 modelTrans = trans1 * trans2 * Transform4x4(orientation.toMatrix4x4());
-
+        Transform4x4 modelTrans = trans1 * trans2;
+        Transform4x4 trans3 = Transform4x4(orientation.toMatrix4x4());
+        modelTrans = modelTrans * trans3;
         
-        
-        
-        
-        
-        
-        
-        
-        
+        Transform4x4 normalTrans = modelTrans.GetInverseMatrix();
+        auto E = modelTrans.GetMatrix() * modelTrans.GetInverseMatrix();
+        //modelTrans.GetMatrix().debug();
+        //modelTrans.GetInverseMatrix().debug();
+        //E.debug();
+        assert(E.IsIdentity());
         Transform4x4 projTrans = Perspective(45.0, winWidth / (float)winHeight, 0.1, 100.0);
         Transform4x4 viewTrans = LookAt(Vector3dF(0.0, 0.0, 1.0), Vector3dF(0.0, 0.0, -1.0), Vector3dF(0.0,1.0,0.0));
         // Matrix4x4::newIdentity();
+        
         shaderMgr.setUniformTransform4f(locModel, modelTrans);
+        shaderMgr.setUniformTransform4f(locNormal, normalTrans);
         shaderMgr.setUniformTransform4f(locView, viewTrans);
         shaderMgr.setUniformTransform4f(locProj, projTrans);
         bufferMgr.DrawBuffer("cube");

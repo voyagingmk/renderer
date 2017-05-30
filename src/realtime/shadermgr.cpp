@@ -131,12 +131,17 @@ void ShaderMgrOpenGL::setUniform4f(UniLoc loc, float f1, float f2, float f3, flo
    glUniform4f(loc, f1, f2, f3, f4);
 }
 
+void ShaderMgrOpenGL::setUniform3f(int32_t loc, float f1, float f2, float f3) {
+   glUniform3f(loc, f1, f2, f3);
+}
+
+
 void ShaderMgrOpenGL::setUniform1i(UniLoc loc, int val) {
     glUniform1i(loc, val);
 }
 
 void ShaderMgrOpenGL::setUniformMatrix4f(UniLoc loc, Matrix4x4 mat) {
-    glUniformMatrix4fv(loc, 1, GL_FALSE, mat.transpose().data->data);
+    glUniformMatrix4fv(loc, 1, GL_FALSE, mat.data->data);
 }
 
 void ShaderMgrOpenGL::setUniformTransform4f(UniLoc loc, Transform4x4 trans) {

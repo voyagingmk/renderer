@@ -77,7 +77,9 @@ namespace renderer {
 		inline Normal3dF operator()(const Normal3dF &v) const;
 		inline Ray operator()(const Ray &r) const;
 		inline BBox operator()(const BBox &b) const;
-		Transform4x4 operator*(const Transform4x4 &t2) const;
+        Transform4x4 operator*(const Transform4x4 &t) const{
+            return Transform4x4(m * t.m, t.mInv * mInv);
+        }
 	};
 
 	inline Point3dF Transform4x4::operator()(const Point3dF &v) const {

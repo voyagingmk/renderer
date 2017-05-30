@@ -40,7 +40,8 @@ namespace renderer {
 		virtual bool isShader(ShaderHDL) { return false; }
         virtual int32_t getUniformLocation(ShaderProgramHDL, const char* name) { return 0; }
         virtual void setUniform4f(int32_t loc, float f1, float f2, float f3, float f4) {}
-		void release();
+        virtual void setUniform3f(int32_t loc, float f1, float f2, float f3) {}
+        void release();
 	};
 
 
@@ -64,9 +65,10 @@ namespace renderer {
 		virtual bool isShader(ShaderHDL) override;
         int32_t getUniformLocation(ShaderProgramHDL, const char* name) override;
         virtual void setUniform4f(UniLoc loc, float f1, float f2, float f3, float f4) override;
-        void setUniform1i(UniLoc loc, int val);
-        void setUniformMatrix4f(UniLoc loc, Matrix4x4 mat);
-        void setUniformTransform4f(UniLoc loc, Transform4x4 trans);
+        virtual void setUniform3f(int32_t loc, float f1, float f2, float f3);
+        virtual void setUniform1i(UniLoc loc, int val);
+        virtual void setUniformMatrix4f(UniLoc loc, Matrix4x4 mat);
+        virtual void setUniformTransform4f(UniLoc loc, Transform4x4 trans);
 	};
 
 #endif
