@@ -122,6 +122,13 @@ namespace renderer {
 			// unless the result is subnormal
 			|| std::abs(x - y) < std::numeric_limits<T>::min();
 	}
+    
+    template<class T>
+    bool AlmostEqual(T v1, T v2)
+    {
+        return std::fabs(v1 - v2) < T(0.0001);
+    }
+    
 
 	static std::string readFile(const char * filepath) {
 		std::ifstream f(filepath);

@@ -220,7 +220,7 @@ namespace renderer {
 		return Transform(mat, mat.transpose());
 	}
 
-    static Transform Perspective(float fovy, float aspect, float n, float f)
+    static Matrix4x4 Perspective(float fovy, float aspect, float n, float f)
     {
         float q = 1.0f / tan(Radians(0.5f * fovy));
         float B = (n + f) / (n - f);
@@ -234,17 +234,16 @@ namespace renderer {
         };
     }
     
-    static Transform LookAt(const Vector3dF &eye, const Vector3dF &targetPos, const Vector3dF &up) {
+    static Matrix4x4 LookAt(const Vector3dF &eye, const Vector3dF &targetPos, const Vector3dF &up) {
 		Vector3dF focal = -(targetPos - eye).Normalize();
 		Vector3dF right = (focal.Cross(up.Normalize())).Normalize();
 		Vector3dF newUp = focal.Cross(right);
-		Matrix4x4 worldToCam{
+		return Matrix4x4{
 			right.x, right.y, right.z, -right.Dot(eye),
 			newUp.x, newUp.y, newUp.z, -newUp.Dot(eye),
 			focal.x, focal.y, focal.z, -focal.Dot(eye),
 			0,			0,			0,		1
 		};
-		return Transform(worldToCam, worldToCam.inverse());
 	}
 
 

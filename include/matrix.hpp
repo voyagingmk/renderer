@@ -94,14 +94,16 @@ namespace renderer {
 		inline const V at(int r, int c) const {
 			return static_cast<V>(*((V*)data + r * col() + c));
 		}
+        inline void set(int r, int c, V val) {
+            *((V*)data + r * col() + c) = val;
+        }
 
 		Matrix<T>& operator=(const Matrix<T>& m) {
 			memcpy(data, m.data, row() * col() * sizeof(V));
 			return *this;
 		}
 		Matrix<T>& operator=(Matrix<T>&& m) {
-			data = m.data;
-			m.data = nullptr;
+			memcpy(data, m.data, row() * col() * sizeof(V));
 			return *this;
 		}
 		Matrix<T> operator+(const Matrix<T>& m) const {
@@ -267,13 +269,26 @@ namespace renderer {
 		}
 
 		Matrix<T> inverse() const {
+            Matrix<T> tmp;
+            Matrix<T> inv;
+            std::vector<V> P;
+            int ret = LUPDecompose(tmp, P);
+            if (ret == 0) {
+                std::cout << "[Matrix] inverse failed" << std::endl;
+                return inv;
+            }
+            LUPInvert(tmp, inv, P);
+            return inv;
+        }
+        /*
+        Matrix<T> inverse() const {
 			Matrix<T> L, U, P;
 			LUP(&L, &U, &P);
 			Matrix<T> invL = L.inverseAsTriangular();
 			Matrix<T> invU = U.inverseAsTriangular();
             Matrix<T> result = invU * invL * P;
 			return result;
-		}
+		}*/
 
 		Matrix<T> pivotize() const {
 			if (!isSquare()) {
@@ -300,6 +315,84 @@ namespace renderer {
 			}
 			return E;
 		}
+        
+        // https://en.wikipedia.org/wiki/LU_decomposition#LU_factorization_with_Partial_Pivoting
+        int LUPDecompose(Matrix<T>& tmp, std::vector<V>& P) const {
+            double Tol = 0.001f;
+            int i, j, k, imax;
+            int N = row();
+            double maxA, absA;
+            P.resize(N + 1);
+            tmp = *this;
+            V* A = (V*)(tmp.data);
+            
+            for (i = 0; i <= N; i++)
+                P[i] = i; //Unit permutation matrix, P[N] initialized with N
+            
+            for (i = 0; i < N; i++) {
+                maxA = 0.0;
+                imax = i;
+                
+                for (k = i; k < N; k++)
+                    if ((absA = fabs(A[k * N + i])) > maxA) {
+                        maxA = absA;
+                        imax = k;
+                    }
+                
+                if (maxA < Tol) return 0; //failure, matrix is degenerate
+                
+                if (imax != i) {
+                    //pivoting P
+                    j = P[i];
+                    P[i] = P[imax];
+                    P[imax] = j;
+                    
+                    //pivoting rows of A
+                    for(int u = 0; u < N; u++)  {
+                        V v = A[i * N + u];
+                        A[i * N + u] = A[imax * N + u];
+                        A[imax * N + u] = v;
+                    }
+                    
+                    //counting pivots starting from N (for determinant)
+                    P[N]++;
+                }
+                
+                for (j = i + 1; j < N; j++) {
+                    A[j * N + i] /= A[i * N + i];
+                    
+                    for (k = i + 1; k < N; k++)
+                        A[j * N + k] -= A[j * N + i] * A[i * N + k];
+                }
+            }
+            
+            return 1;  //decomposition done 
+        }
+        void LUPInvert(Matrix<T>& tmp, Matrix<T>& invA, std::vector<V>& P) const {
+            int N = row();
+            V* A = (V*)(tmp.data);
+            V* IA = (V*)(invA.data);
+            
+            for (int j = 0; j < N; j++) {
+                for (int i = 0; i < N; i++) {
+                    if (P[i] == j)
+                        IA[i * N + j] = 1.0;
+                    else
+                        IA[i * N + j] = 0.0;
+                    
+                    for (int k = 0; k < i; k++)
+                        IA[i * N + j] -= A[i * N + k] * IA[k * N + j];
+                }
+                
+                for (int i = N - 1; i >= 0; i--) {
+                    for (int k = i + 1; k < N; k++)
+                        IA[i * N + j] -= A[i * N + k] * IA[k * N + j];
+                    
+                    IA[i * N + j] /= A[i * N + i];
+                }
+            }
+        }
+
 
         /*
 		void LUP( Matrix<T>* retL, Matrix<T>* retU, Matrix<T>* retP) const { //LUP Decomposition
@@ -385,7 +478,7 @@ namespace renderer {
 			}
 			return num;
 		}
-
+        /*
 		V det() { //determinant
 			if (!isSquare()) {
 				return 0;
@@ -398,20 +491,22 @@ namespace renderer {
 			V detU = U.diagonalMul();
 			V detA = detPt * detL * detU;
 			return detA;
-		}
+		}*/
 
 		bool IsIdentity() const {
 			if (!isSquare()) {
-				return false;
+                return false;
 			}
 			for (int r = 0; r < T::row; r++)
 			{
 				for (int c = 0; c < T::col; c++)
 				{
-					if (r == c && !almost_equal(at(r, c), 1.f))
+                    if (r == c && !AlmostEqual(at(r, c), V(1.0))) {
 						return false;
-					if (r != c && !almost_equal(at(r, c), 0.f))
+                    }
+                    if (r != c && !AlmostEqual(at(r, c), V(0.0))) {
 						return false;
+                    }
 				}
 			};
 			return true;
@@ -436,7 +531,7 @@ namespace renderer {
 			for (int i = 0; i < rowNum; i++) {
 				for (int j = 0; j < colNum; j++) {
 					idx = i * colNum + j;
-					printf("%.1f\t", (*this)[idx]);
+					printf("%.3f\t", (*this)[idx]);
 				}
 				printf("\n");
 			}

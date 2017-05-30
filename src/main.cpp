@@ -170,21 +170,22 @@ public:
         Transform4x4 modelTrans = trans1 * trans2;
         Transform4x4 trans3 = Transform4x4(orientation.toMatrix4x4());
         modelTrans = modelTrans * trans3;
+        auto E = trans3.GetMatrix() * trans3.GetInverseMatrix();
+        if(!E.IsIdentity()){
+            trans3.GetMatrix().debug();
+            trans3.GetInverseMatrix().debug();
+            E.debug();
+            assert(false);
+        }
         
-        Transform4x4 normalTrans = modelTrans.GetInverseMatrix();
-        auto E = modelTrans.GetMatrix() * modelTrans.GetInverseMatrix();
-        //modelTrans.GetMatrix().debug();
-        //modelTrans.GetInverseMatrix().debug();
-        //E.debug();
-        assert(E.IsIdentity());
-        Transform4x4 projTrans = Perspective(45.0, winWidth / (float)winHeight, 0.1, 100.0);
-        Transform4x4 viewTrans = LookAt(Vector3dF(0.0, 0.0, 1.0), Vector3dF(0.0, 0.0, -1.0), Vector3dF(0.0,1.0,0.0));
-        // Matrix4x4::newIdentity();
-        
+        Matrix4x4 normalTrans = modelTrans.GetInverseMatrix();
+        Matrix4x4 projTrans = Perspective(45.0, winWidth / (float)winHeight, 0.1, 100.0);
+        Matrix4x4 viewTrans = LookAt(Vector3dF(0.0, 0.0, 1.0), Vector3dF(0.0, 0.0, -1.0), Vector3dF(0.0,1.0,0.0));
+
         shaderMgr.setUniformTransform4f(locModel, modelTrans);
-        shaderMgr.setUniformTransform4f(locNormal, normalTrans);
-        shaderMgr.setUniformTransform4f(locView, viewTrans);
-        shaderMgr.setUniformTransform4f(locProj, projTrans);
+        shaderMgr.setUniformMatrix4f(locNormal, normalTrans);
+        shaderMgr.setUniformMatrix4f(locView, viewTrans);
+        shaderMgr.setUniformMatrix4f(locProj, projTrans);
         bufferMgr.DrawBuffer("cube");
     }
 };
