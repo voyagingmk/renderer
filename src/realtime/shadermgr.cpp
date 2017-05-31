@@ -87,12 +87,11 @@ ShaderHDL ShaderMgrBase::loadShaderFromFile(ShaderType type, const char* filenam
 
 
 void ShaderMgrBase::release() {
-	for (auto hdl: spHDLs) {
+    std::list<ShaderHDL> spHDLsTmp = spHDLs;
+	for (auto hdl: spHDLsTmp) {
 		deleteShaderProgram(hdl);
 	}
 	spHDLs.clear();
-	fsHDLs.clear();
-	vsHDLs.clear();
 }
 
 
@@ -175,9 +174,16 @@ ShaderProgramHDL ShaderMgrOpenGL::createShaderProgram(ShaderFileNames names) {
 
 
 void ShaderMgrOpenGL::deleteShaderProgram(ShaderProgramHDL hdl) {
+    auto it = programSet.find(hdl);
+    if(it == programSet.end()) {
+        return;
+    }
+    programSet.erase(it);
+    spHDLs.remove(hdl);
 	if (glIsProgram(hdl)) {
 		glDeleteProgram(hdl);
 	}
+    printf("[ShaderProgram released] hdl:%d\n", hdl);
 }
 
 

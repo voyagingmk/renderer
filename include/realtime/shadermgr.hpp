@@ -50,9 +50,7 @@ namespace renderer {
 	class ShaderMgrBase {
 	protected:
 		std::string dirpath;
-		std::vector<ShaderHDL> vsHDLs;
-		std::vector<ShaderHDL> fsHDLs;
-		std::vector<ShaderProgramHDL> spHDLs;
+		std::list<ShaderProgramHDL> spHDLs;
         ShaderProgramSet programSet;
 	public:
 		virtual	~ShaderMgrBase();
@@ -83,7 +81,10 @@ namespace renderer {
 		static ShaderMgrOpenGL& getInstance() {
 			static ShaderMgrOpenGL mgr;
 			return mgr;
-		}
+        }	public:
+        virtual	~ShaderMgrOpenGL() {
+            release();
+        }
 		// override
 		virtual ShaderHDL loadShaderFromStr(ShaderType, const char* filename) override;
 		virtual void deleteShader(ShaderHDL shaderHDL) override;

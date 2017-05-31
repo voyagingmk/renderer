@@ -96,7 +96,7 @@ public:
         shaderProgramHDL(0),
         texID1(0), texID2(0) {}
 	virtual void onSDLEvent(SDL_Event& e) override {
-		if (e.type == SDL_QUIT) {
+        if(e.key.keysym.sym == SDLK_ESCAPE || e.type == SDL_QUIT) {
 			shouldExit = true;
 		}
 	}
