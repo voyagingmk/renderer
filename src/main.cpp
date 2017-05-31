@@ -8,6 +8,7 @@
 #include "quaternion.hpp"
 #include "buffermgr.hpp"
 #include "realtime/glutils.hpp"
+#include "camera.hpp"
 
 #include <assimp/Importer.hpp>      // C++ importer interface
 #include <assimp/scene.h>           // Output data structure
@@ -89,6 +90,7 @@ bool importModel(const std::string& pFile)
 
 
 class MyContext : public RendererContextSDL {
+    PerspectiveCamera camera;
     ShaderProgramHDL shaderProgramHDL;
     texID texID1, texID2;
 public:
@@ -123,6 +125,11 @@ public:
         
         checkSDLError();
         checkGLError();
+        camera.SetFov(45.0f);
+        camera.SetAspect((float)winWidth / (float)winHeight);
+        camera.SetNear(0.1f);
+        camera.SetFar(100.0f);
+        camera.SetCameraPosition(Vector3dF(0.0f, 0.0f, 1.0f));
     }
             
     virtual void onPoll() override
@@ -148,7 +155,7 @@ public:
         shader.set3f("lightPos", lightPos.x, lightPos.y, lightPos.z);
         
         Vector3dF viewPos(0.0f, 0.0f, 1.0f);
-        shader.set3f("viewPos", viewPos.x, viewPos.y, viewPos.z);
+        shader.set3f("viewPos", camera.GetCameraPosition());
         shader.set3f("material.ambient",  1.0f, 0.5f, 0.31f);
         shader.set3f("material.diffuse",  1.0f, 0.5f, 0.31f);
         shader.set3f("material.specular", 0.5f, 0.5f, 0.5f);
@@ -176,13 +183,10 @@ public:
         Matrix4x4 R = orientation.toMatrix4x4();
         Matrix4x4 modelTrans = T * S * R;
         Matrix4x4 normalTrans = modelTrans.inverse();
-        Matrix4x4 projTrans = Perspective(45.0, winWidth / (float)winHeight, 0.1, 100.0);
-        Matrix4x4 viewTrans = LookAt(viewPos, Vector3dF(0.0, 0.0, -1.0), Vector3dF(0.0,1.0,0.0));
-
+        Matrix4x4 cameraMat = camera.GetMatrix();
+        shader.setMatrix4f("viewAndProj", cameraMat);
         shader.setMatrix4f("model", modelTrans);
         shader.setMatrix4f("normalMat", normalTrans);
-        shader.setMatrix4f("view", viewTrans);
-        shader.setMatrix4f("proj", projTrans);
         
         bufferMgr.DrawBuffer("cube");
     }
