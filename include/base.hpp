@@ -108,6 +108,9 @@ namespace renderer {
     static size_t getTimeMS() {
     return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch()).count();
     }
+    static size_t getTimeS() {
+        return std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now().time_since_epoch()).count();
+    }
 
 	constexpr float PI = 3.141592653589793238463f;
 

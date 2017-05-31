@@ -153,6 +153,13 @@ public:
         shader.set3f("material.diffuse",  1.0f, 0.5f, 0.31f);
         shader.set3f("material.specular", 0.5f, 0.5f, 0.5f);
         shader.set1f("material.shininess", 32.0f);
+        Vector3dF lightColor;
+        lightColor.x = (1.0f + sin(getTimeS() * 1.0f)) * 0.5f;
+        lightColor.y = (1.0f + sin(getTimeS() * 2.0f)) * 0.5f;
+        lightColor.z = (1.0f + sin(getTimeS() * 1.5f)) * 0.5f;
+        shader.set3f("light.ambient",  lightColor);
+        shader.set3f("light.diffuse",  lightColor); // darken the light a bit to fit the scene
+        shader.set3f("light.specular", 1.0f, 1.0f, 1.0f);
         
         Matrix4x4 T = Translate<Matrix4x4>({0.0f, 10.0f, -40.0f});
         Matrix4x4 S = Scale<Matrix4x4>({0.1f, 0.1f, 0.1f});

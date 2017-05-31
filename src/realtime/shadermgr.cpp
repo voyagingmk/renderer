@@ -47,6 +47,11 @@ void Shader::set3f(const char* name, float f1, float f2, float f3) {
     set3f(getUniformLocation(name), f1, f2, f3);
 }
 
+void Shader::set3f(const char* name, Vector3dF v) {
+    set3f(getUniformLocation(name), v.x, v.y, v.z);
+}
+
+
 void Shader::set2f(const char* name, float f1, float f2) {
     set2f(getUniformLocation(name), f1, f2);
 }
