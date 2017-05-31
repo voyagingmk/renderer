@@ -13,11 +13,39 @@ namespace renderer {
 	};
     
     typedef int32_t UniLoc;
-	typedef int32_t ShaderHDL;
-	typedef int32_t ShaderProgramHDL;
-
-	typedef std::map<ShaderType, std::string> ShaderFileNames;
-	typedef std::map<ShaderType, ShaderHDL> ShaderSet;
+    typedef int32_t ShaderHDL;
+    typedef int32_t ShaderProgramHDL;
+    
+    typedef std::map<ShaderType, std::string> ShaderFileNames;
+    typedef std::map<ShaderType, ShaderHDL> ShaderHDLSet;
+    
+    class Shader {
+    public:
+        ShaderProgramHDL hdl;
+        // TODO
+    public:
+        Shader():hdl(0) {}
+        Shader(ShaderProgramHDL _hdl):hdl(_hdl) {}
+        virtual UniLoc getUniformLocation(const char* name);
+        // by loc
+        virtual void set4f(UniLoc loc, float f1, float f2, float f3, float f4);
+        virtual void set3f(UniLoc loc, float f1, float f2, float f3);
+        virtual void set2f(UniLoc loc, float f1, float f2);
+        virtual void set1f(UniLoc loc, float f1);
+        virtual void set1i(UniLoc loc, int i1);
+        virtual void setMatrix4f(UniLoc loc, Matrix4x4 mat);
+        virtual void setTransform4f(UniLoc loc, Transform4x4 trans);
+        // by name
+        virtual void set4f(const char* name, float f1, float f2, float f3, float f4);
+        virtual void set3f(const char* name, float f1, float f2, float f3);
+        virtual void set2f(const char* name, float f1, float f2);
+        virtual void set1f(const char* name, float f1);
+        virtual void set1i(const char* name, int i1);
+        virtual void setMatrix4f(const char* name, Matrix4x4 mat);
+        virtual void setTransform4f(const char* name, Transform4x4 trans);
+    };
+    typedef std::map<ShaderProgramHDL, Shader> ShaderProgramSet;
+    
 
 	class ShaderMgrBase {
 	protected:
@@ -25,22 +53,23 @@ namespace renderer {
 		std::vector<ShaderHDL> vsHDLs;
 		std::vector<ShaderHDL> fsHDLs;
 		std::vector<ShaderProgramHDL> spHDLs;
+        ShaderProgramSet programSet;
 	public:
 		virtual	~ShaderMgrBase();
 		void setShaderFileDirPath(const char* path) {
 			dirpath = std::string(path);
 		}
+        inline Shader& getShader(ShaderProgramHDL hdl) {
+            return programSet[hdl];
+        }
 		ShaderHDL loadShaderFromFile(ShaderType, const char* filename);
 		virtual ShaderHDL loadShaderFromStr(ShaderType, const char* str) { return 0; }
 		virtual void deleteShader(ShaderHDL shaderHDL) {}
 		virtual ShaderProgramHDL createShaderProgram(ShaderFileNames) { return 0; }
-		virtual ShaderProgramHDL createShaderProgram(ShaderSet) { return 0; }
+		virtual ShaderProgramHDL createShaderProgram(ShaderHDLSet) { return 0; }
 		virtual void deleteShaderProgram(ShaderProgramHDL){}
 		virtual void useShaderProgram(ShaderProgramHDL hdl) {}
 		virtual bool isShader(ShaderHDL) { return false; }
-        virtual int32_t getUniformLocation(ShaderProgramHDL, const char* name) { return 0; }
-        virtual void setUniform4f(int32_t loc, float f1, float f2, float f3, float f4) {}
-        virtual void setUniform3f(int32_t loc, float f1, float f2, float f3) {}
         void release();
 	};
 
@@ -59,16 +88,10 @@ namespace renderer {
 		virtual ShaderHDL loadShaderFromStr(ShaderType, const char* filename) override;
 		virtual void deleteShader(ShaderHDL shaderHDL) override;
 		virtual ShaderProgramHDL createShaderProgram(ShaderFileNames) override;
-		virtual ShaderProgramHDL createShaderProgram(ShaderSet) override;
+		virtual ShaderProgramHDL createShaderProgram(ShaderHDLSet) override;
 		virtual void deleteShaderProgram(ShaderProgramHDL) override;
 		virtual void useShaderProgram(ShaderProgramHDL hdl) override;
 		virtual bool isShader(ShaderHDL) override;
-        int32_t getUniformLocation(ShaderProgramHDL, const char* name) override;
-        virtual void setUniform4f(UniLoc loc, float f1, float f2, float f3, float f4) override;
-        virtual void setUniform3f(int32_t loc, float f1, float f2, float f3);
-        virtual void setUniform1i(UniLoc loc, int val);
-        virtual void setUniformMatrix4f(UniLoc loc, Matrix4x4 mat);
-        virtual void setUniformTransform4f(UniLoc loc, Transform4x4 trans);
 	};
 
 #endif

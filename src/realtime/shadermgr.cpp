@@ -4,6 +4,72 @@
 
 using namespace renderer;
 
+
+UniLoc Shader::getUniformLocation(const char* name) {
+     return (UniLoc)glGetUniformLocation(hdl, name);
+}
+
+void Shader::set4f(UniLoc loc, float f1, float f2, float f3, float f4) {
+    glUniform4f(loc, f1, f2, f3, f4);
+}
+
+void Shader::set3f(UniLoc loc, float f1, float f2, float f3) {
+    glUniform3f(loc, f1, f2, f3);
+}
+
+void Shader::set2f(UniLoc loc, float f1, float f2) {
+     glUniform2f(loc, f1, f2);
+}
+
+void Shader::set1f(UniLoc loc, float f1) {
+     glUniform1f(loc, f1);
+}
+
+void Shader::set1i(UniLoc loc, int i1) {
+     glUniform1i(loc, i1);
+}
+
+void Shader::setMatrix4f(UniLoc loc, Matrix4x4 mat) {
+    glUniformMatrix4fv(loc, 1, GL_FALSE, mat.data->data);
+}
+
+void Shader::setTransform4f(UniLoc loc, Transform4x4 trans) {
+    setMatrix4f(loc, trans.GetMatrix());
+}
+
+
+// by name
+void Shader::set4f(const char* name, float f1, float f2, float f3, float f4) {
+    set4f(getUniformLocation(name), f1, f2, f3, f4);
+}
+
+void Shader::set3f(const char* name, float f1, float f2, float f3) {
+    set3f(getUniformLocation(name), f1, f2, f3);
+}
+
+void Shader::set2f(const char* name, float f1, float f2) {
+    set2f(getUniformLocation(name), f1, f2);
+}
+
+void Shader::set1f(const char* name, float f1) {
+    set1f(getUniformLocation(name), f1);
+}
+
+void Shader::set1i(const char* name, int i1) {
+    set1i(getUniformLocation(name), i1);
+}
+
+void Shader::setMatrix4f(const char* name, Matrix4x4 mat) {
+    setMatrix4f(getUniformLocation(name), mat);
+}
+
+void Shader::setTransform4f(const char* name, Transform4x4 trans) {
+    setTransform4f(getUniformLocation(name), trans);
+}
+
+
+
+
 ShaderMgrBase::~ShaderMgrBase() {
 	release();
 }
@@ -65,8 +131,8 @@ void ShaderMgrOpenGL::deleteShader(ShaderHDL shaderHDL) {
 	glDeleteShader(shaderHDL);
 }
 
-ShaderProgramHDL ShaderMgrOpenGL::createShaderProgram(ShaderSet shaderSet) {
-	for (auto pair: shaderSet) {
+ShaderProgramHDL ShaderMgrOpenGL::createShaderProgram(ShaderHDLSet shaderHDLSet) {
+	for (auto pair: shaderHDLSet) {
 		ShaderHDL shaderHDL = pair.second;
 		if (!isShader(shaderHDL)) {
 			std::cout << "[ShaderMgr] err, invalid shader hdl:" << shaderHDL << std::endl;
@@ -74,7 +140,7 @@ ShaderProgramHDL ShaderMgrOpenGL::createShaderProgram(ShaderSet shaderSet) {
 		}
 	}
 	GLuint hdl = glCreateProgram();
-	for (auto pair : shaderSet) {
+	for (auto pair : shaderHDLSet) {
 		ShaderHDL shaderHDL = pair.second;
 		glAttachShader(hdl, shaderHDL);
 		checkGLError();
@@ -89,21 +155,22 @@ ShaderProgramHDL ShaderMgrOpenGL::createShaderProgram(ShaderSet shaderSet) {
 		std::cout << "[ShaderMgr] err, shader link failed: \n" << infoLog << std::endl;
 		return 0;
 	}
-	for (auto pair : shaderSet) {
+	for (auto pair : shaderHDLSet) {
 		ShaderHDL shaderHDL = pair.second;
 		deleteShader(shaderHDL);
 	}
 	spHDLs.push_back(hdl);
+    programSet.insert({hdl, Shader(hdl)});
 	return hdl;
 }
 
 ShaderProgramHDL ShaderMgrOpenGL::createShaderProgram(ShaderFileNames names) {
-	ShaderSet shaderSet;
+	ShaderHDLSet shaderHDLSet;
 	for (auto pair: names) {
 		ShaderHDL hdl = loadShaderFromFile(pair.first, pair.second.c_str());
-		shaderSet[pair.first] = hdl;
+		shaderHDLSet[pair.first] = hdl;
 	}
-	return createShaderProgram(shaderSet);
+	return createShaderProgram(shaderHDLSet);
 }
 
 
@@ -121,31 +188,6 @@ void ShaderMgrOpenGL::useShaderProgram(ShaderProgramHDL hdl) {
 
 bool ShaderMgrOpenGL::isShader(ShaderHDL hdl) { 
 	return glIsShader(hdl);
-}
-
-int32_t ShaderMgrOpenGL::getUniformLocation(ShaderProgramHDL hdl, const char* name) {
-    return (int32_t)glGetUniformLocation(hdl, name);
-}
-
-void ShaderMgrOpenGL::setUniform4f(UniLoc loc, float f1, float f2, float f3, float f4) {
-   glUniform4f(loc, f1, f2, f3, f4);
-}
-
-void ShaderMgrOpenGL::setUniform3f(int32_t loc, float f1, float f2, float f3) {
-   glUniform3f(loc, f1, f2, f3);
-}
-
-
-void ShaderMgrOpenGL::setUniform1i(UniLoc loc, int val) {
-    glUniform1i(loc, val);
-}
-
-void ShaderMgrOpenGL::setUniformMatrix4f(UniLoc loc, Matrix4x4 mat) {
-    glUniformMatrix4fv(loc, 1, GL_FALSE, mat.data->data);
-}
-
-void ShaderMgrOpenGL::setUniformTransform4f(UniLoc loc, Transform4x4 trans) {
-    setUniformMatrix4f(loc, trans.GetMatrix());
 }
 
 

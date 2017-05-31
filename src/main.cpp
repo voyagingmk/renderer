@@ -18,7 +18,7 @@ using namespace std;
 using namespace renderer;
 
 
-bool importModel( const std::string& pFile)
+bool importModel(const std::string& pFile)
 {
     // Create an instance of the Importer class
     Assimp::Importer importer;
@@ -103,7 +103,6 @@ public:
     virtual void onCustomSetup() override {
         TextureMgrOpenGL& texMgr = TextureMgrOpenGL::getInstance();
         ShaderMgrOpenGL& shaderMgr = ShaderMgrOpenGL::getInstance();
-        BufferMgrOpenGL& bufferMgr = BufferMgrOpenGL::getInstance();
         texMgr.setTextureDirPath("assets/images/");
         shaderMgr.setShaderFileDirPath("assets/shaders/");
         shaderProgramHDL = shaderMgr.createShaderProgram({
@@ -136,29 +135,29 @@ public:
         // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         shaderMgr.useShaderProgram(shaderProgramHDL);
+        Shader& shader = shaderMgr.getShader(shaderProgramHDL);
         
         // Bind Textures using texture units
         texMgr.activateTexture(0, texID1);
-        UniLoc loc1 = shaderMgr.getUniformLocation(shaderProgramHDL, "ourTexture1");
-        shaderMgr.setUniform1i(loc1, 0);
+        shader.set1i("ourTexture1", 0);
 
         texMgr.activateTexture(1, texID2);
-        UniLoc loc2 = shaderMgr.getUniformLocation(shaderProgramHDL, "ourTexture2");
-        shaderMgr.setUniform1i(loc2, 1);
+        shader.set1i("ourTexture2", 1);
         
         Vector3dF lightPos(100.0f, 100.0f, 100.0f);
-        int32_t lightPosLoc = shaderMgr.getUniformLocation(shaderProgramHDL, "lightPos");
-        shaderMgr.setUniform3f(lightPosLoc, lightPos.x, lightPos.y, lightPos.z);
+        shader.set3f("lightPos", lightPos.x, lightPos.y, lightPos.z);
         
-        UniLoc locNormal = shaderMgr.getUniformLocation(shaderProgramHDL, "normalMat");
-        UniLoc locModel = shaderMgr.getUniformLocation(shaderProgramHDL, "model");
-        UniLoc locView = shaderMgr.getUniformLocation(shaderProgramHDL, "view");
-        UniLoc locProj = shaderMgr.getUniformLocation(shaderProgramHDL, "proj");
+        Vector3dF viewPos(0.0f, 0.0f, 1.0f);
+        shader.set3f("viewPos", viewPos.x, viewPos.y, viewPos.z);
+        shader.set3f("material.ambient",  1.0f, 0.5f, 0.31f);
+        shader.set3f("material.diffuse",  1.0f, 0.5f, 0.31f);
+        shader.set3f("material.specular", 0.5f, 0.5f, 0.5f);
+        shader.set1f("material.shininess", 32.0f);
         
         Matrix4x4 T = Translate<Matrix4x4>({0.0f, 10.0f, -40.0f});
         Matrix4x4 S = Scale<Matrix4x4>({0.1f, 0.1f, 0.1f});
         
-        const float pitch = 1.0f, yaw = 2.0f, roll = 3.0f;
+        const float pitch = 0.0f, yaw = 2.0f, roll = 0.0f;
         
         static QuaternionF orientation = {0.0, 0.0, 0.0, 1.0};
         QuaternionF rotX = QuaternionF::RotateX(pitch); // x
@@ -171,12 +170,13 @@ public:
         Matrix4x4 modelTrans = T * S * R;
         Matrix4x4 normalTrans = modelTrans.inverse();
         Matrix4x4 projTrans = Perspective(45.0, winWidth / (float)winHeight, 0.1, 100.0);
-        Matrix4x4 viewTrans = LookAt(Vector3dF(0.0, 0.0, 1.0), Vector3dF(0.0, 0.0, -1.0), Vector3dF(0.0,1.0,0.0));
+        Matrix4x4 viewTrans = LookAt(viewPos, Vector3dF(0.0, 0.0, -1.0), Vector3dF(0.0,1.0,0.0));
 
-        shaderMgr.setUniformMatrix4f(locModel, modelTrans);
-        shaderMgr.setUniformMatrix4f(locNormal, normalTrans);
-        shaderMgr.setUniformMatrix4f(locView, viewTrans);
-        shaderMgr.setUniformMatrix4f(locProj, projTrans);
+        shader.setMatrix4f("model", modelTrans);
+        shader.setMatrix4f("normalMat", normalTrans);
+        shader.setMatrix4f("view", viewTrans);
+        shader.setMatrix4f("proj", projTrans);
+        
         bufferMgr.DrawBuffer("cube");
     }
 };
