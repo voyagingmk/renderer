@@ -179,9 +179,13 @@ namespace renderer {
 		inline Point3d<T> operator - () const {
 			return Point3d<T>(-x, -y, -z);
 		}
-
+        
+        inline bool operator != (const Point3d<T>& p) {
+            return !AlmostEqual(x, p.x) || !AlmostEqual(y, p.y) || !AlmostEqual(z, p.z);
+        }
+        
 		inline bool operator == (const Point3d<T>& p) const {
-			return x == p.x && y == p.y && z == p.z;
+			return AlmostEqual(x, p.x) && AlmostEqual(y, p.y) && AlmostEqual(z, p.z);
 		}
 
 		inline T operator[](int i) const {
@@ -289,6 +293,14 @@ namespace renderer {
 			Point3d<T>::y = p.y;
 			Point3d<T>::z = p.z;
 		}
+        
+        inline bool operator != (const Vector3d<T>& p) {
+            return !AlmostEqual(Point3d<T>::x, p.x) || !AlmostEqual(Point3d<T>::y, p.y) || !AlmostEqual(Point3d<T>::z, p.z);
+        }
+        
+        inline bool operator == (const Vector3d<T>& p) const {
+            return AlmostEqual(Point3d<T>::x, p.x) && AlmostEqual(Point3d<T>::y, p.y) && AlmostEqual(Point3d<T>::z, p.z);
+        }
 
 		Vector3d<T>& operator = (const Vector3d<T>&& p) {
 			Point3d<T>::x = p.x;

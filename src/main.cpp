@@ -131,7 +131,7 @@ public:
             { ShaderType::Fragment, "test1.fs"}
         });
         texID1 = texMgr.loadTexture("dog.png", "tex1");
-        texID2 = texMgr.loadTexture("face.png", "tex2");
+        texID2 = texMgr.loadTexture("terrian.png", "tex2");
 
         // Uncommenting this call will result in wireframe polygons.
         //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -152,8 +152,8 @@ public:
         camera.SetCameraPosition(Vector3dF(0.0f, 0.0f, 0.0f));
     }
     void updateCamera() {
-        auto p = camera.GetCameraPosition();
-        float dis = 0.02f;
+        Vector3dF p = camera.GetCameraPosition();
+        float dis = 0.2f;
         if(keyState[SDLK_w] == SDL_PRESSED) {
             p += {0.0f, 0.0f, -dis};
         }
@@ -172,7 +172,11 @@ public:
         if(keyState[SDLK_e] == SDL_PRESSED) {
             p += {0.0f, -dis, 0.0f};
         }
+        if(p != camera.GetCameraPosition()) {
+            printf("eye: %.3f, %.3f, %.3f\n", p.x, p.y, p.z);
+        }
         camera.SetCameraPosition(p);
+        camera.SetTargetVector(p + Vector3dF(0.0, 0.0, -1.0));
         
         if(keyState[SDLK_y] == SDL_PRESSED) {
             float f = camera.GetFar();
@@ -207,9 +211,6 @@ public:
         // Bind Textures using texture units
         texMgr.activateTexture(0, texID1);
         shader.set1i("ourTexture1", 0);
-
-        texMgr.activateTexture(1, texID2);
-        shader.set1i("ourTexture2", 1);
         
         Vector3dF lightPos(100.0f, 100.0f, 100.0f);
         shader.set3f("lightPos", lightPos.x, lightPos.y, lightPos.z);
@@ -220,10 +221,11 @@ public:
         shader.set3f("material.diffuse",  1.0f, 0.5f, 0.31f);
         shader.set3f("material.specular", 0.5f, 0.5f, 0.5f);
         shader.set1f("material.shininess", 32.0f);
-        Vector3dF lightColor;
+        Vector3dF lightColor = Vector3dF(1.0f, 1.0f, 1.0f);
+        /*
         lightColor.x = (1.0f + sin(getTimeS() * 1.0f)) * 0.5f;
         lightColor.y = (1.0f + sin(getTimeS() * 2.0f)) * 0.5f;
-        lightColor.z = (1.0f + sin(getTimeS() * 1.5f)) * 0.5f;
+        lightColor.z = (1.0f + sin(getTimeS() * 1.5f)) * 0.5f;*/
         shader.set3f("light.ambient",  lightColor);
         shader.set3f("light.diffuse",  lightColor); // darken the light a bit to fit the scene
         shader.set3f("light.specular", 1.0f, 1.0f, 1.0f);
@@ -231,7 +233,7 @@ public:
         Matrix4x4 T = Translate<Matrix4x4>({0.0f, 0.0f, -80.0f});
         Matrix4x4 S = Scale<Matrix4x4>({0.1f, 0.1f, 0.1f});
         
-        const float pitch = 0.0f, yaw = 2.0f, roll = 0.0f;
+        const float pitch = 0.0f, yaw = 0.0f, roll = 0.0f;
         
         static QuaternionF orientation = {0.0, 0.0, 0.0, 1.0};
         QuaternionF rotX = QuaternionF::RotateX(pitch); // x
@@ -241,14 +243,27 @@ public:
         orientation *= diff;
         orientation = orientation.Normalize();
         Matrix4x4 R = orientation.toMatrix4x4();
-        Matrix4x4 modelTrans = T * S * R;
+        Matrix4x4 modelTrans = R * S * T;
         Matrix4x4 normalTrans = modelTrans.inverse();
         Matrix4x4 cameraMat = camera.GetMatrix();
-        shader.setMatrix4f("viewAndProj", cameraMat);
+        Matrix4x4 viewMat = LookAt(camera.GetCameraPosition(), camera.GetFocalVector(), {0.0, 1.0, 0.0});
+        Matrix4x4 projMat = Perspective(45.0, float(winWidth)/float(winHeight), 0.1f, 10000.f);
+        
+        shader.setMatrix4f("view", camera.GetViewMatrix());
+        shader.setMatrix4f("proj", camera.GetProjMatrix());
+        // shader.setMatrix4f("PV", camera.GetProjMatrix() * camera.GetViewMatrix());
+        shader.setMatrix4f("PV", cameraMat);
         shader.setMatrix4f("model", modelTrans);
         shader.setMatrix4f("normalMat", normalTrans);
         bufferMgr.DrawBuffer("dog");
         
+        
+        texMgr.activateTexture(0, texID2);
+        shader.set1i("ourTexture1", 0);
+        shader.set3f("material.ambient",  1.0f, 1.0f, 1.0f);
+        shader.set3f("material.diffuse",  1.0f, 1.0f, 1.0f);
+        shader.set3f("material.specular", 1.0f, 1.0f, 1.0f);
+        shader.set1f("material.shininess", 32.0f);
         modelTrans = Matrix4x4::newIdentity();
         shader.setMatrix4f("model", modelTrans);
         shader.setMatrix4f("normalMat", modelTrans.inverse());

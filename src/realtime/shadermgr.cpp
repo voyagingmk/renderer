@@ -30,7 +30,7 @@ void Shader::set1i(UniLoc loc, int i1) {
 }
 
 void Shader::setMatrix4f(UniLoc loc, Matrix4x4 mat) {
-    glUniformMatrix4fv(loc, 1, GL_FALSE, mat.data->data);
+    glUniformMatrix4fv(loc, 1, GL_FALSE, mat.transpose().data->data);
 }
 
 void Shader::setTransform4f(UniLoc loc, Transform4x4 trans) {

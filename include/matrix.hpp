@@ -103,10 +103,12 @@ namespace renderer {
 			memcpy(data, m.data, row() * col() * sizeof(V));
 			return *this;
 		}
+        
 		Matrix<T>& operator=(Matrix<T>&& m) {
 			memcpy(data, m.data, row() * col() * sizeof(V));
 			return *this;
 		}
+        
 		Matrix<T> operator+(const Matrix<T>& m) const {
 			return add(m);
 		}
@@ -663,8 +665,7 @@ namespace renderer {
         };
     }
     
-    static Matrix4x4 LookAt(const Vector3dF &eye, const Vector3dF &targetPos, const Vector3dF &up) {
-        Vector3dF focal = -(targetPos - eye).Normalize();
+    static Matrix4x4 LookAt(const Vector3dF &eye, const Vector3dF &focal, const Vector3dF &up) {
         Vector3dF right = (focal.Cross(up.Normalize())).Normalize();
         Vector3dF newUp = focal.Cross(right);
         return Matrix4x4{

@@ -22,19 +22,20 @@ namespace renderer {
     class PerspectiveCamera: public CameraBase {
         Matrix4x4 viewMat;
         Matrix4x4 projMat;
-		Vector3dF eye;
-		Vector3dF front;
+        Vector3dF eye;
+        Vector3dF target;
+		Vector3dF focal;
 		Vector3dF up;
 		Vector3dF right;
         float fov;
+        float aspect;
         float near;
         float far;
-        float aspect;
 		float fovScale;
 	public:
 		PerspectiveCamera(
             const Vector3dF& eye = Vector3dF(0.0f, 0.0f, 0.0f),
-            const Vector3dF& front = Vector3dF(0.0f, 0.0f, -1.0f),
+            const Vector3dF& target = Vector3dF(0.0f, 0.0f, -1.0f),
             const Vector3dF& up = Vector3dF(0.0f, 1.0f, 0.0f),
             const float fov = 45.0f,
             const float ar = 1.0f,
@@ -50,8 +51,9 @@ namespace renderer {
 		}
         
 		PerspectiveCamera& operator = (PerspectiveCamera&& c) {
-			eye = c.eye;
-			front = c.front;
+            eye = c.eye;
+            target = c.target;
+			focal = c.focal;
 			up = c.up;
 			fov = c.fov;
             aspect = c.aspect;
@@ -61,8 +63,9 @@ namespace renderer {
 		}
         
 		PerspectiveCamera& operator = (const PerspectiveCamera& c) {
-			eye = c.eye;
-			front = c.front;
+            eye = c.eye;
+            target = c.target;
+            focal = c.focal;
 			up = c.up;
 			fov = c.fov;
             aspect = c.aspect;
@@ -96,8 +99,9 @@ namespace renderer {
             UpdateViewMatrix();
         }
         
-        void SetFrontVector(Vector3dF v) {
-            front = v;
+        void SetTargetVector(Vector3dF v) {
+            target = v;
+            UpdateFocalVector();
             UpdateViewMatrix();
         }
         
@@ -126,8 +130,12 @@ namespace renderer {
             return aspect;
         }
         
-        Vector3dF GetFrontVector() {
-            return front;
+        Vector3dF GetTargetVector() {
+            return target;
+        }
+        
+        Vector3dF GetFocalVector() {
+            return focal;
         }
         
         Vector3dF GetUpVector() {
@@ -142,7 +150,13 @@ namespace renderer {
         
         Ray GenerateRay(float x, float y);
         
+        Matrix4x4 GetViewMatrix() { return viewMat; }
+        
+        Matrix4x4 GetProjMatrix() { return projMat; }
+        
     protected:
+        
+        void UpdateFocalVector();
         
         virtual void UpdateMatrix();
         

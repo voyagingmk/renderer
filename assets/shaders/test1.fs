@@ -17,6 +17,7 @@ struct Light {
 in vec3 FragPos; 
 in vec2 TexCoord;
 in vec3 Normal; 
+in vec2 debug;
 
 out vec4 color;
 
@@ -31,7 +32,9 @@ uniform Light light;
 void main()
 {
 	vec4 objectColor = texture(ourTexture1, TexCoord);
-
+	color = objectColor;
+	color *= debug.x;
+	return;
 	vec3 norm = normalize(Normal);
 	// dir: frag -> light
 	vec3 lightDir = normalize(lightPos - FragPos); 
@@ -46,5 +49,5 @@ void main()
 	vec3 diffuse  = light.diffuse * (diff * material.diffuse);
 	vec3 specular = light.specular * (spec * material.specular); 
 
-	color = vec4(ambient + 2.0 * diffuse + specular, 1.0) * objectColor;
+	color = vec4(ambient + diffuse + specular, 1.0) * objectColor;
 }

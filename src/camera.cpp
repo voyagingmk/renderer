@@ -5,36 +5,43 @@
 
 namespace renderer {
 
-	PerspectiveCamera::PerspectiveCamera(const Vector3dF& eye, const Vector3dF& front, const Vector3dF& up, const float fov, const float ar, const float n, const float f)
+	PerspectiveCamera::PerspectiveCamera(const Vector3dF& eye, const Vector3dF& target, const Vector3dF& up, const float fov, const float ar, const float n, const float f)
 		: eye(eye)
-		, front(front)
+		, target(target)
 		, up(up)
         , fov(fov)
+        , aspect(ar)
         , near(n)
         , far(f)
-        , aspect(ar)
 	{
+        Init();
 	}
     
+    void PerspectiveCamera::UpdateFocalVector() {
+        focal = (target - eye).Normalize();
+        UpdateViewMatrix();
+    }
+    
     void PerspectiveCamera::UpdateViewMatrix() {
-        viewMat = LookAt(eye, front, up);
-        cameraMat = viewMat * projMat;
+        viewMat = LookAt(eye, focal, up);
+        cameraMat = projMat * viewMat;
     }
     
     void PerspectiveCamera::UpdateProjMatrix() {
         projMat = Perspective(fov, aspect, near, far);
-        cameraMat = viewMat * projMat;
+        cameraMat = projMat * viewMat;
     }
     
     void PerspectiveCamera::UpdateMatrix() {
-        viewMat = LookAt(eye, front, up);
+        viewMat = LookAt(eye, focal, up);
         projMat = Perspective(fov, aspect, near, far);
-        cameraMat = viewMat * projMat;
+        cameraMat = projMat * viewMat;
     }
     
 	void PerspectiveCamera::Init() {
-		right = front.Cross(up);
-		up = right.Cross(front);
+        UpdateFocalVector();
+		right = focal.Cross(up);
+		up = right.Cross(focal);
 		fovScale = tan(0.5f * fov *  PI / 180.0f) * 2.0f;
         UpdateMatrix();
 	}
@@ -42,7 +49,7 @@ namespace renderer {
 	Ray PerspectiveCamera::GenerateRay(float x, float y) {
 		Vector3dF&& r = right * ((x - 0.5f) * fovScale);
 		Vector3dF&& u = up * ((y - 0.5f) * fovScale);
-		Vector3dF&& v = (front + r + u).Normalize();
+		Vector3dF&& v = (focal + r + u).Normalize();
 		return Ray(eye, v);
 	}
 
