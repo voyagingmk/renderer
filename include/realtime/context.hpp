@@ -41,7 +41,8 @@ namespace renderer {
 		virtual void onPoll() override;
 		virtual void shutdown(const char *msg = nullptr) override;
 		virtual void resize(int w, int h) override;
-		virtual void onSDLEvent(SDL_Event&) {}
+		virtual void onSDLEvent(SDL_Event& e) {}
+        virtual void onSDLKeyboardEvent(SDL_KeyboardEvent& e) {}
 	};
 
 

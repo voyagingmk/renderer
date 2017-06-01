@@ -75,7 +75,11 @@ void RendererContextSDL::loop() {
 	while (1) {
 		SDL_Event e;
 		if (SDL_PollEvent(&e)) {
-			onSDLEvent(e);
+            if(e.type == SDL_KEYDOWN || e.type == SDL_KEYUP) {
+                onSDLKeyboardEvent(e.key);
+            } else {
+                onSDLEvent(e);
+            }
 		}
 		if (shouldExit) {
 			break;

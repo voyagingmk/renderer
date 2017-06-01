@@ -19,7 +19,7 @@ using namespace std;
 using namespace renderer;
 
 
-bool importModel(const std::string& pFile)
+bool importModel(const std::string& pFile, const std::string& name)
 {
     // Create an instance of the Importer class
     Assimp::Importer importer;
@@ -81,7 +81,7 @@ bool importModel(const std::string& pFile)
            mesh.indexes.push_back(face.mIndices[j]);
     }
     
-    bufferMgr.CreateBuffer("cube", mesh);
+    bufferMgr.CreateBuffer(name, mesh);
     
     // We're done. Everything will be cleaned up by the importer destructor
     return true;
@@ -93,15 +93,34 @@ class MyContext : public RendererContextSDL {
     PerspectiveCamera camera;
     ShaderProgramHDL shaderProgramHDL;
     texID texID1, texID2;
+    std::map<SDL_Keycode, uint8_t> keyState;
 public:
     MyContext():
         shaderProgramHDL(0),
         texID1(0), texID2(0) {}
 	virtual void onSDLEvent(SDL_Event& e) override {
-        if(e.key.keysym.sym == SDLK_ESCAPE || e.type == SDL_QUIT) {
-			shouldExit = true;
-		}
+        switch (e.type) {
+            case SDL_QUIT:
+                shouldExit = true;
+                break;
+            default:
+                break;
+        }
 	}
+    virtual void onSDLKeyboardEvent(SDL_KeyboardEvent& e) override {
+        auto k = e.keysym.sym;
+        keyState[k] = e.state;
+        if(e.state == SDL_PRESSED) {
+            switch (k) {
+                case SDLK_ESCAPE: {
+                    shouldExit = true;
+                    break;
+                }
+                default:
+                    break;
+            }
+        }
+    }
     virtual void onCustomSetup() override {
         TextureMgrOpenGL& texMgr = TextureMgrOpenGL::getInstance();
         ShaderMgrOpenGL& shaderMgr = ShaderMgrOpenGL::getInstance();
@@ -121,19 +140,60 @@ public:
         // Setup OpenGL options
         glEnable(GL_DEPTH_TEST);
         
-        importModel("./assets/models/dog.obj");
+        importModel("./assets/models/dog.obj", "dog");
+        importModel("./assets/models/plane.obj", "plane");
         
         checkSDLError();
         checkGLError();
         camera.SetFov(45.0f);
         camera.SetAspect((float)winWidth / (float)winHeight);
-        camera.SetNear(0.1f);
+        camera.SetNear(0.01f);
         camera.SetFar(100.0f);
-        camera.SetCameraPosition(Vector3dF(0.0f, 0.0f, 1.0f));
+        camera.SetCameraPosition(Vector3dF(0.0f, 0.0f, 0.0f));
     }
-            
+    void updateCamera() {
+        auto p = camera.GetCameraPosition();
+        float dis = 0.02f;
+        if(keyState[SDLK_w] == SDL_PRESSED) {
+            p += {0.0f, 0.0f, -dis};
+        }
+        if(keyState[SDLK_s] == SDL_PRESSED) {
+            p += {0.0f, 0.0f, dis};
+        }
+        if(keyState[SDLK_a] == SDL_PRESSED) {
+            p += {-dis, 0.0f, 0.0f};
+        }
+        if(keyState[SDLK_d] == SDL_PRESSED) {
+            p += {dis, 0.0f, 0.0f};
+        }
+        if(keyState[SDLK_q] == SDL_PRESSED) {
+            p += {0.0f, dis, 0.0f};
+        }
+        if(keyState[SDLK_e] == SDL_PRESSED) {
+            p += {0.0f, -dis, 0.0f};
+        }
+        camera.SetCameraPosition(p);
+        
+        if(keyState[SDLK_y] == SDL_PRESSED) {
+            float f = camera.GetFar();
+            f += 0.1f;
+            camera.SetFar(f);
+        }
+
+        if(keyState[SDLK_u] == SDL_PRESSED) {
+            float f = camera.GetFar();
+            f -= 0.1f;
+            camera.SetFar(f);
+        }
+    }
+    
     virtual void onPoll() override
     {
+        updateCamera();
+        draw();
+    }
+    
+    void draw() {
         ShaderMgrOpenGL& shaderMgr = ShaderMgrOpenGL::getInstance();
         TextureMgrOpenGL& texMgr = TextureMgrOpenGL::getInstance();
         BufferMgrOpenGL& bufferMgr = BufferMgrOpenGL::getInstance();
@@ -168,7 +228,7 @@ public:
         shader.set3f("light.diffuse",  lightColor); // darken the light a bit to fit the scene
         shader.set3f("light.specular", 1.0f, 1.0f, 1.0f);
         
-        Matrix4x4 T = Translate<Matrix4x4>({0.0f, 10.0f, -40.0f});
+        Matrix4x4 T = Translate<Matrix4x4>({0.0f, 0.0f, -80.0f});
         Matrix4x4 S = Scale<Matrix4x4>({0.1f, 0.1f, 0.1f});
         
         const float pitch = 0.0f, yaw = 2.0f, roll = 0.0f;
@@ -187,8 +247,12 @@ public:
         shader.setMatrix4f("viewAndProj", cameraMat);
         shader.setMatrix4f("model", modelTrans);
         shader.setMatrix4f("normalMat", normalTrans);
+        bufferMgr.DrawBuffer("dog");
         
-        bufferMgr.DrawBuffer("cube");
+        modelTrans = Matrix4x4::newIdentity();
+        shader.setMatrix4f("model", modelTrans);
+        shader.setMatrix4f("normalMat", modelTrans.inverse());
+        bufferMgr.DrawBuffer("plane");
     }
 };
 

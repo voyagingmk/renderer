@@ -239,6 +239,9 @@ namespace renderer {
 			std::swap(*this, p);
 			return *this;
 		}
+        void debug() {
+            printf("%f  %f  %f\n", x, y, z);
+        }
 	};
 
 	typedef Point2d<float> Point2dF;

@@ -17,7 +17,7 @@ namespace renderer {
         bufferID ebo;
     };
     
-    typedef std::map<const char *, BufferSet> BufferDict;
+    typedef std::map<std::string, BufferSet> BufferDict;
     
     class BufferMgrBase {
     protected:
@@ -27,10 +27,10 @@ namespace renderer {
         BufferSet GetBufferSet(const char * aliasname) {
             return bufferDict[aliasname];
         }
-        virtual BufferSet CreateBuffer(const char* aliasname, Mesh& mesh) {
+        virtual BufferSet CreateBuffer(const std::string& aliasname, Mesh& mesh) {
             return BufferSet();
         }
-        virtual void DrawBuffer(const char* aliasname) {}
+        virtual void DrawBuffer(const std::string& aliasname) {}
         virtual void release() {}
     };
 
@@ -45,8 +45,8 @@ namespace renderer {
             return mgr;
         }
         // override
-        virtual BufferSet CreateBuffer(const char* aliasname, Mesh& mesh);
-        virtual void DrawBuffer(const char* aliasname);
+        virtual BufferSet CreateBuffer(const std::string& aliasname, Mesh& mesh);
+        virtual void DrawBuffer(const std::string& aliasname);
     };
 #endif
     

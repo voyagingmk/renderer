@@ -40,12 +40,15 @@ namespace renderer {
             const float ar = 1.0f,
             const float n = 0.1f,
             const float f = 10000.0f);
+
 		PerspectiveCamera(const PerspectiveCamera& c) {
 			*this = c;
 		}
+        
 		PerspectiveCamera(PerspectiveCamera&& c) {
 			*this = std::forward<PerspectiveCamera>(c);
 		}
+        
 		PerspectiveCamera& operator = (PerspectiveCamera&& c) {
 			eye = c.eye;
 			front = c.front;
@@ -56,6 +59,7 @@ namespace renderer {
 			right = c.right;
 			return *this;
 		}
+        
 		PerspectiveCamera& operator = (const PerspectiveCamera& c) {
 			eye = c.eye;
 			front = c.front;
@@ -66,42 +70,84 @@ namespace renderer {
 			right = c.right;
 			return *this;
         }
+        
         void SetFov(float f) {
             fov = f;
             UpdateProjMatrix();
         }
+        
         void SetAspect(float ar) {
             aspect = ar;
             UpdateProjMatrix();
         }
+        
         void SetNear(float n) {
             near = n;
             UpdateProjMatrix();
         }
+        
         void SetFar(float f) {
             far = f;
             UpdateProjMatrix();
         }
+        
         void SetUpVector(Vector3dF v) {
             up = v;
             UpdateViewMatrix();
         }
+        
         void SetFrontVector(Vector3dF v) {
             front = v;
             UpdateViewMatrix();
         }
+        
         virtual void SetCameraPosition(Vector3dF p) {
             eye = p;
             UpdateViewMatrix();
         }
+        
         virtual Vector3dF GetCameraPosition() {
             return eye;
         }
+        
+        float GetFov() {
+            return fov;
+        }
+        
+        float GetNear() {
+            return near;
+        }
+        
+        float GetFar() {
+            return far;
+        }
+        
+        float GetAspect() {
+            return aspect;
+        }
+        
+        Vector3dF GetFrontVector() {
+            return front;
+        }
+        
+        Vector3dF GetUpVector() {
+            return up;
+        }
+        
+        Vector3dF GetRightVector() {
+            return right;
+        }
+        
 		void Init();
+        
         Ray GenerateRay(float x, float y);
+        
     protected:
+        
         virtual void UpdateMatrix();
+        
         void UpdateViewMatrix();
+        
         void UpdateProjMatrix();
 	};
 }
