@@ -8,7 +8,6 @@ layout (location = 2) in vec2 texCoord;
 out vec3 FragPos;
 out vec2 TexCoord;
 out vec3 Normal;
-out vec2 debug;
 
 uniform mat4 view;
 uniform mat4 proj;
@@ -18,11 +17,6 @@ uniform mat4 normalMat;
 
 void main()
 {
-	if(PV != proj * view) {
-		debug = vec2(0.0,0.0);
-	} else {
-		debug = vec2(1.0, 1.0);
-	}
 	mat4 mvp = PV * model;
 	// mat4 mvp =  proj * view * model;
 	gl_Position = mvp * vec4(position, 1.0f);

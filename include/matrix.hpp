@@ -667,7 +667,7 @@ namespace renderer {
     
     static Matrix4x4 LookAt(const Vector3dF &eye, const Vector3dF &focal, const Vector3dF &up) {
         Vector3dF right = (focal.Cross(up.Normalize())).Normalize();
-        Vector3dF newUp = focal.Cross(right);
+        Vector3dF newUp = right.Cross(focal);
         return Matrix4x4{
             right.x, right.y, right.z, -right.Dot(eye),
             newUp.x, newUp.y, newUp.z, -newUp.Dot(eye),

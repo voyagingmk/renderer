@@ -148,8 +148,8 @@ public:
         camera.SetFov(45.0f);
         camera.SetAspect((float)winWidth / (float)winHeight);
         camera.SetNear(0.01f);
-        camera.SetFar(100.0f);
-        camera.SetCameraPosition(Vector3dF(0.0f, 0.0f, 0.0f));
+        camera.SetFar(10000.0f);
+        camera.SetCameraPosition(Vector3dF(0.0f, 10.0f, 0.0f));
     }
     void updateCamera() {
         Vector3dF p = camera.GetCameraPosition();
@@ -243,15 +243,9 @@ public:
         orientation *= diff;
         orientation = orientation.Normalize();
         Matrix4x4 R = orientation.toMatrix4x4();
-        Matrix4x4 modelTrans = R * S * T;
+        Matrix4x4 modelTrans = T * R * S;
         Matrix4x4 normalTrans = modelTrans.inverse();
         Matrix4x4 cameraMat = camera.GetMatrix();
-        Matrix4x4 viewMat = LookAt(camera.GetCameraPosition(), camera.GetFocalVector(), {0.0, 1.0, 0.0});
-        Matrix4x4 projMat = Perspective(45.0, float(winWidth)/float(winHeight), 0.1f, 10000.f);
-        
-        shader.setMatrix4f("view", camera.GetViewMatrix());
-        shader.setMatrix4f("proj", camera.GetProjMatrix());
-        // shader.setMatrix4f("PV", camera.GetProjMatrix() * camera.GetViewMatrix());
         shader.setMatrix4f("PV", cameraMat);
         shader.setMatrix4f("model", modelTrans);
         shader.setMatrix4f("normalMat", normalTrans);

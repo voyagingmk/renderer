@@ -17,7 +17,6 @@ struct Light {
 in vec3 FragPos; 
 in vec2 TexCoord;
 in vec3 Normal; 
-in vec2 debug;
 
 out vec4 color;
 
@@ -33,8 +32,6 @@ void main()
 {
 	vec4 objectColor = texture(ourTexture1, TexCoord);
 	color = objectColor;
-	color *= debug.x;
-	return;
 	vec3 norm = normalize(Normal);
 	// dir: frag -> light
 	vec3 lightDir = normalize(lightPos - FragPos); 
