@@ -24,7 +24,6 @@ namespace renderer {
         Matrix4x4 projMat;
         Vector3dF eye;
         Vector3dF target;
-		Vector3dF focal;
 		Vector3dF up;
 		Vector3dF right;
         float fov;
@@ -53,7 +52,6 @@ namespace renderer {
 		PerspectiveCamera& operator = (PerspectiveCamera&& c) {
             eye = c.eye;
             target = c.target;
-			focal = c.focal;
 			up = c.up;
 			fov = c.fov;
             aspect = c.aspect;
@@ -65,7 +63,6 @@ namespace renderer {
 		PerspectiveCamera& operator = (const PerspectiveCamera& c) {
             eye = c.eye;
             target = c.target;
-            focal = c.focal;
 			up = c.up;
 			fov = c.fov;
             aspect = c.aspect;
@@ -101,7 +98,6 @@ namespace renderer {
         
         void SetTargetVector(Vector3dF v) {
             target = v;
-            UpdateFocalVector();
             UpdateViewMatrix();
         }
         
@@ -134,10 +130,6 @@ namespace renderer {
             return target;
         }
         
-        Vector3dF GetFocalVector() {
-            return focal;
-        }
-        
         Vector3dF GetUpVector() {
             return up;
         }
@@ -155,9 +147,7 @@ namespace renderer {
         Matrix4x4 GetProjMatrix() { return projMat; }
         
     protected:
-        
-        void UpdateFocalVector();
-        
+    
         virtual void UpdateMatrix();
         
         void UpdateViewMatrix();

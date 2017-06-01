@@ -665,14 +665,16 @@ namespace renderer {
         };
     }
     
-    static Matrix4x4 LookAt(const Vector3dF &eye, const Vector3dF &focal, const Vector3dF &up) {
-        Vector3dF right = (focal.Cross(up.Normalize())).Normalize();
-        Vector3dF newUp = right.Cross(focal);
+    static Matrix4x4 LookAt(const Vector3dF &eye, const Vector3dF &target, const Vector3dF &up) {
+        Vector3dF f = (target - eye).Normalize();
+        Vector3dF r = (f.Cross(up)).Normalize();
+        Vector3dF u = r.Cross(f);
+        f = -f;
         return Matrix4x4{
-            right.x, right.y, right.z, -right.Dot(eye),
-            newUp.x, newUp.y, newUp.z, -newUp.Dot(eye),
-            focal.x, focal.y, focal.z, -focal.Dot(eye),
-            0,			0,			0,		1
+            r.x, r.y, r.z, -r.Dot(eye),
+            u.x, u.y, u.z, -u.Dot(eye),
+            f.x, f.y, f.z, -f.Dot(eye),
+            0,	 0,	  0,    1
         };
     }
 
