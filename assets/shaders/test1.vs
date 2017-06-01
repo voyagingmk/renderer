@@ -21,7 +21,7 @@ void main()
 	// mat4 mvp =  proj * view * model;
 	gl_Position = mvp * vec4(position, 1.0f);
 	FragPos = vec3(model * vec4(position, 1.0f));
-	Normal = normal * mat3(normalMat);
+	Normal =  mat3(normalMat) * normal;
 	// Normal = mat3(transpose(inverse(model))) * normal;
 	// We swap the y-axis by substracing our coordinates from 1.
 	TexCoord = vec2(texCoord.x, 1.0 - texCoord.y);

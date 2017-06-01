@@ -150,6 +150,10 @@ public:
         camera.SetNear(0.01f);
         camera.SetFar(10000.0f);
         camera.SetCameraPosition(Vector3dF(0.0f, 10.0f, 0.0f));
+        
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
     void updateCamera() {
         Vector3dF p = camera.GetCameraPosition();
@@ -204,7 +208,6 @@ public:
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         shaderMgr.useShaderProgram(shaderProgramHDL);
         Shader& shader = shaderMgr.getShader(shaderProgramHDL);
         
@@ -243,12 +246,13 @@ public:
         orientation *= diff;
         orientation = orientation.Normalize();
         Matrix4x4 R = orientation.toMatrix4x4();
-        Matrix4x4 modelTrans = T * R * S;
-        Matrix4x4 normalTrans = modelTrans.inverse();
+        // R.debug();
+        
+        Matrix4x4 modelMat = T * R * S;
         Matrix4x4 cameraMat = camera.GetMatrix();
         shader.setMatrix4f("PV", cameraMat);
-        shader.setMatrix4f("model", modelTrans);
-        shader.setMatrix4f("normalMat", normalTrans);
+        shader.setMatrix4f("model", modelMat);
+        shader.setMatrix4f("normalMat", modelMat.inverse().transpose());
         bufferMgr.DrawBuffer("dog");
         
         
@@ -258,9 +262,9 @@ public:
         shader.set3f("material.diffuse",  1.0f, 1.0f, 1.0f);
         shader.set3f("material.specular", 1.0f, 1.0f, 1.0f);
         shader.set1f("material.shininess", 32.0f);
-        modelTrans = Matrix4x4::newIdentity();
-        shader.setMatrix4f("model", modelTrans);
-        shader.setMatrix4f("normalMat", modelTrans.inverse());
+        modelMat = Matrix4x4::newIdentity();
+        shader.setMatrix4f("model", modelMat);
+        shader.setMatrix4f("normalMat", modelMat.inverse().transpose());
         bufferMgr.DrawBuffer("plane");
     }
 };
