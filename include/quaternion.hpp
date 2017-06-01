@@ -40,10 +40,10 @@ namespace renderer {
 		Quaternion<T> operator * (Quaternion<T> q) {
 			/*
 			= (sa + xai + yaj + zak)(sb + xbi + ybj + zbk)
-			= (sasb?xaxb?yayb?zazb)
-			+ (saxb + sbxa + yazb?ybza)i
-			+ (sayb + sbya + zaxb?zbxa)j
-			+ (sazb + sbza + xayb?xbya)k
+			= (sasb - xaxb - yayb - zazb)
+			+ (saxb + sbxa + yazb - ybza)i
+			+ (sayb + sbya + zaxb - zbxa)j
+			+ (sazb + sbza + xayb - xbya)k
 			*/
 			return Quaternion<T>(
 				s * q.s - x * q.x - y * q.y - z * q.z,
@@ -102,7 +102,7 @@ namespace renderer {
 			T n = Norm();
 			assert(n != 0);
 			T inv = T(1) / n;
-			return Quaternion<T>(0, x * inv, y * inv, z * inv);
+			return Quaternion<T>(s * inv, x * inv, y * inv, z * inv);
 		}
 		Quaternion<T> Conjugate() {
 			return Quaternion<T>(s, -x, -y, -z);
@@ -138,6 +138,10 @@ namespace renderer {
 		Quaternion<T> Slerp() {
 
 		}
+        
+        void debug() {
+            printf("%f, %f, %f, %f\n", s, x, y, z);
+        }
         
         // x-axis clockwise
         static Quaternion<T> RotateX(T angle) {

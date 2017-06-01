@@ -230,12 +230,12 @@ public:
         shader.set3f("light.diffuse",  lightColor); // darken the light a bit to fit the scene
         shader.set3f("light.specular", 1.0f, 1.0f, 1.0f);
         
-        Matrix4x4 T = Translate<Matrix4x4>({0.0f, 0.0f, -80.0f});
+        Matrix4x4 T = Translate<Matrix4x4>({0.0f, 10.0f, 30.0f});
         Matrix4x4 S = Scale<Matrix4x4>({0.1f, 0.1f, 0.1f});
         
         const float pitch = 0.0f, yaw = 0.0f, roll = 0.0f;
         
-        static QuaternionF orientation = {0.0, 0.0, 0.0, 1.0};
+        static QuaternionF orientation = {1.0, 0.0, 0.0, 0.0};
         QuaternionF rotX = QuaternionF::RotateX(pitch); // x
         QuaternionF rotY = QuaternionF::RotateY(yaw); // y
         QuaternionF rotZ = QuaternionF::RotateZ(roll); // z
