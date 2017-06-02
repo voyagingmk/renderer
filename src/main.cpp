@@ -215,8 +215,7 @@ public:
         texMgr.activateTexture(0, texID1);
         shader.set1i("ourTexture1", 0);
         
-        Vector3dF lightPos(100.0f, 100.0f, 100.0f);
-        shader.set3f("lightPos", lightPos.x, lightPos.y, lightPos.z);
+
         
         Vector3dF viewPos(0.0f, 0.0f, 1.0f);
         shader.set3f("viewPos", camera.GetCameraPosition());
@@ -229,14 +228,20 @@ public:
         lightColor.x = (1.0f + sin(getTimeS() * 1.0f)) * 0.5f;
         lightColor.y = (1.0f + sin(getTimeS() * 2.0f)) * 0.5f;
         lightColor.z = (1.0f + sin(getTimeS() * 1.5f)) * 0.5f;*/
-        shader.set3f("light.ambient",  lightColor);
-        shader.set3f("light.diffuse",  lightColor); // darken the light a bit to fit the scene
-        shader.set3f("light.specular", 1.0f, 1.0f, 1.0f);
+        
+        Vector3dF lightPos(10.0f, 15.0f, -30.0f);
+        shader.set3f("light.position",  lightPos.x, lightPos.y, lightPos.z);
+        shader.set3f("light.ambient",   lightColor);
+        shader.set3f("light.diffuse",   lightColor);
+        shader.set3f("light.specular",  1.0f, 1.0f, 1.0f);
+        shader.set1f("light.constant",  1.0f);
+        shader.set1f("light.linear",    0.014f);
+        shader.set1f("light.quadratic", 0.0007f);
         
         Matrix4x4 T = Translate<Matrix4x4>({0.0f, 10.0f, -30.0f});
         Matrix4x4 S = Scale<Matrix4x4>({0.1f, 0.1f, 0.1f});
         
-        const float pitch = 0.0f, yaw = 10.0f, roll = 0.0f;
+        const float pitch = 0.0f, yaw = 1.0f, roll = 0.0f;
         
         static QuaternionF orientation = {1.0, 0.0, 0.0, 0.0};
         QuaternionF rotX = QuaternionF::RotateX(pitch); // x
@@ -247,13 +252,18 @@ public:
         orientation = orientation.Normalize();
         Matrix4x4 R = orientation.toMatrix4x4();
         // R.debug();
-        
         Matrix4x4 modelMat = T * R * S;
         Matrix4x4 cameraMat = camera.GetMatrix();
         shader.setMatrix4f("PV", cameraMat);
-        shader.setMatrix4f("model", modelMat);
-        shader.setMatrix4f("normalMat", modelMat.inverse().transpose());
-        bufferMgr.DrawBuffer("dog");
+     
+        for(int i = 0; i < 3; i++) {
+            Matrix4x4 _modelMat = modelMat;
+            _modelMat = Translate<Matrix4x4>({i * 10.0f, 0.0f, 0.0f}) * _modelMat;
+            shader.setMatrix4f("model", _modelMat);
+            shader.setMatrix4f("normalMat", _modelMat.inverse().transpose());
+            bufferMgr.DrawBuffer("dog");
+        }
+        
         
         
         texMgr.activateTexture(0, texID2);
