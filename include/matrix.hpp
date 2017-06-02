@@ -666,10 +666,10 @@ namespace renderer {
     }
     
     static Matrix4x4 LookAt(const Vector3dF &eye, const Vector3dF &target, const Vector3dF &up) {
-        Vector3dF f = (target - eye).Normalize();
-        Vector3dF r = (f.Cross(up)).Normalize();
-        Vector3dF u = r.Cross(f);
-        f = -f;
+        Vector3dF focal = (target - eye).Normalize();
+        Vector3dF r = (focal.Cross(up)).Normalize();
+        Vector3dF u = r.Cross(focal);
+        Vector3dF f = -focal;
         return Matrix4x4{
             r.x, r.y, r.z, -r.Dot(eye),
             u.x, u.y, u.z, -u.Dot(eye),
