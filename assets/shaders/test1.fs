@@ -21,7 +21,8 @@ struct Light {
 
 in vec3 FragPos; 
 in vec2 TexCoord;
-in vec3 Normal; 
+in vec3 Normal;
+in vec3 VColor; 
 
 out vec4 color;
 
@@ -54,5 +55,6 @@ void main()
 	float attenuation = 1.0 / (light.constant + light.linear * distance + 
     light.quadratic * (distance * distance));    
 
-	color = vec4((ambient + diffuse + specular) * attenuation, 1.0) * objectColor;
+	color = vec4((ambient + diffuse + specular) , 1.0) * objectColor;
+	color = vec4(VColor, 1.0);
 }

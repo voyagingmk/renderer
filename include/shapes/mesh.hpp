@@ -29,6 +29,7 @@ namespace renderer {
 		Vector3dF position;
 		// Normal
 		Normal3dF normal;
+        Vector3dF color;
 		// TexCoords
 		Vector2dF texCoords;
 	};

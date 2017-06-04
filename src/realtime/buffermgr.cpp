@@ -31,9 +31,12 @@ BufferSet BufferMgrOpenGL::CreateBuffer(const std::string& aliasname, Mesh& mesh
     // Normal attribute
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(3 * sizeof(GLfloat)));
     glEnableVertexAttribArray(1);
-    //TexCoord attribute
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(6 * sizeof(GLfloat)));
+    //Vertex Color attribute
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(6 * sizeof(GLfloat)));
     glEnableVertexAttribArray(2);
+    //TexCoord attribute
+    glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(9 * sizeof(GLfloat)));
+    glEnableVertexAttribArray(3);
     
     glBindBuffer(GL_ARRAY_BUFFER, 0); // Note that this is allowed, the call to glVertexAttribPointer registered VBO as the currently bound vertex buffer object so afterwards we can safely unbind
     

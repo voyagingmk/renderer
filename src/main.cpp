@@ -53,13 +53,24 @@ bool importModel(const std::string& pFile, const std::string& name)
         p.y = aimesh->mVertices[i].y;
         p.z = aimesh->mVertices[i].z;
         v.position = p;
-        // Normals
-        p.x = aimesh->mNormals[i].x;
-        p.y = aimesh->mNormals[i].y;
-        p.z = aimesh->mNormals[i].z;
+        if(aimesh->HasNormals()) {
+            // Normals
+            p.x = aimesh->mNormals[i].x;
+            p.y = aimesh->mNormals[i].y;
+            p.z = aimesh->mNormals[i].z;
+        } else {
+            p.x = p.y = p.z = 0.0;
+        }
         v.normal = p;
+        if(aimesh->HasVertexColors(0)){
+            v.color.x = aimesh->mColors[0][i].r;
+            v.color.y = aimesh->mColors[0][i].g;
+            v.color.z = aimesh->mColors[0][i].b;
+        } else {
+            v.color = Vector3dF(0.0, 0.0, 0.0);
+        }
         // Texture Coordinates
-        if(aimesh->mTextureCoords[0]) // Does the mesh contain texture coordinates?
+        if(aimesh->HasTextureCoords(0)) // Does the mesh contain texture coordinates?
         {
             Vector2dF uv;
             // A vertex can contain up to 8 different texture coordinates. We thus make the assumption that we won't
@@ -140,7 +151,7 @@ public:
         // Setup OpenGL options
         glEnable(GL_DEPTH_TEST);
         
-        importModel("./assets/models/dog.obj", "dog");
+        importModel("./assets/models/cordorIOS_scan_file_1.ply", "dog");
         importModel("./assets/models/plane.obj", "plane");
         
         checkSDLError();
@@ -151,8 +162,8 @@ public:
         camera.SetFar(10000.0f);
         camera.SetCameraPosition(Vector3dF(0.0f, 10.0f, 0.0f));
         
-        glEnable(GL_CULL_FACE);
-        glCullFace(GL_BACK);
+       // glEnable(GL_CULL_FACE);
+       // glCullFace(GL_BACK);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
     void updateCamera() {
@@ -229,7 +240,7 @@ public:
         lightColor.y = (1.0f + sin(getTimeS() * 2.0f)) * 0.5f;
         lightColor.z = (1.0f + sin(getTimeS() * 1.5f)) * 0.5f;*/
         
-        Vector3dF lightPos(10.0f, 15.0f, -30.0f);
+        Vector3dF lightPos(10.0f, 15.0f, -10.0f);
         shader.set3f("light.position",  lightPos.x, lightPos.y, lightPos.z);
         shader.set3f("light.ambient",   lightColor);
         shader.set3f("light.diffuse",   lightColor);
@@ -241,7 +252,7 @@ public:
         Matrix4x4 T = Translate<Matrix4x4>({0.0f, 10.0f, -30.0f});
         Matrix4x4 S = Scale<Matrix4x4>({0.1f, 0.1f, 0.1f});
         
-        const float pitch = 0.0f, yaw = 1.0f, roll = 0.0f;
+        const float pitch = 1.0f, yaw = 0.0f, roll = 0.0f;
         
         static QuaternionF orientation = {1.0, 0.0, 0.0, 0.0};
         QuaternionF rotX = QuaternionF::RotateX(pitch); // x

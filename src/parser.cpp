@@ -170,7 +170,8 @@ namespace renderer {
 					vertices.push_back({
 						Vector3dF(position[0], position[1], position[2]),
 						Normal3dF(normal[0], normal[1], normal[2]),
-						Vector2dF(uv[0], uv[1])
+						Vector3dF(0.0f, 0.0f, 0.0f),
+                        Vector2dF(uv[0], uv[1])
 					});
 				}
 				for (auto index : objinfo["indexes"]) {
