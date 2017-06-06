@@ -8,103 +8,21 @@
 #include "quaternion.hpp"
 #include "buffermgr.hpp"
 #include "realtime/glutils.hpp"
+#include "realtime/model.hpp"
 #include "camera.hpp"
-
-#include <assimp/Importer.hpp>      // C++ importer interface
-#include <assimp/scene.h>           // Output data structure
-#include <assimp/postprocess.h>     // Post processing flags
-
 
 using namespace std;
 using namespace renderer;
-
-
-bool importModel(const std::string& pFile, const std::string& name)
-{
-    // Create an instance of the Importer class
-    Assimp::Importer importer;
-    
-    // And have it read the given file with some example postprocessing
-    // Usually - if speed is not the most important aspect for you - you'll
-    // propably to request more postprocessing than we do in this example.
-    const aiScene* scene = importer.ReadFile( pFile,
-                                             aiProcess_CalcTangentSpace       |
-                                             aiProcess_Triangulate            |
-                                             aiProcess_JoinIdenticalVertices  |
-                                             aiProcess_SortByPType);
-    
-    // If the import failed, report it
-    if( !scene)
-    {
-        cout << importer.GetErrorString() << endl;
-        return false;
-    }
-    
-    // Now we can access the file's contents.
-    BufferMgrOpenGL& bufferMgr = BufferMgrOpenGL::getInstance();
-    Mesh mesh;
-    aiMesh* aimesh = scene->mMeshes[0];
-    // Walk through each of the mesh's vertices
-    for(uint32_t i = 0; i < aimesh->mNumVertices; i++)
-    {
-        Vertex v;
-        Vector3dF p;
-        p.x = aimesh->mVertices[i].x;
-        p.y = aimesh->mVertices[i].y;
-        p.z = aimesh->mVertices[i].z;
-        v.position = p;
-        if(aimesh->HasNormals()) {
-            // Normals
-            p.x = aimesh->mNormals[i].x;
-            p.y = aimesh->mNormals[i].y;
-            p.z = aimesh->mNormals[i].z;
-        } else {
-            p.x = p.y = p.z = 0.0;
-        }
-        v.normal = p;
-        if(aimesh->HasVertexColors(0)){
-            v.color.x = aimesh->mColors[0][i].r;
-            v.color.y = aimesh->mColors[0][i].g;
-            v.color.z = aimesh->mColors[0][i].b;
-        } else {
-            v.color = Vector3dF(0.0, 0.0, 0.0);
-        }
-        // Texture Coordinates
-        if(aimesh->HasTextureCoords(0)) // Does the mesh contain texture coordinates?
-        {
-            Vector2dF uv;
-            // A vertex can contain up to 8 different texture coordinates. We thus make the assumption that we won't
-            // use models where a vertex can have multiple texture coordinates so we always take the first set (0).
-            uv.x = aimesh->mTextureCoords[0][i].x;
-            uv.y = aimesh->mTextureCoords[0][i].y;
-            v.texCoords = uv;
-        }
-        else
-            v.texCoords = Vector2dF(0.0f, 0.0f);
-         mesh.vertices.push_back(v);
-    }
-    // Now wak through each of the mesh's faces (a face is a mesh its triangle) and retrieve the corresponding vertex indices.
-    for(GLuint i = 0; i < aimesh->mNumFaces; i++)
-    {
-        aiFace face = aimesh->mFaces[i];
-        // Retrieve all indices of the face and store them in the indices vector
-        for(GLuint j = 0; j < face.mNumIndices; j++)
-           mesh.indexes.push_back(face.mIndices[j]);
-    }
-    
-    bufferMgr.CreateBuffer(name, mesh);
-    
-    // We're done. Everything will be cleaned up by the importer destructor
-    return true;
-}
-
-
 
 class MyContext : public RendererContextSDL {
     PerspectiveCamera camera;
     ShaderProgramHDL shaderProgramHDL;
     texID texID1, texID2;
     std::map<SDL_Keycode, uint8_t> keyState;
+    std::vector<Model*> objs;
+    Model* terrian;
+    PhongMaterial* material;
+    PointLight* light;
 public:
     MyContext():
         shaderProgramHDL(0),
@@ -143,16 +61,37 @@ public:
         });
         texID1 = texMgr.loadTexture("dog.png", "tex1");
         texID2 = texMgr.loadTexture("terrian.png", "tex2");
-
-        // Uncommenting this call will result in wireframe polygons.
-        //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        
+        auto matPool = GetPool<PhongMaterial>();
+        material = matPool->newElement(
+            Color(1.0f, 0.5f, 0.31f),
+            Color(1.0f, 0.5f, 0.31f),
+            Color(0.5f, 0.5f, 0.5f),
+            32.0f);
+        auto lightPool = GetPool<PointLight>();
+        light = lightPool->newElement(Vector3dF(10.0f, 15.0f, -10.0f));
+        light->ambient = Color(1.0f, 1.0f, 1.0f);
+        light->diffuse = Color(1.0f, 1.0f, 1.0f);
+        light->specular = Color(1.0f, 1.0f, 1.0f);
+        light->constant = 1.0f;
+        light->linear = 0.014f;
+        light->quadratic = 0.0007f;
         
         glViewport(0, 0, winWidth, winHeight);
-        // Setup OpenGL options
-        glEnable(GL_DEPTH_TEST);
-        
-        importModel("./assets/models/dog.obj", "dog");
-        importModel("./assets/models/plane.obj", "plane");
+
+        auto pool = GetPool<Model>();
+        string dirPath = "./assets/models/";
+
+        for(int i = 0; i < 1; i++) {
+            Model* model = pool->newElement();
+            objs.push_back(model);
+            model->CustomInit(dirPath + "dog.obj");
+            model->SetScale(Vector3dF(0.1f, 0.1f, 0.1f));
+            model->SetPos(Vector3dF(0.0f, 3.0f, -30.0f));
+            model->SetRotate(90, Axis::y);
+        }
+        terrian = pool->newElement();
+        terrian->CustomInit(dirPath + "plane.obj");
         
         checkSDLError();
         checkGLError();
@@ -161,10 +100,18 @@ public:
         camera.SetNear(0.01f);
         camera.SetFar(10000.0f);
         camera.SetCameraPosition(Vector3dF(0.0f, 10.0f, 0.0f));
+       
+        // Setup OpenGL options
+        glEnable(GL_DEPTH_TEST);
+        //glDepthFunc(GL_LESS); //
         
         glEnable(GL_CULL_FACE);
         glCullFace(GL_BACK);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        /*
+        glEnable(GL_STENCIL_TEST);
+        glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+        glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);*/
     }
     void updateCamera() {
         Vector3dF p = camera.GetCameraPosition();
@@ -208,44 +155,12 @@ public:
     
     virtual void onPoll() override
     {
+        updateWorld();
         updateCamera();
         draw();
     }
     
-    void draw() {
-        ShaderMgrOpenGL& shaderMgr = ShaderMgrOpenGL::getInstance();
-        TextureMgrOpenGL& texMgr = TextureMgrOpenGL::getInstance();
-        BufferMgrOpenGL& bufferMgr = BufferMgrOpenGL::getInstance();
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        shaderMgr.useShaderProgram(shaderProgramHDL);
-        Shader& shader = shaderMgr.getShader(shaderProgramHDL);
-        
-        // Bind Textures using texture units
-        texMgr.activateTexture(0, texID1);
-        shader.set1i("ourTexture1", 0);
-        
-        shader.set3f("viewPos", camera.GetCameraPosition());
-        shader.set3f("material.ambient",  1.0f, 0.5f, 0.31f);
-        shader.set3f("material.diffuse",  1.0f, 0.5f, 0.31f);
-        shader.set3f("material.specular", 0.5f, 0.5f, 0.5f);
-        shader.set1f("material.shininess", 32.0f);
-        Vector3dF lightColor = Vector3dF(1.0f, 1.0f, 1.0f);
-        /*
-        lightColor.x = (1.0f + sin(getTimeS() * 1.0f)) * 0.5f;
-        lightColor.y = (1.0f + sin(getTimeS() * 2.0f)) * 0.5f;
-        lightColor.z = (1.0f + sin(getTimeS() * 1.5f)) * 0.5f;*/
-        
-        Vector3dF lightPos(10.0f, 15.0f, -10.0f);
-        shader.set3f("light.position",  lightPos.x, lightPos.y, lightPos.z);
-        shader.set3f("light.ambient",   lightColor);
-        shader.set3f("light.diffuse",   lightColor);
-        shader.set3f("light.specular",  1.0f, 1.0f, 1.0f);
-        shader.set1f("light.constant",  1.0f);
-        shader.set1f("light.linear",    0.014f);
-        shader.set1f("light.quadratic", 0.0007f);
-        
+    void updateWorld() {
         Matrix4x4 T = Translate<Matrix4x4>({-10.0f, 3.0f, -30.0f});
         Matrix4x4 S = Scale<Matrix4x4>({0.1f, 0.1f, 0.1f});
         
@@ -261,29 +176,50 @@ public:
         Matrix4x4 R = orientation.toMatrix4x4();
         // R.debug();
         Matrix4x4 modelMat = T * R * S;
-        Matrix4x4 cameraMat = camera.GetMatrix();
-        shader.setMatrix4f("PV", cameraMat);
-     
-        for(int i = 0; i < 3; i++) {
-            Matrix4x4 _modelMat = modelMat;
-            _modelMat = Translate<Matrix4x4>({i * 10.0f, 0.0f, 0.0f}) * _modelMat;
-            shader.setMatrix4f("model", _modelMat);
-            shader.setMatrix4f("normalMat", _modelMat.inverse().transpose());
-            bufferMgr.DrawBuffer("dog");
-        }
-        
-        
-        
+    }
+    
+    void drawTerrian() {
+        ShaderMgrOpenGL& shaderMgr = ShaderMgrOpenGL::getInstance();
+        TextureMgrOpenGL& texMgr = TextureMgrOpenGL::getInstance();
+        Shader& shader = shaderMgr.getShader(shaderProgramHDL);
+        // 地面
         texMgr.activateTexture(0, texID2);
         shader.set1i("ourTexture1", 0);
-        shader.set3f("material.ambient",  1.0f, 1.0f, 1.0f);
-        shader.set3f("material.diffuse",  1.0f, 1.0f, 1.0f);
-        shader.set3f("material.specular", 1.0f, 1.0f, 1.0f);
-        shader.set1f("material.shininess", 32.0f);
-        modelMat = Matrix4x4::newIdentity();
-        shader.setMatrix4f("model", modelMat);
-        shader.setMatrix4f("normalMat", modelMat.inverse().transpose());
-        bufferMgr.DrawBuffer("plane");
+        
+        shader.setMatrix4f("model", terrian->o2w->m);
+        shader.setMatrix4f("normalMat", terrian->o2w->mInv.transpose());
+        terrian->Draw();
+    }
+    
+    void drawObjs() {
+        TextureMgrOpenGL& texMgr = TextureMgrOpenGL::getInstance();
+        ShaderMgrOpenGL& shaderMgr = ShaderMgrOpenGL::getInstance();
+        shaderMgr.useShaderProgram(shaderProgramHDL);
+        Shader& shader = shaderMgr.getShader(shaderProgramHDL);
+        texMgr.activateTexture(0, texID1);
+        shader.set1i("ourTexture1", 0);
+        
+        for(int i = 0; i < objs.size(); i++) {
+            Model* obj = objs[i];
+            shader.setMatrix4f("model", obj->o2w->m);
+            shader.setMatrix4f("normalMat", obj->o2w->mInv.transpose());
+            obj->Draw();
+        }
+    }
+    
+    void draw() {
+        ShaderMgrOpenGL& shaderMgr = ShaderMgrOpenGL::getInstance();
+        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        shaderMgr.useShaderProgram(shaderProgramHDL);
+        Shader& shader = shaderMgr.getShader(shaderProgramHDL);
+        shader.set3f("viewPos", camera.GetCameraPosition());
+        shader.setMatrix4f("PV", camera.GetMatrix());
+        shader.setLight(light);
+        shader.setMaterial(material);
+        drawTerrian();
+        drawObjs();
     }
 };
 

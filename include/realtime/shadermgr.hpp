@@ -4,6 +4,8 @@
 #include "base.hpp"
 #include "matrix.hpp"
 #include "transform.hpp"
+#include "material.hpp"
+#include "light.hpp"
 
 namespace renderer {
 
@@ -35,6 +37,8 @@ namespace renderer {
         virtual void set1i(UniLoc loc, int i1);
         virtual void setMatrix4f(UniLoc loc, Matrix4x4 mat);
         virtual void setTransform4f(UniLoc loc, Transform4x4 trans);
+        virtual void setLight(Light* light);
+        virtual void setMaterial(Material* mat);
         // by name
         virtual void set4f(const char* name, float f1, float f2, float f3, float f4);
         virtual void set3f(const char* name, float f1, float f2, float f3);

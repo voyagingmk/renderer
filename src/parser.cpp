@@ -44,7 +44,9 @@ namespace renderer {
 			Material* mt = nullptr;
 			if (objinfo["type"] == "Phone") {
 				auto pool = GetPool<PhongMaterial>();
-				mt = pool->newElement(parseColor(objinfo["diffuse"]),
+				mt = pool->newElement(
+					parseColor(objinfo["ambient"]),
+					parseColor(objinfo["diffuse"]),
 					parseColor(objinfo["specular"]),
 					objinfo["shininess"],
 					objinfo["reflectiveness"]);
@@ -218,7 +220,6 @@ namespace renderer {
 				auto color = objinfo["color"];
 				auto pool = GetPool<DirectionLight>();
 				pLight = static_cast<Light*>(pool->newElement(Vector3dF(dir[0], dir[1], dir[2])));
-				pLight->lightType = LightType_Direction;
 			}
 			else if (objinfo["type"] == "PointLight") {
 				auto pos = objinfo["pos"];
@@ -230,11 +231,10 @@ namespace renderer {
 				auto pool = GetPool<PointLight>();
 				pLight = static_cast<Light*>(pool->newElement(
 					Vector3dF(pos[0], pos[1], pos[2]),
+					radius,
 					shadow,
 					softshadow,
-					radius,
 					shadowrays));
-				pLight->lightType = LightType_Point;
 			}
 			if (pLight)
 				lights.push_back(pLight);

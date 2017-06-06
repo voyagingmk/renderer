@@ -111,7 +111,7 @@ namespace renderer {
 				Vector3dF incidenceNormal = incidenceCenter.Normalize();
 				c = pMaterial->Sample(ray, result.position, result.normal, incidenceNormal);
 				float disToLight = 0;
-				if (pLight->lightType == LightType_Point) {
+				if (pLight->getType() == LightType::Point) {
 					disToLight = (dynamic_cast<PointLight*>(pLight)->pos - result.position).Length();
 				}
 				int N = pLight->shadowrays;
@@ -160,14 +160,14 @@ namespace renderer {
 				bool canSample = true;
 				if (_result.geometry && _result.geometry != result.geometry) {
 					logDebug("shadowed, id1: %d id2: %d \n", _result.geometry->id, result.geometry->id);
-					if (pLight->lightType == LightType_Point) {
+					if (pLight->getType() == LightType::Point) {
 						float disToLight = (dynamic_cast<PointLight*>(pLight)->pos - result.position).Length();
 						if (disToLight >= _result.tHit) {
 							canSample = false;
 							c = Color::Black;
 						}
 					}
-					else if (pLight->lightType == LightType_Direction) {
+					else if (pLight->getType() == LightType::Direction) {
 						canSample = false;
 						c = Color::Black;
 					}

@@ -37,6 +37,29 @@ void Shader::setTransform4f(UniLoc loc, Transform4x4 trans) {
     setMatrix4f(loc, trans.GetMatrix());
 }
 
+void Shader::setLight(Light* light) {
+    set3f("light.ambient", light->ambient.r(), light->ambient.g(), light->ambient.b());
+    set3f("light.diffuse", light->diffuse.r(), light->diffuse.g(), light->diffuse.b());
+    set3f("light.specular", light->specular.r(), light->specular.g(), light->specular.b());
+    set1f("light.constant",  light->constant);
+    set1f("light.linear",    light->linear);
+    set1f("light.quadratic", light->quadratic);
+    if(light->getType() == LightType::Point) {
+        PointLight* pl = (PointLight*)light;
+        set3f("light.position",  pl->pos);
+    }
+}
+
+void Shader::setMaterial(Material* mat) {
+    if(mat->getType() == MaterialType::Phong) {
+        PhongMaterial * pmat = (PhongMaterial*)mat;
+        set3f("material.ambient", pmat->ambient.r(), pmat->ambient.g(), pmat->ambient.b());
+        set3f("material.diffuse", pmat->diffuse.r(), pmat->diffuse.g(), pmat->diffuse.b());
+        set3f("material.specular", pmat->specular.r(), pmat->specular.g(), pmat->specular.b());
+        set1f("material.shininess", pmat->shininess);
+    }
+}
+
 
 // by name
 void Shader::set4f(const char* name, float f1, float f2, float f3, float f4) {
@@ -71,8 +94,6 @@ void Shader::setMatrix4f(const char* name, Matrix4x4 mat) {
 void Shader::setTransform4f(const char* name, Transform4x4 trans) {
     setTransform4f(getUniformLocation(name), trans);
 }
-
-
 
 
 ShaderMgrBase::~ShaderMgrBase() {

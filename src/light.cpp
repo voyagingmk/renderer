@@ -9,7 +9,13 @@ namespace renderer {
 		:shadow(false),
 		softshadow(false),
 		radius(0.f),
-		shadowrays(0)
+		shadowrays(0),
+        ambient(1.0f, 1.0f, 1.0f),
+        diffuse(1.0f, 1.0f, 1.0f),
+        specular(1.0f, 1.0f, 1.0f),
+        constant(1.0),
+        linear(0.0),
+        quadratic(0.0)
 	{}
 
 	Light::Light(bool s,
@@ -39,9 +45,9 @@ namespace renderer {
 
 
 	PointLight::PointLight(const Vector3dF& p,
+		const float r,
 		const bool s,
 		const bool ss,
-		const float r,
 		const int rays) noexcept
 		: Light(s, ss, r, rays), pos(p)
 	{}

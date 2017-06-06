@@ -3,12 +3,14 @@
 
 #include "base.hpp"
 #include "geometry.hpp"
+#include "color.hpp"
 
 namespace renderer {
-	constexpr int LightType_Default = 0;
-	constexpr int LightType_Direction = 1;
-	constexpr int LightType_Point = 2;
-
+    enum class LightType {
+        Default = 0,
+        Direction = 1,
+        Point = 2
+    };
 
 	class Light {
 	public:
@@ -16,7 +18,12 @@ namespace renderer {
 		bool softshadow;
 		float radius;
 		int shadowrays;
-		int lightType = LightType_Default;
+        Color ambient;
+        Color diffuse;
+        Color specular;
+        float constant;
+        float linear;
+        float quadratic;
 	public:
 		Light() noexcept;
 		Light(bool s, bool ss, float r, int rays) noexcept;
@@ -25,6 +32,7 @@ namespace renderer {
 		virtual Vector3dF incidence(Point3dF& targetPos) = 0;
 		virtual Color sample_L(Vector3dF& pos) = 0;
 		virtual void Init() = 0;
+        virtual LightType getType() { return LightType::Default; }
 	};
 
 	class DirectionLight final: public Light {
@@ -32,6 +40,7 @@ namespace renderer {
 		Vector3dF dir;
 	public:
 		DirectionLight(const Vector3dF& dir) noexcept;
+        virtual LightType getType() override { return LightType::Direction; }
 		virtual Normal3dF incidenceNormal(Point3dF& targetPos) override {
 			return dir.Normalize();
 		}
@@ -46,11 +55,12 @@ namespace renderer {
 	public:
 		Vector3dF pos;
 	public:
-		PointLight(const Vector3dF& pos,
-			const bool shadow,
-			const bool softshadow,
-			const float radius,
-			const int shadowrays) noexcept;
+        PointLight(const Vector3dF& pos,
+            const float radius = 1.0f,
+			const bool shadow = false,
+			const bool softshadow = false,
+			const int shadowrays = 0) noexcept;
+        virtual LightType getType() override { return LightType::Point; }
 		virtual Normal3dF incidenceNormal(Point3dF& targetPos) override {
 			return (targetPos - pos).Normalize();
 		}		

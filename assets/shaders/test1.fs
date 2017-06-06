@@ -36,7 +36,6 @@ uniform Light light;
 void main()
 {
 	vec4 objectColor = texture(ourTexture1, TexCoord);
-	color = objectColor;
 	vec3 norm = normalize(Normal);
 	// dir: frag -> light
 	vec3 lightDir = normalize(light.position - FragPos); 
@@ -56,4 +55,5 @@ void main()
     light.quadratic * (distance * distance));    
 
 	color = vec4((ambient + diffuse + specular) * attenuation , 1.0) * objectColor;
+	
 }
