@@ -55,6 +55,5 @@ void main()
 	float attenuation = 1.0 / (light.constant + light.linear * distance + 
     light.quadratic * (distance * distance));    
 
-	color = vec4((ambient + diffuse + specular) , 1.0) * objectColor;
-	color = vec4(VColor, 1.0);
+	color = vec4((ambient + diffuse + specular) * attenuation , 1.0) * objectColor;
 }

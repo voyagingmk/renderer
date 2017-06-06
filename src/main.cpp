@@ -151,7 +151,7 @@ public:
         // Setup OpenGL options
         glEnable(GL_DEPTH_TEST);
         
-        importModel("./assets/models/cordorIOS_scan_file_1.ply", "dog");
+        importModel("./assets/models/dog.obj", "dog");
         importModel("./assets/models/plane.obj", "plane");
         
         checkSDLError();
@@ -162,8 +162,8 @@ public:
         camera.SetFar(10000.0f);
         camera.SetCameraPosition(Vector3dF(0.0f, 10.0f, 0.0f));
         
-       // glEnable(GL_CULL_FACE);
-       // glCullFace(GL_BACK);
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
     void updateCamera() {
@@ -226,9 +226,6 @@ public:
         texMgr.activateTexture(0, texID1);
         shader.set1i("ourTexture1", 0);
         
-
-        
-        Vector3dF viewPos(0.0f, 0.0f, 1.0f);
         shader.set3f("viewPos", camera.GetCameraPosition());
         shader.set3f("material.ambient",  1.0f, 0.5f, 0.31f);
         shader.set3f("material.diffuse",  1.0f, 0.5f, 0.31f);
@@ -249,10 +246,10 @@ public:
         shader.set1f("light.linear",    0.014f);
         shader.set1f("light.quadratic", 0.0007f);
         
-        Matrix4x4 T = Translate<Matrix4x4>({0.0f, 10.0f, -30.0f});
+        Matrix4x4 T = Translate<Matrix4x4>({-10.0f, 3.0f, -30.0f});
         Matrix4x4 S = Scale<Matrix4x4>({0.1f, 0.1f, 0.1f});
         
-        const float pitch = 1.0f, yaw = 0.0f, roll = 0.0f;
+        const float pitch = 0.0f, yaw = 1.0f, roll = 0.0f;
         
         static QuaternionF orientation = {1.0, 0.0, 0.0, 0.0};
         QuaternionF rotX = QuaternionF::RotateX(pitch); // x
