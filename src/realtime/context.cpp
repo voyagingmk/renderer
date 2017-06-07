@@ -24,6 +24,7 @@ void RendererContextSDL::setup(size_t w, size_t h) {
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
     checkSDLError(__LINE__);//on Win7 would cause a ERROR about SHCore.dll, just ignore it.
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+    SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 	checkSDLError(__LINE__);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	checkSDLError(__LINE__);

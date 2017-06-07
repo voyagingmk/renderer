@@ -222,6 +222,7 @@ public:
         
         glStencilFunc(GL_ALWAYS, 1, 0xFF);
         glStencilMask(0xFF);
+        useShader(mainShader);
         drawObjs(mainShader);
         
         Shader& singleColorShader = shaderMgr.getShader(singleColorHDL);
