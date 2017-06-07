@@ -48,6 +48,7 @@ namespace renderer {
         virtual void set1i(const char* name, int i1);
         virtual void setMatrix4f(const char* name, Matrix4x4 mat);
         virtual void setTransform4f(const char* name, Transform4x4 trans);
+        virtual void use();
     };
     typedef std::map<ShaderProgramHDL, Shader> ShaderProgramSet;
     

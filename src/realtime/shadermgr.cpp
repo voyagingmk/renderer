@@ -95,6 +95,10 @@ void Shader::setTransform4f(const char* name, Transform4x4 trans) {
     setTransform4f(getUniformLocation(name), trans);
 }
 
+void Shader::use() {
+    glUseProgram(hdl);
+}
+
 
 ShaderMgrBase::~ShaderMgrBase() {
 	release();

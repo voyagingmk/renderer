@@ -17,6 +17,7 @@ using namespace renderer;
 class MyContext : public RendererContextSDL {
     PerspectiveCamera camera;
     ShaderProgramHDL shaderProgramHDL;
+    ShaderProgramHDL singleColorHDL;
     texID texID1, texID2;
     std::map<SDL_Keycode, uint8_t> keyState;
     std::vector<Model*> objs;
@@ -58,6 +59,10 @@ public:
         shaderProgramHDL = shaderMgr.createShaderProgram({
             { ShaderType::Vertex, "test1.vs" },
             { ShaderType::Fragment, "test1.fs"}
+        });
+        singleColorHDL = shaderMgr.createShaderProgram({
+            { ShaderType::Vertex, "test1.vs" },
+            { ShaderType::Fragment, "singlecolor.fs"}
         });
         texID1 = texMgr.loadTexture("dog.png", "tex1");
         texID2 = texMgr.loadTexture("terrian.png", "tex2");
@@ -103,15 +108,14 @@ public:
        
         // Setup OpenGL options
         glEnable(GL_DEPTH_TEST);
-        //glDepthFunc(GL_LESS); //
+        glEnable(GL_STENCIL_TEST);
+        glDepthFunc(GL_LESS);
+        glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
         
         glEnable(GL_CULL_FACE);
         glCullFace(GL_BACK);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-        /*
-        glEnable(GL_STENCIL_TEST);
-        glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-        glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);*/
+        
     }
     void updateCamera() {
         Vector3dF p = camera.GetCameraPosition();
@@ -161,27 +165,17 @@ public:
     }
     
     void updateWorld() {
-        Matrix4x4 T = Translate<Matrix4x4>({-10.0f, 3.0f, -30.0f});
-        Matrix4x4 S = Scale<Matrix4x4>({0.1f, 0.1f, 0.1f});
-        
-        const float pitch = 0.0f, yaw = 1.0f, roll = 0.0f;
-        
-        static QuaternionF orientation = {1.0, 0.0, 0.0, 0.0};
-        QuaternionF rotX = QuaternionF::RotateX(pitch); // x
-        QuaternionF rotY = QuaternionF::RotateY(yaw); // y
-        QuaternionF rotZ = QuaternionF::RotateZ(roll); // z
-        QuaternionF diff = rotZ * rotY * rotX;
-        orientation *= diff;
-        orientation = orientation.Normalize();
-        Matrix4x4 R = orientation.toMatrix4x4();
-        // R.debug();
-        Matrix4x4 modelMat = T * R * S;
+        static float angle = 0.0f;
+        angle += 0.2f;
+        for(int i = 0; i < objs.size(); i++) {
+            Model* obj = objs[i];
+            auto oldScale = obj->scale;
+            obj->SetRotate(angle, Axis::y);
+        }
     }
     
-    void drawTerrian() {
-        ShaderMgrOpenGL& shaderMgr = ShaderMgrOpenGL::getInstance();
+    void drawTerrian(Shader& shader) {
         TextureMgrOpenGL& texMgr = TextureMgrOpenGL::getInstance();
-        Shader& shader = shaderMgr.getShader(shaderProgramHDL);
         // 地面
         texMgr.activateTexture(0, texID2);
         shader.set1i("ourTexture1", 0);
@@ -191,35 +185,54 @@ public:
         terrian->Draw();
     }
     
-    void drawObjs() {
+    void drawObjs(Shader& shader, float scale = 1.0f) {
         TextureMgrOpenGL& texMgr = TextureMgrOpenGL::getInstance();
-        ShaderMgrOpenGL& shaderMgr = ShaderMgrOpenGL::getInstance();
-        shaderMgr.useShaderProgram(shaderProgramHDL);
-        Shader& shader = shaderMgr.getShader(shaderProgramHDL);
         texMgr.activateTexture(0, texID1);
         shader.set1i("ourTexture1", 0);
         
         for(int i = 0; i < objs.size(); i++) {
             Model* obj = objs[i];
+            auto oldScale = obj->scale;
+            obj->SetScale(oldScale * scale);
             shader.setMatrix4f("model", obj->o2w->m);
             shader.setMatrix4f("normalMat", obj->o2w->mInv.transpose());
             obj->Draw();
+            obj->SetScale(oldScale);
         }
     }
-    
-    void draw() {
-        ShaderMgrOpenGL& shaderMgr = ShaderMgrOpenGL::getInstance();
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        shaderMgr.useShaderProgram(shaderProgramHDL);
-        Shader& shader = shaderMgr.getShader(shaderProgramHDL);
+    void useShader(Shader& shader) {
+        shader.use();
         shader.set3f("viewPos", camera.GetCameraPosition());
         shader.setMatrix4f("PV", camera.GetMatrix());
         shader.setLight(light);
         shader.setMaterial(material);
-        drawTerrian();
-        drawObjs();
+    }
+    void draw() {
+        ShaderMgrOpenGL& shaderMgr = ShaderMgrOpenGL::getInstance();
+        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        glEnable(GL_DEPTH_TEST);
+        glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+        // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        Shader& mainShader = shaderMgr.getShader(shaderProgramHDL);
+        useShader(mainShader);
+        
+        glStencilMask(0x00);
+        drawTerrian(mainShader);
+        
+        glStencilFunc(GL_ALWAYS, 1, 0xFF);
+        glStencilMask(0xFF);
+        drawObjs(mainShader);
+        
+        Shader& singleColorShader = shaderMgr.getShader(singleColorHDL);
+        glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+        glStencilMask(0x00); // disable writing to the stencil buffer
+        glDisable(GL_DEPTH_TEST);
+        useShader(singleColorShader);
+        drawObjs(singleColorShader, 1.1f);
+        
+        glStencilMask(0xFF);
+        glEnable(GL_DEPTH_TEST);
     }
 };
 
