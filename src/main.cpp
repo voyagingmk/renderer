@@ -77,6 +77,11 @@ public:
             { ShaderType::Vertex, "screen.vs" },
             { ShaderType::Fragment, "screen.fs"}
         });
+        
+        if (!mainHDL || !singleColorHDL || !screenHDL) {
+            shutdown("createShaderProgram failed");
+        }
+        
         texID1 = texMgr.loadTexture("dog.png", "tex1");
         texID2 = texMgr.loadTexture("terrian.png", "tex2");
         
