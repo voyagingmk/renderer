@@ -16,17 +16,20 @@ using namespace renderer;
 
 class MyContext : public RendererContextSDL {
     PerspectiveCamera camera;
-    ShaderProgramHDL shaderProgramHDL;
+    FrameBuf frameBuf;
+    ShaderProgramHDL mainHDL;
     ShaderProgramHDL singleColorHDL;
-    texID texID1, texID2;
+    ShaderProgramHDL screenHDL;
+    TexID texID1, texID2;
     std::map<SDL_Keycode, uint8_t> keyState;
     std::vector<Model*> objs;
     Model* terrian;
+    Model* quad;
     PhongMaterial* material;
     PointLight* light;
 public:
     MyContext():
-        shaderProgramHDL(0),
+        mainHDL(0),
         texID1(0), texID2(0) {}
 	virtual void onSDLEvent(SDL_Event& e) override {
         switch (e.type) {
@@ -54,15 +57,25 @@ public:
     virtual void onCustomSetup() override {
         TextureMgrOpenGL& texMgr = TextureMgrOpenGL::getInstance();
         ShaderMgrOpenGL& shaderMgr = ShaderMgrOpenGL::getInstance();
+        BufferMgrOpenGL& bufferMgr = BufferMgrOpenGL::getInstance();
+        
+        frameBuf = bufferMgr.createFrameBuffer(winWidth, winHeight, BufType::RBO);
+        
+        frameBuf.debug();
+        
         texMgr.setTextureDirPath("assets/images/");
         shaderMgr.setShaderFileDirPath("assets/shaders/");
-        shaderProgramHDL = shaderMgr.createShaderProgram({
+        mainHDL = shaderMgr.createShaderProgram({
             { ShaderType::Vertex, "test1.vs" },
             { ShaderType::Fragment, "test1.fs"}
         });
         singleColorHDL = shaderMgr.createShaderProgram({
             { ShaderType::Vertex, "test1.vs" },
             { ShaderType::Fragment, "singlecolor.fs"}
+        });
+        screenHDL = shaderMgr.createShaderProgram({
+            { ShaderType::Vertex, "screen.vs" },
+            { ShaderType::Fragment, "screen.fs"}
         });
         texID1 = texMgr.loadTexture("dog.png", "tex1");
         texID2 = texMgr.loadTexture("terrian.png", "tex2");
@@ -98,6 +111,27 @@ public:
         terrian = pool->newElement();
         terrian->CustomInit(dirPath + "plane.obj");
         
+        quad = pool->newElement();
+        Mesh mesh;
+        Vertex v;
+        v.position =  {-1.0f,  1.0f, 0.0f}; // Left Top
+        v.texCoords = {0.0f, 1.0f};
+        mesh.vertices.push_back(v);
+        v.position =  {-1.0f, -1.0f, 0.0f}; // Left Bottom
+        v.texCoords = {0.0f, 0.0f};
+        mesh.vertices.push_back(v);
+        v.position =  {1.0f,  -1.0f, 0.0f}; // Right Bottom
+        v.texCoords = {1.0f, 0.0f};
+        mesh.vertices.push_back(v);
+        v.position =  {1.0f,  1.0f, 0.0f}; // Right Top
+        v.texCoords = {1.0f, 1.0f};
+        mesh.vertices.push_back(v);
+        mesh.indexes = {
+            0, 1, 2,
+            0, 2, 3
+        };
+        quad->CustomInit(mesh);
+        
         checkSDLError();
         checkGLError();
         camera.SetFov(45.0f);
@@ -107,14 +141,14 @@ public:
         camera.SetCameraPosition(Vector3dF(0.0f, 10.0f, 0.0f));
        
         // Setup OpenGL options
-        glEnable(GL_DEPTH_TEST);
-        glEnable(GL_STENCIL_TEST);
         glDepthFunc(GL_LESS);
         glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
         
         glEnable(GL_CULL_FACE);
         glCullFace(GL_BACK);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         
     }
     void updateCamera() {
@@ -161,7 +195,24 @@ public:
     {
         updateWorld();
         updateCamera();
+        TextureMgrOpenGL& texMgr = TextureMgrOpenGL::getInstance();
+        ShaderMgrOpenGL& shaderMgr = ShaderMgrOpenGL::getInstance();
+        Shader& shader = shaderMgr.getShader(screenHDL);
+        BufferMgrOpenGL::getInstance().UseFrameBuffer(frameBuf);
         draw();
+        BufferMgrOpenGL::getInstance().UnuseFrameBuffer();
+        
+        
+        // second pass
+        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        glDisable(GL_DEPTH_TEST);
+        glDisable(GL_STENCIL_TEST);
+        shader.use();
+        // 地面
+        texMgr.activateTexture(0, frameBuf.texID);
+        shader.set1i("texture1", 0);
+        quad->Draw();
     }
     
     void updateWorld() {
@@ -178,7 +229,7 @@ public:
         TextureMgrOpenGL& texMgr = TextureMgrOpenGL::getInstance();
         // 地面
         texMgr.activateTexture(0, texID2);
-        shader.set1i("ourTexture1", 0);
+        shader.set1i("texture1", 0);
         
         shader.setMatrix4f("model", terrian->o2w->m);
         shader.setMatrix4f("normalMat", terrian->o2w->mInv.transpose());
@@ -188,7 +239,7 @@ public:
     void drawObjs(Shader& shader, float scale = 1.0f) {
         TextureMgrOpenGL& texMgr = TextureMgrOpenGL::getInstance();
         texMgr.activateTexture(0, texID1);
-        shader.set1i("ourTexture1", 0);
+        shader.set1i("texture1", 0);
         
         for(int i = 0; i < objs.size(); i++) {
             Model* obj = objs[i];
@@ -212,9 +263,10 @@ public:
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         glEnable(GL_DEPTH_TEST);
+        glEnable(GL_STENCIL_TEST);
         glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
         // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        Shader& mainShader = shaderMgr.getShader(shaderProgramHDL);
+        Shader& mainShader = shaderMgr.getShader(mainHDL);
         useShader(mainShader);
         
         glStencilMask(0x00);
@@ -230,7 +282,7 @@ public:
         glStencilMask(0x00); // disable writing to the stencil buffer
         glDisable(GL_DEPTH_TEST);
         useShader(singleColorShader);
-        drawObjs(singleColorShader, 1.1f);
+        drawObjs(singleColorShader, 1.02f);
         
         glStencilMask(0xFF);
         glEnable(GL_DEPTH_TEST);

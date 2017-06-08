@@ -2,16 +2,11 @@
 #define RENDERER_TEXTUREMGR_HPP
 
 #include "base.hpp"
+#include "glcommon.hpp"
 
 namespace renderer {
-    
-#ifdef USE_GL
-    typedef GLuint texID;
-#else 
-    typedef unsigned int texID;
-#endif
-    
-    typedef std::map<const char *, texID> TextureDict;
+
+    typedef std::map<const char *, TexID> TextureDict;
     
 	class TextureMgrBase {
 	protected:
@@ -21,9 +16,9 @@ namespace renderer {
         virtual	~TextureMgrBase();
     public:
         void setTextureDirPath(const char* path);
-        virtual texID loadTexture(const char* filename, const char* aliasname) { }
-        virtual void destroyTexture(texID texID) {}
-         texID getTexID(const char* aliasname);
+        virtual TexID loadTexture(const char* filename, const char* aliasname, bool hasAlpha = false) { }
+        virtual void destroyTexture(TexID TexID) {}
+         TexID getTexID(const char* aliasname);
 		void release();
 	};
 
@@ -38,9 +33,9 @@ namespace renderer {
 			static TextureMgrOpenGL mgr;
 			return mgr;
 		}
-        virtual texID loadTexture(const char* filename, const char* aliasname);
-        void activateTexture(uint32_t idx, texID texID);
-        virtual void destroyTexture(texID texID);
+        virtual TexID loadTexture(const char* filename, const char* aliasname, bool hasAlpha = false);
+        void activateTexture(uint32_t idx, TexID TexID);
+        virtual void destroyTexture(TexID TexID);
 	};
 
 #endif

@@ -27,8 +27,8 @@ in vec3 VColor;
 out vec4 color;
 
 uniform vec3 viewPos;
-uniform sampler2D ourTexture1;
-uniform sampler2D ourTexture2;
+uniform sampler2D texture1;
+uniform sampler2D texture2;
 uniform Material material;
 uniform Light light; 
 

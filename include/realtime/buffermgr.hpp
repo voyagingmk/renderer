@@ -2,23 +2,13 @@
 #define RENDERER_BUFFERMGR_HPP
 
 #include "base.hpp"
+#include "glcommon.hpp"
 #include "matrix.hpp"
 #include "transform.hpp"
 #include "mesh.hpp"
 
 namespace renderer {
-    
-    typedef uint32_t bufferID;
-    
-    struct BufferSet {
-        size_t triangles;
-        bufferID vao;
-        bufferID vbo;
-        bufferID ebo;
-    };
-    
-    typedef std::map<std::string, BufferSet> BufferDict;
-    
+
     class BufferMgrBase {
     protected:
         BufferDict bufferDict;
@@ -32,6 +22,10 @@ namespace renderer {
         }
         virtual void DrawBuffer(const std::string& aliasname) {}
         virtual void release() {}
+        virtual FrameBuf createFrameBuffer(size_t width, size_t height, BufType depthType) { return FrameBuf(); }
+        virtual void DestroyFrameBuffer(FrameBuf& buf) {}
+        virtual void UseFrameBuffer(FrameBuf& buf) {}
+        virtual void UnuseFrameBuffer() {}
     };
 
 #ifdef USE_GL
@@ -47,6 +41,10 @@ namespace renderer {
         // override
         virtual BufferSet CreateBuffer(const std::string& aliasname, Mesh& mesh);
         virtual void DrawBuffer(const std::string& aliasname);
+        virtual FrameBuf createFrameBuffer(size_t width, size_t height, BufType depthType);
+        virtual void DestroyFrameBuffer(FrameBuf& buf);
+        virtual void UseFrameBuffer(FrameBuf& buf);
+        virtual void UnuseFrameBuffer();
     };
 #endif
     

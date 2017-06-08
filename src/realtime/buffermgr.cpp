@@ -1,14 +1,12 @@
 #include "stdafx.h"
 #include "buffermgr.hpp"
-#include "realtime/glutils.hpp"
+#include "glutils.hpp"
 
 using namespace renderer;
 
 BufferMgrBase::~BufferMgrBase() {
     release();
 }
-
-#ifdef USE_GL
 
 
 BufferSet BufferMgrOpenGL::CreateBuffer(const std::string& aliasname, Mesh& mesh) {
@@ -61,4 +59,56 @@ void BufferMgrOpenGL::DrawBuffer(const std::string& aliasname) {
     checkGLError();
 }
 
-#endif
+FrameBuf BufferMgrOpenGL::createFrameBuffer(size_t width, size_t height, BufType depthType) {
+    FrameBuf buf;
+    buf.width = width;
+    buf.height = height;
+    glGenFramebuffers(1, &buf.fboID);
+    glBindFramebuffer(GL_FRAMEBUFFER, buf.fboID);
+    
+    glGenTextures(1, &buf.texID);
+    glBindTexture(GL_TEXTURE_2D, buf.texID);
+    
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+    
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, buf.texID, 0);
+    
+    // depth and stencil buffer
+    buf.depthType = depthType;
+    if (buf.depthType == BufType::Tex) {
+        glGenTextures(1, &buf.depthTexID);
+        glBindTexture(GL_TEXTURE_2D, buf.depthTexID);
+        
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, width, height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, NULL);
+        
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, buf.depthTexID, 0);
+    } else {
+        glGenRenderbuffers(1, &buf.depthRboID);
+        glBindRenderbuffer(GL_RENDERBUFFER, buf.depthRboID);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, buf.depthRboID);
+    }
+
+    if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+        printf("[CreateFrameBuffer failed]");
+        DestroyFrameBuffer(buf);
+    }
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    return buf;
+}
+
+void BufferMgrOpenGL::DestroyFrameBuffer(FrameBuf& buf) {
+    glDeleteFramebuffers(1, &buf.fboID);
+}
+
+void BufferMgrOpenGL::UseFrameBuffer(FrameBuf& buf) {
+    glBindFramebuffer(GL_FRAMEBUFFER, buf.fboID);
+}
+
+void BufferMgrOpenGL::UnuseFrameBuffer() {
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+

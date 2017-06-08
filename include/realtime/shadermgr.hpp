@@ -2,6 +2,7 @@
 #define RENDERER_SHADERMGR_HPP
 
 #include "base.hpp"
+#include "glcommon.hpp"
 #include "matrix.hpp"
 #include "transform.hpp"
 #include "material.hpp"
