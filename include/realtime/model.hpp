@@ -28,13 +28,13 @@ public:
     void CustomInit(const std::string& filename) {
         BufferMgrOpenGL& mgr = BufferMgrOpenGL::getInstance();
         LoadMesh(filename);
-        mgr.CreateBuffer("model" + std::to_string(id), meshs[0]);
+        mgr.CreateMeshBuffer("model" + std::to_string(id), meshs[0]);
     }
     
     void CustomInit(const Mesh& mesh) {
         BufferMgrOpenGL& mgr = BufferMgrOpenGL::getInstance();
         meshs.push_back(mesh);
-        mgr.CreateBuffer("model" + std::to_string(id), meshs[0]);
+        mgr.CreateMeshBuffer("model" + std::to_string(id), meshs[0]);
     }
     
     void LoadMesh(const std::string& filename) {

@@ -14,9 +14,12 @@ vec4 EdgeDetection();
 
 void main()
 { 
+    color = texture(texture1, TexCoord);
     // color = Inversion();
     // color = Grayscale();
-    color = EdgeDetection();
+    // color = Sharpen();
+    // color = Blur();
+    // color = EdgeDetection();
 }
 
 // post-effect

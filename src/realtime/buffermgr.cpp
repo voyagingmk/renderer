@@ -9,7 +9,7 @@ BufferMgrBase::~BufferMgrBase() {
 }
 
 
-BufferSet BufferMgrOpenGL::CreateBuffer(const std::string& aliasname, Mesh& mesh) {
+BufferSet BufferMgrOpenGL::CreateMeshBuffer(const std::string& aliasname, Mesh& mesh) {
     GLuint VBO, VAO, EBO;
     BufferSet bufferSet;
     glGenVertexArrays(1, &VAO);

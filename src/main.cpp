@@ -59,10 +59,8 @@ public:
         ShaderMgrOpenGL& shaderMgr = ShaderMgrOpenGL::getInstance();
         BufferMgrOpenGL& bufferMgr = BufferMgrOpenGL::getInstance();
         
-        frameBuf = bufferMgr.createFrameBuffer(winWidth, winHeight, BufType::RBO);
-        
-        frameBuf.debug();
-        
+        frameBuf = bufferMgr.createFrameBuffer(winWidth, winHeight, BufType::Tex);
+
         texMgr.setTextureDirPath("assets/images/");
         shaderMgr.setShaderFileDirPath("assets/shaders/");
         mainHDL = shaderMgr.createShaderProgram({
@@ -202,7 +200,6 @@ public:
         updateCamera();
         TextureMgrOpenGL& texMgr = TextureMgrOpenGL::getInstance();
         ShaderMgrOpenGL& shaderMgr = ShaderMgrOpenGL::getInstance();
-        Shader& shader = shaderMgr.getShader(screenHDL);
         BufferMgrOpenGL::getInstance().UseFrameBuffer(frameBuf);
         draw();
         BufferMgrOpenGL::getInstance().UnuseFrameBuffer();
@@ -213,6 +210,7 @@ public:
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         glDisable(GL_DEPTH_TEST);
         glDisable(GL_STENCIL_TEST);
+        Shader& shader = shaderMgr.getShader(screenHDL);
         shader.use();
         // 地面
         texMgr.activateTexture(0, frameBuf.texID);

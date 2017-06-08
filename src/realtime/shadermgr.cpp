@@ -110,10 +110,14 @@ ShaderHDL ShaderMgrBase::loadShaderFromFile(ShaderType type, const char* filenam
 	auto path = dirpath + std::string(filename);
 	std::string source = readFile(path.c_str());
     if (source.length() == 0) {
-        std::cout << "[ShaderMgr] err, loadShaderFromFile failed: wrong file\n" << std::endl;
+        std::cout << "[ShaderMgr] err, loadShaderFromFile failed: wrong file." << std::endl;
         return 0;
     }
-	return loadShaderFromStr(type, source.c_str());
+	auto hdl = loadShaderFromStr(type, source.c_str());
+	if(!hdl) {
+		std::cout << "[ShaderMgr] err, loadShaderFromFile failed:" << filename << std::endl;
+	}
+	return hdl;
 }
 
 

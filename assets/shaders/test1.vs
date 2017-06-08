@@ -14,6 +14,7 @@ out vec3 VColor;
 uniform mat4 view;
 uniform mat4 proj;
 uniform mat4 PV;
+
 uniform mat4 model;
 uniform mat4 normalMat;
 

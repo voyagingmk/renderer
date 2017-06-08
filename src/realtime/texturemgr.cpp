@@ -29,9 +29,9 @@ TexID TextureMgrBase::getTexID(const char* aliasname) {
 TexID TextureMgrOpenGL::loadTexture(const char* filename, const char* aliasname, bool hasAlpha)
 {
     // Load and create a texture
-    GLuint TexID;
-    glGenTextures(1, &TexID);
-    glBindTexture(GL_TEXTURE_2D, TexID); // All upcoming GL_TEXTURE_2D operations now have effect on our texture object
+    TexID texID;
+    glGenTextures(1, &texID);
+    glBindTexture(GL_TEXTURE_2D, texID); // All upcoming GL_TEXTURE_2D operations now have effect on our texture object
     // Set our texture parameters
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, hasAlpha? GL_CLAMP_TO_EDGE : GL_REPEAT);	// Set texture wrapping to GL_REPEAT
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, hasAlpha? GL_CLAMP_TO_EDGE : GL_REPEAT);
@@ -48,8 +48,33 @@ TexID TextureMgrOpenGL::loadTexture(const char* filename, const char* aliasname,
     glGenerateMipmap(GL_TEXTURE_2D);
     SOIL_free_image_data(image);
     glBindTexture(GL_TEXTURE_2D, 0); // Unbind texture when done, so we won't accidentily mess up our texture.
-    texDict.insert({aliasname, TexID});
-    return TexID;
+    texDict.insert({aliasname, texID});
+    return texID;
+}
+
+TexID TextureMgrOpenGL::loadCubeMap(std::string filename[6], const char* aliasname) {
+    TexID texID;
+    glGenTextures(1, &texID);
+    glActiveTexture(GL_TEXTURE0);
+    
+    int width, height;
+    unsigned char* image;
+    
+    glBindTexture(GL_TEXTURE_CUBE_MAP, texID);
+    for (uint32_t i = 0; i < 6; i++)
+    {
+        image = SOIL_load_image((dirpath + filename[i]).c_str(), &width, &height, 0, SOIL_LOAD_RGB);
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+    }
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+    
+    texDict.insert({aliasname, texID});
+    return texID;
 }
 
 void TextureMgrOpenGL::activateTexture(uint32_t idx, TexID TexID) {

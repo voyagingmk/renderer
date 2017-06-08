@@ -17,7 +17,7 @@ namespace renderer {
         BufferSet GetBufferSet(const char * aliasname) {
             return bufferDict[aliasname];
         }
-        virtual BufferSet CreateBuffer(const std::string& aliasname, Mesh& mesh) {
+        virtual BufferSet CreateMeshBuffer(const std::string& aliasname, Mesh& mesh) {
             return BufferSet();
         }
         virtual void DrawBuffer(const std::string& aliasname) {}
@@ -39,7 +39,7 @@ namespace renderer {
             return mgr;
         }
         // override
-        virtual BufferSet CreateBuffer(const std::string& aliasname, Mesh& mesh);
+        virtual BufferSet CreateMeshBuffer(const std::string& aliasname, Mesh& mesh);
         virtual void DrawBuffer(const std::string& aliasname);
         virtual FrameBuf createFrameBuffer(size_t width, size_t height, BufType depthType);
         virtual void DestroyFrameBuffer(FrameBuf& buf);
