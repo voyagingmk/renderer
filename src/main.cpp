@@ -59,8 +59,10 @@ public:
         ShaderMgrOpenGL& shaderMgr = ShaderMgrOpenGL::getInstance();
         BufferMgrOpenGL& bufferMgr = BufferMgrOpenGL::getInstance();
         
-        frameBuf = bufferMgr.createFrameBuffer(winWidth, winHeight, BufType::Tex);
-
+        frameBuf = bufferMgr.createFrameBuffer(winWidth, winHeight, BufType::RBO, 4);
+        
+        frameBuf.debug();
+        
         texMgr.setTextureDirPath("assets/images/");
         shaderMgr.setShaderFileDirPath("assets/shaders/");
         mainHDL = shaderMgr.createShaderProgram({
@@ -200,20 +202,20 @@ public:
         updateCamera();
         TextureMgrOpenGL& texMgr = TextureMgrOpenGL::getInstance();
         ShaderMgrOpenGL& shaderMgr = ShaderMgrOpenGL::getInstance();
+        Shader& shader = shaderMgr.getShader(screenHDL);
+       
         BufferMgrOpenGL::getInstance().UseFrameBuffer(frameBuf);
         draw();
-        BufferMgrOpenGL::getInstance().UnuseFrameBuffer();
-        
-        
+        BufferMgrOpenGL::getInstance().UnuseFrameBuffer(frameBuf);
+
         // second pass
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         glDisable(GL_DEPTH_TEST);
         glDisable(GL_STENCIL_TEST);
-        Shader& shader = shaderMgr.getShader(screenHDL);
         shader.use();
         // 地面
-        texMgr.activateTexture(0, frameBuf.texID);
+        texMgr.activateTexture(0, frameBuf.getTexID());
         shader.set1i("texture1", 0);
         quad->Draw();
     }
@@ -263,13 +265,13 @@ public:
     }
     void draw() {
         ShaderMgrOpenGL& shaderMgr = ShaderMgrOpenGL::getInstance();
+        Shader& mainShader = shaderMgr.getShader(mainHDL);
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_STENCIL_TEST);
         glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
         // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        Shader& mainShader = shaderMgr.getShader(mainHDL);
         useShader(mainShader);
         
         glStencilMask(0x00);

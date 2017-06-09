@@ -36,6 +36,8 @@ class FrameBuf {
 public:
     FboID fboID;
     TexID texID;
+    FboID innerFboID;
+    TexID innerTexID;
     BufType depthType;
     union {
         TexID depthTexID; // include stencil
@@ -43,7 +45,14 @@ public:
     };
     size_t width;
     size_t height;
+    size_t MSAA; // default: 0
 public:
+    TexID getTexID() {
+        if (MSAA) {
+            return innerTexID;
+        }
+        return texID;
+    }
     void debug() {
         printf("FBO:%d, TexID:%d, depthTexID:%d, width:%d, height:%d \n",
                fboID, texID, depthTexID, (int)width, (int)height);

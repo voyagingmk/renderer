@@ -59,42 +59,84 @@ void BufferMgrOpenGL::DrawBuffer(const std::string& aliasname) {
     checkGLError();
 }
 
-FrameBuf BufferMgrOpenGL::createFrameBuffer(size_t width, size_t height, BufType depthType) {
+FrameBuf BufferMgrOpenGL::createFrameBuffer(size_t width, size_t height, BufType depthType, size_t MSAA) {
     FrameBuf buf;
     buf.width = width;
     buf.height = height;
+    buf.MSAA = MSAA;
     glGenFramebuffers(1, &buf.fboID);
     glBindFramebuffer(GL_FRAMEBUFFER, buf.fboID);
     
+    auto target = GL_TEXTURE_2D;
+    if (MSAA) {
+        target = GL_TEXTURE_2D_MULTISAMPLE;
+    }
+    
+    // color buffer
     glGenTextures(1, &buf.texID);
-    glBindTexture(GL_TEXTURE_2D, buf.texID);
-    
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-    
+    glBindTexture(target, buf.texID);
+    if (MSAA) {
+        size_t samples = MSAA;
+        glTexImage2DMultisample(target, samples, GL_RGB, width, height, GL_TRUE);
+    } else {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+    }
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glBindTexture(target, 0);
     
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, buf.texID, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, target, buf.texID, 0);
+ 
     
+    if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+        printf("[CreateFrameBuffer failed]");
+        DestroyFrameBuffer(buf);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        return buf;
+    }
+    if (MSAA) {
+        // configure second post-processing framebuffer
+        glGenFramebuffers(1, &buf.innerFboID);
+        glBindFramebuffer(GL_FRAMEBUFFER, buf.innerFboID);
+        // create a color attachment texture
+        glGenTextures(1, &buf.innerTexID);
+        glBindTexture(GL_TEXTURE_2D, buf.innerTexID);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, buf.innerTexID, 0);	// we only need a color buffer
+    }
+    glBindFramebuffer(GL_FRAMEBUFFER, buf.fboID);
     // depth and stencil buffer
     buf.depthType = depthType;
     if (buf.depthType == BufType::Tex) {
         glGenTextures(1, &buf.depthTexID);
         glBindTexture(GL_TEXTURE_2D, buf.depthTexID);
-        
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, width, height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, NULL);
-        
+        if (MSAA) {
+            size_t samples = MSAA;
+            glTexImage2DMultisample(target, samples, GL_DEPTH24_STENCIL8, width, height, GL_TRUE);
+        } else {
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, width, height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, NULL);
+        }
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, buf.depthTexID, 0);
     } else {
         glGenRenderbuffers(1, &buf.depthRboID);
         glBindRenderbuffer(GL_RENDERBUFFER, buf.depthRboID);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
+        if (MSAA) {
+            size_t samples = MSAA;
+            glRenderbufferStorageMultisample(GL_RENDERBUFFER, samples, GL_DEPTH24_STENCIL8, width, height);
+        } else {
+            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
+        }
+        glBindRenderbuffer(GL_RENDERBUFFER, 0);
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, buf.depthRboID);
     }
 
     if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
         printf("[CreateFrameBuffer failed]");
         DestroyFrameBuffer(buf);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        return buf;
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     return buf;
@@ -108,7 +150,15 @@ void BufferMgrOpenGL::UseFrameBuffer(FrameBuf& buf) {
     glBindFramebuffer(GL_FRAMEBUFFER, buf.fboID);
 }
 
-void BufferMgrOpenGL::UnuseFrameBuffer() {
+void BufferMgrOpenGL::UnuseFrameBuffer(FrameBuf& buf) {
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    if(!buf.MSAA) {
+        return;
+    }
+    // blit multisampled buffer(s) to normal colorbuffer of intermediate FBO. Image is stored in screenTexture
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, buf.fboID);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, buf.innerFboID);
+    glBlitFramebuffer(0, 0, buf.width, buf.height, 0, 0, buf.width, buf.height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
