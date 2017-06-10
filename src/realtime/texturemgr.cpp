@@ -44,7 +44,7 @@ TexID TextureMgrOpenGL::loadTexture(const char* filename, const char* aliasname,
     
     std::cout<< "SOIL: image[" << filename << "] loaded, w:" << width << ", h:" << height << std::endl;
     
-    glTexImage2D(GL_TEXTURE_2D, 0, hasAlpha? GL_RGBA: GL_RGB, width, height, 0, hasAlpha? GL_RGBA: GL_RGB, GL_UNSIGNED_BYTE, image);
+    glTexImage2D(GL_TEXTURE_2D, 0, hasAlpha? GL_SRGB_ALPHA: GL_SRGB, width, height, 0, hasAlpha? GL_RGBA: GL_RGB, GL_UNSIGNED_BYTE, image);
     glGenerateMipmap(GL_TEXTURE_2D);
     SOIL_free_image_data(image);
     glBindTexture(GL_TEXTURE_2D, 0); // Unbind texture when done, so we won't accidentily mess up our texture.
@@ -64,7 +64,7 @@ TexID TextureMgrOpenGL::loadCubeMap(std::string filename[6], const char* aliasna
     for (uint32_t i = 0; i < 6; i++)
     {
         image = SOIL_load_image((dirpath + filename[i]).c_str(), &width, &height, 0, SOIL_LOAD_RGB);
-        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_SRGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
     }
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);

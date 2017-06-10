@@ -89,8 +89,9 @@ public:
         material = matPool->newElement(
             Color(1.0f, 0.5f, 0.31f),
             Color(1.0f, 0.5f, 0.31f),
-            Color(0.5f, 0.5f, 0.5f),
+            Color(1.0f, 1.0f, 1.0f),
             32.0f);
+        
         auto lightPool = GetPool<PointLight>();
         light = lightPool->newElement(Vector3dF(10.0f, 15.0f, -10.0f));
         light->ambient = Color(1.0f, 1.0f, 1.0f);

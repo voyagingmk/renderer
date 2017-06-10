@@ -36,15 +36,20 @@ uniform Light light;
 void main()
 {
 	vec4 objectColor = texture(texture1, TexCoord);
-	vec3 norm = normalize(Normal);
+	vec3 normal = normalize(Normal);
 	// dir: frag -> light
 	vec3 lightDir = normalize(light.position - FragPos); 
-	float diff = max(dot(norm, lightDir), 0.0);
+	float diff = max(dot(normal, lightDir), 0.0);
 
 	vec3 viewDir = normalize(viewPos - FragPos);
+	vec3 halfwayDir = normalize(lightDir + viewDir);
+
 	// dir:  light -> frag 
-	vec3 reflectDir = reflect(-lightDir, norm);  
-	float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
+	vec3 reflectDir = reflect(-lightDir, normal);  
+	// Phong
+	float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+	// Blinn-Phong
+	// float spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
 
 	vec3 ambient  = light.ambient * material.ambient;
 	vec3 diffuse  = light.diffuse * (diff * material.diffuse);
@@ -55,5 +60,4 @@ void main()
     light.quadratic * (distance * distance));    
 
 	color = vec4((ambient + diffuse + specular) * attenuation , 1.0) * objectColor;
-	
 }
