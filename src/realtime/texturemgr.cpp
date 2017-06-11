@@ -26,7 +26,7 @@ TexID TextureMgrBase::getTexID(const char* aliasname) {
 
 #ifdef USE_GL
 
-TexID TextureMgrOpenGL::loadTexture(const char* filename, const char* aliasname, bool hasAlpha)
+TexID TextureMgrOpenGL::loadTexture(const char* filename, const char* aliasname, bool hasAlpha, bool toLinear)
 {
     // Load and create a texture
     TexID texID;
@@ -44,7 +44,14 @@ TexID TextureMgrOpenGL::loadTexture(const char* filename, const char* aliasname,
     
     std::cout<< "SOIL: image[" << filename << "] loaded, w:" << width << ", h:" << height << std::endl;
     
-    glTexImage2D(GL_TEXTURE_2D, 0, hasAlpha? GL_SRGB_ALPHA: GL_SRGB, width, height, 0, hasAlpha? GL_RGBA: GL_RGB, GL_UNSIGNED_BYTE, image);
+    auto format = GL_RGB;
+    auto formatWithAlpha = GL_RGBA;
+    if (toLinear) {
+        format = GL_SRGB;
+        formatWithAlpha = GL_SRGB_ALPHA;
+    }
+    
+    glTexImage2D(GL_TEXTURE_2D, 0, hasAlpha? formatWithAlpha: format, width, height, 0, hasAlpha? GL_RGBA: GL_RGB, GL_UNSIGNED_BYTE, image);
     glGenerateMipmap(GL_TEXTURE_2D);
     SOIL_free_image_data(image);
     glBindTexture(GL_TEXTURE_2D, 0); // Unbind texture when done, so we won't accidentily mess up our texture.
