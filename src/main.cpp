@@ -15,47 +15,13 @@ using namespace std;
 using namespace renderer;
 
 
-const GLuint SHADOW_WIDTH = 800, SHADOW_HEIGHT = 600;
-GLuint quadVAO = 0;
-GLuint quadVBO;
-GLuint planeVAO = 0;
-GLuint planeVBO;
-
-
-void RenderQuad()
-{
-    if (quadVAO == 0)
-    {
-        float len = 0.5f;
-        GLfloat quadVertices[] = {
-            // Positions        // Texture Coords
-            -len,  len, 0.0f,  0.0f, 1.0f,
-            -len, -len, 0.0f,  0.0f, 0.0f,
-            len,  len, 0.0f,  1.0f, 1.0f,
-            len, -len, 0.0f,  1.0f, 0.0f,
-        };
-        // Setup plane VAO
-        glGenVertexArrays(1, &quadVAO);
-        glGenBuffers(1, &quadVBO);
-        glBindVertexArray(quadVAO);
-        glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
-        glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
-    }
-    glBindVertexArray(quadVAO);
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-    glBindVertexArray(0);
-}
-
 class MyContext : public RendererContextSDL {
     PerspectiveCamera camera;
     FrameBuf depthFrameBuf;
     FrameBuf mainFrameBuf;
     ShaderProgramHDL mainHDL;
     ShaderProgramHDL depthMapHDL;
+    ShaderProgramHDL depthMapDebugHDL;
     ShaderProgramHDL singleColorHDL;
     ShaderProgramHDL screenHDL;
     TexID texID1, texID2;
@@ -95,22 +61,6 @@ public:
         }
     }
     virtual void onCustomSetup() override {
-        // Configure depth map FBO
-        glGenFramebuffers(1, &depthMapBuf.fboID);
-        // - Create depth texture
-        glGenTextures(1, &depthMapBuf.depthTexID);
-        glBindTexture(GL_TEXTURE_2D, depthMapBuf.depthTexID);
-        
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        glBindFramebuffer(GL_FRAMEBUFFER, depthMapBuf.fboID);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMapBuf.depthTexID, 0);
-        glDrawBuffer(GL_NONE);
-        glReadBuffer(GL_NONE);
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
         TextureMgrOpenGL& texMgr = TextureMgrOpenGL::getInstance();
         ShaderMgrOpenGL& shaderMgr = ShaderMgrOpenGL::getInstance();
         BufferMgrOpenGL& bufferMgr = BufferMgrOpenGL::getInstance();
@@ -366,45 +316,8 @@ public:
         glClear(clearBits);
         shader.setLight(light);
         shader.setMaterial(material);
-        static float angle = 0.0f;
-        angle += 1.0f;
-        shader.setMatrix4f("model", Translate<Matrix4x4>({0.0f, 0.0f, -10.0f}));
-        //drawTest();
         drawTerrian(shader);
         drawObjs(shader);
-    }
-    void drawTest(){
-        if(!planeVAO){
-            float len = 1000.0f;
-            float s1 = -1.0f, s2 = -1.0f;
-            GLfloat planeVertices[] = {
-                // Positions            // Normals           // Texture Coords
-                 len,  s1,  len, 0.0f,  1.0f,  0.0f,  25.0f, 0.0f,
-                -len,  s1, -len, 0.0f,  1.0f,  0.0f,  0.0f,  25.0f,
-                -len,  s1,  len, 0.0f,  1.0f,  0.0f,  0.0f,  0.0f,
-                
-                 len,  s2,  len, 0.0f,  1.0f,  0.0f,  25.0f, 0.0f,
-                 len,  s2, -len, 0.0f,  1.0f,  0.0f,  25.0f, 25.0f,
-                -len,  s2, -len, 0.0f,  1.0f,  0.0f,  0.0f,  25.0f
-            };
-            // Setup plane VAO
-            glGenVertexArrays(1, &planeVAO);
-            glGenBuffers(1, &planeVBO);
-            glBindVertexArray(planeVAO);
-            glBindBuffer(GL_ARRAY_BUFFER, planeVBO);
-            glBufferData(GL_ARRAY_BUFFER, sizeof(planeVertices), &planeVertices, GL_STATIC_DRAW);
-            glEnableVertexAttribArray(0);
-            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)0);
-            glEnableVertexAttribArray(1);
-            glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
-            glEnableVertexAttribArray(2);
-            glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(6 * sizeof(GLfloat)));
-            glBindVertexArray(0);
-        }
-        glBindVertexArray(planeVAO);
-        glDrawArrays(GL_TRIANGLES, 0, 6);
-        glBindVertexArray(0);
-   
     }
     /*
     void draw2() {
