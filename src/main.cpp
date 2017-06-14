@@ -65,7 +65,7 @@ public:
         ShaderMgrOpenGL& shaderMgr = ShaderMgrOpenGL::getInstance();
         BufferMgrOpenGL& bufferMgr = BufferMgrOpenGL::getInstance();
        
-        depthFrameBuf = bufferMgr.CreateDepthFrameBuffer(winWidth, winHeight);
+        depthFrameBuf = bufferMgr.CreateDepthFrameBuffer(1024, 1024);
         // depthFrameBuf = bufferMgr.CreateColorFrameBuffer(winWidth, winHeight, BufType::Tex, 0);
         mainFrameBuf = bufferMgr.CreateColorFrameBuffer(winWidth, winHeight, BufType::Tex, 0);
         
@@ -111,7 +111,7 @@ public:
             32.0f);
         
         auto lightPool = GetPool<PointLight>();
-        light = lightPool->newElement(Vector3dF(0.0f, 20.0f, 10.0f));
+        light = lightPool->newElement(Vector3dF(0.0f, 3.0f, 3.0f));
         light->ambient = Color(1.0f, 1.0f, 1.0f);
         light->diffuse = Color(1.0f, 1.0f, 1.0f);
         light->specular = Color(1.0f, 1.0f, 1.0f);
@@ -133,7 +133,7 @@ public:
         }
         terrian = pool->newElement();
         terrian->CustomInit(dirPath + "plane.obj");
-        terrian->SetScale({10.0, 10.0, 10.0});
+        //terrian->SetScale({10.0, 10.0, 10.0});
         terrian->SetPos({0.0, 0.0, -10.0});
         quad = pool->newElement();
         Mesh mesh;
@@ -162,7 +162,7 @@ public:
         camera.SetAspect((float)winWidth / (float)winHeight);
         camera.SetNear(0.01f);
         camera.SetFar(10000.0f);
-        camera.SetCameraPosition(Vector3dF(0.0f, 10.0f, 0.0f));
+        camera.SetCameraPosition(Vector3dF(0.0f, 10.0f, 30.0f));
        
         // Setup OpenGL options
         //glDepthFunc(GL_LESS);
@@ -220,8 +220,7 @@ public:
     }
     
     virtual void onPoll() override
-    {   glEnable(GL_DEPTH_TEST);
-        //glDepthRangef(0.0f, 1.0f);
+    {
         updateWorld();
         updateCamera();
         BufferMgrOpenGL& buffMgr = BufferMgrOpenGL::getInstance();
@@ -230,40 +229,45 @@ public:
         
         // 1. first render to depth map
         buffMgr.UseFrameBuffer(depthFrameBuf);
-        Matrix4x4 lightProj = Ortho(-10.0f, 10.0f, -10.0f, 10.0f, 0.01f, 50.0f);
+        Matrix4x4 lightProj = Ortho(-10.0f, 10.0f, -10.0f, 10.0f, 0.01f, 30.0f);
         Matrix4x4 lightPV = lightProj * LookAt(light->pos, Vector3dF(0.0, 0.0, 0.0), {0.0f, 1.0f, 0.0f});
+        Shader& depthMapShader = shaderMgr.getShader(depthMapHDL);
+        depthMapShader.use();
+        depthMapShader.setMatrix4f("lightPV", lightPV);
         drawScene(Color(0.1f, 0.1f, 0.1f, 1.0f),
                   GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT,
                   depthFrameBuf,
-                  depthMapHDL,
-                  light->pos,
-                  lightPV);
+                  depthMapHDL);
         buffMgr.UnuseFrameBuffer(depthFrameBuf);
         
         
         buffMgr.UseFrameBuffer(mainFrameBuf);
+        Shader& mainShader = shaderMgr.getShader(mainHDL);
+        mainShader.use();
+        mainShader.setMatrix4f("lightPV", lightPV);
+        mainShader.set1i("texture2", 1);
+        texMgr.activateTexture(1, depthFrameBuf.depthTexID);
         drawScene(Color(0.1f, 0.1f, 0.1f, 1.0f),
                   GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT,
                   mainFrameBuf,
                   mainHDL,
                   camera.GetCameraPosition(),
-                  lightPV);
+                  camera.GetMatrix());
         buffMgr.UnuseFrameBuffer(mainFrameBuf);
         
-        
-        
-        
+
         glViewport(0, 0, winWidth, winHeight);
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
         glDisable(GL_DEPTH_TEST);
         glDisable(GL_STENCIL_TEST);
-        Shader& screenShader = shaderMgr.getShader(depthMapDebugHDL);
-        //Shader& screenShader = shaderMgr.getShader(screenHDL);
+        //Shader& screenShader = shaderMgr.getShader(depthMapDebugHDL);
+        Shader& screenShader = shaderMgr.getShader(screenHDL);
         screenShader.use();
-        texMgr.activateTexture(0, depthFrameBuf.depthTexID);
-       // texMgr.activateTexture(0, mainFrameBuf.getTexID());
-       // texMgr.activateTexture(0, mainFrameBuf.depthTexID);
+        screenShader.set1i("texture1", 0);
+        // texMgr.activateTexture(0, depthFrameBuf.depthTexID);
+        texMgr.activateTexture(0, mainFrameBuf.getTexID());
+        //texMgr.activateTexture(0, mainFrameBuf.depthTexID);
         quad->Draw();
         CheckGLError;
         
@@ -305,20 +309,16 @@ public:
             obj->SetScale(oldScale);
         }
     }
-    void useShader(Shader& shader, const Vector3dF viewPos, const Matrix4x4& PV) {
-        shader.use();
-        shader.set3f("viewPos", viewPos);
-        shader.setMatrix4f("PV", PV);
-    }
     void drawScene(Color clearColor,
                    uint32_t clearBits,
                    FrameBuf& buf,
                    ShaderProgramHDL hdl,
-                   const Vector3dF viewPos,
-                   const Matrix4x4& PV) {
+                   const Vector3dF viewPos = {0.0, 0.0, 0.0},
+                   const Matrix4x4 PV = Matrix4x4()) {
         ShaderMgrOpenGL& shaderMgr = ShaderMgrOpenGL::getInstance();
         Shader& shader = shaderMgr.getShader(hdl);
-        useShader(shader, viewPos, PV);
+        shader.set3f("viewPos", viewPos);
+        shader.setMatrix4f("PV", PV);
         glEnable(GL_DEPTH_TEST);
         glViewport(0, 0, buf.width, buf.height);
         glClearColor(clearColor.r(), clearColor.g(), clearColor.b(), clearColor.a());

@@ -10,10 +10,12 @@ out vec3 FragPos;
 out vec2 TexCoord;
 out vec3 Normal;
 out vec3 VColor;
+out vec4 FragPosLightSpace;
 
 uniform mat4 view;
 uniform mat4 proj;
 uniform mat4 PV;
+uniform mat4 lightPV;
 
 uniform mat4 model;
 uniform mat4 normalMat;
@@ -24,6 +26,7 @@ void main()
 	// mat4 mvp =  proj * view * model;
 	gl_Position = mvp * vec4(position, 1.0f);
 	FragPos = vec3(model * vec4(position, 1.0f));
+	FragPosLightSpace = lightPV * vec4(FragPos, 1.0);
 	Normal =  mat3(normalMat) * normal;
 	// Normal = mat3(transpose(inverse(model))) * normal;
 	// We swap the y-axis by substracing our coordinates from 1.

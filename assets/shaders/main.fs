@@ -23,6 +23,7 @@ in vec3 FragPos;
 in vec2 TexCoord;
 in vec3 Normal;
 in vec3 VColor; 
+in vec4 FragPosLightSpace;
 
 out vec4 color;
 
@@ -31,6 +32,22 @@ uniform sampler2D texture1;
 uniform sampler2D texture2;
 uniform Material material;
 uniform Light light; 
+
+float ShadowCalculation(vec4 fragPosLightSpace)
+{
+	// perform perspective divide
+    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+    // transform to [0,1] range
+    projCoords = projCoords * 0.5 + 0.5;
+    // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
+    float closestDepth = texture(texture2, projCoords.xy).r; 
+    // get depth of current fragment from light's perspective
+    float currentDepth = projCoords.z;
+    // check whether current frag pos is in shadow
+    float shadow = currentDepth > closestDepth  ? 1.0 : 0.0;
+
+    return shadow;
+}
 
 
 void main()
@@ -58,6 +75,12 @@ void main()
 	float distance    = length(light.position - FragPos);
 	float attenuation = 1.0 / (light.constant + light.linear * distance + 
     light.quadratic * (distance * distance));    
+ 	
+	// calculate shadow
+    float shadow = ShadowCalculation(FragPosLightSpace);      
 
-	color = vec4((ambient + diffuse + specular) * attenuation , 1.0) * objectColor;
+	color = vec4((ambient + (1.0 - shadow) * (diffuse + specular)) * attenuation , 1.0) * objectColor;
+
+	//float d = texture(texture2, TexCoord).r;
+	//color = vec4(d,d,d, 1.0);
 }
