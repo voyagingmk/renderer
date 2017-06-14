@@ -64,36 +64,68 @@ void Shader::setMaterial(Material* mat) {
 
 // by name
 void Shader::set4f(const char* name, float f1, float f2, float f3, float f4) {
-    set4f(getUniformLocation(name), f1, f2, f3, f4);
+    UniLoc loc = getUniformLocation(name);
+    if (loc == -1) {
+        return;
+    }
+    set4f(loc, f1, f2, f3, f4);
 }
 
 void Shader::set3f(const char* name, float f1, float f2, float f3) {
-    set3f(getUniformLocation(name), f1, f2, f3);
+    UniLoc loc = getUniformLocation(name);
+    if (loc == -1) {
+        return;
+    }
+    set3f(loc, f1, f2, f3);
 }
 
 void Shader::set3f(const char* name, Vector3dF v) {
-    set3f(getUniformLocation(name), v.x, v.y, v.z);
+    UniLoc loc = getUniformLocation(name);
+    if (loc == -1) {
+        return;
+    }
+    set3f(loc, v.x, v.y, v.z);
 }
 
 
 void Shader::set2f(const char* name, float f1, float f2) {
-    set2f(getUniformLocation(name), f1, f2);
+    UniLoc loc = getUniformLocation(name);
+    if (loc == -1) {
+        return;
+    }
+    set2f(loc, f1, f2);
 }
 
 void Shader::set1f(const char* name, float f1) {
-    set1f(getUniformLocation(name), f1);
+    UniLoc loc = getUniformLocation(name);
+    if (loc == -1) {
+        return;
+    }
+    set1f(loc, f1);
 }
 
 void Shader::set1i(const char* name, int i1) {
-    set1i(getUniformLocation(name), i1);
+    UniLoc loc = getUniformLocation(name);
+    if (loc == -1) {
+        return;
+    }
+    set1i(loc, i1);
 }
 
 void Shader::setMatrix4f(const char* name, Matrix4x4 mat) {
-    setMatrix4f(getUniformLocation(name), mat);
+    UniLoc loc = getUniformLocation(name);
+    if (loc == -1) {
+        return;
+    }
+    setMatrix4f(loc, mat);
 }
 
 void Shader::setTransform4f(const char* name, Transform4x4 trans) {
-    setTransform4f(getUniformLocation(name), trans);
+    UniLoc loc = getUniformLocation(name);
+    if (loc == -1) {
+        return;
+    }
+    setTransform4f(loc, trans);
 }
 
 void Shader::use() {
@@ -148,7 +180,7 @@ ShaderHDL ShaderMgrOpenGL::loadShaderFromStr(ShaderType type, const char* source
 	}
 	glShaderSource(shaderHDL, 1, &src, NULL);
 	glCompileShader(shaderHDL);
-    checkGLError();
+    CheckGLError;
 	// Check for compile time errors
 	GLint success;
 	glGetShaderiv(shaderHDL, GL_COMPILE_STATUS, &success);
@@ -177,9 +209,9 @@ ShaderProgramHDL ShaderMgrOpenGL::createShaderProgram(ShaderHDLSet shaderHDLSet)
 	for (auto pair : shaderHDLSet) {
 		ShaderHDL shaderHDL = pair.second;
 		glAttachShader(hdl, shaderHDL);
-		checkGLError();
+		CheckGLError;
 	}
-	checkGLError();
+	CheckGLError;
 	glLinkProgram(hdl);
 	GLint success; 
 	glGetProgramiv(hdl, GL_LINK_STATUS, &success);

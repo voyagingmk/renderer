@@ -5,10 +5,10 @@
 
 namespace renderer {
 	class Color {
-		float rgb[3] = { 0 };
+		float rgba[4] = { 0 };
 	public:
 		Color();
-		Color(float r, float g, float b);
+		Color(float r, float g, float b, float a = 1.0f);
 		Color(const Color &);
 		Color(Color &&);
 		Color& operator = (const Color&);
@@ -23,12 +23,14 @@ namespace renderer {
 		bool operator == (const Color&);
 		Color Modulate (const Color&) const;
 		Color clamp() const;
-		inline float r() const { return rgb[0]; };
-		inline float g() const { return rgb[1]; };
-		inline float b() const { return rgb[2]; };
+		inline float r() const { return rgba[0]; };
+		inline float g() const { return rgba[1]; };
+        inline float b() const { return rgba[2]; };
+        inline float a() const { return rgba[3]; };
 		int rInt() const;
 		int gInt() const;
-		int bInt() const;
+        int bInt() const;
+        int aInt() const;
 	private:
 		int toInt(float v) const;
 	public:

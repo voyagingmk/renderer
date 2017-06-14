@@ -39,7 +39,7 @@ BufferSet BufferMgrOpenGL::CreateMeshBuffer(const std::string& aliasname, Mesh& 
     glBindBuffer(GL_ARRAY_BUFFER, 0); // Note that this is allowed, the call to glVertexAttribPointer registered VBO as the currently bound vertex buffer object so afterwards we can safely unbind
     
     glBindVertexArray(0); // Unbind VAO (it's always a good thing to unbind any buffer/array to prevent strange bugs), remember: do NOT unbind the EBO, keep it bound to this VAO
-    checkGLError();
+    CheckGLError;
     
     bufferSet.vao = VAO;
     bufferSet.vbo = VBO;
@@ -56,10 +56,52 @@ void BufferMgrOpenGL::DrawBuffer(const std::string& aliasname) {
     //glDrawArrays(GL_TRIANGLES, 0, bufferSet.triangles);
     glDrawElements(GL_TRIANGLES, bufferSet.triangles * 3, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
-    checkGLError();
+    CheckGLError;
 }
 
-FrameBuf BufferMgrOpenGL::createFrameBuffer(size_t width, size_t height, BufType depthType, size_t MSAA) {
+FrameBuf BufferMgrOpenGL::CreateDepthFrameBuffer(size_t width, size_t height) {
+    FrameBuf buf;
+    buf.width = width;
+    buf.height = height;
+    glGenFramebuffers(1, &buf.fboID);
+    glGenTextures(1, &buf.depthTexID);
+    glBindTexture(GL_TEXTURE_2D, buf.depthTexID);
+    //glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,width, height, 0, GL_DEPTH_COMPONENT,  GL_FLOAT, 0);
+    // glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, width, height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    /*
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+    GLfloat borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
+    glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+     */
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, width, height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, 0);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, buf.fboID);
+    //glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT
+    //                       , GL_TEXTURE_2D, buf.depthTexID, 0);
+    
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, buf.depthTexID, 0);
+
+    //glBindTexture(GL_TEXTURE_2D, 0);
+    glDrawBuffer(GL_NONE);
+    glReadBuffer(GL_NONE);
+    if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+        printf("CreateDepthFrameBuffer failed\n");
+        DestroyFrameBuffer(buf);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        return buf;
+    } else {
+//        printf("CreateDepthFrameBuffer success\n");
+    }
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    return buf;
+}
+
+FrameBuf BufferMgrOpenGL::CreateColorFrameBuffer(size_t width, size_t height, BufType depthType, size_t MSAA) {
     FrameBuf buf;
     buf.width = width;
     buf.height = height;
@@ -116,7 +158,7 @@ FrameBuf BufferMgrOpenGL::createFrameBuffer(size_t width, size_t height, BufType
             size_t samples = MSAA;
             glTexImage2DMultisample(target, samples, GL_DEPTH24_STENCIL8, width, height, GL_TRUE);
         } else {
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, width, height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, NULL);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, width, height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, 0);
         }
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, buf.depthTexID, 0);
     } else {

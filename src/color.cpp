@@ -6,83 +6,91 @@ namespace renderer {
 	Color::Color() {
 	};
 
-	Color::Color(float r, float g, float b) {
-		rgb[0] = r;
-		rgb[1] = g;
-		rgb[2] = b;
+	Color::Color(float r, float g, float b, float a) {
+		rgba[0] = r;
+		rgba[1] = g;
+        rgba[2] = b;
+        rgba[3] = a;
 	};
 
 	Color::Color(const Color& c) {
-		rgb[0] = c.r();
-		rgb[1] = c.g();
-		rgb[2] = c.b();
+		rgba[0] = c.r();
+		rgba[1] = c.g();
+        rgba[2] = c.b();
+        rgba[3] = c.a();
 	};
 	Color::Color(Color&& c) {
-		rgb[0] = c.r();
-		rgb[1] = c.g();
-		rgb[2] = c.b();
+		rgba[0] = c.r();
+		rgba[1] = c.g();
+        rgba[2] = c.b();
+        rgba[3] = c.a();
 	};
 
 	Color& Color::operator = (const Color& c) {
-		rgb[0] = c.r();
-		rgb[1] = c.g();
-		rgb[2] = c.b();
+		rgba[0] = c.r();
+		rgba[1] = c.g();
+        rgba[2] = c.b();
+        rgba[3] = c.a();
 		return *this;
 	};
 
 	Color& Color::operator = (Color&& c) {
-		rgb[0] = c.r();
-		rgb[1] = c.g();
-		rgb[2] = c.b();
+		rgba[0] = c.r();
+		rgba[1] = c.g();
+        rgba[2] = c.b();
+        rgba[3] = c.a();
 		return *this;
 	};
 
 	Color::~Color() {};
 
 	Color Color::operator + (const Color& c) const {
-		return Color(rgb[0] + c.r(), rgb[1] + c.g(), rgb[2] + c.b());
+		return Color(rgba[0] + c.r(), rgba[1] + c.g(), rgba[2] + c.b(), rgba[3] + c.a());
 	};
 
 	Color Color::operator - (const Color& c) const {
-		return Color(rgb[0] - c.r(), rgb[1] - c.g(), rgb[2] - c.b());
+		return Color(rgba[0] - c.r(), rgba[1] - c.g(), rgba[2] - c.b(), rgba[3] - c.a());
 	};
 
 	Color Color::operator * (float f) const {
-		return Color(rgb[0] * f, rgb[1] * f, rgb[2] * f);
+		return Color(rgba[0] * f, rgba[1] * f, rgba[2] * f, rgba[3] * f);
 	};
 
 	Color Color::operator / (float f) const {
 		const float _f = 1.0f / f;
-		return Color(rgb[0] * _f, rgb[1] * _f, rgb[2] * _f);
+		return Color(rgba[0] * _f, rgba[1] * _f, rgba[2] * _f, rgba[3] * _f);
 	};
 
 	Color& Color::operator += (const Color& c) {
-		rgb[0] += c.rgb[0];
-		rgb[1] += c.rgb[1];
-		rgb[2] += c.rgb[2];
+		rgba[0] += c.rgba[0];
+		rgba[1] += c.rgba[1];
+        rgba[2] += c.rgba[2];
+        rgba[3] += c.rgba[3];
 		return *this;
 	}
 
 	Color& Color::operator *= (float f) {
-		rgb[0] *= f;
-		rgb[1] *= f;
-		rgb[2] *= f;
-		return *this;
+		rgba[0] *= f;
+		rgba[1] *= f;
+        rgba[2] *= f;
+        rgba[3] *= f;
+        return *this;
 	}
 
 	// TODO float comparison
 	bool Color::operator == (const Color& c) {
-		return r() == c.r() && g() == c.g() && b() == c.b();
+		return r() == c.r() && g() == c.g() && b() == c.b() && a() == c.a();
 	};
 
 	Color Color::Modulate(const Color& c) const {
-		return Color(r() * c.r(), g() * c.g(), b() * c.b());
+		return Color(r() * c.r(), g() * c.g(), b() * c.b(), a() * c.a());
 	};
 	Color Color::clamp() const {
 		return Color(
-			Clamp(rgb[0], 0.f, 1.f),
-			Clamp(rgb[1], 0.f, 1.f),
-			Clamp(rgb[2], 0.f, 1.f));
+			Clamp(rgba[0], 0.f, 1.f),
+			Clamp(rgba[1], 0.f, 1.f),
+            Clamp(rgba[2], 0.f, 1.f),
+            Clamp(rgba[3], 0.f, 1.f));
 	};
 
 	int Color::rInt() const {
@@ -93,7 +101,10 @@ namespace renderer {
 	}
 	int Color::bInt() const {
 		return toInt(b());
-	}
+    }
+    int Color::aInt() const {
+        return toInt(a());
+    }
 
 	int Color::toInt(float v) const {
 		if (Enable_GammaCorrect) {

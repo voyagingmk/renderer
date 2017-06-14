@@ -9,9 +9,9 @@ typedef GLuint TexID;
 typedef GLuint FboID;
 typedef GLuint RboID;
 #else
-typedef unsigned int TexID;
-typedef unsigned int FboID;
-typedef unsigned int RboID;
+typedef uint32_t TexID;
+typedef uint32_t FboID;
+typedef uint32_t RboID;
 #endif
 
 enum class BufType {
@@ -39,14 +39,23 @@ public:
     FboID innerFboID;
     TexID innerTexID;
     BufType depthType;
-    union {
-        TexID depthTexID; // include stencil
-        RboID depthRboID; // include stencil
-    };
+    TexID depthTexID; // include stencil
+    RboID depthRboID; // include stencil
     size_t width;
     size_t height;
     size_t MSAA; // default: 0
 public:
+    FrameBuf():
+        fboID(0),
+        texID(0),
+        innerFboID(0),
+        innerTexID(0),
+        depthType(BufType::RBO),
+        depthTexID(0),
+        width(1),
+        height(1),
+        MSAA(0)
+    {}
     TexID getTexID() {
         if (MSAA) {
             return innerTexID;

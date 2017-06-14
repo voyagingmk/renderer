@@ -84,12 +84,12 @@ TexID TextureMgrOpenGL::loadCubeMap(std::string filename[6], const char* aliasna
     return texID;
 }
 
-void TextureMgrOpenGL::activateTexture(uint32_t idx, TexID TexID) {
+void TextureMgrOpenGL::activateTexture(uint32_t idx, TexID texID) {
     glActiveTexture(GL_TEXTURE0 + idx);
-    glBindTexture(GL_TEXTURE_2D, TexID);
+    glBindTexture(GL_TEXTURE_2D, texID);
 }
 
-void TextureMgrOpenGL::destroyTexture(TexID TexID) {
+void TextureMgrOpenGL::destroyTexture(TexID texID) {
     
 }
 

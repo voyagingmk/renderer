@@ -13,13 +13,13 @@ void RendererContextSDL::setTitle(const char* title) {
 void RendererContextSDL::setup(size_t w, size_t h) {
 	winWidth = w;
 	winHeight = h;
-    SDL_SetMainReady();
-	if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
+    //SDL_SetMainReady();
+	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 		shutdown("Unable to initialize SDL");
    
     checkSDLError(__LINE__);
-  	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+  	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
 	checkSDLError(__LINE__);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
     checkSDLError(__LINE__);//on Win7 would cause a ERROR about SHCore.dll, just ignore it.

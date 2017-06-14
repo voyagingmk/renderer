@@ -14,10 +14,48 @@
 using namespace std;
 using namespace renderer;
 
+
+const GLuint SHADOW_WIDTH = 800, SHADOW_HEIGHT = 600;
+GLuint quadVAO = 0;
+GLuint quadVBO;
+GLuint planeVAO = 0;
+GLuint planeVBO;
+
+
+void RenderQuad()
+{
+    if (quadVAO == 0)
+    {
+        float len = 0.5f;
+        GLfloat quadVertices[] = {
+            // Positions        // Texture Coords
+            -len,  len, 0.0f,  0.0f, 1.0f,
+            -len, -len, 0.0f,  0.0f, 0.0f,
+            len,  len, 0.0f,  1.0f, 1.0f,
+            len, -len, 0.0f,  1.0f, 0.0f,
+        };
+        // Setup plane VAO
+        glGenVertexArrays(1, &quadVAO);
+        glGenBuffers(1, &quadVBO);
+        glBindVertexArray(quadVAO);
+        glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+    }
+    glBindVertexArray(quadVAO);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    glBindVertexArray(0);
+}
+
 class MyContext : public RendererContextSDL {
     PerspectiveCamera camera;
-    FrameBuf frameBuf;
+    FrameBuf depthFrameBuf;
+    FrameBuf mainFrameBuf;
     ShaderProgramHDL mainHDL;
+    ShaderProgramHDL depthMapHDL;
     ShaderProgramHDL singleColorHDL;
     ShaderProgramHDL screenHDL;
     TexID texID1, texID2;
@@ -27,6 +65,8 @@ class MyContext : public RendererContextSDL {
     Model* quad;
     PhongMaterial* material;
     PointLight* light;
+    FrameBuf depthMapBuf;
+
 public:
     MyContext():
         mainHDL(0),
@@ -55,22 +95,42 @@ public:
         }
     }
     virtual void onCustomSetup() override {
+        // Configure depth map FBO
+        glGenFramebuffers(1, &depthMapBuf.fboID);
+        // - Create depth texture
+        glGenTextures(1, &depthMapBuf.depthTexID);
+        glBindTexture(GL_TEXTURE_2D, depthMapBuf.depthTexID);
+        
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glBindFramebuffer(GL_FRAMEBUFFER, depthMapBuf.fboID);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMapBuf.depthTexID, 0);
+        glDrawBuffer(GL_NONE);
+        glReadBuffer(GL_NONE);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
         TextureMgrOpenGL& texMgr = TextureMgrOpenGL::getInstance();
         ShaderMgrOpenGL& shaderMgr = ShaderMgrOpenGL::getInstance();
         BufferMgrOpenGL& bufferMgr = BufferMgrOpenGL::getInstance();
-        
-        frameBuf = bufferMgr.createFrameBuffer(winWidth, winHeight, BufType::RBO, 4);
-        
-        frameBuf.debug();
+       
+        depthFrameBuf = bufferMgr.CreateDepthFrameBuffer(winWidth, winHeight);
+        // depthFrameBuf = bufferMgr.CreateColorFrameBuffer(winWidth, winHeight, BufType::Tex, 0);
+        mainFrameBuf = bufferMgr.CreateColorFrameBuffer(winWidth, winHeight, BufType::Tex, 0);
         
         texMgr.setTextureDirPath("assets/images/");
         shaderMgr.setShaderFileDirPath("assets/shaders/");
         mainHDL = shaderMgr.createShaderProgram({
-            { ShaderType::Vertex, "test1.vs" },
-            { ShaderType::Fragment, "test1.fs"}
+            { ShaderType::Vertex, "main.vs" },
+            { ShaderType::Fragment, "main.fs"}
+        });
+        depthMapHDL = shaderMgr.createShaderProgram({
+            { ShaderType::Vertex, "depthMap.vs" },
+            { ShaderType::Fragment, "depthMap.fs"}
         });
         singleColorHDL = shaderMgr.createShaderProgram({
-            { ShaderType::Vertex, "test1.vs" },
+            { ShaderType::Vertex, "main.vs" },
             { ShaderType::Fragment, "singlecolor.fs"}
         });
         screenHDL = shaderMgr.createShaderProgram({
@@ -78,7 +138,7 @@ public:
             { ShaderType::Fragment, "screen.fs"}
         });
         
-        if (!mainHDL || !singleColorHDL || !screenHDL) {
+        if (!depthMapHDL || !mainHDL || !singleColorHDL || !screenHDL) {
             shutdown("createShaderProgram failed");
         }
         
@@ -93,15 +153,13 @@ public:
             32.0f);
         
         auto lightPool = GetPool<PointLight>();
-        light = lightPool->newElement(Vector3dF(10.0f, 15.0f, -10.0f));
+        light = lightPool->newElement(Vector3dF(0.0f, 20.0f, 10.0f));
         light->ambient = Color(1.0f, 1.0f, 1.0f);
         light->diffuse = Color(1.0f, 1.0f, 1.0f);
         light->specular = Color(1.0f, 1.0f, 1.0f);
         light->constant = 1.0f;
         light->linear = 0.014f;
         light->quadratic = 0.0007f;
-        
-        glViewport(0, 0, winWidth, winHeight);
 
         auto pool = GetPool<Model>();
         string dirPath = "./assets/models/";
@@ -111,12 +169,14 @@ public:
             objs.push_back(model);
             model->CustomInit(dirPath + "dog.obj");
             model->SetScale(Vector3dF(0.1f, 0.1f, 0.1f));
-            model->SetPos(Vector3dF(0.0f, 3.0f, -30.0f));
+            //model->SetPos(Vector3dF(-10.0f + i * 3.0f, 10.0f, -30.0f - i * 100.0f));
+            model->SetPos({0.0, 0.0, -1.0});
             model->SetRotate(90, Axis::y);
         }
         terrian = pool->newElement();
         terrian->CustomInit(dirPath + "plane.obj");
-        
+        terrian->SetScale({10.0, 10.0, 10.0});
+        terrian->SetPos({0.0, 0.0, -10.0});
         quad = pool->newElement();
         Mesh mesh;
         Vertex v;
@@ -139,7 +199,7 @@ public:
         quad->CustomInit(mesh);
         
         checkSDLError();
-        checkGLError();
+        CheckGLError;
         camera.SetFov(45.0f);
         camera.SetAspect((float)winWidth / (float)winHeight);
         camera.SetNear(0.01f);
@@ -147,8 +207,8 @@ public:
         camera.SetCameraPosition(Vector3dF(0.0f, 10.0f, 0.0f));
        
         // Setup OpenGL options
-        glDepthFunc(GL_LESS);
-        glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+        //glDepthFunc(GL_LESS);
+        //glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
         
         glEnable(GL_CULL_FACE);
         glCullFace(GL_BACK);
@@ -156,9 +216,12 @@ public:
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         
+       
+        
     }
     void updateCamera() {
-        Vector3dF p = camera.GetCameraPosition();
+        Vector3dF p = light->pos;
+        //Vector3dF p = camera.GetCameraPosition();
         float dis = 0.2f;
         if(keyState[SDLK_w] == SDL_PRESSED) {
             p += {0.0f, 0.0f, -dis};
@@ -181,8 +244,9 @@ public:
         if(p != camera.GetCameraPosition()) {
             printf("eye: %.3f, %.3f, %.3f\n", p.x, p.y, p.z);
         }
-        camera.SetCameraPosition(p);
-        camera.SetTargetVector(p + Vector3dF(0.0, 0.0, -1.0));
+        light->pos = p;
+        //camera.SetCameraPosition(p);
+        //camera.SetTargetVector(p + Vector3dF(0.0, 0.0, -1.0));
         
         if(keyState[SDLK_y] == SDL_PRESSED) {
             float f = camera.GetFar();
@@ -198,27 +262,52 @@ public:
     }
     
     virtual void onPoll() override
-    {
+    {   glEnable(GL_DEPTH_TEST);
+        //glDepthRangef(0.0f, 1.0f);
         updateWorld();
         updateCamera();
+        BufferMgrOpenGL& buffMgr = BufferMgrOpenGL::getInstance();
         TextureMgrOpenGL& texMgr = TextureMgrOpenGL::getInstance();
         ShaderMgrOpenGL& shaderMgr = ShaderMgrOpenGL::getInstance();
-        Shader& shader = shaderMgr.getShader(screenHDL);
-       
-        BufferMgrOpenGL::getInstance().UseFrameBuffer(frameBuf);
-        draw();
-        BufferMgrOpenGL::getInstance().UnuseFrameBuffer(frameBuf);
-
-        // second pass
-        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        
+        // 1. first render to depth map
+        buffMgr.UseFrameBuffer(depthFrameBuf);
+        Matrix4x4 lightProj = Ortho(-10.0f, 10.0f, -10.0f, 10.0f, 0.01f, 50.0f);
+        Matrix4x4 lightPV = lightProj * LookAt(light->pos, Vector3dF(0.0, 0.0, 0.0), {0.0f, 1.0f, 0.0f});
+        drawScene(Color(0.1f, 0.1f, 0.1f, 1.0f),
+                  GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT,
+                  depthFrameBuf,
+                  depthMapHDL,
+                  light->pos,
+                  lightPV);
+        buffMgr.UnuseFrameBuffer(depthFrameBuf);
+        
+        
+        buffMgr.UseFrameBuffer(mainFrameBuf);
+        drawScene(Color(0.1f, 0.1f, 0.1f, 1.0f),
+                  GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT,
+                  mainFrameBuf,
+                  mainHDL,
+                  camera.GetCameraPosition(),
+                  lightPV);
+        buffMgr.UnuseFrameBuffer(mainFrameBuf);
+        
+        
+        
+        Shader& screenshader = shaderMgr.getShader(screenHDL);
+        screenshader.use();
+        glViewport(0, 0, winWidth, winHeight);
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
         glDisable(GL_DEPTH_TEST);
         glDisable(GL_STENCIL_TEST);
-        shader.use();
-        // 地面
-        texMgr.activateTexture(0, frameBuf.getTexID());
-        shader.set1i("texture1", 0);
+
+        texMgr.activateTexture(0, depthFrameBuf.depthTexID);
+       // texMgr.activateTexture(0, mainFrameBuf.getTexID());
+       // texMgr.activateTexture(0, mainFrameBuf.depthTexID);
         quad->Draw();
+        CheckGLError;
+        
     }
     
     void updateWorld() {
@@ -257,17 +346,72 @@ public:
             obj->SetScale(oldScale);
         }
     }
-    void useShader(Shader& shader) {
+    void useShader(Shader& shader, const Vector3dF viewPos, const Matrix4x4& PV) {
         shader.use();
-        shader.set3f("viewPos", camera.GetCameraPosition());
-        shader.setMatrix4f("PV", camera.GetMatrix());
+        shader.set3f("viewPos", viewPos);
+        shader.setMatrix4f("PV", PV);
+    }
+    void drawScene(Color clearColor,
+                   uint32_t clearBits,
+                   FrameBuf& buf,
+                   ShaderProgramHDL hdl,
+                   const Vector3dF viewPos,
+                   const Matrix4x4& PV) {
+        ShaderMgrOpenGL& shaderMgr = ShaderMgrOpenGL::getInstance();
+        Shader& shader = shaderMgr.getShader(hdl);
+        useShader(shader, viewPos, PV);
+        glEnable(GL_DEPTH_TEST);
+        glViewport(0, 0, buf.width, buf.height);
+        glClearColor(clearColor.r(), clearColor.g(), clearColor.b(), clearColor.a());
+        glClear(clearBits);
         shader.setLight(light);
         shader.setMaterial(material);
+        static float angle = 0.0f;
+        angle += 1.0f;
+        shader.setMatrix4f("model", Translate<Matrix4x4>({0.0f, 0.0f, -10.0f}));
+        //drawTest();
+        drawTerrian(shader);
+        drawObjs(shader);
     }
-    void draw() {
+    void drawTest(){
+        if(!planeVAO){
+            float len = 1000.0f;
+            float s1 = -1.0f, s2 = -1.0f;
+            GLfloat planeVertices[] = {
+                // Positions            // Normals           // Texture Coords
+                 len,  s1,  len, 0.0f,  1.0f,  0.0f,  25.0f, 0.0f,
+                -len,  s1, -len, 0.0f,  1.0f,  0.0f,  0.0f,  25.0f,
+                -len,  s1,  len, 0.0f,  1.0f,  0.0f,  0.0f,  0.0f,
+                
+                 len,  s2,  len, 0.0f,  1.0f,  0.0f,  25.0f, 0.0f,
+                 len,  s2, -len, 0.0f,  1.0f,  0.0f,  25.0f, 25.0f,
+                -len,  s2, -len, 0.0f,  1.0f,  0.0f,  0.0f,  25.0f
+            };
+            // Setup plane VAO
+            glGenVertexArrays(1, &planeVAO);
+            glGenBuffers(1, &planeVBO);
+            glBindVertexArray(planeVAO);
+            glBindBuffer(GL_ARRAY_BUFFER, planeVBO);
+            glBufferData(GL_ARRAY_BUFFER, sizeof(planeVertices), &planeVertices, GL_STATIC_DRAW);
+            glEnableVertexAttribArray(0);
+            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)0);
+            glEnableVertexAttribArray(1);
+            glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+            glEnableVertexAttribArray(2);
+            glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(6 * sizeof(GLfloat)));
+            glBindVertexArray(0);
+        }
+        glBindVertexArray(planeVAO);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+        glBindVertexArray(0);
+   
+    }
+    /*
+    void draw2() {
         ShaderMgrOpenGL& shaderMgr = ShaderMgrOpenGL::getInstance();
         Shader& mainShader = shaderMgr.getShader(mainHDL);
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+        glViewport(0, 0, mainFrameBuf.width, mainFrameBuf.height);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_STENCIL_TEST);
@@ -292,7 +436,7 @@ public:
         
         glStencilMask(0xFF);
         glEnable(GL_DEPTH_TEST);
-    }
+    }*/
 };
 
 
