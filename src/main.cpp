@@ -87,8 +87,16 @@ public:
             { ShaderType::Vertex, "screen.vs" },
             { ShaderType::Fragment, "screen.fs"}
         });
+        depthMapDebugHDL = shaderMgr.createShaderProgram({
+            { ShaderType::Vertex, "depthMapDebug.vs" },
+            { ShaderType::Fragment, "depthMapDebug.fs"}
+        });
         
-        if (!depthMapHDL || !mainHDL || !singleColorHDL || !screenHDL) {
+        if (!depthMapHDL ||
+            !mainHDL ||
+            !singleColorHDL ||
+            !screenHDL ||
+            !depthMapDebugHDL) {
             shutdown("createShaderProgram failed");
         }
         
@@ -244,14 +252,15 @@ public:
         
         
         
-        Shader& screenshader = shaderMgr.getShader(screenHDL);
-        screenshader.use();
+        
         glViewport(0, 0, winWidth, winHeight);
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
         glDisable(GL_DEPTH_TEST);
         glDisable(GL_STENCIL_TEST);
-
+        Shader& screenShader = shaderMgr.getShader(depthMapDebugHDL);
+        //Shader& screenShader = shaderMgr.getShader(screenHDL);
+        screenShader.use();
         texMgr.activateTexture(0, depthFrameBuf.depthTexID);
        // texMgr.activateTexture(0, mainFrameBuf.getTexID());
        // texMgr.activateTexture(0, mainFrameBuf.depthTexID);

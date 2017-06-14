@@ -5,11 +5,6 @@ out vec4 color;
 in vec2 TexCoord;
 
 uniform sampler2D texture1;
-//uniform float near_plane;
-//uniform float far_plane;
-float near_plane = 0.1;
-float far_plane = 10000.0;
-uniform int type;
 
 vec4 Inversion();
 vec4 Grayscale();
