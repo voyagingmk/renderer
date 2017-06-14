@@ -234,10 +234,12 @@ public:
         Shader& depthMapShader = shaderMgr.getShader(depthMapHDL);
         depthMapShader.use();
         depthMapShader.setMatrix4f("lightPV", lightPV);
+        glCullFace(GL_FRONT);
         drawScene(Color(0.1f, 0.1f, 0.1f, 1.0f),
                   GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT,
                   depthFrameBuf,
                   depthMapHDL);
+        glCullFace(GL_BACK);
         buffMgr.UnuseFrameBuffer(depthFrameBuf);
         
         
