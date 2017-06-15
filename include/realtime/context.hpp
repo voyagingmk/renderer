@@ -42,6 +42,8 @@ namespace renderer {
 		virtual void shutdown(const char *msg = nullptr) override;
 		virtual void resize(int w, int h) override;
 		virtual void onSDLEvent(SDL_Event& e) {}
+        virtual void onSDLMouseEvent(SDL_MouseMotionEvent& e) {}
+        virtual void onSDLMouseEvent(SDL_MouseButtonEvent& e) {}
         virtual void onSDLKeyboardEvent(SDL_KeyboardEvent& e) {}
 	};
 

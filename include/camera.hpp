@@ -93,17 +93,25 @@ namespace renderer {
         
         void SetUpVector(Vector3dF v) {
             up = v;
+            UpdateRightVector();
             UpdateViewMatrix();
         }
         
         void SetTargetVector(Vector3dF v) {
             target = v;
+            UpdateRightVector();
             UpdateViewMatrix();
         }
         
         virtual void SetCameraPosition(Vector3dF p) {
             eye = p;
+            UpdateRightVector();
             UpdateViewMatrix();
+        }
+        
+        void UpdateRightVector() {
+            Vector3dF focal = (target - eye).Normalize();
+            right = (focal.Cross(up)).Normalize();
         }
         
         virtual Vector3dF GetCameraPosition() {
@@ -128,6 +136,9 @@ namespace renderer {
         
         Vector3dF GetTargetVector() {
             return target;
+        }
+        Vector3dF GetFrontVector() {
+            return target - eye;
         }
         
         Vector3dF GetUpVector() {

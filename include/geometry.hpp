@@ -234,7 +234,9 @@ namespace renderer {
 
 		Point3d<T> Normalize() const {
 			T len = Length();
-			assert(len != 0);
+            if (len == 0) {
+                return *this;
+            }
 			T inv = T(1) / len;
 			return Point3d<T>(x * inv, y * inv, z * inv);
 		}

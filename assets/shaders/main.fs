@@ -51,7 +51,20 @@ float ShadowCalculation(vec4 fragPosLightSpace, float bias)
 	// shadow acne
 	//float shadow = currentDepth > closestDepth  ? 1.0 : 0.0;
 	
-	float shadow = currentDepth - bias > closestDepth  ? 1.0 : 0.0;  	
+	// PCF
+	float shadow = 0.0;
+	vec2 texelSize = 1.0 / textureSize(texture2, 0);
+	for(int x = -1; x <= 1; ++x)
+	{
+		for(int y = -1; y <= 1; ++y)
+		{
+			float pcfDepth = texture(texture2, projCoords.xy + vec2(x, y) * texelSize).r; 
+			shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;        
+		}    
+	}
+	shadow /= 9.0;
+
+	// float shadow = currentDepth - bias > closestDepth  ? 1.0 : 0.0;  	
 
     return shadow;
 }
@@ -85,6 +98,7 @@ void main()
  	
 	// calculate shadow
 	float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005); 
+	bias = 0.0;
     float shadow = ShadowCalculation(FragPosLightSpace, bias);      
 
 	color = vec4((ambient + (1.0 - shadow) * (diffuse + specular)) * attenuation , 1.0) * objectColor;

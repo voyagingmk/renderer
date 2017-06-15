@@ -14,6 +14,10 @@
 using namespace std;
 using namespace renderer;
 
+enum class RenderType {
+    Normal = 1,
+    DepthMap = 2
+};
 
 class MyContext : public RendererContextSDL {
     PerspectiveCamera camera;
@@ -32,11 +36,17 @@ class MyContext : public RendererContextSDL {
     PhongMaterial* material;
     PointLight* light;
     FrameBuf depthMapBuf;
-
+    float yaw;
+    float pitch;
+    Vector2dF cameraVec;
+    RenderType renderType;
 public:
     MyContext():
         mainHDL(0),
-        texID1(0), texID2(0) {}
+        texID1(0), texID2(0),
+        yaw(-90.0f), pitch(0),
+        renderType(RenderType::Normal)
+         {}
 	virtual void onSDLEvent(SDL_Event& e) override {
         switch (e.type) {
             case SDL_QUIT:
@@ -46,6 +56,27 @@ public:
                 break;
         }
 	}
+    
+    virtual void onSDLMouseEvent(SDL_MouseMotionEvent& e) override {
+       //printf("mMotion, t:%u, state:%u, (%d,%d), rel:(%d,%d)\n", e.type, e.state, e.x, e.y, e.xrel, e.yrel);
+        float scale = 0.3f;
+        cameraVec = {scale * e.xrel, -scale * e.yrel};
+        yaw   += cameraVec.x;
+        pitch += cameraVec.y;
+        if (pitch > 89.0f)
+            pitch = 89.0f;
+        if (pitch < -89.0f)
+            pitch = -89.0f;
+        Vector3dF front;
+        front.x = cos(Radians(yaw)) * cos(Radians(pitch)); // 0
+        front.y = sin(Radians(pitch)); // 0
+        front.z = sin(Radians(yaw)) * cos(Radians(pitch)); // -1
+        front = front.Normalize();
+        camera.SetTargetVector(camera.GetCameraPosition() + front);
+    }
+    virtual void onSDLMouseEvent(SDL_MouseButtonEvent& e) override {
+          printf("mButton, t:%u, state:%u, btn:%u, (%d,%d), clicks:%d\n", e.type, e.state, e.button, e.x, e.y, e.clicks);
+    }
     virtual void onSDLKeyboardEvent(SDL_KeyboardEvent& e) override {
         auto k = e.keysym.sym;
         keyState[k] = e.state;
@@ -53,6 +84,16 @@ public:
             switch (k) {
                 case SDLK_ESCAPE: {
                     shouldExit = true;
+                    break;
+                }
+                case SDLK_1: {
+                    // normal
+                    renderType = RenderType::Normal;
+                    break;
+                }
+                case SDLK_2: {
+                    // depth map
+                    renderType = RenderType::DepthMap;
                     break;
                 }
                 default:
@@ -65,7 +106,7 @@ public:
         ShaderMgrOpenGL& shaderMgr = ShaderMgrOpenGL::getInstance();
         BufferMgrOpenGL& bufferMgr = BufferMgrOpenGL::getInstance();
        
-        depthFrameBuf = bufferMgr.CreateDepthFrameBuffer(1024, 1024);
+        depthFrameBuf = bufferMgr.CreateDepthFrameBuffer(2024, 1024);
         // depthFrameBuf = bufferMgr.CreateColorFrameBuffer(winWidth, winHeight, BufType::Tex, 0);
         mainFrameBuf = bufferMgr.CreateColorFrameBuffer(winWidth, winHeight, BufType::Tex, 0);
         
@@ -105,14 +146,14 @@ public:
         
         auto matPool = GetPool<PhongMaterial>();
         material = matPool->newElement(
-            Color(1.0f, 0.5f, 0.31f),
-            Color(1.0f, 0.5f, 0.31f),
+            Color(0.3f, 0.3f, 0.3f),
+            Color(1.0f, 1.0f, 1.0f),
             Color(1.0f, 1.0f, 1.0f),
             32.0f);
         
         auto lightPool = GetPool<PointLight>();
-        light = lightPool->newElement(Vector3dF(0.0f, 3.0f, 3.0f));
-        light->ambient = Color(1.0f, 1.0f, 1.0f);
+        light = lightPool->newElement(Vector3dF(5.0f, 5.0f, 5.0f));
+        light->ambient = Color(0.5f, 0.5f, 0.5f);
         light->diffuse = Color(1.0f, 1.0f, 1.0f);
         light->specular = Color(1.0f, 1.0f, 1.0f);
         light->constant = 1.0f;
@@ -162,7 +203,7 @@ public:
         camera.SetAspect((float)winWidth / (float)winHeight);
         camera.SetNear(0.01f);
         camera.SetFar(10000.0f);
-        camera.SetCameraPosition(Vector3dF(0.0f, 10.0f, 30.0f));
+        camera.SetCameraPosition(Vector3dF(0.0f, 15.0f, 25.0f));
        
         // Setup OpenGL options
         //glDepthFunc(GL_LESS);
@@ -170,40 +211,40 @@ public:
         
         glEnable(GL_CULL_FACE);
         glCullFace(GL_BACK);
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        //glEnable(GL_BLEND);
+        //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         
        
         
     }
     void updateCamera() {
-        Vector3dF p = light->pos;
-        //Vector3dF p = camera.GetCameraPosition();
-        float dis = 0.2f;
+       // Vector3dF p = light->pos;
+        Vector3dF p = {0.0f, 0.0f, 0.0f};
         if(keyState[SDLK_w] == SDL_PRESSED) {
-            p += {0.0f, 0.0f, -dis};
+            p = camera.GetFrontVector().Normalize();
         }
         if(keyState[SDLK_s] == SDL_PRESSED) {
-            p += {0.0f, 0.0f, dis};
+            p =-camera.GetFrontVector().Normalize();
         }
         if(keyState[SDLK_a] == SDL_PRESSED) {
-            p += {-dis, 0.0f, 0.0f};
+            p =-camera.GetRightVector().Normalize();
         }
         if(keyState[SDLK_d] == SDL_PRESSED) {
-            p += {dis, 0.0f, 0.0f};
+            p = camera.GetRightVector().Normalize();
         }
         if(keyState[SDLK_q] == SDL_PRESSED) {
-            p += {0.0f, dis, 0.0f};
+            p = camera.GetUpVector().Normalize();
         }
         if(keyState[SDLK_e] == SDL_PRESSED) {
-            p += {0.0f, -dis, 0.0f};
+            p =-camera.GetUpVector().Normalize();
         }
         if(p != camera.GetCameraPosition()) {
-            printf("eye: %.3f, %.3f, %.3f\n", p.x, p.y, p.z);
+            //printf("eye: %.3f, %.3f, %.3f\n", p.x, p.y, p.z);
         }
-        light->pos = p;
-        //camera.SetCameraPosition(p);
+        //light->pos = p;
+        camera.SetTargetVector(camera.GetTargetVector() + p * 0.2f);
+        camera.SetCameraPosition(camera.GetCameraPosition() + p * 0.2f);
         //camera.SetTargetVector(p + Vector3dF(0.0, 0.0, -1.0));
         
         if(keyState[SDLK_y] == SDL_PRESSED) {
@@ -229,7 +270,7 @@ public:
         
         // 1. first render to depth map
         buffMgr.UseFrameBuffer(depthFrameBuf);
-        Matrix4x4 lightProj = Ortho(-10.0f, 10.0f, -10.0f, 10.0f, 0.01f, 30.0f);
+        Matrix4x4 lightProj = Ortho(-20.0f, 20.0f, -20.0f, 20.0f, 0.01f, 100.0f);
         Matrix4x4 lightPV = lightProj * LookAt(light->pos, Vector3dF(0.0, 0.0, 0.0), {0.0f, 1.0f, 0.0f});
         Shader& depthMapShader = shaderMgr.getShader(depthMapHDL);
         depthMapShader.use();
@@ -263,12 +304,17 @@ public:
         glClear(GL_COLOR_BUFFER_BIT);
         glDisable(GL_DEPTH_TEST);
         glDisable(GL_STENCIL_TEST);
-        //Shader& screenShader = shaderMgr.getShader(depthMapDebugHDL);
-        Shader& screenShader = shaderMgr.getShader(screenHDL);
-        screenShader.use();
-        screenShader.set1i("texture1", 0);
-        // texMgr.activateTexture(0, depthFrameBuf.depthTexID);
-        texMgr.activateTexture(0, mainFrameBuf.getTexID());
+        if (renderType == RenderType::Normal) {
+            Shader& screenShader = shaderMgr.getShader(screenHDL);
+            screenShader.use();
+            screenShader.set1i("texture1", 0);
+            texMgr.activateTexture(0, mainFrameBuf.getTexID());
+        } else {
+            Shader& screenShader = shaderMgr.getShader(depthMapDebugHDL);
+            screenShader.use();
+            screenShader.set1i("texture1", 0);
+            texMgr.activateTexture(0, depthFrameBuf.depthTexID);
+        }
         //texMgr.activateTexture(0, mainFrameBuf.depthTexID);
         quad->Draw();
         CheckGLError;

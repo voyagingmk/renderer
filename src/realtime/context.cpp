@@ -78,6 +78,12 @@ void RendererContextSDL::loop() {
 		if (SDL_PollEvent(&e)) {
             if(e.type == SDL_KEYDOWN || e.type == SDL_KEYUP) {
                 onSDLKeyboardEvent(e.key);
+            } else if(e.type == SDL_MOUSEMOTION) {
+                onSDLMouseEvent(e.motion);
+            } else if(e.type == SDL_MOUSEBUTTONDOWN ||
+                      e.type == SDL_MOUSEBUTTONUP ||
+                      e.type == SDL_MOUSEWHEEL) {
+                onSDLMouseEvent(e.button);
             } else {
                 onSDLEvent(e);
             }
