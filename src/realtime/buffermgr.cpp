@@ -71,7 +71,7 @@ FrameBuf BufferMgrOpenGL::CreateDepthFrameBuffer(DepthTexType dtType, TexRef tex
     } else if(dtType == DepthTexType::DepthStencil){
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, buf.depthTex.texID, 0);
     } else if(dtType == DepthTexType::CubeMap){
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, buf.depthTex.texID, 0);
+        glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, buf.depthTex.texID, 0);
     }
     glDrawBuffer(GL_NONE);
     glReadBuffer(GL_NONE);
