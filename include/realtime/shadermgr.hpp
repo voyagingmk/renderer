@@ -37,6 +37,7 @@ namespace renderer {
         virtual void set2f(UniLoc loc, float f1, float f2);
         virtual void set1f(UniLoc loc, float f1);
         virtual void set1i(UniLoc loc, int i1);
+        virtual void set1b(UniLoc loc, bool b);
         virtual void setMatrix4f(UniLoc loc, Matrix4x4 mat);
         virtual void setTransform4f(UniLoc loc, Transform4x4 trans);
         virtual void setLight(Light* light);
@@ -48,6 +49,7 @@ namespace renderer {
         virtual void set2f(const char* name, float f1, float f2);
         virtual void set1f(const char* name, float f1);
         virtual void set1i(const char* name, int i1);
+        virtual void set1b(const char* name, bool b);
         virtual void setMatrixes4f(const char* name, std::vector<Matrix4x4> mat);
         virtual void setMatrix4f(const char* name, Matrix4x4 mat);
         virtual void setTransform4f(const char* name, Transform4x4 trans);

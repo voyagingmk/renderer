@@ -154,7 +154,7 @@ public:
         }
         
         tex1 = texMgr.loadTexture("dog.png", "tex1", false);
-        terrianTex = texMgr.loadTexture("terrian.png", "terrianTex");
+        terrianTex = texMgr.loadTexture("brickwall.jpg", "terrianTex");
         terrianNormTex = texMgr.loadTexture("brickwall_normal.jpg", "terrianNormTex");
         
         
@@ -184,7 +184,7 @@ public:
         lightObj->SetPos(light->pos);
         lightObj->material = objMaterial;
 
-        for(int i = 0; i < 3; i++) {
+        for(int i = 0; i < 0; i++) {
             Model* model = pool->newElement();
             objs.push_back(model);
             model->CustomInit(dirPath + "dog.obj");
@@ -382,6 +382,7 @@ public:
         static float angle = 0.0f;
         angle += 0.3f;
         Vector3dF p = 15.0f * Vector3dF(cos(Radians(angle)), 1.0f, sin(Radians(angle)));
+        p.y = 1.0f;
         light->pos = p;
         lightObj->SetPos(p);
     }
