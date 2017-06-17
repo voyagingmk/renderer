@@ -140,6 +140,11 @@ void TextureMgrOpenGL::activateTexture(uint32_t idx, TexRef texRef) {
     }
 }
 
+void TextureMgrOpenGL::DisableTexture(uint32_t idx) {
+    glActiveTexture(GL_TEXTURE0 + idx);
+    glBindTexture(GL_TEXTURE_2D, 0);
+}
+
 void TextureMgrOpenGL::activateTexture(uint32_t idx, const char* aliasname) {
     auto it = texDict.find(aliasname);
     if(it == texDict.end()) {

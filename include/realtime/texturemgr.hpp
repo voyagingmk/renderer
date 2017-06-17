@@ -42,6 +42,7 @@ namespace renderer {
         virtual TexRef CreateDepthTexture(DepthTexType dtType,size_t width, size_t height);
         virtual TexRef loadCubeMap(std::string filename[6], const char* aliasname);
         void activateTexture(uint32_t idx, TexRef texRef);
+        void DisableTexture(uint32_t idx);
         void activateTexture(uint32_t idx, const char* aliasname);
         virtual void destroyTexture(const char* aliasname);
 	};

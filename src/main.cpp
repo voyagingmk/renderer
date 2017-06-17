@@ -28,12 +28,12 @@ class MyContext : public RendererContextSDL {
     ShaderProgramHDL depthMapDebugHDL;
     ShaderProgramHDL singleColorHDL;
     ShaderProgramHDL screenHDL;
-    TexRef tex1, tex2;
+    TexRef tex1, terrianTex, terrianNormTex;
     std::map<SDL_Keycode, uint8_t> keyState;
     std::vector<Model*> objs;
     Model* terrian;
     Model* quad;
-    PhongMaterial* material;
+    Model* lightObj;
     PointLight* light;
     FrameBuf depthMapBuf;
     float yaw;
@@ -154,14 +154,11 @@ public:
         }
         
         tex1 = texMgr.loadTexture("dog.png", "tex1", false);
-        tex2 = texMgr.loadTexture("terrian.png", "tex2");
+        terrianTex = texMgr.loadTexture("terrian.png", "terrianTex");
+        terrianNormTex = texMgr.loadTexture("brickwall_normal.jpg", "terrianNormTex");
+        
         
         auto matPool = GetPool<PhongMaterial>();
-        material = matPool->newElement(
-            Color(0.3f, 0.3f, 0.3f),
-            Color(1.0f, 1.0f, 1.0f),
-            Color(1.0f, 1.0f, 1.0f),
-            32.0f);
         
         auto lightPool = GetPool<PointLight>();
         light = lightPool->newElement(Vector3dF(0.0f, 20.0f, 0.0f));
@@ -171,9 +168,21 @@ public:
         light->constant = 1.0f;
         light->linear = 0.014f;
         light->quadratic = 0.0007f;
-
+        
         auto pool = GetPool<Model>();
         string dirPath = "./assets/models/";
+        
+        Material* objMaterial = matPool->newElement(
+            Color(0.3f, 0.3f, 0.3f),
+            Color(1.0f, 1.0f, 1.0f),
+            Color(1.0f, 1.0f, 1.0f),
+            32.0f);
+        
+        lightObj = pool->newElement();
+        lightObj->CustomInit(dirPath + "cube.obj");
+        lightObj->SetPos(light->pos);
+        lightObj->material = objMaterial;
+        //objs.push_back(lightObj);
 
         for(int i = 0; i < 3; i++) {
             Model* model = pool->newElement();
@@ -181,13 +190,21 @@ public:
             model->CustomInit(dirPath + "dog.obj");
             //model->SetScale(Vector3dF(2.0f, 2.0f, 2.0f));
             model->SetScale(Vector3dF(0.1f, 0.1f, 0.1f));
-            model->SetPos(Vector3dF(-10.0f + i * 10.0f, 5.0f, -1.0f));
+            model->SetPos(Vector3dF(-10.0f + i * 10.0f, 0.0f, -1.0f));
             model->SetRotate(90, Axis::y);
+            model->material = objMaterial;
         }
+        Material* terrianMaterial = matPool->newElement(
+            Color(0.9f, 0.9f, 0.9f),
+            Color(1.0f, 1.0f, 1.0f),
+            Color(1.0f, 1.0f, 1.0f),
+            64.0f);
         terrian = pool->newElement();
         terrian->CustomInit(dirPath + "plane.obj");
         //terrian->SetScale({10.0, 10.0, 10.0});
-        terrian->SetPos({0.0, 0.0, -10.0});
+        terrian->SetPos({0.0, 0.0, 0.0});
+        terrian->material = terrianMaterial;
+        
         quad = pool->newElement();
         Mesh mesh;
         Vertex v;
@@ -227,11 +244,9 @@ public:
         //glEnable(GL_BLEND);
         //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         
-       
-        
     }
+    
     void updateCamera() {
-       // Vector3dF p = light->pos;
         Vector3dF p = {0.0f, 0.0f, 0.0f};
         if(keyState[SDLK_w] == SDL_PRESSED) {
             p = camera.GetFrontVector().Normalize();
@@ -254,7 +269,6 @@ public:
         if(p != camera.GetCameraPosition()) {
             //printf("eye: %.3f, %.3f, %.3f\n", p.x, p.y, p.z);
         }
-        //light->pos = p;
         camera.SetTargetVector(camera.GetTargetVector() + p * 0.2f);
         camera.SetCameraPosition(camera.GetCameraPosition() + p * 0.2f);
         //camera.SetTargetVector(p + Vector3dF(0.0, 0.0, -1.0));
@@ -279,6 +293,14 @@ public:
         BufferMgrOpenGL& buffMgr = BufferMgrOpenGL::getInstance();
         TextureMgrOpenGL& texMgr = TextureMgrOpenGL::getInstance();
         ShaderMgrOpenGL& shaderMgr = ShaderMgrOpenGL::getInstance();
+        
+        static float angle = 0.0f;
+        angle += 0.3f;
+        Vector3dF p = 10.0f * Vector3dF(cos(Radians(angle)), 1.0f, sin(Radians(angle)));
+        //light->pos = p;
+        //lightObj->SetPos(p);
+        
+        //light->pos = p;
         
         GLfloat aspect = depthFrameBuf.width / depthFrameBuf.height;
         GLfloat near = 0.1f;
@@ -320,7 +342,7 @@ public:
         mainShader.use();
         mainShader.set1f("far_plane", far);
         mainShader.setMatrix4f("lightPV", lightPV);
-        mainShader.set1i("texture2", 1);
+        mainShader.set1i("depthMap", 1);
         texMgr.activateTexture(1, depthFrameBuf.depthTex);
         drawScene(Color(0.1f, 0.1f, 0.1f, 1.0f),
                   GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT,
@@ -366,17 +388,23 @@ public:
     void drawTerrian(Shader& shader) {
         TextureMgrOpenGL& texMgr = TextureMgrOpenGL::getInstance();
         // 地面
-        texMgr.activateTexture(0, tex2);
+        texMgr.activateTexture(0, terrianTex);
+        texMgr.activateTexture(2, terrianNormTex);
         shader.set1i("texture1", 0);
+        shader.set1i("normTex", 2);
         
         shader.setMatrix4f("model", terrian->o2w->m);
         shader.setMatrix4f("normalMat", terrian->o2w->mInv.transpose());
+        assert(terrian->material);
+        shader.setMaterial(terrian->material);
         terrian->Draw();
     }
     
     void drawObjs(Shader& shader, float scale = 1.0f) {
         TextureMgrOpenGL& texMgr = TextureMgrOpenGL::getInstance();
+        
         texMgr.activateTexture(0, tex1);
+        //texMgr.DisableTexture(2); // no normal map
         shader.set1i("texture1", 0);
         
         for(int i = 0; i < objs.size(); i++) {
@@ -385,6 +413,8 @@ public:
             obj->SetScale(oldScale * scale);
             shader.setMatrix4f("model", obj->o2w->m);
             shader.setMatrix4f("normalMat", obj->o2w->mInv.transpose());
+            assert(obj->material);
+            shader.setMaterial(obj->material);
             obj->Draw();
             obj->SetScale(oldScale);
         }
@@ -404,41 +434,9 @@ public:
         glClearColor(clearColor.r(), clearColor.g(), clearColor.b(), clearColor.a());
         glClear(clearBits);
         shader.setLight(light);
-        shader.setMaterial(material);
         drawTerrian(shader);
         drawObjs(shader);
     }
-    /*
-    void draw2() {
-        ShaderMgrOpenGL& shaderMgr = ShaderMgrOpenGL::getInstance();
-        Shader& mainShader = shaderMgr.getShader(mainHDL);
-        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-        glViewport(0, 0, mainFrameBuf.width, mainFrameBuf.height);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-        glEnable(GL_DEPTH_TEST);
-        glEnable(GL_STENCIL_TEST);
-        glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-        // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        useShader(mainShader);
-        
-        glStencilMask(0x00);
-        drawTerrian(mainShader);
-        
-        glStencilFunc(GL_ALWAYS, 1, 0xFF);
-        glStencilMask(0xFF);
-        useShader(mainShader);
-        drawObjs(mainShader);
-        
-        Shader& singleColorShader = shaderMgr.getShader(singleColorHDL);
-        glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-        glStencilMask(0x00); // disable writing to the stencil buffer
-        glDisable(GL_DEPTH_TEST);
-        useShader(singleColorShader);
-        drawObjs(singleColorShader, 1.02f);
-        
-        glStencilMask(0xFF);
-        glEnable(GL_DEPTH_TEST);
-    }*/
 };
 
 
