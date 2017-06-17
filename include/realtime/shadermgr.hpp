@@ -12,7 +12,8 @@ namespace renderer {
 
 	enum class ShaderType {
 		Vertex = 1,
-		Fragment = 2
+		Fragment = 2,
+        Geometry = 3
 	};
     
     typedef int32_t UniLoc;

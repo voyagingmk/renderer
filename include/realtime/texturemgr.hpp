@@ -39,6 +39,7 @@ namespace renderer {
 			return mgr;
 		}
         virtual TexID loadTexture(const char* filename, const char* aliasname, bool hasAlpha = false, bool toLinear = true);
+        virtual TexID CreateDepthTexture(DepthTexType dtType,size_t width, size_t height);
         virtual TexID loadCubeMap(std::string filename[6], const char* aliasname);
         void activateTexture(uint32_t idx, TexID TexID);
         virtual void destroyTexture(TexID TexID);

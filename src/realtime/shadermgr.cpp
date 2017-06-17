@@ -175,7 +175,10 @@ ShaderHDL ShaderMgrOpenGL::loadShaderFromStr(ShaderType type, const char* source
 	case ShaderType::Fragment:
 		shaderHDL = glCreateShader(GL_FRAGMENT_SHADER);
 		break;
-	default:
+        case ShaderType::Geometry:
+        shaderHDL = glCreateShader(GL_GEOMETRY_SHADER);
+        break;
+    default:
 		return 0;
 	}
 	glShaderSource(shaderHDL, 1, &src, NULL);

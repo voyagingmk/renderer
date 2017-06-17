@@ -28,6 +28,7 @@ class MyContext : public RendererContextSDL {
     ShaderProgramHDL depthMapDebugHDL;
     ShaderProgramHDL singleColorHDL;
     ShaderProgramHDL screenHDL;
+    ShaderProgramHDL pointDepthMapHDL;
     TexID texID1, texID2;
     std::map<SDL_Keycode, uint8_t> keyState;
     std::vector<Model*> objs;
@@ -106,7 +107,7 @@ public:
         ShaderMgrOpenGL& shaderMgr = ShaderMgrOpenGL::getInstance();
         BufferMgrOpenGL& bufferMgr = BufferMgrOpenGL::getInstance();
        
-        depthFrameBuf = bufferMgr.CreateDepthFrameBuffer(2024, 1024);
+        depthFrameBuf = bufferMgr.CreateDepthFrameBuffer(DepthTexType::DepthStencil, 1024, 1024, texMgr.CreateDepthTexture(DepthTexType::DepthStencil, 1024, 1024));
         // depthFrameBuf = bufferMgr.CreateColorFrameBuffer(winWidth, winHeight, BufType::Tex, 0);
         mainFrameBuf = bufferMgr.CreateColorFrameBuffer(winWidth, winHeight, BufType::Tex, 0);
         
@@ -132,12 +133,18 @@ public:
             { ShaderType::Vertex, "depthMapDebug.vs" },
             { ShaderType::Fragment, "depthMapDebug.fs"}
         });
+        pointDepthMapHDL = shaderMgr.createShaderProgram({
+            { ShaderType::Geometry, "point_shadows_depth.gs"},
+            { ShaderType::Vertex, "point_shadows_depth.vs" },
+            { ShaderType::Fragment, "point_shadows_depth.fs"}
+        });
         
         if (!depthMapHDL ||
             !mainHDL ||
             !singleColorHDL ||
             !screenHDL ||
-            !depthMapDebugHDL) {
+            !depthMapDebugHDL||
+            !pointDepthMapHDL) {
             shutdown("createShaderProgram failed");
         }
         

@@ -19,6 +19,12 @@ enum class BufType {
     RBO = 2  // render buffer
 };
 
+enum class DepthTexType {
+    DepthOnly = 1,
+    DepthStencil = 2,
+    CubeMap = 3
+};
+
 
 typedef uint32_t bufferID;
 
