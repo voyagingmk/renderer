@@ -28,7 +28,6 @@ class MyContext : public RendererContextSDL {
     ShaderProgramHDL depthMapDebugHDL;
     ShaderProgramHDL singleColorHDL;
     ShaderProgramHDL screenHDL;
-    ShaderProgramHDL pointDepthMapHDL;
     TexRef tex1, tex2;
     std::map<SDL_Keycode, uint8_t> keyState;
     std::vector<Model*> objs;
@@ -105,21 +104,34 @@ public:
         TextureMgrOpenGL& texMgr = TextureMgrOpenGL::getInstance();
         ShaderMgrOpenGL& shaderMgr = ShaderMgrOpenGL::getInstance();
         BufferMgrOpenGL& bufferMgr = BufferMgrOpenGL::getInstance();
-        TexRef texRef = texMgr.CreateDepthTexture(DepthTexType::DepthStencil, 1024, 1024);
-        depthFrameBuf = bufferMgr.CreateDepthFrameBuffer(DepthTexType::DepthStencil, texRef);
-        // depthFrameBuf = bufferMgr.CreateColorFrameBuffer(winWidth, winHeight, BufType::Tex, 0);
+        //TexRef texRef = texMgr.CreateDepthTexture(DepthTexType::DepthStencil, 1024, 1024);
+        //depthFrameBuf = bufferMgr.CreateDepthFrameBuffer(DepthTexType::DepthStencil, texRef);
+        TexRef texRef = texMgr.CreateDepthTexture(DepthTexType::CubeMap, 1024, 1024);
+        CheckGLError;
+        depthFrameBuf = bufferMgr.CreateDepthFrameBuffer(DepthTexType::CubeMap, texRef);
+        CheckGLError;
+        
         mainFrameBuf = bufferMgr.CreateColorFrameBuffer(winWidth, winHeight, BufType::Tex, 0);
         
         texMgr.setTextureDirPath("assets/images/");
         shaderMgr.setShaderFileDirPath("assets/shaders/");
         mainHDL = shaderMgr.createShaderProgram({
+            { ShaderType::Vertex, "point_shadow.vs" },
+            { ShaderType::Fragment, "point_shadow.fs"}
+        });
+        depthMapHDL = shaderMgr.createShaderProgram({
+            { ShaderType::Geometry, "point_shadows_depth.gs"},
+            { ShaderType::Vertex, "point_shadows_depth.vs" },
+            { ShaderType::Fragment, "point_shadows_depth.fs"}
+        });
+        /*mainHDL = shaderMgr.createShaderProgram({
             { ShaderType::Vertex, "main.vs" },
             { ShaderType::Fragment, "main.fs"}
         });
         depthMapHDL = shaderMgr.createShaderProgram({
             { ShaderType::Vertex, "depthMap.vs" },
             { ShaderType::Fragment, "depthMap.fs"}
-        });
+        });*/
         singleColorHDL = shaderMgr.createShaderProgram({
             { ShaderType::Vertex, "main.vs" },
             { ShaderType::Fragment, "singlecolor.fs"}
@@ -132,22 +144,16 @@ public:
             { ShaderType::Vertex, "depthMapDebug.vs" },
             { ShaderType::Fragment, "depthMapDebug.fs"}
         });
-        pointDepthMapHDL = shaderMgr.createShaderProgram({
-            { ShaderType::Geometry, "point_shadows_depth.gs"},
-            { ShaderType::Vertex, "point_shadows_depth.vs" },
-            { ShaderType::Fragment, "point_shadows_depth.fs"}
-        });
         
         if (!depthMapHDL ||
             !mainHDL ||
             !singleColorHDL ||
             !screenHDL ||
-            !depthMapDebugHDL||
-            !pointDepthMapHDL) {
+            !depthMapDebugHDL) {
             shutdown("createShaderProgram failed");
         }
         
-        tex1 = texMgr.loadTexture("dog.png", "tex1");
+        tex1 = texMgr.loadTexture("dog.png", "tex1", false);
         tex2 = texMgr.loadTexture("terrian.png", "tex2");
         
         auto matPool = GetPool<PhongMaterial>();
@@ -158,7 +164,7 @@ public:
             32.0f);
         
         auto lightPool = GetPool<PointLight>();
-        light = lightPool->newElement(Vector3dF(5.0f, 5.0f, 5.0f));
+        light = lightPool->newElement(Vector3dF(0.0f, 20.0f, 0.0f));
         light->ambient = Color(0.5f, 0.5f, 0.5f);
         light->diffuse = Color(1.0f, 1.0f, 1.0f);
         light->specular = Color(1.0f, 1.0f, 1.0f);
@@ -169,13 +175,13 @@ public:
         auto pool = GetPool<Model>();
         string dirPath = "./assets/models/";
 
-        for(int i = 0; i < 1; i++) {
+        for(int i = 0; i < 3; i++) {
             Model* model = pool->newElement();
             objs.push_back(model);
             model->CustomInit(dirPath + "dog.obj");
+            //model->SetScale(Vector3dF(2.0f, 2.0f, 2.0f));
             model->SetScale(Vector3dF(0.1f, 0.1f, 0.1f));
-            //model->SetPos(Vector3dF(-10.0f + i * 3.0f, 10.0f, -30.0f - i * 100.0f));
-            model->SetPos({0.0, 0.0, -1.0});
+            model->SetPos(Vector3dF(-10.0f + i * 10.0f, 5.0f, -1.0f));
             model->SetRotate(90, Axis::y);
         }
         terrian = pool->newElement();
@@ -275,16 +281,16 @@ public:
         ShaderMgrOpenGL& shaderMgr = ShaderMgrOpenGL::getInstance();
         
         GLfloat aspect = depthFrameBuf.width / depthFrameBuf.height;
-        GLfloat near = 1.0f;
-        GLfloat far = 25.0f;
+        GLfloat near = 0.1f;
+        GLfloat far = 10000.0f;
         Matrix4x4 shadowProj = Perspective(90.0f, aspect, near, far);
         std::vector<Matrix4x4> lightPVs;
-        lightPVs.push_back(shadowProj * LookAt(light->pos, light->pos + Vector3dF{1.0,  0.0,  0.0}, {0.0, -1.0,  0.0}));
-        lightPVs.push_back(shadowProj * LookAt(light->pos, light->pos + Vector3dF{-1.0,  0.0,  0.0}, {0.0, -1.0,  0.0}));
-        lightPVs.push_back(shadowProj * LookAt(light->pos, light->pos + Vector3dF{ 0.0,  1.0,  0.0}, {0.0,  0.0,  1.0}));
-        lightPVs.push_back(shadowProj * LookAt(light->pos, light->pos + Vector3dF{ 0.0, -1.0,  0.0}, {0.0,  0.0, -1.0}));
-        lightPVs.push_back(shadowProj * LookAt(light->pos, light->pos + Vector3dF{ 0.0,  0.0,  1.0}, {0.0, -1.0,  0.0}));
-        lightPVs.push_back(shadowProj * LookAt(light->pos, light->pos + Vector3dF{ 0.0,  0.0, -1.0}, {0.0, -1.0,  0.0}));
+        lightPVs.push_back(shadowProj * LookAt(light->pos, light->pos + Vector3dF{ 1.0,  0.0,  0.0}, {0.0, -1.0,  0.0}));// right
+        lightPVs.push_back(shadowProj * LookAt(light->pos, light->pos + Vector3dF{-1.0,  0.0,  0.0}, {0.0, -1.0,  0.0}));// left
+        lightPVs.push_back(shadowProj * LookAt(light->pos, light->pos + Vector3dF{ 0.0,  1.0,  0.0}, {0.0,  0.0,  1.0}));// top
+        lightPVs.push_back(shadowProj * LookAt(light->pos, light->pos + Vector3dF{ 0.0, -1.0,  0.0}, {0.0,  0.0, -1.0}));// bottom
+        lightPVs.push_back(shadowProj * LookAt(light->pos, light->pos + Vector3dF{ 0.0,  0.0,  1.0}, {0.0, -1.0,  0.0}));// near
+        lightPVs.push_back(shadowProj * LookAt(light->pos, light->pos + Vector3dF{ 0.0,  0.0, -1.0}, {0.0, -1.0,  0.0}));// far
         
         
         // 1. first render to depth map
@@ -293,19 +299,18 @@ public:
         Matrix4x4 lightPV = lightProj * LookAt(light->pos, Vector3dF(0.0, 0.0, 0.0), {0.0f, 1.0f, 0.0f});
         
         Shader& depthMapShader = shaderMgr.getShader(depthMapHDL);
-        //Shader& depthMapShader = shaderMgr.getShader(pointDepthMapHDL);
         depthMapShader.use();
-        /*depthMapShader.setMatrixes4f("lightPVs", lightPVs);
+        depthMapShader.setMatrixes4f("lightPVs", lightPVs);
         depthMapShader.set1f("far_plane", far);
         depthMapShader.set3f("lightPos", light->pos);
-        */
+ 
         depthMapShader.setMatrix4f("lightPV", lightPV);
         
         glCullFace(GL_FRONT);
         drawScene(Color(0.1f, 0.1f, 0.1f, 1.0f),
-                  GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT,
-                  depthFrameBuf,
-                  depthMapHDL);
+            GL_DEPTH_BUFFER_BIT,
+            depthFrameBuf,
+            depthMapHDL);
         glCullFace(GL_BACK);
         buffMgr.UnuseFrameBuffer(depthFrameBuf);
         
@@ -313,6 +318,7 @@ public:
         buffMgr.UseFrameBuffer(mainFrameBuf);
         Shader& mainShader = shaderMgr.getShader(mainHDL);
         mainShader.use();
+        mainShader.set1f("far_plane", far);
         mainShader.setMatrix4f("lightPV", lightPV);
         mainShader.set1i("texture2", 1);
         texMgr.activateTexture(1, depthFrameBuf.depthTex);
