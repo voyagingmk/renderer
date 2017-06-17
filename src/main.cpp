@@ -180,9 +180,9 @@ public:
         
         lightObj = pool->newElement();
         lightObj->CustomInit(dirPath + "cube.obj");
+        lightObj->SetScale(Vector3dF(1.0f, 1.0f, 1.0f));
         lightObj->SetPos(light->pos);
         lightObj->material = objMaterial;
-        //objs.push_back(lightObj);
 
         for(int i = 0; i < 3; i++) {
             Model* model = pool->newElement();
@@ -293,14 +293,7 @@ public:
         BufferMgrOpenGL& buffMgr = BufferMgrOpenGL::getInstance();
         TextureMgrOpenGL& texMgr = TextureMgrOpenGL::getInstance();
         ShaderMgrOpenGL& shaderMgr = ShaderMgrOpenGL::getInstance();
-        
-        static float angle = 0.0f;
-        angle += 0.3f;
-        Vector3dF p = 10.0f * Vector3dF(cos(Radians(angle)), 1.0f, sin(Radians(angle)));
-        //light->pos = p;
-        //lightObj->SetPos(p);
-        
-        //light->pos = p;
+
         
         GLfloat aspect = depthFrameBuf.width / depthFrameBuf.height;
         GLfloat near = 0.1f;
@@ -350,6 +343,7 @@ public:
                   mainHDL,
                   camera.GetCameraPosition(),
                   camera.GetMatrix());
+        drawLight(mainShader);
         buffMgr.UnuseFrameBuffer(mainFrameBuf);
         
 
@@ -376,13 +370,27 @@ public:
     }
     
     void updateWorld() {
+        /*
         static float angle = 0.0f;
         angle += 0.2f;
         for(int i = 0; i < objs.size(); i++) {
             Model* obj = objs[i];
             auto oldScale = obj->scale;
             obj->SetRotate(angle, Axis::y);
-        }
+        }*/
+        
+        static float angle = 0.0f;
+        angle += 0.3f;
+        Vector3dF p = 15.0f * Vector3dF(cos(Radians(angle)), 1.0f, sin(Radians(angle)));
+        light->pos = p;
+        lightObj->SetPos(p);
+    }
+    
+    void drawLight(Shader& shader) {
+        shader.setMatrix4f("model", lightObj->o2w->m);
+        shader.setMatrix4f("normalMat", lightObj->o2w->mInv.transpose());
+        shader.setMaterial(lightObj->material);
+        lightObj->Draw();
     }
     
     void drawTerrian(Shader& shader) {
