@@ -48,6 +48,7 @@ namespace renderer {
         virtual void set2f(const char* name, float f1, float f2);
         virtual void set1f(const char* name, float f1);
         virtual void set1i(const char* name, int i1);
+        virtual void setMatrixes4f(const char* name, std::vector<Matrix4x4> mat);
         virtual void setMatrix4f(const char* name, Matrix4x4 mat);
         virtual void setTransform4f(const char* name, Transform4x4 trans);
         virtual void use();

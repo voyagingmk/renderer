@@ -63,15 +63,15 @@ FrameBuf BufferMgrOpenGL::CreateDepthFrameBuffer(DepthTexType dtType, TexRef tex
     FrameBuf buf;
     buf.width = texRef.width;
     buf.height = texRef.height;
-    buf.depthTexID = texRef.texID;
+    buf.depthTex = texRef;
     glGenFramebuffers(1, &buf.fboID);
     glBindFramebuffer(GL_FRAMEBUFFER, buf.fboID);
     if(dtType == DepthTexType::DepthOnly) {
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, buf.depthTexID, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, buf.depthTex.texID, 0);
     } else if(dtType == DepthTexType::DepthStencil){
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, buf.depthTexID, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, buf.depthTex.texID, 0);
     } else if(dtType == DepthTexType::CubeMap){
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, buf.depthTexID, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, buf.depthTex.texID, 0);
     }
     glDrawBuffer(GL_NONE);
     glReadBuffer(GL_NONE);
@@ -91,6 +91,8 @@ FrameBuf BufferMgrOpenGL::CreateColorFrameBuffer(size_t width, size_t height, Bu
     FrameBuf buf;
     buf.width = width;
     buf.height = height;
+    buf.tex.width = width;
+    buf.tex.height = height;
     buf.MSAA = MSAA;
     glGenFramebuffers(1, &buf.fboID);
     glBindFramebuffer(GL_FRAMEBUFFER, buf.fboID);
@@ -101,8 +103,8 @@ FrameBuf BufferMgrOpenGL::CreateColorFrameBuffer(size_t width, size_t height, Bu
     }
     
     // color buffer
-    glGenTextures(1, &buf.texID);
-    glBindTexture(target, buf.texID);
+    glGenTextures(1, &buf.tex.texID);
+    glBindTexture(target, buf.tex.texID);
     if (MSAA) {
         size_t samples = MSAA;
         glTexImage2DMultisample(target, samples, GL_RGB, width, height, GL_TRUE);
@@ -113,7 +115,7 @@ FrameBuf BufferMgrOpenGL::CreateColorFrameBuffer(size_t width, size_t height, Bu
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glBindTexture(target, 0);
     
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, target, buf.texID, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, target, buf.tex.texID, 0);
  
     
     if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
@@ -127,26 +129,26 @@ FrameBuf BufferMgrOpenGL::CreateColorFrameBuffer(size_t width, size_t height, Bu
         glGenFramebuffers(1, &buf.innerFboID);
         glBindFramebuffer(GL_FRAMEBUFFER, buf.innerFboID);
         // create a color attachment texture
-        glGenTextures(1, &buf.innerTexID);
-        glBindTexture(GL_TEXTURE_2D, buf.innerTexID);
+        glGenTextures(1, &buf.innerTex.texID);
+        glBindTexture(GL_TEXTURE_2D, buf.innerTex.texID);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, buf.innerTexID, 0);	// we only need a color buffer
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, buf.innerTex.texID, 0);	// we only need a color buffer
     }
     glBindFramebuffer(GL_FRAMEBUFFER, buf.fboID);
     // depth and stencil buffer
     buf.depthType = depthType;
     if (buf.depthType == BufType::Tex) {
-        glGenTextures(1, &buf.depthTexID);
-        glBindTexture(GL_TEXTURE_2D, buf.depthTexID);
+        glGenTextures(1, &buf.depthTex.texID);
+        glBindTexture(GL_TEXTURE_2D, buf.depthTex.texID);
         if (MSAA) {
             size_t samples = MSAA;
             glTexImage2DMultisample(target, samples, GL_DEPTH24_STENCIL8, width, height, GL_TRUE);
         } else {
             glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, width, height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, 0);
         }
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, buf.depthTexID, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, buf.depthTex.texID, 0);
     } else {
         glGenRenderbuffers(1, &buf.depthRboID);
         glBindRenderbuffer(GL_RENDERBUFFER, buf.depthRboID);

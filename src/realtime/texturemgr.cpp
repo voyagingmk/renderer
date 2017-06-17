@@ -127,13 +127,11 @@ TexRef TextureMgrOpenGL::loadCubeMap(std::string filename[6], const char* aliasn
 
 void TextureMgrOpenGL::activateTexture(uint32_t idx, TexRef texRef) {
     glActiveTexture(GL_TEXTURE0 + idx);
-    glBindTexture(GL_TEXTURE_2D, texRef.texID);
-}
-
-
-void TextureMgrOpenGL::activateTexture(uint32_t idx, TexID texID) {
-    glActiveTexture(GL_TEXTURE0 + idx);
-    glBindTexture(GL_TEXTURE_2D, texID);
+    if(texRef.type == TexType::Tex2D) {
+        glBindTexture(GL_TEXTURE_2D, texRef.texID);
+    } else if(texRef.type == TexType::CubeMap) {
+        glBindTexture(GL_TEXTURE_CUBE_MAP, texRef.texID);
+    }
 }
 
 void TextureMgrOpenGL::activateTexture(uint32_t idx, const char* aliasname) {
@@ -141,8 +139,7 @@ void TextureMgrOpenGL::activateTexture(uint32_t idx, const char* aliasname) {
     if(it == texDict.end()) {
         return;
     }
-    glActiveTexture(GL_TEXTURE0 + idx);
-    glBindTexture(GL_TEXTURE_2D, it->second.texID);
+    activateTexture(idx, it->second);
 }
 
 void TextureMgrOpenGL::destroyTexture(const char* aliasname) {

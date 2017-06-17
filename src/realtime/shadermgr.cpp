@@ -112,6 +112,16 @@ void Shader::set1i(const char* name, int i1) {
     set1i(loc, i1);
 }
 
+
+void Shader::setMatrixes4f(const char* name, std::vector<Matrix4x4> mats) {
+    for (GLuint i = 0; i < 6; ++i){
+        UniLoc loc = getUniformLocation((std::string(name) + "[" + std::to_string(i) + "]").c_str());
+        if (loc == -1) {
+            return;
+        }
+        setMatrix4f(loc, mats[i]);
+    }
+}
 void Shader::setMatrix4f(const char* name, Matrix4x4 mat) {
     UniLoc loc = getUniformLocation(name);
     if (loc == -1) {

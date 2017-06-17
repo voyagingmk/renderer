@@ -274,13 +274,33 @@ public:
         TextureMgrOpenGL& texMgr = TextureMgrOpenGL::getInstance();
         ShaderMgrOpenGL& shaderMgr = ShaderMgrOpenGL::getInstance();
         
+        GLfloat aspect = depthFrameBuf.width / depthFrameBuf.height;
+        GLfloat near = 1.0f;
+        GLfloat far = 25.0f;
+        Matrix4x4 shadowProj = Perspective(90.0f, aspect, near, far);
+        std::vector<Matrix4x4> lightPVs;
+        lightPVs.push_back(shadowProj * LookAt(light->pos, light->pos + Vector3dF{1.0,  0.0,  0.0}, {0.0, -1.0,  0.0}));
+        lightPVs.push_back(shadowProj * LookAt(light->pos, light->pos + Vector3dF{-1.0,  0.0,  0.0}, {0.0, -1.0,  0.0}));
+        lightPVs.push_back(shadowProj * LookAt(light->pos, light->pos + Vector3dF{ 0.0,  1.0,  0.0}, {0.0,  0.0,  1.0}));
+        lightPVs.push_back(shadowProj * LookAt(light->pos, light->pos + Vector3dF{ 0.0, -1.0,  0.0}, {0.0,  0.0, -1.0}));
+        lightPVs.push_back(shadowProj * LookAt(light->pos, light->pos + Vector3dF{ 0.0,  0.0,  1.0}, {0.0, -1.0,  0.0}));
+        lightPVs.push_back(shadowProj * LookAt(light->pos, light->pos + Vector3dF{ 0.0,  0.0, -1.0}, {0.0, -1.0,  0.0}));
+        
+        
         // 1. first render to depth map
         buffMgr.UseFrameBuffer(depthFrameBuf);
         Matrix4x4 lightProj = Ortho(-20.0f, 20.0f, -20.0f, 20.0f, 0.01f, 100.0f);
         Matrix4x4 lightPV = lightProj * LookAt(light->pos, Vector3dF(0.0, 0.0, 0.0), {0.0f, 1.0f, 0.0f});
+        
         Shader& depthMapShader = shaderMgr.getShader(depthMapHDL);
+        //Shader& depthMapShader = shaderMgr.getShader(pointDepthMapHDL);
         depthMapShader.use();
+        /*depthMapShader.setMatrixes4f("lightPVs", lightPVs);
+        depthMapShader.set1f("far_plane", far);
+        depthMapShader.set3f("lightPos", light->pos);
+        */
         depthMapShader.setMatrix4f("lightPV", lightPV);
+        
         glCullFace(GL_FRONT);
         drawScene(Color(0.1f, 0.1f, 0.1f, 1.0f),
                   GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT,
@@ -295,7 +315,7 @@ public:
         mainShader.use();
         mainShader.setMatrix4f("lightPV", lightPV);
         mainShader.set1i("texture2", 1);
-        texMgr.activateTexture(1, depthFrameBuf.depthTexID);
+        texMgr.activateTexture(1, depthFrameBuf.depthTex);
         drawScene(Color(0.1f, 0.1f, 0.1f, 1.0f),
                   GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT,
                   mainFrameBuf,
@@ -314,12 +334,12 @@ public:
             Shader& screenShader = shaderMgr.getShader(screenHDL);
             screenShader.use();
             screenShader.set1i("texture1", 0);
-            texMgr.activateTexture(0, mainFrameBuf.getTexID());
+            texMgr.activateTexture(0, mainFrameBuf.getTexRef());
         } else {
             Shader& screenShader = shaderMgr.getShader(depthMapDebugHDL);
             screenShader.use();
             screenShader.set1i("texture1", 0);
-            texMgr.activateTexture(0, depthFrameBuf.depthTexID);
+            texMgr.activateTexture(0, depthFrameBuf.depthTex);
         }
         //texMgr.activateTexture(0, mainFrameBuf.depthTexID);
         quad->Draw();

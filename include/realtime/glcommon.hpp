@@ -59,11 +59,11 @@ public:
 class FrameBuf {
 public:
     FboID fboID;
-    TexID texID;
+    TexRef tex;
     FboID innerFboID;
-    TexID innerTexID;
+    TexRef innerTex;
     BufType depthType;
-    TexID depthTexID; // include stencil
+    TexRef depthTex; // include stencil
     RboID depthRboID; // include stencil
     size_t width;
     size_t height;
@@ -71,24 +71,21 @@ public:
 public:
     FrameBuf():
         fboID(0),
-        texID(0),
         innerFboID(0),
-        innerTexID(0),
         depthType(BufType::RBO),
-        depthTexID(0),
         width(1),
         height(1),
         MSAA(0)
     {}
-    TexID getTexID() {
+    TexRef getTexRef() {
         if (MSAA) {
-            return innerTexID;
+            return innerTex;
         }
-        return texID;
+        return tex;
     }
     void debug() {
         printf("FBO:%d, TexID:%d, depthTexID:%d, width:%d, height:%d \n",
-               fboID, texID, depthTexID, (int)width, (int)height);
+               fboID, tex.texID, depthTex.texID, (int)width, (int)height);
     }
 };
 
