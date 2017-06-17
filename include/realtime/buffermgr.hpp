@@ -22,7 +22,7 @@ namespace renderer {
         }
         virtual void DrawBuffer(const std::string& aliasname) {}
         virtual void release() {}
-        virtual FrameBuf CreateDepthFrameBuffer(DepthTexType dtType, size_t width, size_t height, TexID texID) { return FrameBuf(); }
+        virtual FrameBuf CreateDepthFrameBuffer(DepthTexType dtType, TexRef texRef) { return FrameBuf(); }
         virtual FrameBuf CreateColorFrameBuffer(size_t width, size_t height, BufType depthType, size_t MSAA = 0) { return FrameBuf(); }
         virtual void DestroyFrameBuffer(FrameBuf& buf) {}
         virtual void UseFrameBuffer(FrameBuf& buf) {}
@@ -42,7 +42,7 @@ namespace renderer {
         // override
         virtual BufferSet CreateMeshBuffer(const std::string& aliasname, Mesh& mesh);
         virtual void DrawBuffer(const std::string& aliasname);
-        virtual FrameBuf CreateDepthFrameBuffer(DepthTexType dtType, size_t width, size_t height, TexID texID);
+        virtual FrameBuf CreateDepthFrameBuffer(DepthTexType dtType, TexRef texRef);
         virtual FrameBuf CreateColorFrameBuffer(size_t width, size_t height, BufType depthType, size_t MSAA = 0);
         virtual void DestroyFrameBuffer(FrameBuf& buf);
         virtual void UseFrameBuffer(FrameBuf& buf);

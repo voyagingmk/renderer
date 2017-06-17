@@ -18,7 +18,7 @@ void TextureMgrBase::release() {
 	
 }
 
-TexID TextureMgrBase::getTexID(const char* aliasname) {
+TexRef TextureMgrBase::getTexRef(const char* aliasname) {
     return texDict[aliasname];
 }
 
@@ -26,12 +26,12 @@ TexID TextureMgrBase::getTexID(const char* aliasname) {
 
 #ifdef USE_GL
 
-TexID TextureMgrOpenGL::loadTexture(const char* filename, const char* aliasname, bool hasAlpha, bool toLinear)
+TexRef TextureMgrOpenGL::loadTexture(const char* filename, const char* aliasname, bool hasAlpha, bool toLinear)
 {
     // Load and create a texture
-    TexID texID;
-    glGenTextures(1, &texID);
-    glBindTexture(GL_TEXTURE_2D, texID); // All upcoming GL_TEXTURE_2D operations now have effect on our texture object
+    TexRef texRef;
+    glGenTextures(1, &texRef.texID);
+    glBindTexture(GL_TEXTURE_2D, texRef.texID); // All upcoming GL_TEXTURE_2D operations now have effect on our texture object
     // Set our texture parameters
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, hasAlpha? GL_CLAMP_TO_EDGE : GL_REPEAT);	// Set texture wrapping to GL_REPEAT
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, hasAlpha? GL_CLAMP_TO_EDGE : GL_REPEAT);
@@ -55,30 +55,37 @@ TexID TextureMgrOpenGL::loadTexture(const char* filename, const char* aliasname,
     glGenerateMipmap(GL_TEXTURE_2D);
     SOIL_free_image_data(image);
     glBindTexture(GL_TEXTURE_2D, 0); // Unbind texture when done, so we won't accidentily mess up our texture.
-    texDict.insert({aliasname, texID});
-    return texID;
+    texRef.width = width;
+    texRef.height = height;
+    texRef.type = TexType::Tex2D;
+    texDict.insert({aliasname, texRef});
+    return texRef;
 }
 
 
-TexID TextureMgrOpenGL::CreateDepthTexture(DepthTexType dtType, size_t width, size_t height) {
-    TexID texID;
-    glGenTextures(1, &texID);
+TexRef TextureMgrOpenGL::CreateDepthTexture(DepthTexType dtType, size_t width, size_t height) {
+    TexRef texRef;
+    texRef.width = width;
+    texRef.height = height;
+    glGenTextures(1, &texRef.texID);
     if(dtType == DepthTexType::DepthOnly ||
        dtType == DepthTexType::DepthStencil) {
-    glBindTexture(GL_TEXTURE_2D, texID);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-    GLfloat borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
-    glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
-    if(dtType == DepthTexType::DepthStencil)
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,width, height, 0, GL_DEPTH_COMPONENT,  GL_FLOAT, 0);
-    if(dtType == DepthTexType::DepthStencil)
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, width, height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, 0);
-    glBindTexture(GL_TEXTURE_2D, 0);
+        texRef.type = TexType::Tex2D;
+        glBindTexture(GL_TEXTURE_2D, texRef.texID);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+        GLfloat borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
+        glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+        if(dtType == DepthTexType::DepthStencil)
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,width, height, 0, GL_DEPTH_COMPONENT,  GL_FLOAT, 0);
+        if(dtType == DepthTexType::DepthStencil)
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, width, height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, 0);
+        glBindTexture(GL_TEXTURE_2D, 0);
     } else {
-        glBindTexture(GL_TEXTURE_CUBE_MAP, texID);
+        texRef.type = TexType::CubeMap;
+        glBindTexture(GL_TEXTURE_CUBE_MAP, texRef.texID);
         for (unsigned int i = 0; i < 6; ++i) {
             glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_DEPTH_COMPONENT,
                          width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
@@ -90,18 +97,18 @@ TexID TextureMgrOpenGL::CreateDepthTexture(DepthTexType dtType, size_t width, si
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
         glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
     }
-    return texID;
+    return texRef;
 }
 
-TexID TextureMgrOpenGL::loadCubeMap(std::string filename[6], const char* aliasname) {
-    TexID texID;
-    glGenTextures(1, &texID);
+TexRef TextureMgrOpenGL::loadCubeMap(std::string filename[6], const char* aliasname) {
+    TexRef texRef;
+    glGenTextures(1, &texRef.texID);
     glActiveTexture(GL_TEXTURE0);
     
     int width, height;
     unsigned char* image;
     
-    glBindTexture(GL_TEXTURE_CUBE_MAP, texID);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, texRef.texID);
     for (uint32_t i = 0; i < 6; i++)
     {
         image = SOIL_load_image((dirpath + filename[i]).c_str(), &width, &height, 0, SOIL_LOAD_RGB);
@@ -114,17 +121,37 @@ TexID TextureMgrOpenGL::loadCubeMap(std::string filename[6], const char* aliasna
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
     glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
     
-    texDict.insert({aliasname, texID});
-    return texID;
+    texDict.insert({aliasname, texRef});
+    return texRef;
 }
+
+void TextureMgrOpenGL::activateTexture(uint32_t idx, TexRef texRef) {
+    glActiveTexture(GL_TEXTURE0 + idx);
+    glBindTexture(GL_TEXTURE_2D, texRef.texID);
+}
+
 
 void TextureMgrOpenGL::activateTexture(uint32_t idx, TexID texID) {
     glActiveTexture(GL_TEXTURE0 + idx);
     glBindTexture(GL_TEXTURE_2D, texID);
 }
 
-void TextureMgrOpenGL::destroyTexture(TexID texID) {
-    
+void TextureMgrOpenGL::activateTexture(uint32_t idx, const char* aliasname) {
+    auto it = texDict.find(aliasname);
+    if(it == texDict.end()) {
+        return;
+    }
+    glActiveTexture(GL_TEXTURE0 + idx);
+    glBindTexture(GL_TEXTURE_2D, it->second.texID);
+}
+
+void TextureMgrOpenGL::destroyTexture(const char* aliasname) {
+    auto it = texDict.find(aliasname);
+    if(it == texDict.end()) {
+        return;
+    }
+    glDeleteTextures(1, &it->second.texID);
+    texDict.erase(it);
 }
 
 

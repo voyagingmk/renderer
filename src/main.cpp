@@ -29,7 +29,7 @@ class MyContext : public RendererContextSDL {
     ShaderProgramHDL singleColorHDL;
     ShaderProgramHDL screenHDL;
     ShaderProgramHDL pointDepthMapHDL;
-    TexID texID1, texID2;
+    TexRef tex1, tex2;
     std::map<SDL_Keycode, uint8_t> keyState;
     std::vector<Model*> objs;
     Model* terrian;
@@ -44,7 +44,6 @@ class MyContext : public RendererContextSDL {
 public:
     MyContext():
         mainHDL(0),
-        texID1(0), texID2(0),
         yaw(-90.0f), pitch(0),
         renderType(RenderType::Normal)
          {}
@@ -106,8 +105,8 @@ public:
         TextureMgrOpenGL& texMgr = TextureMgrOpenGL::getInstance();
         ShaderMgrOpenGL& shaderMgr = ShaderMgrOpenGL::getInstance();
         BufferMgrOpenGL& bufferMgr = BufferMgrOpenGL::getInstance();
-       
-        depthFrameBuf = bufferMgr.CreateDepthFrameBuffer(DepthTexType::DepthStencil, 1024, 1024, texMgr.CreateDepthTexture(DepthTexType::DepthStencil, 1024, 1024));
+        TexRef texRef = texMgr.CreateDepthTexture(DepthTexType::DepthStencil, 1024, 1024);
+        depthFrameBuf = bufferMgr.CreateDepthFrameBuffer(DepthTexType::DepthStencil, texRef);
         // depthFrameBuf = bufferMgr.CreateColorFrameBuffer(winWidth, winHeight, BufType::Tex, 0);
         mainFrameBuf = bufferMgr.CreateColorFrameBuffer(winWidth, winHeight, BufType::Tex, 0);
         
@@ -148,8 +147,8 @@ public:
             shutdown("createShaderProgram failed");
         }
         
-        texID1 = texMgr.loadTexture("dog.png", "tex1");
-        texID2 = texMgr.loadTexture("terrian.png", "tex2");
+        tex1 = texMgr.loadTexture("dog.png", "tex1");
+        tex2 = texMgr.loadTexture("terrian.png", "tex2");
         
         auto matPool = GetPool<PhongMaterial>();
         material = matPool->newElement(
@@ -341,7 +340,7 @@ public:
     void drawTerrian(Shader& shader) {
         TextureMgrOpenGL& texMgr = TextureMgrOpenGL::getInstance();
         // 地面
-        texMgr.activateTexture(0, texID2);
+        texMgr.activateTexture(0, tex2);
         shader.set1i("texture1", 0);
         
         shader.setMatrix4f("model", terrian->o2w->m);
@@ -351,7 +350,7 @@ public:
     
     void drawObjs(Shader& shader, float scale = 1.0f) {
         TextureMgrOpenGL& texMgr = TextureMgrOpenGL::getInstance();
-        texMgr.activateTexture(0, texID1);
+        texMgr.activateTexture(0, tex1);
         shader.set1i("texture1", 0);
         
         for(int i = 0; i < objs.size(); i++) {

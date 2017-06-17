@@ -18,6 +18,10 @@ enum class BufType {
     Tex = 1, // texture
     RBO = 2  // render buffer
 };
+enum class TexType {
+    Tex2D = 1,
+    CubeMap = 2
+};
 
 enum class DepthTexType {
     DepthOnly = 1,
@@ -37,6 +41,20 @@ struct BufferSet {
 
 typedef std::map<std::string, BufferSet> BufferDict;
 
+class TexRef {
+public:
+    TexID texID;
+    TexType type;
+    size_t width;
+    size_t height;
+public:
+    TexRef():
+    texID(0),
+    type(TexType::Tex2D),
+    width(1),
+    height(1)
+    {}
+};
 
 class FrameBuf {
 public:

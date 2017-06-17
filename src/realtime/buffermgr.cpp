@@ -59,11 +59,11 @@ void BufferMgrOpenGL::DrawBuffer(const std::string& aliasname) {
     CheckGLError;
 }
 
-FrameBuf BufferMgrOpenGL::CreateDepthFrameBuffer(DepthTexType dtType, size_t width, size_t height, TexID texID) {
+FrameBuf BufferMgrOpenGL::CreateDepthFrameBuffer(DepthTexType dtType, TexRef texRef) {
     FrameBuf buf;
-    buf.width = width;
-    buf.height = height;
-    buf.depthTexID = texID;
+    buf.width = texRef.width;
+    buf.height = texRef.height;
+    buf.depthTexID = texRef.texID;
     glGenFramebuffers(1, &buf.fboID);
     glBindFramebuffer(GL_FRAMEBUFFER, buf.fboID);
     if(dtType == DepthTexType::DepthOnly) {
