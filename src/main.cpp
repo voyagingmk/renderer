@@ -117,7 +117,7 @@ public:
         shaderMgr.setShaderFileDirPath("assets/shaders/");
         mainHDL = shaderMgr.createShaderProgram({
             { ShaderType::Vertex, "point_shadow.vs" },
-            { ShaderType::Fragment, "normal_mapping.fs"}
+            { ShaderType::Fragment, "point_shadow.fs"}
         });
         depthMapHDL = shaderMgr.createShaderProgram({
             { ShaderType::Geometry, "point_shadows_depth.gs"},
@@ -184,7 +184,7 @@ public:
         lightObj->SetPos(light->pos);
         lightObj->material = objMaterial;
 
-        for(int i = 0; i < 0; i++) {
+        for(int i = 0; i < 3; i++) {
             Model* model = pool->newElement();
             objs.push_back(model);
             model->CustomInit(dirPath + "dog.obj");
