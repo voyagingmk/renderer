@@ -117,7 +117,7 @@ public:
         shaderMgr.setShaderFileDirPath("assets/shaders/");
         mainHDL = shaderMgr.createShaderProgram({
             { ShaderType::Vertex, "point_shadow.vs" },
-            { ShaderType::Fragment, "point_shadow.fs"}
+            { ShaderType::Fragment, "normal_mapping.fs"}
         });
         depthMapHDL = shaderMgr.createShaderProgram({
             { ShaderType::Geometry, "point_shadows_depth.gs"},
