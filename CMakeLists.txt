@@ -29,6 +29,7 @@ include_directories("${PROJECT_SOURCE_DIR}/include/shapes")
 include_directories("${PROJECT_SOURCE_DIR}/SOIL")
 include_directories("${PROJECT_SOURCE_DIR}/GL")
 include_directories("${PROJECT_SOURCE_DIR}/SDL")
+include_directories("${PROJECT_SOURCE_DIR}/assimp")
 include_directories("${PROJECT_SOURCE_DIR}/src")
 include_directories("${PROJECT_SOURCE_DIR}/src/realtime")
 include_directories("${PROJECT_SOURCE_DIR}/src/shapes")
@@ -73,10 +74,12 @@ ENDIF (APPLE)
 
 link_directories(
     "./"
+    "/usr/local/lib/"
 )
 
 set (EXTRA_LIBS ${EXTRA_LIBS} SDL2)
 set (EXTRA_LIBS ${EXTRA_LIBS} SOIL)
+set (EXTRA_LIBS ${EXTRA_LIBS} freetyped)
 
 add_executable(renderer ${BASE_SOURCERS} ${PROJECT_SOURCE_DIR})
 
