@@ -27,7 +27,7 @@ include_directories("${PROJECT_SOURCE_DIR}/include")
 include_directories("${PROJECT_SOURCE_DIR}/include/realtime")
 include_directories("${PROJECT_SOURCE_DIR}/include/shapes")
 include_directories("${PROJECT_SOURCE_DIR}/SOIL")
-include_directories("${PROJECT_SOURCE_DIR}/GL")
+include_directories("${PROJECT_SOURCE_DIR}/external")
 include_directories("${PROJECT_SOURCE_DIR}/SDL")
 include_directories("${PROJECT_SOURCE_DIR}/assimp")
 include_directories("${PROJECT_SOURCE_DIR}/src")
@@ -39,7 +39,7 @@ FILE(GLOB_RECURSE BASE_SOURCERS
   ${PROJECT_SOURCE_DIR}/src/*.cpp
   ${PROJECT_SOURCE_DIR}/src/realtime/*.cpp
   ${PROJECT_SOURCE_DIR}/src/shapes/*.cpp
-  ${PROJECT_SOURCE_DIR}/GL/*.c
+  ${PROJECT_SOURCE_DIR}/external/GL/*.c
   )
 
 FILE(GLOB_RECURSE MAIN_SOURCERS ${PROJECT_SOURCE_DIR}/main/*.cpp)
@@ -55,6 +55,8 @@ IF(APPLE)
    FIND_LIBRARY(COREVIDEO_LIBRARY CoreVideo)
    FIND_LIBRARY(IOKIT_LIBRARY IOKit)
    FIND_LIBRARY(FORCEFEEDBACK_LIBRARY ForceFeedback)
+   FIND_LIBRARY(ASSIMP_LIBRARY assimp)
+   
    
    MARK_AS_ADVANCED (CARBON_LIBRARY
                      OPENGL_LIBRARY
@@ -64,11 +66,13 @@ IF(APPLE)
                      AUDIOTOOLBOX_LIBRARY
                      COREVIDEO_LIBRARY
                      IOKIT_LIBRARY
-                     FORCEFEEDBACK_LIBRARY)
+                     FORCEFEEDBACK_LIBRARY
+                     ASSIMP_LIBRARY)
    SET(EXTRA_LIBS ${CARBON_LIBRARY} ${OPENGL_LIBRARY} 
     ${CF_LIBRARY} ${COCOA_LIBRARY}
     ${COREAUDIO_LIBRARY} ${AUDIOTOOLBOX_LIBRARY} 
-    ${COREVIDEO_LIBRARY} ${IOKIT_LIBRARY} ${FORCEFEEDBACK_LIBRARY})
+    ${COREVIDEO_LIBRARY} ${IOKIT_LIBRARY} 
+    ${FORCEFEEDBACK_LIBRARY} ${ASSIMP_LIBRARY})
 ENDIF (APPLE)
 
 
