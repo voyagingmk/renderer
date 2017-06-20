@@ -23,13 +23,15 @@ FILE(GLOB_RECURSE MY_HEADERS "${PROJECT_SOURCE_DIR}/include/*.h")
 source_group("My Headers" FILES ${MY_HEADERS})
 
 include_directories("${PROJECT_SOURCE_DIR}")
+
+include_directories("${PROJECT_SOURCE_DIR}/external")
+include_directories("${PROJECT_SOURCE_DIR}/external/SOIL")
+include_directories("${PROJECT_SOURCE_DIR}/external/SDL")
+
 include_directories("${PROJECT_SOURCE_DIR}/include")
 include_directories("${PROJECT_SOURCE_DIR}/include/realtime")
 include_directories("${PROJECT_SOURCE_DIR}/include/shapes")
-include_directories("${PROJECT_SOURCE_DIR}/SOIL")
-include_directories("${PROJECT_SOURCE_DIR}/external")
-include_directories("${PROJECT_SOURCE_DIR}/SDL")
-include_directories("${PROJECT_SOURCE_DIR}/assimp")
+
 include_directories("${PROJECT_SOURCE_DIR}/src")
 include_directories("${PROJECT_SOURCE_DIR}/src/realtime")
 include_directories("${PROJECT_SOURCE_DIR}/src/shapes")
