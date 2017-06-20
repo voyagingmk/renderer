@@ -1,9 +1,9 @@
-## Tutorial
+## Quick Start
 
-1. mkdir build
+1. mkdir xcode_build
 
 2. cmake .. -G 'Xcode'
 
-3. link library with binaries:  assimp.dylib
+3. set the working directory to project's root directory
 
-4. set the working directory to project's root directory
+4. run
