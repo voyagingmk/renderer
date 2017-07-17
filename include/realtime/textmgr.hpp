@@ -1,6 +1,6 @@
 #ifndef RENDERER_TEXTMGR_HPP
 #define RENDERER_TEXTMGR_HPP
-
+#include <codecvt>
 #include "glutils.hpp"
 #include "glcommon.hpp"
 #include "texturemgr.hpp"
@@ -15,10 +15,16 @@ class TextMgr {
 public:
     FT_Library ft;
     FT_Face face;
-    std::map<GLchar, Character> characters;
+    std::map<FT_ULong, Character> characters;
     GLuint VAO, VBO;
+    size_t winWidth, winHeight;
 protected:
-    TextMgr() {
+    TextMgr():
+        VAO(0),
+        VBO(0),
+        winWidth(0),
+        winHeight(0)
+    {
         if (FT_Init_FreeType(&ft)) {
             std::cout << "ERROR::FREETYPE: Could not init FreeType Library" << std::endl;
         }
@@ -43,46 +49,59 @@ public:
         FT_Done_Face(face);
     }
     
+    void setScreenSize(size_t w, size_t h) {
+        winWidth = w;
+        winHeight = h;
+    }
+    
     void buildCharaTexture() {
         TextureMgrOpenGL& texMgr = TextureMgrOpenGL::getInstance();
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // Disable byte-alignment restriction
-        TexRef texRef;
+        
         for (unsigned char c = 0; c < 128; c++)
         {
-            // Load character glyph
-            if (FT_Load_Char(face, c, FT_LOAD_RENDER))
-            {
-                std::cout << "ERROR::FREETYTPE: Failed to load Glyph" << std::endl;
-                continue;
-            }
-            glGenTextures(1, &texRef.texID);
-            glBindTexture(GL_TEXTURE_2D, texRef.texID);
-            glTexImage2D(
-                GL_TEXTURE_2D,
-                0,
-                GL_RED,
-                face->glyph->bitmap.width,
-                face->glyph->bitmap.rows,
-                0,
-                GL_RED,
-                GL_UNSIGNED_BYTE,
-                face->glyph->bitmap.buffer
-                );
-            // Set texture options
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-            // Now store character for later use
-            Character character = {
-                texRef, 
-                Point2dI(face->glyph->bitmap.width, face->glyph->bitmap.rows),
-                Point2dI(face->glyph->bitmap_left, face->glyph->bitmap_top),
-                static_cast<int>(face->glyph->advance.x)
-            };
-            characters.insert(std::pair<GLchar, Character>(c, character));
-            glBindTexture(GL_TEXTURE_2D, 0);
+            loadSingleChar(c);
         }
+        loadSingleChar(u'测');
+        loadSingleChar(u'试');
+    }
+    
+    template<typename T>
+    void loadSingleChar(T c) {
+        TexRef texRef;
+        // Load character glyph
+        if (FT_Load_Char(face, static_cast<FT_ULong>(c), FT_LOAD_RENDER))
+        {
+            std::cout << "ERROR::FREETYTPE: Failed to load Glyph" << std::endl;
+            return;
+        }
+        glGenTextures(1, &texRef.texID);
+        glBindTexture(GL_TEXTURE_2D, texRef.texID);
+        glTexImage2D(
+                     GL_TEXTURE_2D,
+                     0,
+                     GL_RED,
+                     face->glyph->bitmap.width,
+                     face->glyph->bitmap.rows,
+                     0,
+                     GL_RED,
+                     GL_UNSIGNED_BYTE,
+                     face->glyph->bitmap.buffer
+                     );
+        // Set texture options
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        // Now store character for later use
+        Character character = {
+            texRef,
+            Point2dI(face->glyph->bitmap.width, face->glyph->bitmap.rows),
+            Point2dI(face->glyph->bitmap_left, face->glyph->bitmap_top),
+            static_cast<int>(face->glyph->advance.x)
+        };
+        characters.insert(std::pair<FT_ULong, Character>(static_cast<FT_ULong>(c), character));
+        glBindTexture(GL_TEXTURE_2D, 0);
     }
     void setupBuffer() {
         glGenVertexArrays(1, &VAO);
@@ -97,7 +116,8 @@ public:
         CheckGLError;
     }
     
-    void RenderText(ShaderProgramHDL shaderHDL, std::string text, GLfloat x, GLfloat y, GLfloat scale, Color color)
+    template<typename T>
+    void RenderText(ShaderProgramHDL shaderHDL, T text, GLfloat x, GLfloat y, GLfloat scale, Color color)
     {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -105,23 +125,21 @@ public:
         // Activate corresponding render state
         shader.use();
         shader.set3f("textColor", color.r(), color.g(), color.b());
-        Matrix4x4 projection = Ortho(0.0f, 800.0f, 0.0f, 600.0f, 0.01f, 100.0f);
+        Matrix4x4 projection = Ortho(0.0f, (float)winWidth, 0.0f, (float)winHeight, 0.01f, 100.0f);
         shader.setMatrix4f("projection", projection);
         glActiveTexture(GL_TEXTURE0);
         glBindVertexArray(VAO);
         CheckGLError;
-        
-        // Iterate through all characters
-        std::string::const_iterator c;
-        for (c = text.begin(); c != text.end(); c++)
-        {
-            Character ch = characters[*c];
-            
+        std::wstring_convert<std::codecvt_utf8_utf16<char16_t>,char16_t> codecvt;
+        for (auto c:text) {
+            Character ch = characters[static_cast<FT_ULong>(c)];
             GLfloat xpos = x + ch.Bearing.x * scale;
             GLfloat ypos = y - (ch.Size.y - ch.Bearing.y) * scale;
-            
+            // std::cout << codecvt.to_bytes(*c) << std::endl;
+            printf("%c, ypos = %.2f - (%d - %d) * %.2f = %.2f\n", c, y, ch.Size.y, ch.Bearing.y, scale, ypos);
             GLfloat w = ch.Size.x * scale;
             GLfloat h = ch.Size.y * scale;
+            // (xpos, ypos)是字符左下角坐标
             // Update VBO for each character
             GLfloat vertices[6][4] = {
                 { xpos,     ypos + h,   0.0, 0.0 },
@@ -150,7 +168,5 @@ public:
 };
     
 };
-// std::map<GLchar, Character> Characters;
-
 
 #endif

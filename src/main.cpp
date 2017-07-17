@@ -254,7 +254,8 @@ public:
         //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         
         TextMgr& textmgr = TextMgr::getInstance();
-        textmgr.loadTTF("./assets/fonts/Arial.ttf", 16);
+        textmgr.setScreenSize(winWidth, winHeight);
+        textmgr.loadTTF("./assets/fonts/STHeiti Light.ttc", 16);
         textmgr.buildCharaTexture();
         textmgr.setupBuffer();
         FT_Error error;
@@ -447,9 +448,9 @@ public:
         //texMgr.activateTexture(0, mainFrameBuf.depthTexID);
         quad->Draw();
         TextMgr& textmgr = TextMgr::getInstance();
-        textmgr.RenderText(textHDL, "This is sample text", 25.0f, 25.0f, 1.0f, Color(0.5, 0.8f, 0.2f));
+        textmgr.RenderText<std::u16string>(textHDL, u"测试", 0.0f, 10.0f, 1.0f, Color(0.5, 0.8f, 0.2f));
         CheckGLError;
-        textmgr.RenderText(textHDL, "(C) LearnOpenGL.com", 540.0f, 570.0f, 0.5f, Color(0.3, 0.7f, 0.9f));
+        textmgr.RenderText<std::string>(textHDL, "(C) LearnOpenGL.com", 540.0f, 570.0f, 1.0f, Color(0.3, 0.7f, 0.9f));
         CheckGLError;
         
     }
