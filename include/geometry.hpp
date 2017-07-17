@@ -250,7 +250,8 @@ namespace renderer {
         }
 	};
 
-	typedef Point2d<float> Point2dF;
+    typedef Point2d<float> Point2dF;
+    typedef Point2d<int> Point2dI;
 	typedef Point3d<float> Point3dF;
 
 	using Vector2dF = Point2dF;

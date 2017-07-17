@@ -15,7 +15,12 @@ vec4 EdgeDetection();
 void main()
 { 
     color = texture(texture1, TexCoord);
-	color.rgb = pow(color.rgb, vec3(1.0 / 2.2));
+
+     // reinhard tone mapping
+    vec3 mapped = color.rgb / (color.rgb + vec3(1.0));
+     
+    // gamma correction
+    color.rgb = pow(mapped, vec3(1.0 / 2.2));
     // color = Inversion();
     // color = Grayscale();
     // color = Sharpen();

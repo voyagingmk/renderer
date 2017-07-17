@@ -2,6 +2,9 @@
 #define RENDERER_GLCOMMON_HPP
 
 #include "base.hpp"
+#include "../geometry.hpp"
+
+namespace renderer {
 
     
 #ifdef USE_GL
@@ -87,6 +90,16 @@ public:
         printf("FBO:%d, TexID:%d, depthTexID:%d, width:%d, height:%d \n",
                fboID, tex.texID, depthTex.texID, (int)width, (int)height);
     }
+};
+
+struct Character {
+    TexRef      texRef;  // ID handle of the glyph texture
+    Point2dI    Size;       // Size of glyph
+    Point2dI    Bearing;    // Offset from baseline to left/top of glyph
+    int         Advance;    // Offset to advance to next glyph
+};
+    
+    
 };
 
 #endif

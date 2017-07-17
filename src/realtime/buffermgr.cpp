@@ -107,9 +107,9 @@ FrameBuf BufferMgrOpenGL::CreateColorFrameBuffer(size_t width, size_t height, Bu
     glBindTexture(target, buf.tex.texID);
     if (MSAA) {
         size_t samples = MSAA;
-        glTexImage2DMultisample(target, samples, GL_RGB, width, height, GL_TRUE);
+        glTexImage2DMultisample(target, samples, GL_RGBA16F, width, height, GL_TRUE);
     } else {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
     }
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);

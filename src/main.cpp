@@ -9,7 +9,10 @@
 #include "buffermgr.hpp"
 #include "realtime/glutils.hpp"
 #include "realtime/model.hpp"
+#include "realtime/textmgr.hpp"
 #include "camera.hpp"
+#include "sdf.hpp"
+
 
 using namespace std;
 using namespace renderer;
@@ -28,6 +31,7 @@ class MyContext : public RendererContextSDL {
     ShaderProgramHDL depthMapDebugHDL;
     ShaderProgramHDL singleColorHDL;
     ShaderProgramHDL screenHDL;
+    ShaderProgramHDL textHDL;
     TexRef tex1, terrianTex, terrianNormTex;
     std::map<SDL_Keycode, uint8_t> keyState;
     std::vector<Model*> objs;
@@ -145,6 +149,11 @@ public:
             { ShaderType::Fragment, "depthMapDebug.fs"}
         });
         
+        textHDL = shaderMgr.createShaderProgram({
+            { ShaderType::Vertex, "text.vs" },
+            { ShaderType::Fragment, "text.fs"}
+        });
+        
         if (!depthMapHDL ||
             !mainHDL ||
             !singleColorHDL ||
@@ -208,7 +217,7 @@ public:
         quad = pool->newElement();
         Mesh mesh;
         Vertex v;
-        v.position =  {-1.0f,  1.0f, 0.0f}; // Left Top
+        v.position = {-1.0f,  1.0f, 0.0f}; // Left Top
         v.texCoords = {0.0f, 1.0f};
         mesh.vertices.push_back(v);
         v.position =  {-1.0f, -1.0f, 0.0f}; // Left Bottom
@@ -244,6 +253,78 @@ public:
         //glEnable(GL_BLEND);
         //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         
+        TextMgr& textmgr = TextMgr::getInstance();
+        textmgr.loadTTF("./assets/fonts/Arial.ttf", 16);
+        textmgr.buildCharaTexture();
+        textmgr.setupBuffer();
+        FT_Error error;
+        FT_GlyphSlot  slot = textmgr.face->glyph;  /* a small shortcut */
+        int           pen_x, pen_y, n;
+        const char* text = "S";
+        const int num_chars = strlen(text);
+        const int width = 18, height = 18;
+        pen_x = 3;
+        pen_y = 16;
+        unsigned char Image[height][width] = {{0}};
+        auto my_draw_bitmap = [&]( FT_Bitmap* bitmap, FT_Int x, FT_Int y)
+        {
+            FT_Int  i, j, p, q;
+            FT_Int  x_max = x + bitmap->width;
+            FT_Int  y_max = y + bitmap->rows;
+            // bitmap->width bitmap->rows是单个字符的实际大小
+            // (x, y)是字符在大图里的起始坐标
+            printf("my_draw, w:%d, h:%d\n", bitmap->width, bitmap->rows);
+            printf("my_draw, x:%d, y:%d\n", x, y);
+            printf("x_max:%d, y_max:%d\n", x_max, y_max);
+            // 左上角是原点，从上往下画,x,y都是++
+            for ( j = y, q = 0; j < y_max; j++, q++ )
+            {
+                for ( i = x, p = 0; i < x_max; i++, p++ )
+                {
+                    if ( i<0 || j<0 || i>=width || j>=height )  continue;
+                    Image[j][i] |= bitmap->buffer[q * bitmap->width + p];
+                    if(Image[j][i]==0) // empty
+                        printf("-");
+                    else
+                        printf("0");
+                }
+                printf("\n");
+            }
+        };
+        for ( n = 0; n < num_chars; n++ )
+        {
+            /* load glyph image into the slot (erase previous one) */
+            error = FT_Load_Char(textmgr.face, text[n], FT_LOAD_RENDER );
+            if ( error )
+                continue;  /* ignore errors */
+            
+            /* now, draw to our target surface */
+            printf("bitmap: left: %d, top: %d\n", slot->bitmap_left, slot->bitmap_top);
+            my_draw_bitmap( &slot->bitmap,
+                           pen_x + slot->bitmap_left,
+                           pen_y - slot->bitmap_top );
+            
+            /* increment pen position */
+            pen_x += slot->advance.x >> 6;
+        }
+
+        int buffer[height][width];
+        sdf::SDFBuilder builder(width, height);
+        builder.buildSDF([&](int x, int y)->float {
+            // 黑色返回0，白色返回1
+            return Image[y][x] == 0? 1.0f : 0.0f;
+            if(abs(x - y) <= 1) return 0.0f;
+            return 1.0f;
+        }, [&](int x, int y, float v){
+            buffer[y][x] = v;
+        });
+        printf("result:\n");
+        for(int y = 0; y < height; y++){
+            for(int x = 0; x < width; x++){
+                printf("%d\t", buffer[y][x]);
+            }
+            printf("\n");
+        }
     }
     
     void updateCamera() {
@@ -365,6 +446,10 @@ public:
         }
         //texMgr.activateTexture(0, mainFrameBuf.depthTexID);
         quad->Draw();
+        TextMgr& textmgr = TextMgr::getInstance();
+        textmgr.RenderText(textHDL, "This is sample text", 25.0f, 25.0f, 1.0f, Color(0.5, 0.8f, 0.2f));
+        CheckGLError;
+        textmgr.RenderText(textHDL, "(C) LearnOpenGL.com", 540.0f, 570.0f, 0.5f, Color(0.3, 0.7f, 0.9f));
         CheckGLError;
         
     }
@@ -434,6 +519,7 @@ public:
                    ShaderProgramHDL hdl,
                    const Vector3dF viewPos = {0.0, 0.0, 0.0},
                    const Matrix4x4 PV = Matrix4x4()) {
+        CheckGLError;
         ShaderMgrOpenGL& shaderMgr = ShaderMgrOpenGL::getInstance();
         Shader& shader = shaderMgr.getShader(hdl);
         shader.set3f("viewPos", viewPos);
@@ -445,6 +531,7 @@ public:
         shader.setLight(light);
         drawTerrian(shader);
         drawObjs(shader);
+        CheckGLError;
     }
 };
 
