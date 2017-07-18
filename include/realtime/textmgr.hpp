@@ -54,18 +54,6 @@ public:
         winHeight = h;
     }
     
-    void buildCharaTexture() {
-        TextureMgrOpenGL& texMgr = TextureMgrOpenGL::getInstance();
-        glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // Disable byte-alignment restriction
-        
-        for (unsigned char c = 0; c < 128; c++)
-        {
-            loadSingleChar(c);
-        }
-        loadSingleChar(u'测');
-        loadSingleChar(u'试');
-    }
-    
     template<typename T>
     void loadSingleChar(T c) {
         TexRef texRef;
@@ -75,6 +63,7 @@ public:
             std::cout << "ERROR::FREETYTPE: Failed to load Glyph" << std::endl;
             return;
         }
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // Disable byte-alignment restriction
         glGenTextures(1, &texRef.texID);
         glBindTexture(GL_TEXTURE_2D, texRef.texID);
         glTexImage2D(
@@ -132,11 +121,15 @@ public:
         CheckGLError;
         std::wstring_convert<std::codecvt_utf8_utf16<char16_t>,char16_t> codecvt;
         for (auto c:text) {
-            Character ch = characters[static_cast<FT_ULong>(c)];
+            FT_ULong k = static_cast<FT_ULong>(c);
+            if(characters.find(k) == characters.end()) {
+                loadSingleChar(c);
+            }
+            Character ch = characters[k];
             GLfloat xpos = x + ch.Bearing.x * scale;
             GLfloat ypos = y - (ch.Size.y - ch.Bearing.y) * scale;
             // std::cout << codecvt.to_bytes(*c) << std::endl;
-            printf("%c, ypos = %.2f - (%d - %d) * %.2f = %.2f\n", c, y, ch.Size.y, ch.Bearing.y, scale, ypos);
+            // printf("%c, ypos = %.2f - (%d - %d) * %.2f = %.2f\n", c, y, ch.Size.y, ch.Bearing.y, scale, ypos);
             GLfloat w = ch.Size.x * scale;
             GLfloat h = ch.Size.y * scale;
             // (xpos, ypos)是字符左下角坐标

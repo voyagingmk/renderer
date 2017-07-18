@@ -256,7 +256,6 @@ public:
         TextMgr& textmgr = TextMgr::getInstance();
         textmgr.setScreenSize(winWidth, winHeight);
         textmgr.loadTTF("./assets/fonts/STHeiti Light.ttc", 16);
-        textmgr.buildCharaTexture();
         textmgr.setupBuffer();
         FT_Error error;
         FT_GlyphSlot  slot = textmgr.face->glyph;  /* a small shortcut */
