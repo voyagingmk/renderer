@@ -1,5 +1,7 @@
 ## Quick Start
 
+### Mac
+
 1. mkdir xcode_build
 
 2. cmake .. -G 'Xcode'
@@ -9,7 +11,7 @@
 4. run
 
 
-## Windows
+### Windows
 
 需要加 glu32.lib SDL2main.lib opengl32.lib 
 自己编译 SOIL.lib
