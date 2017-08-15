@@ -138,6 +138,22 @@ namespace renderer {
         return std::fabs(v1 - v2) < T(0.0001);
     }
     
+	template<typename T>
+	T** new2DArray(int h, int w) {
+		T ** v = new T*[h];
+		for (int i = 0; i < h; i++) {
+			v[i] = new T[w]{ 0 };
+		}
+		return v;
+	}
+
+	template<typename T>
+	void del2DArray(T** v, int h) {
+		for (int i = 0; i < h; i++) {
+			delete[] v[i];
+		}
+		delete[] v;
+	}
 
 	static std::string readFile(const char * filepath) {
 		std::ifstream f(filepath);

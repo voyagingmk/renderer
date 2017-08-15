@@ -89,6 +89,16 @@ link_directories(
 set (EXTRA_LIBS ${EXTRA_LIBS} SDL2)
 set (EXTRA_LIBS ${EXTRA_LIBS} SOIL)
 
+IF (WIN32)
+set (EXTRA_LIBS ${EXTRA_LIBS} SDL2main)
+set (EXTRA_LIBS ${EXTRA_LIBS} glu32)
+set (EXTRA_LIBS ${EXTRA_LIBS} opengl32)
+set (EXTRA_LIBS ${EXTRA_LIBS} SOIL)
+set (EXTRA_LIBS ${EXTRA_LIBS} assimp)
+set (EXTRA_LIBS ${EXTRA_LIBS} freetype)
+ENDIF (WIN32)
+
+
 add_executable(renderer ${BASE_SOURCERS} ${PROJECT_SOURCE_DIR})
 
 

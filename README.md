@@ -11,9 +11,26 @@
 4. run
 
 
-### Windows
+### Windows (32 bits)
 
-需要加 glu32.lib SDL2main.lib opengl32.lib 
-自己编译 SOIL.lib
-下载 assimp sdk 的exe，安装后可以在安装目录找到lib文件
-下载 freetype2的zip，找到lib
+1. mkdir vs_build
+
+2. cmake ..
+
+3. open [Configuration Properties -> Debugging]
+
+3. set working directory: $(ProjectDir)/../
+
+4. set environment: PATH=./lib/32/;$(Path)
+
+The third party libraries may need to be re-compile:
+
+SOIL.lib
+
+assimp.lib
+
+freetype.lib
+
+
+
+

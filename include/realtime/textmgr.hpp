@@ -106,15 +106,11 @@ public:
         CheckGLError;
     }
     
-    void test(char c, int pen_x, int pen_y, size_t width, size_t height) {
+    void test(char c, int pen_x, int pen_y, const size_t width, const size_t height) {
         FT_Error error;
-        FT_GlyphSlot  slot = face->glyph; // 指向当前load进来的char的信息
-        unsigned char Image[height][width];
-        for(int y = 0; y < height; y++) {
-            for(int x = 0; x < width; x++) {
-                Image[y][x] = 0;
-            }
-        }
+		FT_GlyphSlot  slot = face->glyph; // 指向当前load进来的char的信息
+
+		unsigned char ** Image = new2DArray<unsigned char>(height, width);
         /*
         vector<vector<unsigned char>> Image(height, vector<unsigned char>(width));
         for(auto r: Image) {
@@ -160,9 +156,8 @@ public:
         
         /* increment pen position */
         pen_x += slot->advance.x >> 6;
-        
-        float buffer[height][width];
-        unsigned char data[height][width];
+		float** buffer = new2DArray<float>(height, width);
+		unsigned char** data = new2DArray<unsigned char>(height, width);
         float valMin = 9999, valMax = -9999;
         sdf::SDFBuilder builder(width, height);
         builder.buildSDF([&](int x, int y)->float {
@@ -220,6 +215,9 @@ public:
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glBindTexture(GL_TEXTURE_2D, 0);
+		del2DArray(buffer, height);
+		del2DArray(Image, height);
+		del2DArray(data, height);
     }
     
     template<typename T>
