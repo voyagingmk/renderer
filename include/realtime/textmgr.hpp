@@ -6,6 +6,7 @@
 #include "texturemgr.hpp"
 #include "shadermgr.hpp"
 #include "../color.hpp"
+#include "sdf.hpp"
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
@@ -18,6 +19,7 @@ public:
     std::map<FT_ULong, Character> characters;
     GLuint VAO, VBO;
     size_t winWidth, winHeight;
+    TexRef sdfTexRef;
 protected:
     TextMgr():
         VAO(0),
@@ -103,6 +105,122 @@ public:
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
         CheckGLError;
+    }
+    
+    void test(char c, int pen_x, int pen_y, size_t width, size_t height) {
+        FT_Error error;
+        FT_GlyphSlot  slot = face->glyph; // 指向当前load进来的char的信息
+        unsigned char Image[height][width];
+        for(int y = 0; y < height; y++) {
+            for(int x = 0; x < width; x++) {
+                Image[y][x] = 0;
+            }
+        }
+        /*
+        vector<vector<unsigned char>> Image(height, vector<unsigned char>(width));
+        for(auto r: Image) {
+            for(auto it = r.begin(); it != r.end(); it++) {
+                *it = 0;
+            }
+        }*/
+        auto my_draw_bitmap = [&]( FT_Bitmap* bitmap, FT_Int x, FT_Int y)
+        {
+            FT_Int  i, j, p, q;
+            FT_Int  x_max = x + bitmap->width;
+            FT_Int  y_max = y + bitmap->rows;
+            // bitmap->width bitmap->rows是单个字符的实际大小
+            // (x, y)是字符在大图里的起始坐标
+            printf("my_draw, w:%d, h:%d\n", bitmap->width, bitmap->rows);
+            printf("my_draw, x:%d, y:%d\n", x, y);
+            printf("x_max:%d, y_max:%d\n", x_max, y_max);
+            // 左上角是原点，从上往下画, x, y都是++
+            for ( j = y, q = 0; j < y_max; j++, q++ )
+            {
+                for ( i = x, p = 0; i < x_max; i++, p++ )
+                {
+                    if ( i<0 || j<0 || i>=width || j>=height )  continue;
+                    Image[j][i] |= bitmap->buffer[q * bitmap->width + p];
+                    if(Image[j][i]==0) // empty
+                        printf("-");
+                    else
+                        printf("0");
+                }
+                printf("\n");
+            }
+        };
+            /* load glyph image into the slot (erase previous one) */
+        error = FT_Load_Char(face, c, FT_LOAD_RENDER );
+        if ( error )
+            return;
+            
+        /* now, draw to our target surface */
+        printf("bitmap: left: %d, top: %d\n", slot->bitmap_left, slot->bitmap_top);
+        my_draw_bitmap( &slot->bitmap,
+                       pen_x + slot->bitmap_left,
+                       pen_y - slot->bitmap_top );
+        
+        /* increment pen position */
+        pen_x += slot->advance.x >> 6;
+        
+        float buffer[height][width];
+        unsigned char data[height][width];
+        float valMin = 9999, valMax = -9999;
+        sdf::SDFBuilder builder(width, height);
+        builder.buildSDF([&](int x, int y)->float {
+            // 黑色返回0，白色返回1
+            return Image[y][x] == 0? 1.0f : 0.0f;
+        }, [&](int x, int y, float v) {
+            if(v < valMin) {
+                valMin = v;
+            }
+            if(v > valMax) {
+                valMax = v;
+            }
+            buffer[height - y - 1][x] = v;
+        });
+        printf("result:\n");
+        for(int y = height - 1; y >= 0; y--) {
+            for(int x = 0; x < width; x++) {
+                float v = buffer[y][x];
+                printf("%d\t", (int)v);
+            }
+            printf("\n");
+        }
+        printf("\n");
+        for(int y = height - 1; y >= 0; y--) {
+            for(int x = 0; x < width; x++) {
+                float v = buffer[y][x];
+                //v = (v - valMin) / (valMax - valMin);
+                //data[y][x] = v * 255.0f;
+                float c = v * 3.0f + 128.0f;
+                if ( c < 0.0f ) c = 0.0f;
+                if ( c > 255.0f ) c = 255.0f;
+                data[y][x] = c;
+                printf("%d\t", data[y][x]);
+            }
+            printf("\n");
+        }
+        
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // Disable byte-alignment restriction
+        glGenTextures(1, &sdfTexRef.texID);
+        glBindTexture(GL_TEXTURE_2D, sdfTexRef.texID);
+        glTexImage2D(
+                     GL_TEXTURE_2D,
+                     0,
+                     GL_RED,
+                     width,
+                     height,
+                     0,
+                     GL_RED,
+                     GL_UNSIGNED_BYTE,
+                     data
+                     );
+        // Set texture options
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glBindTexture(GL_TEXTURE_2D, 0);
     }
     
     template<typename T>
