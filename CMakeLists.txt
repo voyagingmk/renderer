@@ -81,7 +81,7 @@ ENDIF (APPLE)
 
 
 link_directories(
-    "./"
+    "./lib/mac/"
     "/usr/local/lib/"
 )
 
