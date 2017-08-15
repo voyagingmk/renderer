@@ -32,7 +32,7 @@ class MyContext : public RendererContextSDL {
     ShaderProgramHDL screenHDL;
     ShaderProgramHDL sdfHDL;
     ShaderProgramHDL textHDL;
-    TexRef tex1, terrianTex, terrianNormTex;
+    TexRef tex1, terrianTex, terrianNormTex, sdfTex;
     std::map<SDL_Keycode, uint8_t> keyState;
     std::vector<Model*> objs;
     Model* terrian;
@@ -172,6 +172,7 @@ public:
         tex1 = texMgr.loadTexture("dog.png", "tex1", false);
         terrianTex = texMgr.loadTexture("brickwall.jpg", "terrianTex");
         terrianNormTex = texMgr.loadTexture("brickwall_normal.jpg", "terrianNormTex");
+        sdfTex = texMgr.loadTexture("msdf.png", "msdf");
         
         
         auto matPool = GetPool<PhongMaterial>();
@@ -391,7 +392,7 @@ public:
         
         TextMgr& textmgr = TextMgr::getInstance();
         
-        quad->SetScale({400.0f, 400.0f, 1.0f});
+        quad->SetScale({200.0f, 200.0f, 1.0f});
         quad->SetPos({winWidth * 0.5f, winHeight * 0.5f, 0.0f});
         Shader& sdfShader = shaderMgr.getShader(sdfHDL);
         sdfShader.use();
@@ -399,7 +400,9 @@ public:
         Matrix4x4 PV = Ortho(0.0f, (float)winWidth, 0.0f, (float)winHeight, 0.01f, 100.0f);
         sdfShader.setMatrix4f("PV", PV);
         sdfShader.setMatrix4f("model", quad->o2w->m);
-        texMgr.activateTexture(0, textmgr.sdfTexRef);
+        //texMgr.activateTexture(0, textmgr.sdfTexRef);
+        texMgr.activateTexture(0, sdfTex);
+        
         quad->Draw();
         
         textmgr.RenderText<std::u16string>(textHDL, u"测试", 0.0f, 10.0f, 1.0f, Color(0.5, 0.8f, 0.2f));
