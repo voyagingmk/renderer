@@ -1,3 +1,5 @@
+#pragma once  
+
 #ifndef BASE_HPP
 #define BASE_HPP
 
@@ -8,19 +10,16 @@
 #include <memory>
 
 
-#ifdef __APPLE__
+
 #include "SDL.h"
 // #include "SDL_opengl.h"
-#endif
+
 
 
 #ifdef USE_GL
 
 #ifdef _MSC_VER
-#define GLEW_STATIC
-#include "GL/glew.h" // include GLEW and new version of GL on Windows
-// #define GLFW_DLL
-#include "GLFW/glfw3.h" // GLFW helper library
+#include "GL/gl3w.h"
 #include <GL/GL.h>
 #include <GL/GLU.h>
 #else
@@ -38,7 +37,7 @@
 #include <functional>
 #include <stdio.h>
 #include <string>
-#include <math.h>
+#include <cmath>
 #include <limits>
 #include <vector>
 #include <list>
@@ -54,7 +53,14 @@
 #include <chrono>
 #include "stdafx.h"
 
-#define DEFINE_SHARE_PTR(name) typedef std::shared_ptr<name> Ptr#name;
+#ifdef far
+#undef far
+#endif
+
+#ifdef near
+#undef near
+#endif
+
 #define FLOAT_MAX (std::numeric_limits<float>::max())
 
 #ifndef M_PI

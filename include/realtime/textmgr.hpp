@@ -1,6 +1,5 @@
 #ifndef RENDERER_TEXTMGR_HPP
 #define RENDERER_TEXTMGR_HPP
-#include <codecvt>
 #include "glutils.hpp"
 #include "glcommon.hpp"
 #include "texturemgr.hpp"
@@ -119,7 +118,6 @@ public:
         glActiveTexture(GL_TEXTURE0);
         glBindVertexArray(VAO);
         CheckGLError;
-        std::wstring_convert<std::codecvt_utf8_utf16<char16_t>,char16_t> codecvt;
         for (auto c:text) {
             FT_ULong k = static_cast<FT_ULong>(c);
             if(characters.find(k) == characters.end()) {
@@ -128,7 +126,6 @@ public:
             Character ch = characters[k];
             GLfloat xpos = x + ch.Bearing.x * scale;
             GLfloat ypos = y - (ch.Size.y - ch.Bearing.y) * scale;
-            // std::cout << codecvt.to_bytes(*c) << std::endl;
             // printf("%c, ypos = %.2f - (%d - %d) * %.2f = %.2f\n", c, y, ch.Size.y, ch.Bearing.y, scale, ypos);
             GLfloat w = ch.Size.x * scale;
             GLfloat h = ch.Size.y * scale;

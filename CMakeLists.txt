@@ -85,6 +85,7 @@ link_directories(
     "/usr/local/lib/"
 )
 
+
 set (EXTRA_LIBS ${EXTRA_LIBS} SDL2)
 set (EXTRA_LIBS ${EXTRA_LIBS} SOIL)
 

@@ -22,3 +22,8 @@ renderer.vcxproj.filters
 *.codeanalysis
 *.codeanalysisast
 *.lastcodeanalysissucceeded
+assets/fonts/
+assets/images/
+assets/models/
+*.db-wal
+*.db-shm
