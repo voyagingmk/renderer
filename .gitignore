@@ -27,3 +27,4 @@ assets/images/
 assets/models/
 *.db-wal
 *.db-shm
+vs_build/
