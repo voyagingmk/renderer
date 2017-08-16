@@ -44,6 +44,7 @@ namespace renderer {
         virtual void DrawBuffer(const std::string& aliasname);
         virtual FrameBuf CreateDepthFrameBuffer(DepthTexType dtType, TexRef texRef);
         virtual FrameBuf CreateColorFrameBuffer(size_t width, size_t height, BufType depthType, size_t MSAA = 0);
+		virtual FrameBuf CreateGBuffer(size_t width, size_t height);
         virtual void DestroyFrameBuffer(FrameBuf& buf);
         virtual void UseFrameBuffer(FrameBuf& buf);
         virtual void UnuseFrameBuffer(FrameBuf& buf);

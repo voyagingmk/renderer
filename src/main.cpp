@@ -32,6 +32,8 @@ class MyContext : public RendererContextSDL {
     ShaderProgramHDL screenHDL;
     ShaderProgramHDL sdfHDL;
     ShaderProgramHDL textHDL;
+	ShaderProgramHDL gBufferHDL;
+	ShaderProgramHDL deferredShadingHDL;
     TexRef tex1, terrianTex, terrianNormTex, sdfTex;
     std::map<SDL_Keycode, uint8_t> keyState;
     std::vector<Model*> objs;
@@ -158,6 +160,14 @@ public:
             { ShaderType::Vertex, "text.vs" },
             { ShaderType::Fragment, "text.fs"}
         });
+		gBufferHDL = shaderMgr.createShaderProgram({
+			{ ShaderType::Vertex, "g_buffer.vs" },
+			{ ShaderType::Fragment, "g_buffer.fs" }
+		});
+		deferredShadingHDL = shaderMgr.createShaderProgram({
+			{ ShaderType::Vertex, "deferred_shading.vs" },
+			{ ShaderType::Fragment, "deferred_shading.fs" }
+		});
         
         if (!depthMapHDL ||
             !mainHDL ||
