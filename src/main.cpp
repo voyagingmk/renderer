@@ -453,12 +453,7 @@ public:
     }
     
     void drawLight(Shader& shader) {
-        shader.setMatrix4f("model", lightObj->o2w->m);
-        shader.setMatrix4f("normalMat", lightObj->o2w->mInv.transpose());
-        MaterialMgr& matMgr = MaterialMgr::getInstance();
-        Material* mat = matMgr.getMaterial(lightObj->matID);
-        mat->getSetting()->uploadToShader(&shader);
-        lightObj->Draw();
+        lightObj->Draw(&shader);
     }
     
     void drawTerrian(Shader& shader) {
@@ -468,13 +463,7 @@ public:
         texMgr.activateTexture(2, terrianNormTex);
         shader.set1i("texture1", 0);
         shader.set1i("normTex", 2);
-        
-        shader.setMatrix4f("model", terrian->o2w->m);
-        shader.setMatrix4f("normalMat", terrian->o2w->mInv.transpose());
-        MaterialMgr& matMgr = MaterialMgr::getInstance();
-        Material* mat = matMgr.getMaterial(terrian->matID);
-        mat->getSetting()->uploadToShader(&shader);
-        terrian->Draw();
+        terrian->Draw(&shader);
     }
     
     void drawObjs(Shader& shader, float scale = 1.0f) {
@@ -483,16 +472,11 @@ public:
         texMgr.activateTexture(0, tex1);
         //texMgr.DisableTexture(2); // no normal map
         shader.set1i("texture1", 0);
-        MaterialMgr& matMgr = MaterialMgr::getInstance();
         for(int i = 0; i < objs.size(); i++) {
             Model* obj = objs[i];
             auto oldScale = obj->scale;
             obj->SetScale(oldScale * scale);
-            shader.setMatrix4f("model", obj->o2w->m);
-            shader.setMatrix4f("normalMat", obj->o2w->mInv.transpose());
-            Material* mat = matMgr.getMaterial(obj->matID);
-            mat->getSetting()->uploadToShader(&shader);
-            obj->Draw();
+            obj->Draw(&shader);
             obj->SetScale(oldScale);
         }
     }

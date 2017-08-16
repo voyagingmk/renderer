@@ -5,6 +5,7 @@
 #include "mesh.hpp"
 #include "importer.hpp"
 #include "buffermgr.hpp"
+#include "shadermgr.hpp"
 
 
 using namespace std;
@@ -47,7 +48,16 @@ public:
         
     }
     
-    void Draw() {
+    void Draw(Shader* shader = nullptr) {
+        if (shader) {
+            shader->setMatrix4f("model", o2w->m);
+            shader->setMatrix4f("normalMat", o2w->mInv.transpose());
+            MaterialMgr& matMgr = MaterialMgr::getInstance();
+            Material* mat = matMgr.getMaterial(matID);
+            if (mat && mat->getSetting()) {
+                mat->getSetting()->uploadToShader(shader);
+            }
+        }
         BufferMgrOpenGL& mgr = BufferMgrOpenGL::getInstance();
         mgr.DrawBuffer("model" + std::to_string(id));
     }
