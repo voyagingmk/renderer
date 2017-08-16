@@ -52,10 +52,12 @@ namespace renderer {
 					parseColor(objinfo["specular"]),
 					objinfo["shininess"],
 					objinfo["reflectiveness"]);
-                MaterialID sID = mgr.addMaterialSetting(s);
+                MaterialSettingID sID = mgr.addMaterialSetting(s);
                 
                 mt = pool1->newElement();
 				mt->bindSetting(sID);
+                MaterialID matID = mgr.addMaterial(mt);
+                mgr.setMaterialAlias(matID, std::to_string((int)objinfo["id"]));
 			}
 			else if (objinfo["type"] == "Checker") {
 				auto pool1 = GetPool<MaterialChecker>();
@@ -68,6 +70,8 @@ namespace renderer {
                 
                 mt = pool1->newElement();
                 mt->bindSetting(sID);
+                MaterialID matID = mgr.addMaterial(mt);
+                mgr.setMaterialAlias(matID, std::to_string((int)objinfo["id"]));
 			}
 		}
 	}
@@ -155,7 +159,6 @@ namespace renderer {
 					Mesh* pMesh = pool->newElement(vertices,indexes);
 					// pMesh->reverse = true;
 					pShape = static_cast<Shape*>(pMesh);
-					// pShape->material = matDict[objinfo["matId"]];
 					addShape(pShape, objID, o2w);
 					pShape = nullptr;
 				}
@@ -164,13 +167,11 @@ namespace renderer {
 				float radius  = objinfo["radius"];
 				auto pool = GetPool<Sphere>();
 				pShape = static_cast<Shape*>(pool->newElement(radius));
-				// pShape->material = matDict[objinfo["matId"]];
 			}
 			else if (objinfo["type"] == "Plane") {
 				auto pool = GetPool<Plane>();
 				float distance = objinfo["distance"];
 				pShape = static_cast<Shape*>(pool->newElement(distance));
-				// pShape->material = matDict[objinfo["matId"]];
 			}
 			else if (objinfo["type"] == "Mesh") {
 				auto pool = GetPool<Mesh>();
@@ -207,11 +208,12 @@ namespace renderer {
 					pMesh->reverse = objinfo["reverse"];
 				}
 				pShape = static_cast<Shape*>(pMesh);
-				// pShape->material = matDict[objinfo["matId"]];
 			}
 			else
 				continue;
+            
 			if (pShape) {
+                pShape->matAlias = std::to_string((int)objinfo["matId"]);
 				addShape(pShape, objID, o2w);
 			}
 

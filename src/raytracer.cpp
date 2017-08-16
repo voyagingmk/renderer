@@ -47,7 +47,7 @@ namespace renderer {
 				Ray ray = camera.GenerateRay(sx, sy);
 				scene->Intersect(ray, &result);
 				if (result.geometry) {
-					Material* pMaterial = mgr.getMaterial(result.geometry->matID);
+					Material* pMaterial = mgr.getMaterial(result.geometry->matAlias);
 					Color color(0, 0, 0);
 					for (int i = 0; i < lights.size(); i++) {
 						Vector3dF incidence = lights[i]->incidence(result.position);
@@ -96,7 +96,7 @@ namespace renderer {
 			return Color::Black;
 		}
 		logDebug("rayTraceRecursive, hit geometry\n\n");
-		Material* pMaterial = mgr.getMaterial(result.geometry->matID);
+		Material* pMaterial = mgr.getMaterial(result.geometry->matAlias);
 		float reflectiveness = pMaterial->getSetting()->reflectiveness;
 		Color color(0, 0, 0);
 		

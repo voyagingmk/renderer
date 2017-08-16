@@ -14,6 +14,7 @@ namespace renderer {
 	public:
         int id;
         MaterialID matID;
+        std::string matAlias;
 		Transform4x4* o2w;
         Transform4x4* w2o;
         Vector3dF pos;
@@ -22,6 +23,7 @@ namespace renderer {
 	public:
 		Shape() noexcept:
             matID(0),
+            matAlias(""),
             o2w(nullptr),
             w2o(nullptr),
             pos(0.0f, 0.0f, 0.0f),
@@ -33,6 +35,7 @@ namespace renderer {
 			o2w = nullptr;
 			w2o = nullptr;
 			matID = 0;
+            matAlias = "";
 		}
         
         void SetPos(Vector3dF p) {

@@ -29,13 +29,13 @@ namespace renderer {
     class MaterialSettingPhong: public MaterialSetting {
     public:
         Color ambient, diffuse, specular;
-        int shininess;
+        float shininess;
     public:
         MaterialSettingPhong() {
             setDefault();
         }
         
-        MaterialSettingPhong(Color a, Color d, Color s, int sh, int r):
+        MaterialSettingPhong(Color a, Color d, Color s, float sh, int r):
             MaterialSetting(r),
             ambient(a),
             diffuse(d),

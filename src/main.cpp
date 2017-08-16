@@ -110,6 +110,8 @@ public:
         TextureMgrOpenGL& texMgr = TextureMgrOpenGL::getInstance();
         ShaderMgrOpenGL& shaderMgr = ShaderMgrOpenGL::getInstance();
         BufferMgrOpenGL& bufferMgr = BufferMgrOpenGL::getInstance();
+        MaterialMgr& matMgr = MaterialMgr::getInstance();
+
         //TexRef texRef = texMgr.CreateDepthTexture(DepthTexType::DepthStencil, 1024, 1024);
         //depthFrameBuf = bufferMgr.CreateDepthFrameBuffer(DepthTexType::DepthStencil, texRef);
         TexRef texRef = texMgr.CreateDepthTexture(DepthTexType::CubeMap, 1024, 1024);
@@ -187,7 +189,6 @@ public:
         sdfTex = texMgr.loadTexture("msdf.png", "msdf");
         
         
-        auto matPool = GetPool<MaterialPhong>();
 
         auto lightPool = GetPool<PointLight>();
         light = lightPool->newElement(Vector3dF(0.0f, 20.0f, 0.0f));
@@ -201,20 +202,21 @@ public:
         auto pool = GetPool<Model>();
         string dirPath = "./assets/models/";
         
-        Material* objMaterial = matPool->newElement();
-        /*
-        
+        auto matPool = GetPool<MaterialPhong>();
+        Material* mat = matPool->newElement();
+        MaterialSettingID sID = matMgr.addMaterialSetting(GetPool<MaterialSettingPhong>()->newElement(
             Color(0.3f, 0.3f, 0.3f),
             Color(1.0f, 1.0f, 1.0f),
             Color(1.0f, 1.0f, 1.0f),
-            32.0f
-        */
-
+            32.0f, 0));
+        mat->bindSetting(sID);
+        MaterialID matID = matMgr.addMaterial(mat);
+        
         lightObj = pool->newElement();
         lightObj->CustomInit(dirPath + "cube.obj");
         lightObj->SetScale(Vector3dF(1.0f, 1.0f, 1.0f));
         lightObj->SetPos(light->pos);
-        // lightObj->material = objMaterial;
+        lightObj->matID = matID;
 
         for(int i = 0; i < 3; i++) {
             Model* model = pool->newElement();
@@ -224,20 +226,23 @@ public:
             model->SetScale(Vector3dF(0.1f, 0.1f, 0.1f));
             model->SetPos(Vector3dF(-10.0f + i * 10.0f, 0.0f, -1.0f));
             model->SetRotate(90, Axis::y);
-            // model->material = objMaterial;
+            model->matID = matID;
         }
-        Material* terrianMaterial = matPool->newElement();
-        /*
+        
+        mat = matPool->newElement();
+        sID = matMgr.addMaterialSetting(GetPool<MaterialSettingPhong>()->newElement(
             Color(0.9f, 0.9f, 0.9f),
             Color(1.0f, 1.0f, 1.0f),
             Color(1.0f, 1.0f, 1.0f),
-            64.0f);
-        */
+            64.0f, 0));
+        mat->bindSetting(sID);
+        matID = matMgr.addMaterial(mat);
+        
         terrian = pool->newElement();
         terrian->CustomInit(dirPath + "plane.obj");
         //terrian->SetScale({10.0, 10.0, 10.0});
         terrian->SetPos({0.0, 0.0, 0.0});
-        // terrian->material = terrianMaterial;
+        terrian->matID = matID;
         
         quad = pool->newElement();
         Mesh mesh;
@@ -450,7 +455,9 @@ public:
     void drawLight(Shader& shader) {
         shader.setMatrix4f("model", lightObj->o2w->m);
         shader.setMatrix4f("normalMat", lightObj->o2w->mInv.transpose());
-       // shader.setMaterial(lightObj->material);
+        MaterialMgr& matMgr = MaterialMgr::getInstance();
+        Material* mat = matMgr.getMaterial(lightObj->matID);
+        mat->getSetting()->uploadToShader(&shader);
         lightObj->Draw();
     }
     
@@ -464,7 +471,9 @@ public:
         
         shader.setMatrix4f("model", terrian->o2w->m);
         shader.setMatrix4f("normalMat", terrian->o2w->mInv.transpose());
-        // shader.setMaterial(terrian->material);
+        MaterialMgr& matMgr = MaterialMgr::getInstance();
+        Material* mat = matMgr.getMaterial(terrian->matID);
+        mat->getSetting()->uploadToShader(&shader);
         terrian->Draw();
     }
     
@@ -474,14 +483,15 @@ public:
         texMgr.activateTexture(0, tex1);
         //texMgr.DisableTexture(2); // no normal map
         shader.set1i("texture1", 0);
-        
+        MaterialMgr& matMgr = MaterialMgr::getInstance();
         for(int i = 0; i < objs.size(); i++) {
             Model* obj = objs[i];
             auto oldScale = obj->scale;
             obj->SetScale(oldScale * scale);
             shader.setMatrix4f("model", obj->o2w->m);
             shader.setMatrix4f("normalMat", obj->o2w->mInv.transpose());
-            // shader.setMaterial(obj->material);
+            Material* mat = matMgr.getMaterial(obj->matID);
+            mat->getSetting()->uploadToShader(&shader);
             obj->Draw();
             obj->SetScale(oldScale);
         }

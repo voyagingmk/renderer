@@ -12,10 +12,10 @@ namespace renderer {
 
     void MaterialSettingPhong::uploadToShader(Shader *shader) {
         // MaterialSetting::uploadToShader(<#shader#>);
-        shader->set3f("ambient", ambient.r(), ambient.g(), ambient.b());
-        shader->set3f("diffuse", diffuse.r(), diffuse.g(), diffuse.b());
-        shader->set3f("specular", specular.r(), specular.g(), specular.b());
-        shader->set1i("shininess", shininess);
+        shader->set3f("material.ambient", ambient.r(), ambient.g(), ambient.b());
+        shader->set3f("material.diffuse", diffuse.r(), diffuse.g(), diffuse.b());
+        shader->set3f("material.specular", specular.r(), specular.g(), specular.b());
+        shader->set1f("material.shininess", shininess);
     }
     
     void MaterialSettingChecker::uploadToShader(Shader *shader) {
