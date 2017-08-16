@@ -37,6 +37,7 @@ namespace renderer {
 	}
 
 	void RayTracer::rayTrace(Film *film, Shape* scene, PerspectiveCamera& camera, Lights& lights) {
+        MaterialMgr& mgr = MaterialMgr::getInstance();
 		int w = film->width(), h = film->height();
 		IntersectResult result;
 		for (int y = 0; y < h; y++) {
@@ -46,7 +47,7 @@ namespace renderer {
 				Ray ray = camera.GenerateRay(sx, sy);
 				scene->Intersect(ray, &result);
 				if (result.geometry) {
-					Material* pMaterial = result.geometry->material;
+					Material* pMaterial = mgr.getMaterial(result.geometry->matID);
 					Color color(0, 0, 0);
 					for (int i = 0; i < lights.size(); i++) {
 						Vector3dF incidence = lights[i]->incidence(result.position);
@@ -87,6 +88,7 @@ namespace renderer {
 
 	std::mt19937 eng(4029349);
 	Color RayTracer::rayTraceRecursive(Shape* scene, Ray& ray, Lights& lights, int maxReflect) {
+        MaterialMgr& mgr = MaterialMgr::getInstance();
 		IntersectResult result;
 		scene->Intersect(ray, &result);
 		if (!result.geometry) {
@@ -94,8 +96,8 @@ namespace renderer {
 			return Color::Black;
 		}
 		logDebug("rayTraceRecursive, hit geometry\n\n");
-		Material* pMaterial = result.geometry->material;
-		float reflectiveness = pMaterial->reflectiveness;
+		Material* pMaterial = mgr.getMaterial(result.geometry->matID);
+		float reflectiveness = pMaterial->getSetting()->reflectiveness;
 		Color color(0, 0, 0);
 		
 		std::uniform_real_distribution<float> distribution(0, 1);

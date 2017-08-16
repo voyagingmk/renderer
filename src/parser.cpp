@@ -26,38 +26,49 @@ namespace renderer {
 		return parseSceneDesc(config);
 	}
 	SceneDesc SceneParser::parseSceneDesc(nlohmann::json& config) {
-		MaterialDict matDict;
-		parseMaterials(config, matDict); 
-		SceneDesc desc(parsePerspectiveCamera(config), parseShapes(config, matDict));
-		desc.matDict = std::move(matDict);
+		parseMaterials(config); 
+		SceneDesc desc(parsePerspectiveCamera(config), parseShapes(config));
 		desc.width = config["width"];
 		desc.height = config["height"];
 		desc.threadsPow = config["threadsPow"];
 		desc.maxReflect = config["maxReflect"];
-		parseLights(config, desc.lights, desc.matDict);
+		parseLights(config, desc.lights);
 		return desc;
 	}
 
-	void SceneParser::parseMaterials(nlohmann::json& config, MaterialDict& matDict)
+	void SceneParser::parseMaterials(nlohmann::json& config)
 	{
+		MaterialMgr& mgr = MaterialMgr::getInstance();
 		for (auto objinfo : config["material"]) {
 			Material* mt = nullptr;
+			MaterialSetting* s = nullptr;
 			if (objinfo["type"] == "Phone") {
-				auto pool = GetPool<PhongMaterial>();
-				mt = pool->newElement(
+				auto pool1 = GetPool<MaterialPhong>();
+				auto pool2 = GetPool<MaterialSettingPhong>();
+                
+				s = pool2->newElement(
 					parseColor(objinfo["ambient"]),
 					parseColor(objinfo["diffuse"]),
 					parseColor(objinfo["specular"]),
 					objinfo["shininess"],
 					objinfo["reflectiveness"]);
+                MaterialID sID = mgr.addMaterialSetting(s);
+                
+                mt = pool1->newElement();
+				mt->bindSetting(sID);
 			}
 			else if (objinfo["type"] == "Checker") {
-				auto pool = GetPool<CheckerMaterial>();
+				auto pool1 = GetPool<MaterialChecker>();
+                auto pool2 = GetPool<MaterialSettingChecker>();
+
 				auto c1 = objinfo["color1"], c2 = objinfo["color2"];
 				Color color1 = parseColor(c1, Color::Black), color2 = parseColor(c2, Color::White);
-				mt = pool->newElement(objinfo["scale"], objinfo["reflectiveness"], color1, color2);
+                s = pool2->newElement(color1, color2, objinfo["scale"], objinfo["reflectiveness"]);
+                MaterialID sID = mgr.addMaterialSetting(s);
+                
+                mt = pool1->newElement();
+                mt->bindSetting(sID);
 			}
-			matDict[objinfo["id"]] = mt;
 		}
 	}
 
@@ -86,7 +97,7 @@ namespace renderer {
 		return o2w;
 	}
 
-	ShapeUnion* SceneParser::parseShapes(nlohmann::json& config, MaterialDict& matDict)
+	ShapeUnion* SceneParser::parseShapes(nlohmann::json& config)
 	{
 		auto pool_Transform = GetPool<Transform>();
 		Shapes shapes;
@@ -144,7 +155,7 @@ namespace renderer {
 					Mesh* pMesh = pool->newElement(vertices,indexes);
 					// pMesh->reverse = true;
 					pShape = static_cast<Shape*>(pMesh);
-					pShape->material = matDict[objinfo["matId"]];
+					// pShape->material = matDict[objinfo["matId"]];
 					addShape(pShape, objID, o2w);
 					pShape = nullptr;
 				}
@@ -153,13 +164,13 @@ namespace renderer {
 				float radius  = objinfo["radius"];
 				auto pool = GetPool<Sphere>();
 				pShape = static_cast<Shape*>(pool->newElement(radius));
-				pShape->material = matDict[objinfo["matId"]];
+				// pShape->material = matDict[objinfo["matId"]];
 			}
 			else if (objinfo["type"] == "Plane") {
 				auto pool = GetPool<Plane>();
 				float distance = objinfo["distance"];
 				pShape = static_cast<Shape*>(pool->newElement(distance));
-				pShape->material = matDict[objinfo["matId"]];
+				// pShape->material = matDict[objinfo["matId"]];
 			}
 			else if (objinfo["type"] == "Mesh") {
 				auto pool = GetPool<Mesh>();
@@ -196,7 +207,7 @@ namespace renderer {
 					pMesh->reverse = objinfo["reverse"];
 				}
 				pShape = static_cast<Shape*>(pMesh);
-				pShape->material = matDict[objinfo["matId"]];
+				// pShape->material = matDict[objinfo["matId"]];
 			}
 			else
 				continue;
@@ -211,7 +222,7 @@ namespace renderer {
 		return unionObj;
 	}
 
-	void SceneParser::parseLights(nlohmann::json& config, Lights& lights, MaterialDict& matDict)
+	void SceneParser::parseLights(nlohmann::json& config, Lights& lights)
 	{
 		for (auto objinfo : config["light"]) {
 			Light* pLight = nullptr;

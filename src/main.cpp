@@ -175,7 +175,9 @@ public:
             !screenHDL ||
             !depthMapDebugHDL ||
             !sdfHDL ||
-            !textHDL) {
+            !textHDL ||
+            !gBufferHDL ||
+            !deferredShadingHDL) {
             shutdown("createShaderProgram failed");
         }
         
@@ -185,8 +187,8 @@ public:
         sdfTex = texMgr.loadTexture("msdf.png", "msdf");
         
         
-        auto matPool = GetPool<PhongMaterial>();
-        
+        auto matPool = GetPool<MaterialPhong>();
+
         auto lightPool = GetPool<PointLight>();
         light = lightPool->newElement(Vector3dF(0.0f, 20.0f, 0.0f));
         light->ambient = Color(0.5f, 0.5f, 0.5f);
@@ -199,17 +201,20 @@ public:
         auto pool = GetPool<Model>();
         string dirPath = "./assets/models/";
         
-        Material* objMaterial = matPool->newElement(
+        Material* objMaterial = matPool->newElement();
+        /*
+        
             Color(0.3f, 0.3f, 0.3f),
             Color(1.0f, 1.0f, 1.0f),
             Color(1.0f, 1.0f, 1.0f),
-            32.0f);
-        
+            32.0f
+        */
+
         lightObj = pool->newElement();
         lightObj->CustomInit(dirPath + "cube.obj");
         lightObj->SetScale(Vector3dF(1.0f, 1.0f, 1.0f));
         lightObj->SetPos(light->pos);
-        lightObj->material = objMaterial;
+        // lightObj->material = objMaterial;
 
         for(int i = 0; i < 3; i++) {
             Model* model = pool->newElement();
@@ -219,18 +224,20 @@ public:
             model->SetScale(Vector3dF(0.1f, 0.1f, 0.1f));
             model->SetPos(Vector3dF(-10.0f + i * 10.0f, 0.0f, -1.0f));
             model->SetRotate(90, Axis::y);
-            model->material = objMaterial;
+            // model->material = objMaterial;
         }
-        Material* terrianMaterial = matPool->newElement(
+        Material* terrianMaterial = matPool->newElement();
+        /*
             Color(0.9f, 0.9f, 0.9f),
             Color(1.0f, 1.0f, 1.0f),
             Color(1.0f, 1.0f, 1.0f),
             64.0f);
+        */
         terrian = pool->newElement();
         terrian->CustomInit(dirPath + "plane.obj");
         //terrian->SetScale({10.0, 10.0, 10.0});
         terrian->SetPos({0.0, 0.0, 0.0});
-        terrian->material = terrianMaterial;
+        // terrian->material = terrianMaterial;
         
         quad = pool->newElement();
         Mesh mesh;
@@ -443,7 +450,7 @@ public:
     void drawLight(Shader& shader) {
         shader.setMatrix4f("model", lightObj->o2w->m);
         shader.setMatrix4f("normalMat", lightObj->o2w->mInv.transpose());
-        shader.setMaterial(lightObj->material);
+       // shader.setMaterial(lightObj->material);
         lightObj->Draw();
     }
     
@@ -457,8 +464,7 @@ public:
         
         shader.setMatrix4f("model", terrian->o2w->m);
         shader.setMatrix4f("normalMat", terrian->o2w->mInv.transpose());
-        assert(terrian->material);
-        shader.setMaterial(terrian->material);
+        // shader.setMaterial(terrian->material);
         terrian->Draw();
     }
     
@@ -475,8 +481,7 @@ public:
             obj->SetScale(oldScale * scale);
             shader.setMatrix4f("model", obj->o2w->m);
             shader.setMatrix4f("normalMat", obj->o2w->mInv.transpose());
-            assert(obj->material);
-            shader.setMaterial(obj->material);
+            // shader.setMaterial(obj->material);
             obj->Draw();
             obj->SetScale(oldScale);
         }

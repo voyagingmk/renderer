@@ -93,6 +93,7 @@ namespace renderer {
 	class IntersectResult;
 	class Shape;
 	class Material;
+	class MaterialSetting;
 	class Sphere;
 	class Plane;
 	class Union;

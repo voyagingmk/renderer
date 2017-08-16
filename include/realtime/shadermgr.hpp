@@ -41,7 +41,6 @@ namespace renderer {
         virtual void setMatrix4f(UniLoc loc, Matrix4x4 mat);
         virtual void setTransform4f(UniLoc loc, Transform4x4 trans);
         virtual void setLight(Light* light);
-        virtual void setMaterial(Material* mat);
         // by name
         virtual void set4f(const char* name, float f1, float f2, float f3, float f4);
         virtual void set3f(const char* name, float f1, float f2, float f3);
@@ -92,7 +91,8 @@ namespace renderer {
 		static ShaderMgrOpenGL& getInstance() {
 			static ShaderMgrOpenGL mgr;
 			return mgr;
-        }	public:
+        }
+    public:
         virtual	~ShaderMgrOpenGL() {
             release();
         }

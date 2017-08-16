@@ -65,6 +65,4 @@ public:
     }
 };
 
-size_t Model::modelCount = 0;
-
 #endif

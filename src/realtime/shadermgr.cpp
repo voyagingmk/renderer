@@ -55,17 +55,6 @@ void Shader::setLight(Light* light) {
     }
 }
 
-void Shader::setMaterial(Material* mat) {
-    if(mat->getType() == MaterialType::Phong) {
-        PhongMaterial * pmat = (PhongMaterial*)mat;
-        set3f("material.ambient", pmat->ambient.r(), pmat->ambient.g(), pmat->ambient.b());
-        set3f("material.diffuse", pmat->diffuse.r(), pmat->diffuse.g(), pmat->diffuse.b());
-        set3f("material.specular", pmat->specular.r(), pmat->specular.g(), pmat->specular.b());
-        set1f("material.shininess", pmat->shininess);
-    }
-}
-
-
 // by name
 void Shader::set4f(const char* name, float f1, float f2, float f3, float f4) {
     UniLoc loc = getUniformLocation(name);

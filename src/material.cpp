@@ -3,31 +3,39 @@
 #include "geometry.hpp"
 #include "color.hpp"
 #include "ray.hpp"
+#include "realtime/shadermgr.hpp"
 
 namespace renderer {
-	CheckerMaterial::CheckerMaterial(float scale, float reflectiveness, Color c1, Color c2) :
-		Material(reflectiveness),
-		scale(scale),
-		color1(c1),
-		color2(c2)
-	{
+    void MaterialSetting::uploadToShader(Shader *shader) {
+       
+    }
+
+    void MaterialSettingPhong::uploadToShader(Shader *shader) {
+        // MaterialSetting::uploadToShader(<#shader#>);
+        shader->set3f("ambient", ambient.r(), ambient.g(), ambient.b());
+        shader->set3f("diffuse", diffuse.r(), diffuse.g(), diffuse.b());
+        shader->set3f("specular", specular.r(), specular.g(), specular.b());
+        shader->set1i("shininess", shininess);
+    }
+    
+    void MaterialSettingChecker::uploadToShader(Shader *shader) {
+        
+    }
+    
+    
+    
+    
+    MaterialSetting* Material::getSetting() {
+        return MaterialMgr::getInstance().getMaterialSetting(sID);
+    }
+    
+	Color MaterialChecker::Sample(Ray& ray, Point3dF& position, Normal3dF& normal, Vector3dF& incidence) {
+        MaterialSettingChecker* s = dynamic_cast<MaterialSettingChecker*>(getSetting());
+		return abs((int(std::floor(position.x * 0.1)) + int(std::floor(position.z * s->scale))) % 2) < 1 ? s->color1 : s->color2;
 	};
 
-	Color CheckerMaterial::Sample(Ray& ray, Point3dF& position, Normal3dF& normal, Vector3dF& incidence) {
-		return abs((int(std::floor(position.x * 0.1)) + int(std::floor(position.z * scale))) % 2) < 1 ? color1 : color2;
-	};
-
-
-	PhongMaterial::PhongMaterial(const Color& ambient, const Color& diffuse, const Color& specular, const int shininess, const float reflectiveness) :
-		Material(reflectiveness),
-        ambient(ambient),
-		diffuse(diffuse),
-		specular(specular),
-		shininess(shininess) {
-
-	};
-
-	Color PhongMaterial::Sample(Ray& ray, Point3dF& position, Normal3dF& normal, Vector3dF& incidence) {
+	Color MaterialPhong::Sample(Ray& ray, Point3dF& position, Normal3dF& normal, Vector3dF& incidence) {
+        MaterialSettingPhong* s = dynamic_cast<MaterialSettingPhong*>(getSetting());
 		Vector3dF lightDir = -incidence;
 		float NdotL = normal.Dot(lightDir);
 		Vector3dF D = lightDir - ray.d;
@@ -35,10 +43,10 @@ namespace renderer {
 			return Color::White;
 		Vector3dF H = D.Normalize();
 		float NdotH = normal.Dot(H);
-		Color diffuseTerm = diffuse * (max(NdotL, 0.0f));
+		Color diffuseTerm = s->diffuse * (max(NdotL, 0.0f));
 		Color specularTerm = Color::Black;
-		if(shininess > 0)
-			specular * (float)(std::pow(max(NdotH, 0.0f), shininess));
+		if(s->shininess > 0)
+			s->specular * (float)(std::pow(max(NdotH, 0.0f), s->shininess));
 		assert(!isnan(diffuseTerm.r()) && !isnan(diffuseTerm.r()) && !isnan(diffuseTerm.r()));
 		assert(!isnan(specularTerm.r()) && !isnan(specularTerm.r()) && !isnan(specularTerm.r()));
 

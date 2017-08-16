@@ -5,6 +5,7 @@
 #include "transform.hpp"
 #include "bbox.hpp"
 #include "quaternion.hpp"
+#include "material.hpp"
 
 namespace renderer {
 	class Shape {
@@ -12,7 +13,7 @@ namespace renderer {
 		//default Position = (0, 0, 0)
 	public:
         int id;
-        Material* material;
+        MaterialID matID;
 		Transform4x4* o2w;
         Transform4x4* w2o;
         Vector3dF pos;
@@ -20,7 +21,7 @@ namespace renderer {
         Vector3dF rotate;
 	public:
 		Shape() noexcept:
-            material(nullptr),
+            matID(0),
             o2w(nullptr),
             w2o(nullptr),
             pos(0.0f, 0.0f, 0.0f),
@@ -31,7 +32,7 @@ namespace renderer {
 		virtual ~Shape() noexcept {
 			o2w = nullptr;
 			w2o = nullptr;
-			material = nullptr;
+			matID = 0;
 		}
         
         void SetPos(Vector3dF p) {

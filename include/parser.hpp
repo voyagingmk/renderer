@@ -14,10 +14,10 @@ namespace renderer {
 	private:
 		SceneDesc parseSceneDesc(nlohmann::json& config);
 		PerspectiveCamera parsePerspectiveCamera(nlohmann::json& config);
-		void parseMaterials(nlohmann::json& config, MaterialDict& matDict);
+		void parseMaterials(nlohmann::json& config);
 		Transform* parseTransform(nlohmann::json& config);
-		ShapeUnion* parseShapes(nlohmann::json& config, MaterialDict& matDict);
-		void parseLights(nlohmann::json& config, Lights& lights, MaterialDict& matDict);
+		ShapeUnion* parseShapes(nlohmann::json& config);
+		void parseLights(nlohmann::json& config, Lights& lights);
 		Color parseColor(nlohmann::json& c);
 		template<typename T>
 		Color parseColor(T& colorInfo, const Color& defaultColor) {

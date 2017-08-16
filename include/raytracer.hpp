@@ -24,7 +24,6 @@ namespace renderer {
 		int maxReflect;
 		Film* film;
 		PerspectiveCamera camera;
-		MaterialDict matDict;
 		ShapeUnion* shapeUnion;
 		Lights lights;
 		SceneDesc(const PerspectiveCamera& c, ShapeUnion* s) :
@@ -41,7 +40,6 @@ namespace renderer {
 			camera(s.camera)
 		{
 			s.film = nullptr;
-			matDict = std::move(s.matDict);
 			lights = std::move(s.lights);
 			shapeUnion = std::move(s.shapeUnion);
 		}
