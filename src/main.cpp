@@ -118,20 +118,8 @@ public:
         std::string shaderSubDir = config["shaderSubDir"];
         texMgr.setTextureDirPath((assetsDir + texSubDir).c_str());
         shaderMgr.setShaderFileDirPath((assetsDir + shaderSubDir).c_str());
-        for (auto shaderInfo: config["shader"]) {
-            std::string aliasName = shaderInfo["alias"];
-            ShaderProgramHDL spHDL = shaderMgr.createShaderProgram({
-               { ShaderType::Geometry, shaderInfo["gs"].is_null()? "" : shaderInfo["gs"].get<std::string>() },
-               { ShaderType::Vertex, shaderInfo["vs"].get<std::string>() },
-               { ShaderType::Fragment, shaderInfo["fs"].get<std::string>() }
-            });
-            assert(spHDL);
-            if (!spHDL) {
-                continue;
-            }
-            shaderMgr.setAlias(spHDL, aliasName.c_str());
-        }
-        
+        parser.parseShaders(config);
+
         tex1 = texMgr.loadTexture("dog.png", "tex1", false);
         terrianTex = texMgr.loadTexture("brickwall.jpg", "terrianTex");
         terrianNormTex = texMgr.loadTexture("brickwall_normal.jpg", "terrianNormTex");

@@ -11,9 +11,10 @@ namespace renderer {
 	class SceneParser {
 	public:
 		SceneDesc parse(nlohmann::json& config);
-	private:
+
 		SceneDesc parseSceneDesc(nlohmann::json& config);
 		PerspectiveCamera parsePerspectiveCamera(nlohmann::json& config);
+        void parseShaders(nlohmann::json& config);
 		void parseMaterials(nlohmann::json& config);
 		Transform* parseTransform(nlohmann::json& config);
 		ShapeUnion* parseShapes(nlohmann::json& config);

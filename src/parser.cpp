@@ -13,6 +13,7 @@
 #include "light.hpp"
 #include "transform.hpp"
 #include "bvh.hpp"
+#include "realtime/shadermgr.hpp"
 
 
 #define TINYOBJLOADER_IMPLEMENTATION // define this in only *one* .cc
@@ -35,6 +36,23 @@ namespace renderer {
 		parseLights(config, desc.lights);
 		return desc;
 	}
+    void SceneParser::parseShaders(nlohmann::json& config) {
+        ShaderMgrOpenGL& shaderMgr = ShaderMgrOpenGL::getInstance();
+        for (auto shaderInfo: config["shader"]) {
+            std::string aliasName = shaderInfo["alias"];
+            ShaderProgramHDL spHDL = shaderMgr.createShaderProgram({
+                { ShaderType::Geometry, shaderInfo["gs"].is_null()? "" : shaderInfo["gs"].get<std::string>() },
+                { ShaderType::Vertex, shaderInfo["vs"].get<std::string>() },
+                { ShaderType::Fragment, shaderInfo["fs"].get<std::string>() }
+            });
+            assert(spHDL);
+            if (!spHDL) {
+                continue;
+            }
+            shaderMgr.setAlias(spHDL, aliasName.c_str());
+        }
+    }
+    
 
 	void SceneParser::parseMaterials(nlohmann::json& config)
 	{
