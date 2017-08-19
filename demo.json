@@ -89,6 +89,42 @@
             "toLinear": true
         }
     ],
+    "light": [
+        {
+            "type": "DirectionLight",
+            "dir": [
+                -1,
+                -1,
+                0
+            ],
+            "softshadow": false
+        },
+        {
+            "type": "PointLight",
+            "pos": [
+                0,
+                0,
+                90
+            ],
+            "ambient": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "diffuse": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "specular": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "radius": 10,
+            "shadow": true
+        }
+    ],
     "material": [
         {
             "id": 1,

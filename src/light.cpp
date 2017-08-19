@@ -31,8 +31,10 @@ namespace renderer {
 	void Light::Init() {
 	}
 
-	DirectionLight::DirectionLight(const Vector3dF& d) noexcept
-		: dir(d)
+	DirectionLight::DirectionLight(bool s, bool ss, const Vector3dF& d) noexcept
+		: 
+		Light(s, ss),
+		dir(d)
 	{}
 
 	void DirectionLight::Init() {

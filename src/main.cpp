@@ -33,6 +33,7 @@ class MyContext : public RendererContextSDL {
     Model* quad;
     Model* lightObj;
     PointLight* light;
+	Lights lights;
     FrameBuf depthMapBuf;
     float yaw;
     float pitch;
@@ -119,6 +120,7 @@ public:
         shaderMgr.setShaderFileDirPath((assetsDir + shaderSubDir).c_str());
         parser.parseShaders(config);
         parser.parseTextures(config);
+		parser.parseLights(config, lights);
 
         auto lightPool = GetPool<PointLight>();
         light = lightPool->newElement(Vector3dF(0.0f, 20.0f, 0.0f));
@@ -294,7 +296,6 @@ public:
         depthMapShader.setMatrixes4f("lightPVs", lightPVs);
         depthMapShader.set1f("far_plane", far);
         depthMapShader.set3f("lightPos", light->pos);
-        depthMapShader.setMatrix4f("lightPV", lightPV);
     
         CheckGLError;
         glCullFace(GL_FRONT);

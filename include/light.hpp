@@ -26,7 +26,7 @@ namespace renderer {
         float quadratic;
 	public:
 		Light() noexcept;
-		Light(bool s, bool ss, float r, int rays) noexcept;
+		Light(bool s, bool ss, float r = 1.0f, int rays = 0) noexcept;
 		//incidence: lightPos towards targetPos
 		virtual Normal3dF incidenceNormal(Point3dF& targetPos) = 0;
 		virtual Vector3dF incidence(Point3dF& targetPos) = 0;
@@ -39,7 +39,7 @@ namespace renderer {
 	public:
 		Vector3dF dir;
 	public:
-		DirectionLight(const Vector3dF& dir) noexcept;
+		DirectionLight(bool s, bool ss, const Vector3dF& dir) noexcept;
         virtual LightType getType() override { return LightType::Direction; }
 		virtual Normal3dF incidenceNormal(Point3dF& targetPos) override {
 			return dir.Normalize();
