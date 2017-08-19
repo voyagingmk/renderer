@@ -18,7 +18,7 @@ void TextureMgrBase::release() {
 	
 }
 
-TexRef TextureMgrBase::getTexRef(const char* aliasname) {
+TexRef TextureMgrBase::getTexRef(std::string&& aliasname) {
     return texDict[aliasname];
 }
 
@@ -26,7 +26,7 @@ TexRef TextureMgrBase::getTexRef(const char* aliasname) {
 
 #ifdef USE_GL
 
-TexRef TextureMgrOpenGL::loadTexture(const char* filename, const char* aliasname, bool hasAlpha, bool toLinear)
+TexRef TextureMgrOpenGL::loadTexture(const char* filename, std::string& aliasname, bool hasAlpha, bool toLinear)
 {
     // Load and create a texture
     TexRef texRef;
@@ -106,7 +106,7 @@ TexRef TextureMgrOpenGL::CreateDepthTexture(DepthTexType dtType, size_t width, s
     return texRef;
 }
 
-TexRef TextureMgrOpenGL::loadCubeMap(std::string filename[6], const char* aliasname) {
+TexRef TextureMgrOpenGL::loadCubeMap(std::string filename[6], std::string&& aliasname) {
     TexRef texRef;
     glGenTextures(1, &texRef.texID);
     glActiveTexture(GL_TEXTURE0);
@@ -145,7 +145,7 @@ void TextureMgrOpenGL::DisableTexture(uint32_t idx) {
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void TextureMgrOpenGL::activateTexture(uint32_t idx, const char* aliasname) {
+void TextureMgrOpenGL::activateTexture(uint32_t idx, std::string&& aliasname) {
     auto it = texDict.find(aliasname);
     if(it == texDict.end()) {
         return;
@@ -153,7 +153,7 @@ void TextureMgrOpenGL::activateTexture(uint32_t idx, const char* aliasname) {
     activateTexture(idx, it->second);
 }
 
-void TextureMgrOpenGL::destroyTexture(const char* aliasname) {
+void TextureMgrOpenGL::destroyTexture(std::string&& aliasname) {
     auto it = texDict.find(aliasname);
     if(it == texDict.end()) {
         return;

@@ -27,7 +27,6 @@ class MyContext : public RendererContextSDL {
     PerspectiveCamera camera;
     FrameBuf depthFrameBuf;
     FrameBuf mainFrameBuf;
-    TexRef tex1, terrianTex, terrianNormTex, sdfTex;
     std::map<SDL_Keycode, uint8_t> keyState;
     std::vector<Model*> objs;
     Model* terrian;
@@ -119,13 +118,7 @@ public:
         texMgr.setTextureDirPath((assetsDir + texSubDir).c_str());
         shaderMgr.setShaderFileDirPath((assetsDir + shaderSubDir).c_str());
         parser.parseShaders(config);
-
-        tex1 = texMgr.loadTexture("dog.png", "tex1", false);
-        terrianTex = texMgr.loadTexture("brickwall.jpg", "terrianTex");
-        terrianNormTex = texMgr.loadTexture("brickwall_normal.jpg", "terrianNormTex");
-        sdfTex = texMgr.loadTexture("msdf.png", "msdf");
-        
-        
+        parser.parseTextures(config);
 
         auto lightPool = GetPool<PointLight>();
         light = lightPool->newElement(Vector3dF(0.0f, 20.0f, 0.0f));
@@ -363,8 +356,7 @@ public:
         Matrix4x4 PV = Ortho(0.0f, (float)winWidth, 0.0f, (float)winHeight, 0.01f, 100.0f);
         sdfShader.setMatrix4f("PV", PV);
         sdfShader.setMatrix4f("model", quad->o2w->m);
-        //texMgr.activateTexture(0, textmgr.sdfTexRef);
-        texMgr.activateTexture(0, sdfTex);
+        texMgr.activateTexture(0, "sdf");
         
         quad->Draw();
         
@@ -400,8 +392,8 @@ public:
     void drawTerrian(Shader& shader) {
         TextureMgrOpenGL& texMgr = TextureMgrOpenGL::getInstance();
         // 地面
-        texMgr.activateTexture(0, terrianTex);
-        texMgr.activateTexture(2, terrianNormTex);
+        texMgr.activateTexture(0, "terrian");
+        texMgr.activateTexture(2, "terrianNorm");
         shader.set1i("texture1", 0);
         shader.set1i("normTex", 2);
         terrian->Draw(&shader);
@@ -410,7 +402,7 @@ public:
     void drawObjs(Shader& shader, float scale = 1.0f) {
         TextureMgrOpenGL& texMgr = TextureMgrOpenGL::getInstance();
         
-        texMgr.activateTexture(0, tex1);
+        texMgr.activateTexture(0, "dog");
         //texMgr.DisableTexture(2); // no normal map
         shader.set1i("texture1", 0);
         for(int i = 0; i < objs.size(); i++) {

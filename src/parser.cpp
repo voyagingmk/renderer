@@ -14,6 +14,7 @@
 #include "transform.hpp"
 #include "bvh.hpp"
 #include "realtime/shadermgr.hpp"
+#include "realtime/texturemgr.hpp"
 
 
 #define TINYOBJLOADER_IMPLEMENTATION // define this in only *one* .cc
@@ -36,6 +37,7 @@ namespace renderer {
 		parseLights(config, desc.lights);
 		return desc;
 	}
+    
     void SceneParser::parseShaders(nlohmann::json& config) {
         ShaderMgrOpenGL& shaderMgr = ShaderMgrOpenGL::getInstance();
         for (auto shaderInfo: config["shader"]) {
@@ -50,6 +52,19 @@ namespace renderer {
                 continue;
             }
             shaderMgr.setAlias(spHDL, aliasName.c_str());
+        }
+    }
+    
+    
+    void SceneParser::parseTextures(nlohmann::json& config) {
+        TextureMgrOpenGL& texMgr = TextureMgrOpenGL::getInstance();
+        for (auto texnfo: config["texture"]) {
+            std::string fileName = texnfo["file"];
+            std::string aliasName = texnfo["alias"];
+            bool hasAlpha = texnfo["hasAlpha"];
+            bool toLinear = texnfo["toLinear"];
+            
+            texMgr.loadTexture(fileName.c_str(), aliasName, hasAlpha, toLinear);
         }
     }
     

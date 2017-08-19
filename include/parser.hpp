@@ -15,6 +15,7 @@ namespace renderer {
 		SceneDesc parseSceneDesc(nlohmann::json& config);
 		PerspectiveCamera parsePerspectiveCamera(nlohmann::json& config);
         void parseShaders(nlohmann::json& config);
+        void parseTextures(nlohmann::json& config);
 		void parseMaterials(nlohmann::json& config);
 		Transform* parseTransform(nlohmann::json& config);
 		ShapeUnion* parseShapes(nlohmann::json& config);

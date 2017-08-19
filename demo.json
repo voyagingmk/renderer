@@ -63,6 +63,32 @@
             "fs": "deferred_shading.fs"
         }
     ],
+    "texture": [
+        {
+            "alias": "dog",
+            "file": "dog.png",
+            "hasAlpha": false,
+            "toLinear": true
+        },
+        {
+            "alias": "terrian",
+            "file": "brickwall.jpg",
+            "hasAlpha": false,
+            "toLinear": true
+        },
+        {
+            "alias": "terrianNorm",
+            "file": "brickwall_normal.jpg",
+            "hasAlpha": false,
+            "toLinear": true
+        },
+        {
+            "alias": "msdf",
+            "file": "msdf.png",
+            "hasAlpha": false,
+            "toLinear": true
+        }
+    ],
     "material": [
         {
             "id": 1,
