@@ -49,6 +49,8 @@ namespace renderer {
         virtual void UseFrameBuffer(FrameBuf& buf);
         virtual void UnuseFrameBuffer(FrameBuf& buf);
     };
+
+	typedef BufferMgrOpenGL BufferMgr;
 #endif
     
 }
