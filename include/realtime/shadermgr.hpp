@@ -55,13 +55,14 @@ namespace renderer {
         virtual void use();
     };
     typedef std::map<ShaderProgramHDL, Shader> ShaderProgramSet;
-    
+    typedef std::map<std::string, ShaderProgramHDL> ShaderProgramAlias;
 
 	class ShaderMgrBase {
 	protected:
 		std::string dirpath;
 		std::list<ShaderProgramHDL> spHDLs;
         ShaderProgramSet programSet;
+        ShaderProgramAlias programAlias;
 	public:
 		virtual	~ShaderMgrBase();
 		void setShaderFileDirPath(const char* path) {
@@ -70,13 +71,27 @@ namespace renderer {
         inline Shader& getShader(ShaderProgramHDL hdl) {
             return programSet[hdl];
         }
+        inline Shader& getShader(const char* alias) {
+            return getShader(std::string(alias));
+        }
+        inline Shader& getShader(std::string&& alias) {
+            ShaderProgramHDL hdl = programAlias[alias];
+            return programSet[hdl];
+        }
 		ShaderHDL loadShaderFromFile(ShaderType, const char* filename);
 		virtual ShaderHDL loadShaderFromStr(ShaderType, const char* str) { return 0; }
 		virtual void deleteShader(ShaderHDL shaderHDL) {}
 		virtual ShaderProgramHDL createShaderProgram(ShaderFileNames) { return 0; }
 		virtual ShaderProgramHDL createShaderProgram(ShaderHDLSet) { return 0; }
-		virtual void deleteShaderProgram(ShaderProgramHDL){}
+		virtual void deleteShaderProgram(ShaderProgramHDL) {}
 		virtual void useShaderProgram(ShaderProgramHDL hdl) {}
+        void setAlias(ShaderProgramHDL hdl, const char* alias) {
+            assert(hdl);
+            programAlias[alias] = hdl;
+        }
+        ShaderProgramHDL getShaderProgram(std::string& alias) {
+            return programAlias[alias];
+        }
 		virtual bool isShader(ShaderHDL) { return false; }
         void release();
 	};

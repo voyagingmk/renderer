@@ -221,11 +221,10 @@ public:
     }
     
     template<typename T>
-    void RenderText(ShaderProgramHDL shaderHDL, T text, GLfloat x, GLfloat y, GLfloat scale, Color color)
+    void RenderText(Shader &shader, T text, GLfloat x, GLfloat y, GLfloat scale, Color color)
     {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        Shader &shader = ShaderMgrOpenGL::getInstance().getShader(shaderHDL);
         // Activate corresponding render state
         shader.use();
         shader.set3f("textColor", color.r(), color.g(), color.b());

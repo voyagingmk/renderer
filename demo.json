@@ -1,0 +1,84 @@
+{
+    "title": "Test Scene",
+    "width": 512,
+    "height": 512,
+    "assetsDir": "assets/",
+    "texSubDir": "images/",
+    "shaderSubDir": "shaders/",
+    "shader": [
+        {
+            "alias": "main2",
+            "vs": "main.vs",
+            "fs": "main.fs"
+        },
+        {
+            "alias": "main",
+            "vs": "point_shadow.vs",
+            "fs": "point_shadow.fs"
+        },
+        {
+            "alias": "depthMap2",
+            "vs": "depthMap.vs",
+            "fs": "depthMap.fs"
+        },
+        {
+            "alias": "depthMap",
+            "gs": "point_shadows_depth.gs",
+            "vs": "point_shadows_depth.vs",
+            "fs": "point_shadows_depth.fs"
+        },
+        {
+            "alias": "depthMapDebug",
+            "vs": "depthMapDebug.vs",
+            "fs": "depthMapDebug.fs"
+        },
+        {
+            "alias": "singleColor",
+            "vs": "main.vs",
+            "fs": "singlecolor.fs"
+        },
+        {
+            "alias": "screen",
+            "vs": "screen.vs",
+            "fs": "screen.fs"
+        },
+        {
+            "alias": "sdf",
+            "vs": "sdf.vs",
+            "fs": "sdf.fs"
+        },
+        {
+            "alias": "text",
+            "vs": "text.vs",
+            "fs": "text.fs"
+        },
+        {
+            "alias": "gBuffer",
+            "vs": "g_buffer.vs",
+            "fs": "g_buffer.fs"
+        },
+        {
+            "alias": "deferredShading",
+            "vs": "deferred_shading.vs",
+            "fs": "deferred_shading.fs"
+        }
+    ],
+    "material": [
+        {
+            "id": 1,
+            "type": "Phone",
+            "diffuse": "White",
+            "specular": "White",
+            "shininess": 32,
+            "reflectiveness": 0.5
+        },
+        {
+            "id": 2,
+            "type": "Phone",
+            "diffuse": "Blue",
+            "specular": "White",
+            "shininess": 16,
+            "reflectiveness": 0.25
+        }
+    ]
+}

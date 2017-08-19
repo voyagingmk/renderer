@@ -152,12 +152,12 @@ ShaderHDL ShaderMgrBase::loadShaderFromFile(ShaderType type, const char* filenam
 	auto path = dirpath + std::string(filename);
 	std::string source = readFile(path.c_str());
     if (source.length() == 0) {
-        std::cout << "[ShaderMgr] err, loadShaderFromFile failed: wrong file." << std::endl;
+        std::cout << "[ShaderMgr] err, loadShaderFromFile failed, wrong file:" << path << std::endl;
         return 0;
     }
 	auto hdl = loadShaderFromStr(type, source.c_str());
 	if(!hdl) {
-		std::cout << "[ShaderMgr] err, loadShaderFromFile failed:" << filename << std::endl;
+		std::cout << "[ShaderMgr] err, loadShaderFromFile failed:" << path << std::endl;
 	}
 	return hdl;
 }
@@ -246,7 +246,11 @@ ShaderProgramHDL ShaderMgrOpenGL::createShaderProgram(ShaderHDLSet shaderHDLSet)
 ShaderProgramHDL ShaderMgrOpenGL::createShaderProgram(ShaderFileNames names) {
 	ShaderHDLSet shaderHDLSet;
 	for (auto pair: names) {
-		ShaderHDL hdl = loadShaderFromFile(pair.first, pair.second.c_str());
+        const char* path = pair.second.c_str();
+        if (!path || strlen(path) == 0) {
+            continue;
+        }
+		ShaderHDL hdl = loadShaderFromFile(pair.first, path);
 		shaderHDLSet[pair.first] = hdl;
 	}
 	return createShaderProgram(shaderHDLSet);

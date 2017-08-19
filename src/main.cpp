@@ -11,10 +11,12 @@
 #include "realtime/model.hpp"
 #include "realtime/textmgr.hpp"
 #include "camera.hpp"
+#include "parser.hpp"
 
 
 using namespace std;
 using namespace renderer;
+using json = nlohmann::json;
 
 enum class RenderType {
     Normal = 1,
@@ -25,15 +27,6 @@ class MyContext : public RendererContextSDL {
     PerspectiveCamera camera;
     FrameBuf depthFrameBuf;
     FrameBuf mainFrameBuf;
-    ShaderProgramHDL mainHDL;
-    ShaderProgramHDL depthMapHDL;
-    ShaderProgramHDL depthMapDebugHDL;
-    ShaderProgramHDL singleColorHDL;
-    ShaderProgramHDL screenHDL;
-    ShaderProgramHDL sdfHDL;
-    ShaderProgramHDL textHDL;
-	ShaderProgramHDL gBufferHDL;
-	ShaderProgramHDL deferredShadingHDL;
     TexRef tex1, terrianTex, terrianNormTex, sdfTex;
     std::map<SDL_Keycode, uint8_t> keyState;
     std::vector<Model*> objs;
@@ -48,7 +41,6 @@ class MyContext : public RendererContextSDL {
     RenderType renderType;
 public:
     MyContext():
-        mainHDL(0),
         yaw(-90.0f), pitch(0),
         renderType(RenderType::Normal)
          {}
@@ -111,76 +103,33 @@ public:
         ShaderMgrOpenGL& shaderMgr = ShaderMgrOpenGL::getInstance();
         BufferMgrOpenGL& bufferMgr = BufferMgrOpenGL::getInstance();
         MaterialMgr& matMgr = MaterialMgr::getInstance();
-
+        
+        SceneParser parser;
+        json config = readJson("demo.json");
         //TexRef texRef = texMgr.CreateDepthTexture(DepthTexType::DepthStencil, 1024, 1024);
         //depthFrameBuf = bufferMgr.CreateDepthFrameBuffer(DepthTexType::DepthStencil, texRef);
         TexRef texRef = texMgr.CreateDepthTexture(DepthTexType::CubeMap, 1024, 1024);
         CheckGLError;
         depthFrameBuf = bufferMgr.CreateDepthFrameBuffer(DepthTexType::CubeMap, texRef);
         CheckGLError;
-        
         mainFrameBuf = bufferMgr.CreateColorFrameBuffer(winWidth, winHeight, BufType::Tex, 0);
-        
-        texMgr.setTextureDirPath("assets/images/");
-        shaderMgr.setShaderFileDirPath("assets/shaders/");
-        mainHDL = shaderMgr.createShaderProgram({
-            { ShaderType::Vertex, "point_shadow.vs" },
-            { ShaderType::Fragment, "point_shadow.fs"}
-        });
-        depthMapHDL = shaderMgr.createShaderProgram({
-            { ShaderType::Geometry, "point_shadows_depth.gs"},
-            { ShaderType::Vertex, "point_shadows_depth.vs" },
-            { ShaderType::Fragment, "point_shadows_depth.fs"}
-        });
-        /*mainHDL = shaderMgr.createShaderProgram({
-            { ShaderType::Vertex, "main.vs" },
-            { ShaderType::Fragment, "main.fs"}
-        });
-        depthMapHDL = shaderMgr.createShaderProgram({
-            { ShaderType::Vertex, "depthMap.vs" },
-            { ShaderType::Fragment, "depthMap.fs"}
-        });*/
-        singleColorHDL = shaderMgr.createShaderProgram({
-            { ShaderType::Vertex, "main.vs" },
-            { ShaderType::Fragment, "singlecolor.fs"}
-        });
-        screenHDL = shaderMgr.createShaderProgram({
-            { ShaderType::Vertex, "screen.vs" },
-            { ShaderType::Fragment, "screen.fs"}
-        });
-        depthMapDebugHDL = shaderMgr.createShaderProgram({
-            { ShaderType::Vertex, "depthMapDebug.vs" },
-            { ShaderType::Fragment, "depthMapDebug.fs"}
-        });
-        
-        sdfHDL = shaderMgr.createShaderProgram({
-            { ShaderType::Vertex, "sdf.vs" },
-            { ShaderType::Fragment, "sdf.fs"}
-        });
-        
-        textHDL = shaderMgr.createShaderProgram({
-            { ShaderType::Vertex, "text.vs" },
-            { ShaderType::Fragment, "text.fs"}
-        });
-		gBufferHDL = shaderMgr.createShaderProgram({
-			{ ShaderType::Vertex, "g_buffer.vs" },
-			{ ShaderType::Fragment, "g_buffer.fs" }
-		});
-		deferredShadingHDL = shaderMgr.createShaderProgram({
-			{ ShaderType::Vertex, "deferred_shading.vs" },
-			{ ShaderType::Fragment, "deferred_shading.fs" }
-		});
-        
-        if (!depthMapHDL ||
-            !mainHDL ||
-            !singleColorHDL ||
-            !screenHDL ||
-            !depthMapDebugHDL ||
-            !sdfHDL ||
-            !textHDL ||
-            !gBufferHDL ||
-            !deferredShadingHDL) {
-            shutdown("createShaderProgram failed");
+        std::string assetsDir = config["assetsDir"];
+        std::string texSubDir = config["texSubDir"];
+        std::string shaderSubDir = config["shaderSubDir"];
+        texMgr.setTextureDirPath((assetsDir + texSubDir).c_str());
+        shaderMgr.setShaderFileDirPath((assetsDir + shaderSubDir).c_str());
+        for (auto shaderInfo: config["shader"]) {
+            std::string aliasName = shaderInfo["alias"];
+            ShaderProgramHDL spHDL = shaderMgr.createShaderProgram({
+               { ShaderType::Geometry, shaderInfo["gs"].is_null()? "" : shaderInfo["gs"].get<std::string>() },
+               { ShaderType::Vertex, shaderInfo["vs"].get<std::string>() },
+               { ShaderType::Fragment, shaderInfo["fs"].get<std::string>() }
+            });
+            assert(spHDL);
+            if (!spHDL) {
+                continue;
+            }
+            shaderMgr.setAlias(spHDL, aliasName.c_str());
         }
         
         tex1 = texMgr.loadTexture("dog.png", "tex1", false);
@@ -357,34 +306,38 @@ public:
         Matrix4x4 lightProj = Ortho(-20.0f, 20.0f, -20.0f, 20.0f, 0.01f, 100.0f);
         Matrix4x4 lightPV = lightProj * LookAt(light->pos, Vector3dF(0.0, 0.0, 0.0), {0.0f, 1.0f, 0.0f});
         
-        Shader& depthMapShader = shaderMgr.getShader(depthMapHDL);
+        CheckGLError;
+        Shader& depthMapShader = shaderMgr.getShader("depthMap");
         depthMapShader.use();
+        CheckGLError;
         depthMapShader.setMatrixes4f("lightPVs", lightPVs);
         depthMapShader.set1f("far_plane", far);
         depthMapShader.set3f("lightPos", light->pos);
- 
         depthMapShader.setMatrix4f("lightPV", lightPV);
-        
+    
+        CheckGLError;
         glCullFace(GL_FRONT);
         drawScene(Color(0.1f, 0.1f, 0.1f, 1.0f),
             GL_DEPTH_BUFFER_BIT,
             depthFrameBuf,
-            depthMapHDL);
+            "depthMap");
         glCullFace(GL_BACK);
         buffMgr.UnuseFrameBuffer(depthFrameBuf);
         
         
         buffMgr.UseFrameBuffer(mainFrameBuf);
-        Shader& mainShader = shaderMgr.getShader(mainHDL);
+        Shader& mainShader = shaderMgr.getShader("main");
         mainShader.use();
         mainShader.set1f("far_plane", far);
         mainShader.setMatrix4f("lightPV", lightPV);
         mainShader.set1i("depthMap", 1);
         texMgr.activateTexture(1, depthFrameBuf.depthTex);
+        
+        CheckGLError;
         drawScene(Color(0.1f, 0.1f, 0.1f, 1.0f),
                   GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT,
                   mainFrameBuf,
-                  mainHDL,
+                  "main",
                   camera.GetCameraPosition(),
                   camera.GetMatrix());
         drawLight(mainShader);
@@ -397,12 +350,12 @@ public:
         glDisable(GL_DEPTH_TEST);
         glDisable(GL_STENCIL_TEST);
         if (renderType == RenderType::Normal) {
-            Shader& screenShader = shaderMgr.getShader(screenHDL);
+            Shader& screenShader = shaderMgr.getShader("screen");
             screenShader.use();
             screenShader.set1i("texture1", 0);
             texMgr.activateTexture(0, mainFrameBuf.getTexRef());
         } else {
-            Shader& screenShader = shaderMgr.getShader(depthMapDebugHDL);
+            Shader& screenShader = shaderMgr.getShader("depthMapDebug");
             screenShader.use();
             screenShader.set1i("texture1", 0);
             texMgr.activateTexture(0, depthFrameBuf.depthTex);
@@ -416,7 +369,7 @@ public:
         
         quad->SetScale({200.0f, 200.0f, 1.0f});
         quad->SetPos({winWidth * 0.5f, winHeight * 0.5f, 0.0f});
-        Shader& sdfShader = shaderMgr.getShader(sdfHDL);
+        Shader& sdfShader = shaderMgr.getShader("sdf");
         sdfShader.use();
         sdfShader.set1i("texture1", 0);
         Matrix4x4 PV = Ortho(0.0f, (float)winWidth, 0.0f, (float)winHeight, 0.01f, 100.0f);
@@ -427,9 +380,9 @@ public:
         
         quad->Draw();
         
-        textmgr.RenderText<std::u16string>(textHDL, u"测试", 0.0f, 10.0f, 1.0f, Color(0.5, 0.8f, 0.2f));
+        textmgr.RenderText<std::u16string>(shaderMgr.getShader("text"), u"测试", 0.0f, 10.0f, 1.0f, Color(0.5, 0.8f, 0.2f));
         CheckGLError;
-        textmgr.RenderText<std::string>(textHDL, "(C) LearnOpenGL.com", 540.0f, 570.0f, 1.0f, Color(0.3, 0.7f, 0.9f));
+        textmgr.RenderText<std::string>(shaderMgr.getShader("text"), "(C) LearnOpenGL.com", 540.0f, 570.0f, 1.0f, Color(0.3, 0.7f, 0.9f));
         CheckGLError;
         
     }
@@ -483,12 +436,11 @@ public:
     void drawScene(Color clearColor,
                    uint32_t clearBits,
                    FrameBuf& buf,
-                   ShaderProgramHDL hdl,
+                   const char* shaderALias,
                    const Vector3dF viewPos = {0.0, 0.0, 0.0},
                    const Matrix4x4 PV = Matrix4x4()) {
-        CheckGLError;
         ShaderMgrOpenGL& shaderMgr = ShaderMgrOpenGL::getInstance();
-        Shader& shader = shaderMgr.getShader(hdl);
+        Shader& shader = shaderMgr.getShader(shaderALias);
         shader.set3f("viewPos", viewPos);
         shader.setMatrix4f("PV", PV);
         glEnable(GL_DEPTH_TEST);
