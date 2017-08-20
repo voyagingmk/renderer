@@ -12,6 +12,7 @@
 #include "realtime/textmgr.hpp"
 #include "camera.hpp"
 #include "parser.hpp"
+#include "ecs/test.hpp"
 
 using namespace std;
 using namespace renderer;
@@ -112,6 +113,10 @@ class MyContext : public RendererContextSDL
     }
     virtual void onCustomSetup() override
     {
+
+		static ECSDemo demo;
+		demo.update(0.1f);
+
         TextureMgr &texMgr = TextureMgr::getInstance();
         ShaderMgr &shaderMgr = ShaderMgr::getInstance();
         BufferMgr &bufferMgr = BufferMgr::getInstance();

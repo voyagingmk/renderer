@@ -117,6 +117,7 @@ public:
 
 	template <class... Args>
 	T* newElement(ElementIdx idx, Args&&... args) {
+		reserve(idx);
 		return ::new(get(idx)) T(std::forward<Args>(args) ...);
 	}
 
