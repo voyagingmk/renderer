@@ -24,5 +24,8 @@
     "editor.minimap.enabled": false,
     "workbench.iconTheme": null,
     "eslint.enable": true,
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "files.associations": {
+        "memory": "cpp"
+    }
 }

@@ -49,7 +49,9 @@
 #include <thread>
 #include <mutex>
 #include <random>
+#include <bitset>
 #include <ctime>
+#include <unordered_map>
 #include <chrono>
 #include "stdafx.h"
 

@@ -1,0 +1,88 @@
+#pragma once
+
+#include <cstddef>
+#include <cassert>
+#include <vector>
+#include <set>  
+
+
+template <typename T>
+class MemoryPool {
+protected:
+	typedef std::size_t ElementIdx;
+public:
+	explicit MemoryPool(std::size_t chunkElements = 8192) :
+		m_elementSize(sizeof(T)),
+		m_chunkElements(chunkElements),
+		m_tailIdx(0),
+		m_capacity(0) {}
+
+	virtual ~MemoryPool() {
+		for (char *ptr : m_blocks) {
+			delete[] ptr;
+		}
+	}
+	std::size_t capacity() const { return m_capacity; }
+	std::size_t chunks() const { return m_blocks.size(); }
+
+	inline void reserve(ElementIdx nRequiredElements) {
+		while (m_capacity < nRequiredElements) {
+			char *chunk = new char[m_elementSize * m_chunkElements];
+			m_blocks.push_back(chunk);
+			m_capacity += m_chunkElements;
+			printf("m_capacity -> %d\n", m_capacity);
+		}
+	}
+
+	inline void* get(ElementIdx idx) {
+		assert(idx < m_capacity);
+		return m_blocks[idx / m_chunkElements] + m_elementSize * (idx % m_chunkElements);
+	}
+
+	inline const T* get(ElementIdx idx) const {
+		assert(idx < m_capacity);
+		return (static_cast<T*>) m_blocks[idx / m_chunkElements] + m_elementSize * (idx % m_chunkElements);
+	}
+
+	T* dispatch() {
+		T* elem;
+		if (recycled.size() > 0) {
+			elem = *recycled.begin();
+			recycled.erase(recycled.begin());
+			return elem;
+		}
+		else {
+			if (m_tailIdx >= m_capacity) {
+				// add 1 chunk
+				reserve(m_capacity + m_chunkElements);
+			}
+			ElementIdx idx = m_tailIdx++;
+			elem = static_cast<T*>(get(idx));
+		}
+		return elem;
+	}
+
+	void recycle(T* ptr) {
+		recycled.insert(ptr);
+	}
+
+
+	virtual void deleteElement(T* ptr) {
+		recycle(ptr);
+		ptr->~T();
+	}
+
+
+	template <class... Args>
+	T* newElement(Args&&... args) {
+		return ::new(dispatch()) T(std::forward<Args>(args) ...);
+	}
+
+protected:
+	std::set<T*> recycled;
+	std::vector<char *> m_blocks;
+	std::size_t m_elementSize;
+	std::size_t m_chunkElements;
+	std::size_t m_capacity;
+	ElementIdx m_tailIdx; // the tail elememnt
+};
