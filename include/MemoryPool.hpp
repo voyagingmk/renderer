@@ -44,12 +44,11 @@ public:
 		return (static_cast<T*>) m_blocks[idx / m_chunkElements] + m_elementSize * (idx % m_chunkElements);
 	}
 
-	T* dispatch() {
+	T* dispatchPtr() {
 		T* elem;
-		if (recycled.size() > 0) {
-			elem = *recycled.begin();
-			recycled.erase(recycled.begin());
-			return elem;
+		if (recycledPtrs.size() > 0) {
+			elem = *recycledPtrs.begin();
+			recycledPtrs.erase(recycledPtrs.begin());
 		}
 		else {
 			if (m_tailIdx >= m_capacity) {
@@ -62,24 +61,68 @@ public:
 		return elem;
 	}
 
-	void recycle(T* ptr) {
-		recycled.insert(ptr);
+	ElementIdx dispatchIdx() {
+		ElementIdx idx;
+		if (recycledIdxes.size() > 0) {
+			idx = *recycledIdxes.begin();
+			recycled.erase(recycledIdxes.begin());
+		}
+		else {
+			if (m_tailIdx >= m_capacity) {
+				// add 1 chunk
+				reserve(m_capacity + m_chunkElements);
+			}
+			idx = m_tailIdx++;
+		}
+		return idx;
 	}
 
+	bool recycle(T* ptr) {
+		auto ret = recycledPtrs.insert(ptr);
+		return ret.second == true;
+	}
 
-	virtual void deleteElement(T* ptr) {
-		recycle(ptr);
+	bool recycle(ElementIdx idx) {
+		auto ret = recycledIdxes.insert(idx);
+		return ret.second == true;
+	}
+
+	// No ElementIdx
+
+	void deleteElement(T* ptr) {
+		bool ok = recycle(ptr);
+		if (!ok) {
+			return;
+		}
 		ptr->~T();
 	}
 
 
 	template <class... Args>
 	T* newElement(Args&&... args) {
-		return ::new(dispatch()) T(std::forward<Args>(args) ...);
+		return ::new(dispatchPtr()) T(std::forward<Args>(args) ...);
+	}
+
+	// Need ElementIdx
+
+	void deleteElement(ElementIdx idx) {
+		bool ok = recycle(idx);
+		if (!ok) {
+			return;
+		}
+		T* ptr = get(idx);
+		ptr->~T();
+	}
+
+
+	template <class... Args>
+	T* newElement(ElementIdx idx, Args&&... args) {
+		return ::new(get(idx)) T(std::forward<Args>(args) ...);
 	}
 
 protected:
-	std::set<T*> recycled;
+	std::set<T*> recycledPtrs;
+	std::set<ElementIdx> recycledIdxes;
 	std::vector<char *> m_blocks;
 	std::size_t m_elementSize;
 	std::size_t m_chunkElements;
