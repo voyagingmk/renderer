@@ -2,7 +2,8 @@
 #define RENDERER_ECS_HPP
 
 #include "base.hpp"
-#include "obj.hpp"
+#include "object.hpp"
+#include "object_manager.hpp"
 #include "event.hpp"
 #include "system.hpp"
 

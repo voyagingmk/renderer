@@ -1,4 +1,5 @@
-#pragma once
+#ifndef MEMORYPOOL_HPP
+#define MEMORYPOOL_HPP
 
 #include <cstddef>
 #include <cassert>
@@ -105,7 +106,7 @@ public:
 
 	// Need ElementIdx
 
-	void deleteElement(ElementIdx idx) {
+	void deleteElementByIdx(ElementIdx idx) {
 		bool ok = recycle(idx);
 		if (!ok) {
 			return;
@@ -116,7 +117,7 @@ public:
 
 
 	template <class... Args>
-	T* newElement(ElementIdx idx, Args&&... args) {
+	T* newElementByIdx(ElementIdx idx, Args&&... args) {
 		reserve(idx);
 		return ::new(get(idx)) T(std::forward<Args>(args) ...);
 	}
@@ -130,3 +131,6 @@ protected:
 	std::size_t m_capacity;
 	ElementIdx m_tailIdx; // the tail elememnt
 };
+
+
+#endif

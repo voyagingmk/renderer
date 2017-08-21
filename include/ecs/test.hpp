@@ -22,17 +22,20 @@ struct Direction
 
 class MovementSystem : public System<MovementSystem>
 {
+public:
 	void update(ObjectManager &objs, EventManager &events, float dt) override
 	{
+		/*
 		objs.each<Position, Direction>([dt](Object obj, Position &position, Direction &direction) {
 			position.x += direction.x * dt;
 			position.y += direction.y * dt;
-		});
+		});*/
 	};
 };
 
 struct Collision
 {
+public:
 	Collision(Object left, Object right) : left(left), right(right) {}
 
 	Object left, right;
@@ -41,24 +44,26 @@ struct Collision
 class CollisionSystem : public System<CollisionSystem>
 {
   public:
-	void update(ObjectManager &objs, EventManager &events, float dt) override
+	void update(ObjectManager &objMgr, EventManager &evtMgr, float dt) override
 	{
 		ComponentHandle<Position> left_position, right_position;
-		for (Object left_entity : objs.entities_with_components(left_position))
+		/*
+		for (Object left_obj : objMgr.entities_with_components(left_position))
 		{
-			for (Object right_entity : objs.entities_with_components(right_position))
+			for (Object right_obj : objMgr.entities_with_components(right_position))
 			{
 				if (1)
 				{
-					events.emit<Collision>(left_entity, right_entity);
+					evtMgr.emit<Collision>(left_obj, right_obj);
 				}
 			}
-		}
+		}*/
 	};
 };
 
 struct DebugSystem : public System<DebugSystem>, public Receiver<DebugSystem>
 {
+public:
 	void configure(EventManager &events)
 	{
 		events.subscribe<Collision>(*this);

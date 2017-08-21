@@ -26,6 +26,13 @@
     "eslint.enable": true,
     "editor.formatOnSave": true,
     "files.associations": {
-        "memory": "cpp"
+        "memory": "cpp",
+        "locale": "cpp",
+        "thread": "cpp",
+        "xlocale": "cpp",
+        "xlocmes": "cpp",
+        "xlocmon": "cpp",
+        "xlocnum": "cpp",
+        "xloctime": "cpp"
     }
 }

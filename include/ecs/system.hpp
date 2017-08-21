@@ -3,7 +3,7 @@
 
 #include "base.hpp"
 #include "setting.hpp"
-#include "obj.hpp"
+#include "object.hpp"
 #include "event.hpp"
 
 namespace ecs
@@ -52,7 +52,7 @@ class BaseSystem
 	* Use this class when implementing Systems.
 	*
 	* struct MovementSystem : public System<MovementSystem> {
-	*   void update(ObjectManager &entities, EventManager &events, TimeDelta dt) {
+	*   void update(ObjectManager &entities, EventManager &events, float dt) {
 	*     // Do stuff to/with entities...
 	*   }
 	* }
@@ -73,7 +73,7 @@ class System : public BaseSystem
 	}
 };
 
-class SystemManager : entityx::help::NonCopyable
+class SystemManager
 {
   public:
 	SystemManager(ObjectManager &entity_manager,
@@ -86,7 +86,7 @@ class SystemManager : entityx::help::NonCopyable
 		* Must be called before Systems can be used.
 		*
 		* eg.
-		* std::shared_ptr<MovementSystem> movement = entityx::make_shared<MovementSystem>();
+		* std::shared_ptr<MovementSystem> movement  -make_shared<MovementSystem>();
 		* system.add(movement);
 		*/
 	template <typename S>
@@ -132,7 +132,7 @@ class SystemManager : entityx::help::NonCopyable
 		* Call the System::update() method for a registered system.
 		*/
 	template <typename S>
-	void update(TimeDelta dt)
+	void update(float dt)
 	{
 		assert(initialized_ && "SystemManager::configure() not called");
 		std::shared_ptr<S> s = system<S>();
@@ -150,7 +150,7 @@ class SystemManager : entityx::help::NonCopyable
 		* to manually specify the update order. EntityX does not yet support a way of
 		* specifying priority for update_all().
 		*/
-	void update_all(TimeDelta dt);
+	void update_all(float dt);
 
 	/**
 		* Configure the system. Call after adding all Systems.
@@ -165,7 +165,6 @@ class SystemManager : entityx::help::NonCopyable
 	EventManager &event_manager_;
 	std::unordered_map<BaseSystem::Family, std::shared_ptr<BaseSystem>> systems_;
 };
-
-} // namespace entityx
+}
 
 #endif

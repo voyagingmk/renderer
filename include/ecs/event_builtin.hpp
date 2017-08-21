@@ -1,43 +1,46 @@
 #ifndef RENDERER_ECS_EVENT_BUILTIN_HPP
 #define RENDERER_ECS_EVENT_BUILTIN_HPP
 
-#include "obj.hpp"
 #include "event.hpp"
-
+#include "component_handle.hpp"
 
 namespace ecs
 {
-	struct EntityCreatedEvent : public Event<EntityCreatedEvent> {
-		explicit EntityCreatedEvent(Object obj) : m_obj(obj) {}
-		virtual ~EntityCreatedEvent() {
+	class Object;
+
+	struct ObjectCreatedEvent : public Event<ObjectCreatedEvent>
+	{
+		explicit ObjectCreatedEvent(Object* obj) : m_obj(obj) {}
+		virtual ~ObjectCreatedEvent()
+		{
 		}
-		Object m_obj;
+		Object* m_obj;
 	};
 
-	struct EntityDestroyedEvent : public Event<EntityDestroyedEvent> {
-		explicit EntityDestroyedEvent(Object obj) : m_obj(obj) {}
-		virtual ~EntityDestroyedEvent() {}
-		Object m_obj;
+	struct ObjectDestroyedEvent : public Event<ObjectDestroyedEvent>
+	{
+		explicit ObjectDestroyedEvent(ObjectID objID) : m_objID(objID) {}
+		virtual ~ObjectDestroyedEvent() {}
+		ObjectID m_objID;
 	};
 
 	template <typename C>
-	struct ComponentAddedEvent : public Event<ComponentAddedEvent<C>> {
-		ComponentAddedEvent(Object obj, ComponentHandle<C> component) :
-			m_obj(obj), component(component) {}
+	struct ComponentAddedEvent : public Event<ComponentAddedEvent<C>>
+	{
+		ComponentAddedEvent(Object obj, ComponentHandle<C> component) : m_obj(obj), component(component) {}
 
 		Object m_obj;
 		ComponentHandle<C> component;
 	};
 
 	template <typename C>
-	struct ComponentRemovedEvent : public Event<ComponentRemovedEvent<C>> {
-		ComponentRemovedEvent(Object obj, ComponentHandle<C> component) :
-			m_obj(obj), component(component) {}
+	struct ComponentRemovedEvent : public Event<ComponentRemovedEvent<C>>
+	{
+		ComponentRemovedEvent(Object obj, ComponentHandle<C> component) : m_obj(obj), component(component) {}
 
 		Object m_obj;
 		ComponentHandle<C> component;
 	};
 };
-
 
 #endif
