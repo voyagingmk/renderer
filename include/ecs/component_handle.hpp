@@ -13,8 +13,8 @@ namespace ecs
 	class ComponentHandle
 	{
 	public:
-		ComponentHandle(ObjectManager *manager, ObjectID id);
-		ComponentHandle();
+		ComponentHandle(ObjectManager *manager, ObjectID id) : m_manager(manager), m_id(id) {}
+		ComponentHandle() : m_manager(nullptr), m_id(0) {}
 
 		bool valid() const;
 

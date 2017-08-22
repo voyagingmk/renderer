@@ -46,7 +46,7 @@ class CollisionSystem : public System<CollisionSystem>
   public:
 	void update(ObjectManager &objMgr, EventManager &evtMgr, float dt) override
 	{
-		// ComponentHandle<Position> left_position, right_position;
+		ComponentHandle<Position> left_position, right_position;
 		/*
 		for (Object left_obj : objMgr.entities_with_components(left_position))
 		{
@@ -73,22 +73,14 @@ public:
 
 	void receive(const Collision &collision)
 	{
-		std::cout << "entities collided: " << collision.left.ID() << " and " << collision.right.ID() << endl;
+		std::cout << "entities collided: " << collision.left.ID() << " and " << collision.right.ID() << std::endl;
 	}
 };
 
 class ECSDemo : public ECS
 {
-  public:
-	ECSDemo()
-	{
-		systemMgr.add<MovementSystem>();
-		systemMgr.configure();
-
-		Object obj = objMgr.create();
-		//obj.assign<Position>(rand() % 100, rand() % 100);
-		//obj.assign<Direction>((rand() % 10) - 5, (rand() % 10) - 5);
-	}
+public:
+	ECSDemo();
 
 	void update(float dt)
 	{

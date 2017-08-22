@@ -4,11 +4,6 @@
 
 
 namespace ecs {
-	template <typename C>
-	ComponentHandle<C>::ComponentHandle(ObjectManager *manager, ObjectID id) : m_manager(manager), m_id(id) {}
-
-	template <typename C>
-	ComponentHandle<C>::ComponentHandle() : m_manager(nullptr), m_id(0) {}
 
 	template <typename C>
 	bool ComponentHandle<C>::valid() const

@@ -1,5 +1,5 @@
-#ifndef RENDERER_ECS_OBJ_HPP
-#define RENDERER_ECS_OBJ_HPP
+#ifndef RENDERER_ECS_OBJECT_HPP
+#define RENDERER_ECS_OBJECT_HPP
 
 #include "setting.hpp"
 
@@ -84,5 +84,7 @@ namespace ecs {
 
 };
 
+
+#include "object_impl.hpp"
 
 #endif

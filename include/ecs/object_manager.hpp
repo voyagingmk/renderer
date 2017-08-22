@@ -2,9 +2,9 @@
 #define RENDERER_ECS_OBJECT_MANAGER_HPP
 
 #include "setting.hpp"
-#include "object.hpp"
 namespace ecs
 {
+class Object;
 
 template <typename C>
 class ComponentHandle;
@@ -143,4 +143,5 @@ class ObjectManager
 };
 };
 
+#include "object_manager_impl.hpp"
 #endif
