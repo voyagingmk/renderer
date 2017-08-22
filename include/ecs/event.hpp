@@ -190,7 +190,6 @@ namespace ecs {
 
 		std::vector<EventSignalPtr> handlers_;
 	};
-
-	};
+};
 
 #endif

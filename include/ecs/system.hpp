@@ -17,7 +17,7 @@ class SystemManager;
 class BaseSystem
 {
   public:
-	typedef size_t Family;
+	typedef std::size_t TypeID;
 
 	virtual ~BaseSystem();
 
@@ -43,7 +43,7 @@ class BaseSystem
 		*/
 	virtual void update(ObjectManager &objs, EventManager &events, float dt) = 0;
 
-	static Family family_counter_;
+	static TypeID m_SystemTypeCounter;
 
   protected:
 };
@@ -66,10 +66,10 @@ class System : public BaseSystem
   private:
 	friend class SystemManager;
 
-	static Family family()
+	static TypeID typeID()
 	{
-		static Family family = family_counter_++;
-		return family;
+		static TypeID typeID = m_SystemTypeCounter++;
+		return typeID;
 	}
 };
 
@@ -92,7 +92,7 @@ class SystemManager
 	template <typename S>
 	void add(std::shared_ptr<S> system)
 	{
-		systems_.insert(std::make_pair(S::family(), system));
+		systems_.insert(std::make_pair(S::typeID(), system));
 	}
 
 	/**
@@ -121,7 +121,7 @@ class SystemManager
 	template <typename S>
 	std::shared_ptr<S> system()
 	{
-		auto it = systems_.find(S::family());
+		auto it = systems_.find(S::typeID());
 		assert(it != systems_.end());
 		return it == systems_.end()
 				   ? std::shared_ptr<S>()
@@ -163,7 +163,7 @@ class SystemManager
 	bool initialized_ = false;
 	ObjectManager &entity_manager_;
 	EventManager &event_manager_;
-	std::unordered_map<BaseSystem::Family, std::shared_ptr<BaseSystem>> systems_;
+	std::unordered_map<BaseSystem::TypeID, std::shared_ptr<BaseSystem>> systems_;
 };
 }
 

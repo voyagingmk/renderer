@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "component_handle.hpp"
 #include "object.hpp"
+#include "object_manager.hpp"
 
 
 namespace ecs {
