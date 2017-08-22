@@ -3,9 +3,11 @@
 
 #include "setting.hpp"
 #include "object.hpp"
-
 namespace ecs
 {
+
+template <typename C>
+class ComponentHandle;
 
 class EventManager;
 
@@ -56,18 +58,7 @@ class ObjectManager
 		* @returns Smart pointer to newly created component.
 		*/
 	template <typename C, typename... Args>
-	ComponentHandle<C> assign(ObjectID id, Args &&... args)
-	{
-
-		// Placement new into the component pool.
-		MemoryPool<C> *pool = getComponentPool<C>();
-		pool->newElementByIdx(id, std::forward<Args>(args)...);
-
-		// Create and return handle.
-		ComponentHandle<C> component(this, id);
-		m_event_manager.emit<ComponentAddedEvent<C>>(Object(this, id), component);
-		return component;
-	}
+	ComponentHandle<C> assign(ObjectID id, Args &&... args);
 
 	template <typename C>
 	MemoryPool<C> *getComponentPool()
@@ -82,15 +73,7 @@ class ObjectManager
 		* Emits a ComponentRemovedEvent<C> event.
 		*/
 	template <typename C>
-	void remove(ObjectID id)
-	{
-		MemoryPool<C> *pool = getComponentPool<C>();
-		ComponentHandle<C> component(this, id);
-		m_event_manager.emit<ComponentRemovedEvent<C>>(Object(this, id), component);
-
-		// Call destructor.
-		pool->destroy(id);
-	}
+	void remove(ObjectID id);
 
 	/**
 		* Check if an Object has a component.
@@ -113,32 +96,19 @@ class ObjectManager
 		* @returns Pointer to an instance of C, or nullptr if the ObjectID does not have that Component.
 		*/
 	template <typename C, typename = typename std::enable_if<!std::is_const<C>::value>::type>
-	ComponentHandle<C> component(ObjectID id)
-	{
-		return ComponentHandle<C>(this, id);
-	}
+	ComponentHandle<C> component(ObjectID id);
 
 	/**
-		* Retrieve a Component assigned to an ObjectID.
-		*
-		* @returns Component instance, or nullptr if the ObjectID does not have that Component.
-		*/
+	* Retrieve a Component assigned to an ObjectID.
+	*
+	* @returns Component instance, or nullptr if the ObjectID does not have that Component.
+	*/
 	template <typename C, typename = typename std::enable_if<std::is_const<C>::value>::type>
-	const ComponentHandle<C> component(ObjectID id) const
-	{
-
-		// We don't bother checking the component mask, as we return a nullptr anyway.
-		if (family >= component_pools_.size())
-			return ComponentHandle<C, const ObjectManager>();
-		MemoryPool<C> *pool = getComponentPool<C>();
-		if (!pool)
-			return ComponentHandle<C, const ObjectManager>();
-		return ComponentHandle<C, const ObjectManager>(this, id);
-	}
+	const ComponentHandle<C> component(ObjectID id) const;
 
 	/**
-		* Destroy all entities and reset the ObjectManager.
-		*/
+	* Destroy all entities and reset the ObjectManager.
+	*/
 	void reset()
 	{
 		/*
@@ -161,22 +131,10 @@ class ObjectManager
 	friend class ComponentHandle;
 
 	template <typename C>
-	C *get_component_ptr(ObjectID id)
-	{
-		assert(valid(id));
-		MemoryPool<C> *pool = getComponentPool<C>();
-		assert(pool);
-		return static_cast<C *>(pool->get(id));
-	}
+	C *get_component_ptr(ObjectID id);
 
 	template <typename C>
-	const C *get_component_ptr(ObjectID id) const
-	{
-
-		MemoryPool<C> *pool = getComponentPool<C>();
-		assert(pool);
-		return static_cast<const C *>(pool->get(id));
-	}
+	const C *get_component_ptr(ObjectID id) const;
 
 	uint32_t m_objectIDCounter = 0;
 

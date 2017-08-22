@@ -1,55 +1,55 @@
-#ifndef RENDERER_ECS_COMPONENT_HANDLER_HPP
-#define RENDERER_ECS_COMPONENT_HANDLER_HPP
+#ifndef RENDERER_ECS_COMPONENT_HANDLE_HPP
+#define RENDERER_ECS_COMPONENT_HANDLE_HPP
 
 #include "setting.hpp"
 
 namespace ecs
 {
 
-class Object;
-class ObjectManager;
+	class Object;
+	class ObjectManager;
 
-template <typename C>
-class ComponentHandle
-{
-  public:
-	ComponentHandle(ObjectManager *manager, ObjectID id);
-	ComponentHandle();
+	template <typename C>
+	class ComponentHandle
+	{
+	public:
+		ComponentHandle(ObjectManager *manager, ObjectID id);
+		ComponentHandle();
 
-	bool valid() const;
+		bool valid() const;
 
-	operator bool() const;
+		operator bool() const;
 
-	C *operator->();
+		C *operator->();
 
-	const C *operator->() const;
+		const C *operator->() const;
 
-	C &operator*();
+		C &operator*();
 
-	const C &operator*() const;
+		const C &operator*() const;
 
-	C *get();
+		C *get();
 
-	const C *get() const;
+		const C *get() const;
 
-	/**
-		* Remove the component from its entity and destroy it.
-		*/
-	void remove();
+		/**
+			* Remove the component from its entity and destroy it.
+			*/
+		void remove();
 
-	/**
-		* Returns the Entity associated with the component
-		*/
-	Object object();
+		/**
+			* Returns the Entity associated with the component
+			*/
+		Object object();
 
-	bool operator==(const ComponentHandle<C> &other) const;
+		bool operator==(const ComponentHandle<C> &other) const;
 
-	bool operator!=(const ComponentHandle<C> &other) const;
+		bool operator!=(const ComponentHandle<C> &other) const;
 
-  private:
-	ObjectManager *m_manager;
-	ObjectID m_id;
-};
+	  private:
+		ObjectManager *m_manager;
+		ObjectID m_id;
+	};
 };
 
 #endif

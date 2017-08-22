@@ -1,14 +1,12 @@
 #ifndef RENDERER_ECS_OBJ_HPP
 #define RENDERER_ECS_OBJ_HPP
 
-#include "base.hpp"
 #include "setting.hpp"
-#include "event.hpp"
-#include "component_handle.hpp"
-#include "event_builtin.hpp"
-#include "MemoryPool.hpp"
 
 namespace ecs {
+	template <typename C>
+	class ComponentHandle; 
+	
 	class ObjectManager;
 
 
@@ -46,77 +44,32 @@ namespace ecs {
 		}
 
 		template <typename C, typename... Args>
-		ComponentHandle<C> assign(Args &&... args)
-		{
-			assert(valid());
-			assert(std::is_pod<C>::value == true);
-			return m_manager->assign<C>(m_id, std::forward<Args>(args)...);
-		}
+		ComponentHandle<C> assign(Args &&... args);
 
 		template <typename C>
-		ComponentHandle<C> assign_from_copy(const C &component)
-		{
-			assert(valid());
-			return m_manager->assign<C>(m_id, std::forward<const C &>(component));
-		}
+		ComponentHandle<C> assign_from_copy(const C &component);
+
 
 		template <typename C, typename... Args>
-		ComponentHandle<C> replace(Args &&... args)
-		{
-			assert(valid());
-			auto handle = component<C>();
-			if (handle)
-			{
-				*(handle.get()) = C(std::forward<Args>(args)...);
-			}
-			else
-			{
-				handle = m_manager->assign<C>(m_id, std::forward<Args>(args)...);
-			}
-			return handle;
-		}
+		ComponentHandle<C> replace(Args &&... args);
 
 		template <typename C>
-		void remove()
-		{
-			assert(valid() && has_component<C>());
-			m_manager->remove<C>(m_id);
-		}
+		void remove();
 
 		template <typename C, typename = typename std::enable_if<!std::is_const<C>::value>::type>
-		ComponentHandle<C> component()
-		{
-			assert(valid());
-			return m_manager->component<C>(m_id);
-		}
+		ComponentHandle<C> component();
 
 		template <typename C, typename = typename std::enable_if<std::is_const<C>::value>::type>
-		const ComponentHandle<C> component() const
-		{
-			assert(valid());
-			return const_cast<const ObjectManager *>(m_manager)->component<const C>(m_id);
-		}
+		const ComponentHandle<C> component() const;
 
 		template <typename... Components>
-		std::tuple<ComponentHandle<Components>...> components()
-		{
-			assert(valid());
-			return m_manager->components<Components...>(m_id);
-		}
+		std::tuple<ComponentHandle<Components>...> components();
 
 		template <typename... Components>
-		std::tuple<ComponentHandle<const Components>...> components() const
-		{
-			assert(valid());
-			return const_cast<const OM *>(m_manager)->components<const Components...>(m_id);
-		}
+		std::tuple<ComponentHandle<const Components>...> components() const;
 
 		template <typename C>
-		bool has_component() const
-		{
-			assert(valid());
-			return m_manager->has_component<C>(m_id);
-		}
+		bool has_component() const;
 
 		/**
 			* Destroy and invalidate this Object.

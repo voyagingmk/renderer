@@ -46,7 +46,7 @@ class CollisionSystem : public System<CollisionSystem>
   public:
 	void update(ObjectManager &objMgr, EventManager &evtMgr, float dt) override
 	{
-		ComponentHandle<Position> left_position, right_position;
+		// ComponentHandle<Position> left_position, right_position;
 		/*
 		for (Object left_obj : objMgr.entities_with_components(left_position))
 		{
@@ -86,8 +86,8 @@ class ECSDemo : public ECS
 		systemMgr.configure();
 
 		Object obj = objMgr.create();
-		obj.assign<Position>(rand() % 100, rand() % 100);
-		obj.assign<Direction>((rand() % 10) - 5, (rand() % 10) - 5);
+		//obj.assign<Position>(rand() % 100, rand() % 100);
+		//obj.assign<Direction>((rand() % 10) - 5, (rand() % 10) - 5);
 	}
 
 	void update(float dt)

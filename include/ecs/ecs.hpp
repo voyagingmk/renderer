@@ -6,6 +6,7 @@
 #include "object_manager.hpp"
 #include "event.hpp"
 #include "system.hpp"
+#include "component_handle.hpp"
 
 namespace ecs
 {
