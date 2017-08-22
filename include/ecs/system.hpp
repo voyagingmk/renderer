@@ -68,7 +68,7 @@ class System : public BaseSystem
 
 	static TypeID typeID()
 	{
-		static TypeID typeID = m_SystemTypeCounter++;
+		static TypeID typeID = ++m_SystemTypeCounter;
 		return typeID;
 	}
 };

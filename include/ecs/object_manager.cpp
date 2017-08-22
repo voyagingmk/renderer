@@ -14,9 +14,9 @@ namespace ecs {
 	Object ObjectManager::create()
 	{
 		ObjectID id;
-		if (m_free_list.empty())
+		if (m_free_list.size() <= 0)
 		{
-			id = m_objectIDCounter++;
+			id = ++m_objectIDCounter;
 		}
 		else
 		{

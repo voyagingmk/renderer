@@ -1,7 +1,4 @@
 #ifdef RENDERER_ECS_OBJECT_HPP
-#ifndef RENDERER_ECS_OBJECT_CPP
-#define RENDERER_ECS_OBJECT_CPP
-
 
 namespace ecs {
 
@@ -43,10 +40,9 @@ namespace ecs {
 
 	template <typename C, typename... Args>
 	ComponentHandle<C> Object::assign(Args &&... args)
-	{
+	 { 
 		assert(valid());
-		assert(std::is_pod<C>::value == true);
-		return m_manager->assign<C>(m_id, std::forward<Args>(args)...);
+	 	return m_manager->assign<C>(m_id, std::forward<Args>(args)...);
 	}
 
 	template <typename C>
@@ -82,5 +78,4 @@ namespace ecs {
 
 };
 
-#endif
 #endif
