@@ -226,6 +226,7 @@ C *ObjectManager::get_component_ptr(ObjectID id)
 template <typename C>
 const C *ObjectManager::get_component_ptr(ObjectID id) const
 {
+	assert(valid(id));
 	MemoryPool<C> *pool = getComponentPool<C>();
 	assert(pool);
 	auto idx = getComponentIdx<C>(id);

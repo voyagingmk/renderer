@@ -115,6 +115,7 @@ class MyContext : public RendererContextSDL
     {
 
 		static ECSDemo demo;
+		demo.setup();
 		demo.update(0.1f);
 
         TextureMgr &texMgr = TextureMgr::getInstance();

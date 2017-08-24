@@ -54,11 +54,9 @@ class Object
 	template <typename C>
 	void remove();
 
-	template <typename C, typename = typename std::enable_if<!std::is_const<C>::value>::type>
-	ComponentHandle<C> component();
+	template <typename C>
+	ComponentHandle<C> component() const;
 
-	template <typename C, typename = typename std::enable_if<std::is_const<C>::value>::type>
-	const ComponentHandle<C> component() const;
 
 	template <typename... Components>
 	std::tuple<ComponentHandle<Components>...> components();
@@ -81,19 +79,13 @@ void Object::remove()
 	m_manager->remove<C>(m_id);
 }
 
-template <typename C, typename = typename std::enable_if<!std::is_const<C>::value>::type>
-ComponentHandle<C> Object::component()
+template <typename C>
+ComponentHandle<C> Object::component() const
 {
 	assert(valid());
 	return m_manager->component<C>(m_id);
 }
 
-template <typename C, typename = typename std::enable_if<std::is_const<C>::value>::type>
-const ComponentHandle<C> Object::component() const
-{
-	assert(valid());
-	return const_cast<const ObjectManager *>(m_manager)->component<const C>(m_id);
-}
 
 template <typename... Components>
 std::tuple<ComponentHandle<Components>...> Object::components()

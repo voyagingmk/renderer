@@ -84,10 +84,13 @@ struct DebugSystem : public System<DebugSystem>, public Receiver<DebugSystem>
 
 class ECSDemo : public ECS
 {
+	Object obj;
   public:
 	ECSDemo();
 
-	void update(float dt);
+	void setup();
+
+	void update(float dt) const;
 };
 
 #endif
