@@ -9,7 +9,7 @@
 
 template <typename T>
 class MemoryPool {
-protected:
+public:
 	typedef std::size_t ElementIdx;
 public:
 	explicit MemoryPool(std::size_t chunkElements = 8192) :
@@ -66,7 +66,7 @@ public:
 		ElementIdx idx;
 		if (recycledIdxes.size() > 0) {
 			idx = *recycledIdxes.begin();
-			recycled.erase(recycledIdxes.begin());
+			recycledIdxes.erase(recycledIdxes.begin());
 		}
 		else {
 			if (m_tailIdx >= m_capacity) {

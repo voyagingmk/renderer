@@ -3,8 +3,8 @@
 
 #include "base.hpp"
 #include "setting.hpp"
-#include "component_handle.hpp"
 #include "object.hpp"
+#include "component_handle.hpp"
 #include "object_manager.hpp"
 #include "event.hpp"
 #include "event_builtin.hpp"

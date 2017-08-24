@@ -22,9 +22,8 @@ struct Direction
 
 class MovementSystem : public System<MovementSystem>
 {
-public:
-	void update(ObjectManager &objs, EventManager &events, float dt) override
-	{
+  public:
+	void update(ObjectManager &objs, EventManager &events, float dt) override{
 		/*
 		objs.each<Position, Direction>([dt](Object obj, Position &position, Direction &direction) {
 			position.x += direction.x * dt;
@@ -35,7 +34,7 @@ public:
 
 struct Collision
 {
-public:
+  public:
 	Collision(Object left, Object right) : left(left), right(right) {}
 
 	Object left, right;
@@ -63,10 +62,11 @@ class CollisionSystem : public System<CollisionSystem>
 
 struct DebugSystem : public System<DebugSystem>, public Receiver<DebugSystem>
 {
-public:
+  public:
 	void configure(EventManager &events)
 	{
 		events.subscribe<Collision>(*this);
+		events.subscribe<ObjectCreatedEvent>(*this);
 	}
 
 	void update(ObjectManager &objs, EventManager &events, float dt) {}
@@ -75,17 +75,19 @@ public:
 	{
 		std::cout << "entities collided: " << collision.left.ID() << " and " << collision.right.ID() << std::endl;
 	}
+
+	void receive(const ObjectCreatedEvent &evt)
+	{
+		std::cout << "ObjectCreatedEvent: " << evt.m_obj->ID() << std::endl;
+	}
 };
 
 class ECSDemo : public ECS
 {
-public:
+  public:
 	ECSDemo();
 
-	void update(float dt)
-	{
-		systemMgr.update<MovementSystem>(dt);
-	}
+	void update(float dt);
 };
 
 #endif

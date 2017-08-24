@@ -233,11 +233,11 @@ class MyContext : public RendererContextSDL
         //glEnable(GL_BLEND);
         //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        TextMgr &textmgr = TextMgr::getInstance();
-        textmgr.setScreenSize(winWidth, winHeight);
-        textmgr.loadTTF("./assets/fonts/STHeiti Light.ttc", 60);
-        textmgr.setupBuffer();
-        textmgr.test('A', 60, 60, 200, 200);
+     //   TextMgr &textmgr = TextMgr::getInstance();
+      //  textmgr.setScreenSize(winWidth, winHeight);
+      //  textmgr.loadTTF("./assets/fonts/STHeiti Light.ttc", 60);
+      //  textmgr.setupBuffer();
+       // textmgr.test('A', 60, 60, 200, 200);
     }
 
     void updateCamera()
