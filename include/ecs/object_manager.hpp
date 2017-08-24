@@ -81,9 +81,7 @@ template <typename C>
 bool has_component(ObjectID id) const
 {
 
-	ComponentHash h = comHash[id];
-	auto typeID = ComponentType<C>::typeID();
-	return h.find(typeID) != h.end();
+	return getComponentIdx<C>(id) != -1;
 }
 
 template <typename C>
