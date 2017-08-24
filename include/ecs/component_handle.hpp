@@ -13,7 +13,7 @@ namespace ecs
 	class ComponentHandle
 	{
 	public:
-		ComponentHandle(ObjectManager *manager, ObjectID id) : m_manager(manager), m_id(id) {}
+		ComponentHandle(const ObjectManager *manager, ObjectID id) : m_manager(manager), m_id(id) {}
 
 		ComponentHandle() : m_manager(nullptr), m_id(0) {}
 
@@ -48,7 +48,7 @@ namespace ecs
 		bool operator!=(const ComponentHandle<C> &other) const;
 
 	  private:
-		ObjectManager *m_manager;
+		const ObjectManager *m_manager;
 		ObjectID m_id;
 	};
 

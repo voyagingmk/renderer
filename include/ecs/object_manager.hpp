@@ -64,7 +64,7 @@ class ObjectManager
 	ComponentHandle<C> addComponent(ObjectID id, Args &&... args);
 
 	template <typename C>
-	MemoryPool<C> *getComponentPool();
+	MemoryPool<C> *getComponentPool() const;
 
 	/**
 			* Remove a Component from an ObjectID
@@ -77,70 +77,60 @@ class ObjectManager
 	/**
 			* Check if an Object has a component.
 			*/
-	template <typename C>
-	bool has_component(ObjectID id) const
-	{
+template <typename C>
+bool has_component(ObjectID id) const
+{
 
-		ComponentHash h = comHash[id];
-		auto typeID = ComponentType<C>::typeID();
-		return h.find(typeID) != h.end();
-	}
+	ComponentHash h = comHash[id];
+	auto typeID = ComponentType<C>::typeID();
+	return h.find(typeID) != h.end();
+}
 
-	/**
-			* Retrieve a Component assigned to an ObjectID.
-			*
-			* @returns Pointer to an instance of C, or nullptr if the ObjectID does not have that Component.
+template <typename C>
+ComponentHandle<C> component(ObjectID id) const;
+
+
+/**
+	* Destroy all entities and reset the ObjectManager.
+	*/
+void reset()
+{
+	/*
+			for (BasePool *pool : component_pools_)
+			{
+			if (pool)
+			{
+			delete pool;
+			}
+			}
+			component_pools_.clear();
 			*/
-	template <typename C, typename = typename std::enable_if<!std::is_const<C>::value>::type>
-	ComponentHandle<C> component(ObjectID id);
-
-
-	template <typename C, typename = typename std::enable_if<std::is_const<C>::value>::type>
-	const ComponentHandle<C> component(ObjectID id) const;
-
-
-
-	/**
-		* Destroy all entities and reset the ObjectManager.
-		*/
-	void reset()
-	{
-		/*
-				for (BasePool *pool : component_pools_)
-				{
-				if (pool)
-				{
-				delete pool;
-				}
-				}
-				component_pools_.clear();
-				*/
-		m_free_list.clear();
-		m_objectIDCounter = 0;
-	}
+	m_free_list.clear();
+	m_objectIDCounter = 0;
+}
 
   private:
-	friend class Object;
-	template <typename C>
-	friend class ComponentHandle;
+	  friend class Object;
+	  template <typename C>
+	  friend class ComponentHandle;
 
-	template <typename C>
-	size_t getComponentIdx(ObjectID id);
+	  template <typename C>
+	  size_t getComponentIdx(ObjectID id) const;
 
-	template <typename C>
-	C *get_component_ptr(ObjectID id);
+	  template <typename C>
+	  C *get_component_ptr(ObjectID id);
 
-	template <typename C>
-	const C *get_component_ptr(ObjectID id) const;
+	  template <typename C>
+	  const C *get_component_ptr(ObjectID id) const;
 
-	uint32_t m_objectIDCounter = 0;
+	  uint32_t m_objectIDCounter = 0;
 
-	EventManager &m_event_manager;
-	std::vector<uint32_t> m_free_list;
-	std::vector<bool> isAlive;
+	  EventManager &m_event_manager;
+	  std::vector<uint32_t> m_free_list;
+	  std::vector<bool> isAlive;
 
-	typedef std::map<size_t, size_t> ComponentHash;
-	std::vector<ComponentHash> comHash;
+	  typedef std::map<size_t, size_t> ComponentHash;
+	  std::vector<ComponentHash> comHash;
 };
 
 template <typename C, typename... Args>
@@ -164,7 +154,7 @@ ComponentHandle<C> ObjectManager::addComponent(ObjectID id, Args &&... args)
 }
 
 template <typename C>
-MemoryPool<C>* ObjectManager::getComponentPool()
+MemoryPool<C>* ObjectManager::getComponentPool() const
 {
 	static MemoryPool<C> pool;
 	ComponentType<C>::typeID();
@@ -183,34 +173,27 @@ void ObjectManager::remove(ObjectID id)
 }
 
 template <typename C>
-size_t ObjectManager::getComponentIdx(ObjectID id) {
+size_t ObjectManager::getComponentIdx(ObjectID id) const {
 	auto typeID = ComponentType<C>::typeID();
-	ComponentHash h = comHash[id];
-	return h[typeID];
+	if (id >= comHash.size()) {
+		return -1;
+	}
+	const ComponentHash& h = comHash[id];
+	auto it2 = h.find(typeID);
+	if (it2 == h.end()) {
+		return -1;
+	}
+	return it2->second;
 }
 
-template <typename C, typename = typename std::enable_if<!std::is_const<C>::value>::type>
-ComponentHandle<C> ObjectManager::component(ObjectID id)
+template <typename C>
+ComponentHandle<C> ObjectManager::component(ObjectID id) const
 {
-	auto typeID = ComponentType<C>::typeID();
-	ComponentHash h = comHash[id];
-	if (h.find(typeID) == h.end()) {
+	auto idx = getComponentIdx<C>(id);
+	if (idx == -1) {
 		return ComponentHandle<C>();
 	}
 	return ComponentHandle<C>(this, id);
-}
-
-template <typename C, typename = typename std::enable_if<std::is_const<C>::value>::type>
-const ComponentHandle<C> ObjectManager::component(ObjectID id) const
-{
-
-	// We don't bother checking the component mask, as we return a nullptr anyway.
-	if (family >= component_pools_.size())
-		return ComponentHandle<C, const ObjectManager>();
-	MemoryPool<C> *pool = getComponentPool<C>();
-	if (!pool)
-		return ComponentHandle<C, const ObjectManager>();
-	return ComponentHandle<C, const ObjectManager>(this, id);
 }
 
 template <typename C>

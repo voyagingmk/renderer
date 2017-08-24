@@ -23,5 +23,5 @@ void ECSDemo::update(float dt) const
 {
 	// systemMgr.update<MovementSystem>(dt);
 	const ComponentHandle<Position> com = obj.component<Position>();
-	printf("pos:%f,%f\n", com.get()->x, com.get()->y);
+	printf("pos:%f,%f\n", com->x, com->y);
 }

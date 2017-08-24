@@ -57,13 +57,6 @@ class Object
 	template <typename C>
 	ComponentHandle<C> component() const;
 
-
-	template <typename... Components>
-	std::tuple<ComponentHandle<Components>...> components();
-
-	template <typename... Components>
-	std::tuple<ComponentHandle<const Components>...> components() const;
-
 	template <typename C>
 	bool has_component() const;
 
@@ -87,19 +80,6 @@ ComponentHandle<C> Object::component() const
 }
 
 
-template <typename... Components>
-std::tuple<ComponentHandle<Components>...> Object::components()
-{
-	assert(valid());
-	return m_manager->components<Components...>(m_id);
-}
-
-template <typename... Components>
-std::tuple<ComponentHandle<const Components>...> Object::components() const
-{
-	assert(valid());
-	return const_cast<const OM *>(m_manager)->components<const Components...>(m_id);
-}
 
 template <typename C, typename... Args>
 ComponentHandle<C> Object::addComponent(Args &&... args)
