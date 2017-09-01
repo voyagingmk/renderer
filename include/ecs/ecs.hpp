@@ -14,15 +14,15 @@
 namespace ecs
 {
 
-	class ECS
-	{
-	  public:
-		ECS() : objMgr(eventMgr), systemMgr(objMgr, eventMgr) {}
+class ECS
+{
+  public:
+	ECS() : m_objMgr(m_evtMgr), m_systemMgr(m_objMgr, m_evtMgr) {}
 
-		EventManager eventMgr;
-		ObjectManager objMgr;
-		SystemManager systemMgr;
-	};
+	EventManager m_evtMgr;
+	ObjectManager m_objMgr;
+	SystemManager m_systemMgr;
+};
 };
 
 #endif
