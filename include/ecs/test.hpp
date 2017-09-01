@@ -22,10 +22,10 @@ struct Direction
 
 class MovementSystem : public System<MovementSystem>
 {
-  public:
-	void update(ObjectManager &objs, EventManager &events, float dt) override{
-		/*
-		objs.each<Position, Direction>([dt](Object obj, Position &position, Direction &direction) {
+public:
+	void update(ObjectManager &objMgr, EventManager &evtMgr, float dt) override{
+			/*
+		objMgr.each<Position, Direction>([dt](Object obj, Position &position, Direction &direction) {
 			position.x += direction.x * dt;
 			position.y += direction.y * dt;
 		});*/
@@ -34,7 +34,7 @@ class MovementSystem : public System<MovementSystem>
 
 struct Collision
 {
-  public:
+public:
 	Collision(Object left, Object right) : left(left), right(right) {}
 
 	Object left, right;
@@ -42,7 +42,7 @@ struct Collision
 
 class CollisionSystem : public System<CollisionSystem>
 {
-  public:
+public:
 	void update(ObjectManager &objMgr, EventManager &evtMgr, float dt) override
 	{
 		ComponentHandle<Position> left_position, right_position;
@@ -62,18 +62,18 @@ class CollisionSystem : public System<CollisionSystem>
 
 struct DebugSystem : public System<DebugSystem>, public Receiver<DebugSystem>
 {
-  public:
-	void configure(EventManager &events)
+public:
+	void configure(EventManager &evtMgr)
 	{
-		events.on<Collision>(*this);
-		events.on<ObjectCreatedEvent>(*this);
+		evtMgr.on<Collision>(*this);
+		evtMgr.on<ObjectCreatedEvent>(*this);
 	}
 
-	void update(ObjectManager &objs, EventManager &events, float dt) {}
+	void update(ObjectManager &objMgr, EventManager &evtMgr, float dt) {}
 
 	void receive(const Collision &collision)
 	{
-		std::cout << "entities collided: " << collision.left.ID() << " and " << collision.right.ID() << std::endl;
+		std::cout << "obj collided: " << collision.left.ID() << " and " << collision.right.ID() << std::endl;
 	}
 
 	void receive(const ObjectCreatedEvent &evt)
@@ -85,7 +85,8 @@ struct DebugSystem : public System<DebugSystem>, public Receiver<DebugSystem>
 class ECSDemo : public ECS
 {
 	Object obj;
-  public:
+
+public:
 	ECSDemo();
 
 	void setup();

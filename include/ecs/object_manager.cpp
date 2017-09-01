@@ -6,11 +6,9 @@
 namespace ecs
 {
 
-
-
 int ComponentTypeBase::counter = 0;
 
-ObjectManager::ObjectManager(EventManager &event_manager) : m_event_manager(event_manager) {}
+ObjectManager::ObjectManager(EventManager &evtMgr) : m_evtMgr(evtMgr) {}
 
 ObjectManager::~ObjectManager()
 {
@@ -32,7 +30,7 @@ Object ObjectManager::create()
 	isAlive.resize(id + 1);
 	isAlive[id] = true;
 	Object obj(this, id);
-	m_event_manager.emit<ObjectCreatedEvent>(&obj);
+	m_evtMgr.emit<ObjectCreatedEvent>(&obj);
 	return obj;
 }
 
@@ -47,7 +45,7 @@ Object ObjectManager::instantiate(Object original)
 void ObjectManager::destroy(ObjectID id)
 {
 	// TODO com delete
-	m_event_manager.emit<ObjectDestroyedEvent>(id);
+	m_evtMgr.emit<ObjectDestroyedEvent>(id);
 	m_free_list.push_back(id);
 	isAlive[id] = false;
 }

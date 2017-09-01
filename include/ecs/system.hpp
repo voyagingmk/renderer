@@ -13,32 +13,32 @@ class SystemManager;
 
 class BaseSystem
 {
-public:
+  public:
 	typedef std::size_t TypeID;
 
 	virtual ~BaseSystem();
 
-	virtual void configure(ObjectManager &entities, EventManager &events)
+	virtual void configure(ObjectManager &objMgr, EventManager &evtMgr)
 	{
-		configure(events);
+		configure(evtMgr);
 	}
 
-	virtual void configure(EventManager &events) {}
+	virtual void configure(EventManager &evtMgr) {}
 
-	virtual void update(ObjectManager &objs, EventManager &events, float dt) = 0;
+	virtual void update(ObjectManager &objMgr, EventManager &evtMgr, float dt) = 0;
 
 	static TypeID m_SystemTypeCounter;
 
-protected:
+  protected:
 };
 
 template <typename Derived>
 class System : public BaseSystem
 {
-public:
+  public:
 	virtual ~System() {}
 
-private:
+  private:
 	friend class SystemManager;
 
 	static TypeID typeID()
@@ -50,10 +50,9 @@ private:
 
 class SystemManager
 {
-public:
-	SystemManager(ObjectManager &entity_manager,
-								EventManager &event_manager) : objMgr(entity_manager),
-																							 evtMgr(event_manager) {}
+  public:
+	SystemManager(ObjectManager &objMgr, EventManager &evtMgr) : m_objMgr(objMgr),
+																 m_evtMgr(evtMgr) {}
 
 	template <typename S>
 	void add(std::shared_ptr<S> system)
@@ -81,28 +80,17 @@ public:
 	{
 		assert(m_inited && "SystemManager::configure() not called");
 		std::shared_ptr<S> s = system<S>();
-		s->update(objMgr, evtMgr, dt);
+		s->update(m_objMgr, m_evtMgr, dt);
 	}
 
-	/**
-		* Call System::update() on all registered systems.
-		*
-		* The order which the registered systems are updated is arbitrary but consistent,
-		* meaning the order which they will be updated cannot be specified, but that order
-		* will stay the same as long no systems are added or removed.
-		*
-		* If the order in which systems update is important, use SystemManager::update()
-		* to manually specify the update order. EntityX does not yet support a way of
-		* specifying priority for update_all().
-		*/
-	void update_all(float dt);
+	void updateAll(float dt);
 
 	void configure();
 
-private:
+  private:
 	bool m_inited = false;
-	ObjectManager &objMgr;
-	EventManager &evtMgr;
+	ObjectManager &m_objMgr;
+	EventManager &m_evtMgr;
 	std::unordered_map<BaseSystem::TypeID, std::shared_ptr<BaseSystem>> m_evtTypeID2System;
 };
 }

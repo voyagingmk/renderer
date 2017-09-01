@@ -31,17 +31,11 @@ class ComponentType : public ComponentTypeBase
 class ObjectManager
 {
   public:
-	explicit ObjectManager(EventManager &event_manager);
+	explicit ObjectManager(EventManager &evtMgr);
 	virtual ~ObjectManager();
 
-	/**
-			* Number of managed entities.
-			*/
 	size_t size() const { return 0; }
 
-	/**
-			* Current entity capacity.
-			*/
 	size_t capacity() const { return 0; }
 
 	bool valid(ObjectID id) const
@@ -84,9 +78,6 @@ class ObjectManager
 	template <typename C>
 	ComponentHandle<C> component(ObjectID id) const;
 
-	/**
-	* Destroy all entities and reset the ObjectManager.
-	*/
 	void reset()
 	{
 		/*
@@ -119,7 +110,7 @@ class ObjectManager
 
 	uint32_t m_objectIDCounter = 0;
 
-	EventManager &m_event_manager;
+	EventManager &m_evtMgr;
 	std::vector<uint32_t> m_free_list;
 	std::vector<bool> isAlive;
 
@@ -143,7 +134,7 @@ ComponentHandle<C> ObjectManager::addComponent(ObjectID id, Args &&... args)
 	comHash[id] = h;
 	// Create and return handle.
 	ComponentHandle<C> component(this, id);
-	m_event_manager.emit<ComponentAddedEvent<C>>(Object(this, id), component);
+	m_evtMgr.emit<ComponentAddedEvent<C>>(Object(this, id), component);
 	return component;
 }
 
@@ -160,7 +151,7 @@ void ObjectManager::remove(ObjectID id)
 {
 	MemoryPool<C> *pool = getComponentPool<C>();
 	ComponentHandle<C> component(this, id);
-	m_event_manager.emit<ComponentRemovedEvent<C>>(Object(this, id), component);
+	m_evtMgr.emit<ComponentRemovedEvent<C>>(Object(this, id), component);
 
 	// Call destructor.
 	pool->destroy(id);
