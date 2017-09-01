@@ -23,14 +23,7 @@ class BaseEvent
 	static TypeID eventTypeCounter;
 };
 
-/**
-		* Event types should subclass from this.
-		*
-		* struct Explosion : public Event<Explosion> {
-		*   Explosion(int damage) : damage(damage) {}
-		*   int damage;
-		* };
-		*/
+
 template <typename Derived>
 class Event : public BaseEvent
 {
@@ -88,41 +81,21 @@ class EventManager
 	EventManager() {}
 	virtual ~EventManager() {}
 
-	/**
-			* Subscribe an object to receive events of type E.
-			*
-			* Receivers must be subclasses of Receiver and must implement a receive() method accepting the given event type.
-			*
-			* eg.
-			*
-			*     struct ExplosionReceiver : public Receiver<ExplosionReceiver> {
-			*       void receive(const Explosion &explosion) {
-			*       }
-			*     };
-			*
-			*     ExplosionReceiver receiver;
-			*     em.subscribe<Explosion>(receiver);
-			*/
 	template <typename E, typename Receiver>
-	void subscribe(Receiver &receiver)
+	void on(Receiver &receiver)
 	{
 		typedef void (Receiver::*receiveFunc)(const E &);
 		receiveFunc receive = &Receiver::receive;
-		auto sig = signal_for(Event<E>::typeID());
-		auto wrapper = EventCallbackWrapper<E>(std::bind(receive, &receiver, std::placeholders::_1));
-		ConnectionID connection = sig->connect(wrapper);
+		auto sig = newSignal(Event<E>::typeID());
+		ConnectionID connection = sig->connect([&](const void* evt) {
+			receiver.receive(*(static_cast<const E *>(evt)));
+		});
 		BaseReceiver &base = receiver;
 		base.connections.insert(std::make_pair(Event<E>::typeID(), std::make_pair(EventSignalWeakPtr(sig), connection)));
 	}
 
-	/**
-			* Unsubscribe an object in order to not receive events of type E anymore.
-			*
-			* Receivers must have subscribed for event E before unsubscribing from event E.
-			*
-			*/
 	template <typename E, typename Receiver>
-	void unsubscribe(Receiver &receiver)
+	void off(Receiver &receiver)
 	{
 		BaseReceiver &base = receiver;
 		assert(base.connections.find(Event<E>::typeID()) != base.connections.end());
@@ -139,57 +112,47 @@ class EventManager
 	template <typename E>
 	void emit(const E &event)
 	{
-		auto sig = signal_for(Event<E>::typeID());
+		auto sig = newSignal(Event<E>::typeID());
 		sig->emit(&event);
 	}
 
 	template <typename E>
 	void emit(std::unique_ptr<E> event)
 	{
-		auto sig = signal_for(Event<E>::typeID());
+		auto sig = newSignal(Event<E>::typeID());
 		sig->emit(event.get());
 	}
 
-	// emit(0.1f, 10, "xxx")
 	template <typename E, typename... Args>
 	void emit(Args &&... args)
 	{
 		E event = E(std::forward<Args>(args)...);
-		auto sig = signal_for(std::size_t(Event<E>::typeID()));
+		auto sig = newSignal(std::size_t(Event<E>::typeID()));
 		sig->emit(&event);
 	}
 
 	std::size_t connected_receivers() const
 	{
 		std::size_t size = 0;
-		for (EventSignalPtr handler : handlers_)
+		for (EventSignalPtr ptr : m_evtTypeID2Signal)
 		{
-			if (handler)
-				size += handler->size();
+			if (ptr)
+				size += ptr->size();
 		}
 		return size;
 	}
 
   private:
-	EventSignalPtr &signal_for(std::size_t id)
+	EventSignalPtr &newSignal(std::size_t evtTypeID)
 	{
-		if (id >= handlers_.size())
-			handlers_.resize(id + 1);
-		if (!handlers_[id])
-			handlers_[id] = std::make_shared<EventSignal>();
-		return handlers_[id];
+		if (evtTypeID >= m_evtTypeID2Signal.size())
+			m_evtTypeID2Signal.resize(evtTypeID + 1);
+		if (!m_evtTypeID2Signal[evtTypeID])
+			m_evtTypeID2Signal[evtTypeID] = std::make_shared<EventSignal>();
+		return m_evtTypeID2Signal[evtTypeID];
 	}
 
-	// Functor used as an event signal callback that casts to E.
-	template <typename E>
-	struct EventCallbackWrapper
-	{
-		explicit EventCallbackWrapper(std::function<void(const E &)> callback) : callback(callback) {}
-		void operator()(const void *event) { callback(*(static_cast<const E *>(event))); }
-		std::function<void(const E &)> callback;
-	};
-
-	std::vector<EventSignalPtr> handlers_;
+	std::vector<EventSignalPtr> m_evtTypeID2Signal;
 };
 };
 

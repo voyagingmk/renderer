@@ -13,14 +13,14 @@ class EventManager;
 
 class ComponentTypeBase
 {
-protected:
+  protected:
 	static int counter;
 };
 
 template <typename C>
-class ComponentType: public ComponentTypeBase
+class ComponentType : public ComponentTypeBase
 {
-public:
+  public:
 	static int typeID()
 	{
 		static int id = ++counter;
@@ -51,14 +51,11 @@ class ObjectManager
 
 	Object create();
 
-
 	Object instantiate(Object original);
-
 
 	void destroy(ObjectID id);
 
 	Object get(ObjectID id);
-
 
 	template <typename C, typename... Args>
 	ComponentHandle<C> addComponent(ObjectID id, Args &&... args);
@@ -77,23 +74,22 @@ class ObjectManager
 	/**
 			* Check if an Object has a component.
 			*/
-template <typename C>
-bool has_component(ObjectID id) const
-{
+	template <typename C>
+	bool has_component(ObjectID id) const
+	{
 
-	return getComponentIdx<C>(id) != -1;
-}
+		return getComponentIdx<C>(id) != -1;
+	}
 
-template <typename C>
-ComponentHandle<C> component(ObjectID id) const;
+	template <typename C>
+	ComponentHandle<C> component(ObjectID id) const;
 
-
-/**
+	/**
 	* Destroy all entities and reset the ObjectManager.
 	*/
-void reset()
-{
-	/*
+	void reset()
+	{
+		/*
 			for (BasePool *pool : component_pools_)
 			{
 			if (pool)
@@ -103,32 +99,32 @@ void reset()
 			}
 			component_pools_.clear();
 			*/
-	m_free_list.clear();
-	m_objectIDCounter = 0;
-}
+		m_free_list.clear();
+		m_objectIDCounter = 0;
+	}
 
   private:
-	  friend class Object;
-	  template <typename C>
-	  friend class ComponentHandle;
+	friend class Object;
+	template <typename C>
+	friend class ComponentHandle;
 
-	  template <typename C>
-	  size_t getComponentIdx(ObjectID id) const;
+	template <typename C>
+	size_t getComponentIdx(ObjectID id) const;
 
-	  template <typename C>
-	  C *get_component_ptr(ObjectID id);
+	template <typename C>
+	C *get_component_ptr(ObjectID id);
 
-	  template <typename C>
-	  const C *get_component_ptr(ObjectID id) const;
+	template <typename C>
+	const C *get_component_ptr(ObjectID id) const;
 
-	  uint32_t m_objectIDCounter = 0;
+	uint32_t m_objectIDCounter = 0;
 
-	  EventManager &m_event_manager;
-	  std::vector<uint32_t> m_free_list;
-	  std::vector<bool> isAlive;
+	EventManager &m_event_manager;
+	std::vector<uint32_t> m_free_list;
+	std::vector<bool> isAlive;
 
-	  typedef std::map<size_t, size_t> ComponentHash;
-	  std::vector<ComponentHash> comHash;
+	typedef std::map<size_t, size_t> ComponentHash;
+	std::vector<ComponentHash> comHash;
 };
 
 template <typename C, typename... Args>
@@ -152,7 +148,7 @@ ComponentHandle<C> ObjectManager::addComponent(ObjectID id, Args &&... args)
 }
 
 template <typename C>
-MemoryPool<C>* ObjectManager::getComponentPool() const
+MemoryPool<C> *ObjectManager::getComponentPool() const
 {
 	static MemoryPool<C> pool;
 	ComponentType<C>::typeID();
@@ -171,14 +167,17 @@ void ObjectManager::remove(ObjectID id)
 }
 
 template <typename C>
-size_t ObjectManager::getComponentIdx(ObjectID id) const {
+size_t ObjectManager::getComponentIdx(ObjectID id) const
+{
 	auto typeID = ComponentType<C>::typeID();
-	if (id >= comHash.size()) {
+	if (id >= comHash.size())
+	{
 		return -1;
 	}
-	const ComponentHash& h = comHash[id];
+	const ComponentHash &h = comHash[id];
 	auto it2 = h.find(typeID);
-	if (it2 == h.end()) {
+	if (it2 == h.end())
+	{
 		return -1;
 	}
 	return it2->second;
@@ -188,7 +187,8 @@ template <typename C>
 ComponentHandle<C> ObjectManager::component(ObjectID id) const
 {
 	auto idx = getComponentIdx<C>(id);
-	if (idx == -1) {
+	if (idx == -1)
+	{
 		return ComponentHandle<C>();
 	}
 	return ComponentHandle<C>(this, id);
@@ -213,7 +213,6 @@ const C *ObjectManager::get_component_ptr(ObjectID id) const
 	auto idx = getComponentIdx<C>(id);
 	return static_cast<const C *>(pool->get(idx));
 }
-
 };
 
 #endif

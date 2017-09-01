@@ -65,8 +65,8 @@ struct DebugSystem : public System<DebugSystem>, public Receiver<DebugSystem>
   public:
 	void configure(EventManager &events)
 	{
-		events.subscribe<Collision>(*this);
-		events.subscribe<ObjectCreatedEvent>(*this);
+		events.on<Collision>(*this);
+		events.on<ObjectCreatedEvent>(*this);
 	}
 
 	void update(ObjectManager &objs, EventManager &events, float dt) {}
