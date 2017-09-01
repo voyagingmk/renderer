@@ -23,7 +23,6 @@ class BaseEvent
 	static TypeID eventTypeCounter;
 };
 
-
 template <typename Derived>
 class Event : public BaseEvent
 {
@@ -50,7 +49,7 @@ class BaseReceiver
 		}
 	}
 
-	std::size_t connected_signals() const
+	std::size_t getAliveSignals() const
 	{
 		std::size_t size = 0;
 		for (auto connection : connections)
@@ -87,7 +86,7 @@ class EventManager
 		typedef void (Receiver::*receiveFunc)(const E &);
 		receiveFunc receive = &Receiver::receive;
 		auto sig = newSignal(Event<E>::typeID());
-		ConnectionID connection = sig->connect([&](const void* evt) {
+		ConnectionID connection = sig->connect([&](const void *evt) {
 			receiver.receive(*(static_cast<const E *>(evt)));
 		});
 		BaseReceiver &base = receiver;
@@ -129,17 +128,6 @@ class EventManager
 		E event = E(std::forward<Args>(args)...);
 		auto sig = newSignal(std::size_t(Event<E>::typeID()));
 		sig->emit(&event);
-	}
-
-	std::size_t connected_receivers() const
-	{
-		std::size_t size = 0;
-		for (EventSignalPtr ptr : m_evtTypeID2Signal)
-		{
-			if (ptr)
-				size += ptr->size();
-		}
-		return size;
 	}
 
   private:
