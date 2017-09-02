@@ -22,9 +22,9 @@ struct Direction
 
 class MovementSystem : public System<MovementSystem>
 {
-public:
+  public:
 	void update(ObjectManager &objMgr, EventManager &evtMgr, float dt) override{
-			/*
+		/*
 		objMgr.each<Position, Direction>([dt](Object obj, Position &position, Direction &direction) {
 			position.x += direction.x * dt;
 			position.y += direction.y * dt;
@@ -34,7 +34,7 @@ public:
 
 struct Collision
 {
-public:
+  public:
 	Collision(Object left, Object right) : left(left), right(right) {}
 
 	Object left, right;
@@ -42,7 +42,7 @@ public:
 
 class CollisionSystem : public System<CollisionSystem>
 {
-public:
+  public:
 	void update(ObjectManager &objMgr, EventManager &evtMgr, float dt) override
 	{
 		ComponentHandle<Position> left_position, right_position;
@@ -62,8 +62,8 @@ public:
 
 struct DebugSystem : public System<DebugSystem>, public Receiver<DebugSystem>
 {
-public:
-	void configure(EventManager &evtMgr)
+  public:
+	void init(EventManager &evtMgr)
 	{
 		evtMgr.on<Collision>(*this);
 		evtMgr.on<ObjectCreatedEvent>(*this);
@@ -86,7 +86,7 @@ class ECSDemo : public ECS
 {
 	Object obj;
 
-public:
+  public:
 	ECSDemo();
 
 	void setup();

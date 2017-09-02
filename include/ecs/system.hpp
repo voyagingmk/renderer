@@ -13,32 +13,32 @@ class SystemManager;
 
 class BaseSystem
 {
-  public:
+public:
 	typedef std::size_t TypeID;
 
 	virtual ~BaseSystem();
 
-	virtual void configure(ObjectManager &objMgr, EventManager &evtMgr)
+	virtual void init(ObjectManager &objMgr, EventManager &evtMgr)
 	{
-		configure(evtMgr);
+		init(evtMgr);
 	}
 
-	virtual void configure(EventManager &evtMgr) {}
+	virtual void init(EventManager &evtMgr) {}
 
 	virtual void update(ObjectManager &objMgr, EventManager &evtMgr, float dt) = 0;
 
 	static TypeID m_SystemTypeCounter;
 
-  protected:
+protected:
 };
 
 template <typename Derived>
 class System : public BaseSystem
 {
-  public:
+public:
 	virtual ~System() {}
 
-  private:
+private:
 	friend class SystemManager;
 
 	static TypeID typeID()
@@ -50,9 +50,9 @@ class System : public BaseSystem
 
 class SystemManager
 {
-  public:
+public:
 	SystemManager(ObjectManager &objMgr, EventManager &evtMgr) : m_objMgr(objMgr),
-																 m_evtMgr(evtMgr) {}
+																															 m_evtMgr(evtMgr) {}
 
 	template <typename S>
 	void add(std::shared_ptr<S> system)
@@ -78,16 +78,16 @@ class SystemManager
 	template <typename S>
 	void update(float dt)
 	{
-		assert(m_inited && "SystemManager::configure() not called");
+		assert(m_inited && "SystemManager::init() not called");
 		std::shared_ptr<S> s = system<S>();
 		s->update(m_objMgr, m_evtMgr, dt);
 	}
 
 	void updateAll(float dt);
 
-	void configure();
+	void init();
 
-  private:
+private:
 	bool m_inited = false;
 	ObjectManager &m_objMgr;
 	EventManager &m_evtMgr;

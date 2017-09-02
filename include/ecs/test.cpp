@@ -12,7 +12,7 @@ void ECSDemo::setup()
 	m_systemMgr.add<MovementSystem>();
 	m_systemMgr.add<DebugSystem>();
 
-	m_systemMgr.configure();
+	m_systemMgr.init();
 
 	obj = m_objMgr.create();
 	obj.addComponent<Position>(rand() % 100, rand() % 100);
