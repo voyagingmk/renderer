@@ -27,6 +27,7 @@ void ECSDemo::setup()
 	obj.replace<Direction>(100, 999);
 	cout << "new " << dir->x << "," << dir->y << endl;
 	obj.removeComponent<Direction>();
+	// cout << "after delete " << dir->x << "," << dir->y << endl;
 	obj.destroy();
 }
 

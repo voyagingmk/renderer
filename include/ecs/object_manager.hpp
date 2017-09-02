@@ -152,6 +152,11 @@ void ObjectManager::removeComponent(ObjectID id)
 	ComponentHandle<C> component(this, id);
 	m_evtMgr.emit<ComponentRemovedEvent<C>>(Object(this, id), component);
 	pool->deleteElementByIdx(idx);
+	ComponentHash &h = m_comHashes[id];
+	auto typeID = ComponentType<C>::typeID();
+	auto it = h.find(typeID);
+	assert(it != h.end());
+	h.erase(it);
 }
 
 template <typename C>
