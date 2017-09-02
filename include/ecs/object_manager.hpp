@@ -61,7 +61,7 @@ class ObjectManager
 	void removeComponent(ObjectID id);
 
 	template <typename C>
-	bool has_component(ObjectID id) const
+	bool hasComponent(ObjectID id) const
 	{
 
 		return getComponentIdx<C>(id) != -1;
@@ -72,8 +72,10 @@ class ObjectManager
 
 	void reset()
 	{
-		for (ObjectID id = 0, len = m_isAlive.size(); id < len; id++) {
-			if (m_isAlive[id]) {
+		for (ObjectID id = 0, len = m_isAlive.size(); id < len; id++)
+		{
+			if (m_isAlive[id])
+			{
 				destroy(id);
 			}
 		}
@@ -106,8 +108,9 @@ class ObjectManager
 	typedef std::map<size_t, size_t> ComponentHash;
 	std::vector<ComponentHash> m_comHashes;
 
-	struct ComponentMetaInfo {
-		MemoryPoolBase* pool;
+	struct ComponentMetaInfo
+	{
+		MemoryPoolBase *pool;
 	};
 
 	std::vector<ComponentMetaInfo> m_comMetaInfo;

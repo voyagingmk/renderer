@@ -2,6 +2,7 @@
 #include "test.hpp"
 
 using namespace ecs;
+using namespace std;
 
 ECSDemo::ECSDemo()
 {
@@ -21,6 +22,10 @@ void ECSDemo::setup()
 	pos->y = 999;
 	obj.removeComponent<Position>();
 	obj.addComponent<Direction>(rand() % 10, rand() % 10);
+	auto dir = obj.component<Direction>();
+	cout << "old " << dir->x << "," << dir->y << endl;
+	obj.replace<Direction>(100, 999);
+	cout << "new " << dir->x << "," << dir->y << endl;
 	obj.removeComponent<Direction>();
 	obj.destroy();
 }

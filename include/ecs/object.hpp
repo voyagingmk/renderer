@@ -58,7 +58,7 @@ class Object
 	ComponentHandle<C> component() const;
 
 	template <typename C>
-	bool has_component() const;
+	bool hasComponent() const;
 
   private:
 	ObjectManager *m_manager = nullptr;
@@ -68,7 +68,7 @@ class Object
 template <typename C>
 void Object::removeComponent()
 {
-	assert(valid() && has_component<C>());
+	assert(valid() && hasComponent<C>());
 	m_manager->removeComponent<C>(m_id);
 }
 
@@ -78,8 +78,6 @@ ComponentHandle<C> Object::component() const
 	assert(valid());
 	return m_manager->component<C>(m_id);
 }
-
-
 
 template <typename C, typename... Args>
 ComponentHandle<C> Object::addComponent(Args &&... args)
@@ -105,12 +103,11 @@ ComponentHandle<C> Object::replace(Args &&... args)
 }
 
 template <typename C>
-bool Object::has_component() const
+bool Object::hasComponent() const
 {
 	assert(valid());
-	return m_manager->has_component<C>(m_id);
+	return m_manager->hasComponent<C>(m_id);
 }
 };
-
 
 #endif
