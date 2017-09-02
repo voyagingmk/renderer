@@ -30,7 +30,7 @@ Object ObjectManager::create()
 	m_isAlive.resize(id + 1);
 	m_isAlive[id] = true;
 	Object obj(this, id);
-	m_evtMgr.emit<ObjectCreatedEvent>(&obj);
+	m_evtMgr.emit<ObjectCreatedEvent>(obj);
 	return obj;
 }
 

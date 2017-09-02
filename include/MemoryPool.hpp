@@ -30,7 +30,6 @@ public:
 			char *chunk = new char[m_elementSize * m_chunkElements];
 			m_blocks.push_back(chunk);
 			m_capacity += m_chunkElements;
-			// printf("m_capacity -> %d\n", m_capacity);
 		}
 	}
 
@@ -55,7 +54,7 @@ public:
 		return idx;
 	}
 
-	bool recycle(ElementIdx idx) {
+	bool recycleIdx(ElementIdx idx) {
 		auto ret = recycledIdxes.insert(idx);
 		return ret.second == true;
 	}
@@ -115,11 +114,11 @@ public:
 	}
 
 	void deleteElementByIdx(ElementIdx idx) {
-		bool ok = recycle(idx);
+		bool ok = recycleIdx(idx);
 		if (!ok) {
 			return;
 		}
-		T* ptr = get(idx);
+		const T* ptr = get(idx);
 		ptr->~T();
 	}
 

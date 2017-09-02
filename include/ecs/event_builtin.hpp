@@ -10,11 +10,11 @@ namespace ecs
 
 	struct ObjectCreatedEvent : public Event<ObjectCreatedEvent>
 	{
-		explicit ObjectCreatedEvent(Object* obj) : m_obj(obj) {}
+		explicit ObjectCreatedEvent(Object obj) : m_obj(obj) {}
 		virtual ~ObjectCreatedEvent()
 		{
 		}
-		Object* m_obj;
+		Object m_obj;
 	};
 
 	struct ObjectDestroyedEvent : public Event<ObjectDestroyedEvent>

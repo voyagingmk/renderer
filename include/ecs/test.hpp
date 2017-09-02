@@ -68,6 +68,11 @@ struct DebugSystem : public System<DebugSystem>, public Receiver<DebugSystem>
 		evtMgr.on<Collision>(*this);
 		evtMgr.on<ObjectCreatedEvent>(*this);
 		evtMgr.on<ObjectDestroyedEvent>(*this);
+		evtMgr.on<ComponentAddedEvent<Position>>(*this);
+		evtMgr.on<ComponentRemovedEvent<Position>>(*this);
+		evtMgr.on<ComponentAddedEvent<Direction>>(*this);
+		evtMgr.on<ComponentRemovedEvent<Direction>>(*this);
+		
 	}
 
 	void update(ObjectManager &objMgr, EventManager &evtMgr, float dt) {}
@@ -79,12 +84,32 @@ struct DebugSystem : public System<DebugSystem>, public Receiver<DebugSystem>
 
 	void receive(const ObjectCreatedEvent &evt)
 	{
-		std::cout << "ObjectCreatedEvent: " << evt.m_obj->ID() << std::endl;
+		std::cout << "ObjectCreatedEvent: " << evt.m_obj.ID() << std::endl;
 	}
 
 	void receive(const ObjectDestroyedEvent &evt)
 	{
 		std::cout << "ObjectDestroyedEvent: " << evt.m_objID << std::endl;
+	}
+
+	void receive(const ComponentAddedEvent<Position> &evt)
+	{
+		std::cout << "ComponentAddedEvent Position: " << evt.m_obj.ID() << evt.component->x << "," << evt.component->y << std::endl;
+	}
+
+	void receive(const ComponentRemovedEvent<Position> &evt)
+	{
+		std::cout << "ComponentRemovedEvent Position: " << evt.m_obj.ID() << evt.component->x << "," << evt.component->y << std::endl;
+	}
+
+	void receive(const ComponentAddedEvent<Direction> &evt)
+	{
+		std::cout << "ComponentAddedEvent Direction: " << evt.m_obj.ID() << evt.component->x << "," << evt.component->y << std::endl;
+	}
+
+	void receive(const ComponentRemovedEvent<Direction> &evt)
+	{
+		std::cout << "ComponentRemovedEvent Direction: " << evt.m_obj.ID() << evt.component->x << "," << evt.component->y << std::endl;
 	}
 };
 

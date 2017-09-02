@@ -52,7 +52,7 @@ class Object
 	ComponentHandle<C> replace(Args &&... args);
 
 	template <typename C>
-	void remove();
+	void removeComponent();
 
 	template <typename C>
 	ComponentHandle<C> component() const;
@@ -66,10 +66,10 @@ class Object
 };
 
 template <typename C>
-void Object::remove()
+void Object::removeComponent()
 {
 	assert(valid() && has_component<C>());
-	m_manager->remove<C>(m_id);
+	m_manager->removeComponent<C>(m_id);
 }
 
 template <typename C>

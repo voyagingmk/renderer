@@ -16,7 +16,9 @@ void ECSDemo::setup()
 
 	obj = m_objMgr.create();
 	obj.addComponent<Position>(rand() % 100, rand() % 100);
-	obj.addComponent<Direction>((rand() % 10) - 5, (rand() % 10) - 5);
+	obj.removeComponent<Position>();
+	obj.addComponent<Direction>(rand() % 10, rand() % 10);
+	obj.removeComponent<Direction>();
 	obj.destroy();
 }
 

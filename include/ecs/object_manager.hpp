@@ -58,7 +58,7 @@ class ObjectManager
 	MemoryPool<C> *getComponentPool() const;
 
 	template <typename C>
-	void remove(ObjectID id);
+	void removeComponent(ObjectID id);
 
 	template <typename C>
 	bool has_component(ObjectID id) const
@@ -107,7 +107,7 @@ class ObjectManager
 	std::vector<ComponentHash> m_comHashes;
 
 	struct ComponentMetaInfo {
-		//	MemoryPool<C> *pool
+		MemoryPoolBase* pool;
 	};
 
 	std::vector<ComponentMetaInfo> m_comMetaInfo;
@@ -126,6 +126,7 @@ ComponentHandle<C> ObjectManager::addComponent(ObjectID id, Args &&... args)
 	m_comHashes.resize(id + 1);
 	ComponentHash h = m_comHashes[id];
 	h[ComponentType<C>::typeID()] = idx;
+	m_comHashes[id] = h;
 	// Create and return handle.
 	ComponentHandle<C> component(this, id);
 	m_evtMgr.emit<ComponentAddedEvent<C>>(Object(this, id), component);
@@ -143,12 +144,11 @@ MemoryPool<C> *ObjectManager::getComponentPool() const
 template <typename C>
 void ObjectManager::removeComponent(ObjectID id)
 {
+	size_t idx = getComponentIdx<C>(id);
 	MemoryPool<C> *pool = getComponentPool<C>();
 	ComponentHandle<C> component(this, id);
 	m_evtMgr.emit<ComponentRemovedEvent<C>>(Object(this, id), component);
-
-	// Call destructor.
-	pool->destroy(id);
+	pool->deleteElementByIdx(idx);
 }
 
 template <typename C>
