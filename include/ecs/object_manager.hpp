@@ -72,16 +72,11 @@ class ObjectManager
 
 	void reset()
 	{
-		/*
-			for (BasePool *pool : component_pools_)
-			{
-			if (pool)
-			{
-			delete pool;
+		for (ObjectID id = 0, len = m_isAlive.size(); id < len; id++) {
+			if (m_isAlive[id]) {
+				destroy(id);
 			}
-			}
-			component_pools_.clear();
-			*/
+		}
 		m_freeList.clear();
 		m_isAlive.clear();
 		m_comHashes.clear();
@@ -110,6 +105,12 @@ class ObjectManager
 
 	typedef std::map<size_t, size_t> ComponentHash;
 	std::vector<ComponentHash> m_comHashes;
+
+	struct ComponentMetaInfo {
+		//	MemoryPool<C> *pool
+	};
+
+	std::vector<ComponentMetaInfo> m_comMetaInfo;
 };
 
 template <typename C, typename... Args>
@@ -125,7 +126,6 @@ ComponentHandle<C> ObjectManager::addComponent(ObjectID id, Args &&... args)
 	m_comHashes.resize(id + 1);
 	ComponentHash h = m_comHashes[id];
 	h[ComponentType<C>::typeID()] = idx;
-	m_comHashes[id] = h;
 	// Create and return handle.
 	ComponentHandle<C> component(this, id);
 	m_evtMgr.emit<ComponentAddedEvent<C>>(Object(this, id), component);
@@ -141,7 +141,7 @@ MemoryPool<C> *ObjectManager::getComponentPool() const
 }
 
 template <typename C>
-void ObjectManager::remove(ObjectID id)
+void ObjectManager::removeComponent(ObjectID id)
 {
 	MemoryPool<C> *pool = getComponentPool<C>();
 	ComponentHandle<C> component(this, id);

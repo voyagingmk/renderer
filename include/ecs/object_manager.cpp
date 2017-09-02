@@ -45,6 +45,10 @@ Object ObjectManager::instantiate(Object original)
 void ObjectManager::destroy(ObjectID id)
 {
 	// TODO com delete
+	ComponentHash h = m_comHashes[id];
+	for (auto idx : h) {
+		idx.second;
+	}
 	m_evtMgr.emit<ObjectDestroyedEvent>(id);
 	m_freeList.push_back(id);
 	m_isAlive[id] = false;
