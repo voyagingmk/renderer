@@ -62,42 +62,42 @@ template <typename C>
 inline C *ComponentHandle<C>::operator->()
 {
 	assert(valid());
-	return const_cast<C *>(m_manager->template get_component_ptr<C>(m_id));
+	return const_cast<C *>(m_manager->template getComponentPtr<C>(m_id));
 }
 
 template <typename C>
 inline const C *ComponentHandle<C>::operator->() const
 {
 	assert(valid());
-	return m_manager->template get_component_ptr<C>(m_id);
+	return m_manager->template getComponentPtr<C>(m_id);
 }
 
 template <typename C>
 C &ComponentHandle<C>::operator*()
 {
 	assert(valid());
-	return *m_manager->template get_component_ptr<C>(m_id);
+	return *m_manager->template getComponentPtr<C>(m_id);
 }
 
 template <typename C>
 const C &ComponentHandle<C>::operator*() const
 {
 	assert(valid());
-	return *m_manager->template get_component_ptr<C>(m_id);
+	return *m_manager->template getComponentPtr<C>(m_id);
 }
 
 template <typename C>
 C *ComponentHandle<C>::get()
 {
 	assert(valid());
-	return const_cast<C *>(m_manager->template get_component_ptr<C>(m_id));
+	return const_cast<C *>(m_manager->template getComponentPtr<C>(m_id));
 }
 
 template <typename C>
 const C *ComponentHandle<C>::get() const
 {
 	assert(valid());
-	return m_manager->template get_component_ptr<C>(m_id);
+	return m_manager->template getComponentPtr<C>(m_id);
 }
 
 template <typename C>

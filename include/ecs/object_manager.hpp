@@ -94,10 +94,10 @@ class ObjectManager
 	size_t getComponentIdx(ObjectID id) const;
 
 	template <typename C>
-	C *get_component_ptr(ObjectID id);
+	C *getComponentPtr(ObjectID id);
 
 	template <typename C>
-	const C *get_component_ptr(const ObjectID id) const;
+	const C *getComponentPtr(const ObjectID id) const;
 
 	uint32_t m_objectIDCounter = 0;
 
@@ -183,7 +183,7 @@ ComponentHandle<C> ObjectManager::component(ObjectID id) const
 }
 
 template <typename C>
-C *ObjectManager::get_component_ptr(ObjectID id)
+C *ObjectManager::getComponentPtr(ObjectID id)
 {
 	assert(valid(id));
 	MemoryPool<C> *pool = getComponentPool<C>();
@@ -193,7 +193,7 @@ C *ObjectManager::get_component_ptr(ObjectID id)
 }
 
 template <typename C>
-const C *ObjectManager::get_component_ptr(const ObjectID id) const
+const C *ObjectManager::getComponentPtr(const ObjectID id) const
 {
 	assert(valid(id));
 	MemoryPool<C> *pool = getComponentPool<C>();
