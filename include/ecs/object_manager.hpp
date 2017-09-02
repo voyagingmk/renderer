@@ -40,7 +40,7 @@ class ObjectManager
 
 	bool valid(ObjectID id) const
 	{
-		return isAlive[id];
+		return m_isAlive[id];
 	}
 
 	Object create();
@@ -57,17 +57,9 @@ class ObjectManager
 	template <typename C>
 	MemoryPool<C> *getComponentPool() const;
 
-	/**
-			* Remove a Component from an ObjectID
-			*
-			* Emits a ComponentRemovedEvent<C> event.
-			*/
 	template <typename C>
 	void remove(ObjectID id);
 
-	/**
-			* Check if an Object has a component.
-			*/
 	template <typename C>
 	bool has_component(ObjectID id) const
 	{
@@ -90,7 +82,9 @@ class ObjectManager
 			}
 			component_pools_.clear();
 			*/
-		m_free_list.clear();
+		m_freeList.clear();
+		m_isAlive.clear();
+		m_comHashes.clear();
 		m_objectIDCounter = 0;
 	}
 
@@ -111,11 +105,11 @@ class ObjectManager
 	uint32_t m_objectIDCounter = 0;
 
 	EventManager &m_evtMgr;
-	std::vector<uint32_t> m_free_list;
-	std::vector<bool> isAlive;
+	std::vector<uint32_t> m_freeList;
+	std::vector<bool> m_isAlive;
 
 	typedef std::map<size_t, size_t> ComponentHash;
-	std::vector<ComponentHash> comHash;
+	std::vector<ComponentHash> m_comHashes;
 };
 
 template <typename C, typename... Args>
@@ -128,10 +122,10 @@ ComponentHandle<C> ObjectManager::addComponent(ObjectID id, Args &&... args)
 
 	pool->newElementByIdx(idx, std::forward<Args>(args)...);
 
-	comHash.resize(id + 1);
-	ComponentHash h = comHash[id];
+	m_comHashes.resize(id + 1);
+	ComponentHash h = m_comHashes[id];
 	h[ComponentType<C>::typeID()] = idx;
-	comHash[id] = h;
+	m_comHashes[id] = h;
 	// Create and return handle.
 	ComponentHandle<C> component(this, id);
 	m_evtMgr.emit<ComponentAddedEvent<C>>(Object(this, id), component);
@@ -161,11 +155,11 @@ template <typename C>
 size_t ObjectManager::getComponentIdx(ObjectID id) const
 {
 	auto typeID = ComponentType<C>::typeID();
-	if (id >= comHash.size())
+	if (id >= m_comHashes.size())
 	{
 		return -1;
 	}
-	const ComponentHash &h = comHash[id];
+	const ComponentHash &h = m_comHashes[id];
 	auto it2 = h.find(typeID);
 	if (it2 == h.end())
 	{

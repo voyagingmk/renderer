@@ -67,6 +67,7 @@ struct DebugSystem : public System<DebugSystem>, public Receiver<DebugSystem>
 	{
 		evtMgr.on<Collision>(*this);
 		evtMgr.on<ObjectCreatedEvent>(*this);
+		evtMgr.on<ObjectDestroyedEvent>(*this);
 	}
 
 	void update(ObjectManager &objMgr, EventManager &evtMgr, float dt) {}
@@ -80,6 +81,11 @@ struct DebugSystem : public System<DebugSystem>, public Receiver<DebugSystem>
 	{
 		std::cout << "ObjectCreatedEvent: " << evt.m_obj->ID() << std::endl;
 	}
+
+	void receive(const ObjectDestroyedEvent &evt)
+	{
+		std::cout << "ObjectDestroyedEvent: " << evt.m_objID << std::endl;
+	}
 };
 
 class ECSDemo : public ECS
@@ -91,7 +97,7 @@ class ECSDemo : public ECS
 
 	void setup();
 
-	void update(float dt) const;
+	void update(float dt);
 };
 
 #endif

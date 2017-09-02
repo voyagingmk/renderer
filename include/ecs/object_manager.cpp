@@ -18,17 +18,17 @@ ObjectManager::~ObjectManager()
 Object ObjectManager::create()
 {
 	ObjectID id;
-	if (m_free_list.size() <= 100000)
+	if (m_freeList.size() <= 100000)
 	{
 		id = ++m_objectIDCounter;
 	}
 	else
 	{
-		id = m_free_list.back();
-		m_free_list.pop_back();
+		id = m_freeList.back();
+		m_freeList.pop_back();
 	}
-	isAlive.resize(id + 1);
-	isAlive[id] = true;
+	m_isAlive.resize(id + 1);
+	m_isAlive[id] = true;
 	Object obj(this, id);
 	m_evtMgr.emit<ObjectCreatedEvent>(&obj);
 	return obj;
@@ -46,8 +46,8 @@ void ObjectManager::destroy(ObjectID id)
 {
 	// TODO com delete
 	m_evtMgr.emit<ObjectDestroyedEvent>(id);
-	m_free_list.push_back(id);
-	isAlive[id] = false;
+	m_freeList.push_back(id);
+	m_isAlive[id] = false;
 }
 
 Object ObjectManager::get(ObjectID id)
