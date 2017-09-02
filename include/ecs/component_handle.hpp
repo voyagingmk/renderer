@@ -59,14 +59,14 @@ ComponentHandle<C>::operator bool() const
 }
 
 template <typename C>
-C *ComponentHandle<C>::operator->()
+inline C *ComponentHandle<C>::operator->()
 {
 	assert(valid());
-	return m_manager->template get_component_ptr<C>(m_id);
+	return const_cast<C*>(m_manager->template get_component_ptr<C>(m_id));
 }
 
 template <typename C>
-const C *ComponentHandle<C>::operator->() const
+inline const C *ComponentHandle<C>::operator->() const
 {
 	assert(valid());
 	return m_manager->template get_component_ptr<C>(m_id);

@@ -94,12 +94,12 @@ struct DebugSystem : public System<DebugSystem>, public Receiver<DebugSystem>
 
 	void receive(const ComponentAddedEvent<Position> &evt)
 	{
-		std::cout << "ComponentAddedEvent Position: " << evt.m_obj.ID() << evt.component->x << "," << evt.component->y << std::endl;
+		std::cout << "ComponentAddedEvent Position: " << evt.m_obj.ID() << "," << evt.component->x << "," << evt.component->y << std::endl;
 	}
 
 	void receive(const ComponentRemovedEvent<Position> &evt)
 	{
-		std::cout << "ComponentRemovedEvent Position: " << evt.m_obj.ID() << evt.component->x << "," << evt.component->y << std::endl;
+		std::cout << "ComponentRemovedEvent Position: " << evt.m_obj.ID() << "," << evt.component->x << "," << evt.component->y << std::endl;
 	}
 
 	void receive(const ComponentAddedEvent<Direction> &evt)
