@@ -131,13 +131,18 @@ ComponentHandle<C> ObjectManager::addComponent(ObjectID id, Args &&... args)
 		m_comMetaInfo[typeID] = info;
 	}
 
-	MemoryPool<C>::ElementIdx idx = pool->dispatchIdx();
-
-	pool->newElementByIdx(idx, std::forward<Args>(args)...);
-
-	m_comHashes.resize(id + 1);
+	if (m_comHashes.size() <= id) {
+		m_comHashes.resize(id + 1);
+	}
 	ComponentHash h = m_comHashes[id];
-	h[ComponentType<C>::typeID()] = idx;
+	if (h.find(typeID) != h.end()) {
+		// already exists
+		ComponentHandle<C> component(this, id);
+		return component;
+	}
+	MemoryPool<C>::ElementIdx idx = pool->dispatchIdx();
+	pool->newElementByIdx(idx, std::forward<Args>(args)...);
+	h[typeID] = idx;
 	m_comHashes[id] = h;
 	// Create and return handle.
 	ComponentHandle<C> component(this, id);

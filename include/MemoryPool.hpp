@@ -106,6 +106,7 @@ public:
 
 	void deleteElement(T* ptr) {
 		bool ok = recycle(ptr);
+		assert(ok && "deleteElement failed");
 		if (!ok) {
 			return;
 		}
@@ -120,6 +121,7 @@ public:
 
 	void deleteElementByIdx(ElementIdx idx) {
 		bool ok = recycleIdx(idx);
+		assert(ok && "deleteElementByIdx failed");
 		if (!ok) {
 			return;
 		}
