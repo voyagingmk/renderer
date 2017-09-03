@@ -34,13 +34,6 @@ Object ObjectManager::create()
 	return obj;
 }
 
-Object ObjectManager::instantiate(Object original)
-{
-	assert(original.valid());
-	auto clone = create();
-	// TODO
-	return clone;
-}
 
 void ObjectManager::destroy(ObjectID id)
 {

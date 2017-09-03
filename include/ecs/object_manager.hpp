@@ -36,9 +36,9 @@ class ObjectManager
 	explicit ObjectManager(EventManager &evtMgr);
 	virtual ~ObjectManager();
 
-	size_t size() const { return 0; }
+	size_t size() const { return m_isAlive.size() - m_freeList.size(); }
 
-	size_t capacity() const { return 0; }
+	size_t capacity() const { return m_isAlive.size(); }
 
 	bool valid(ObjectID id) const
 	{
@@ -46,8 +46,6 @@ class ObjectManager
 	}
 
 	Object create();
-
-	Object instantiate(Object original);
 
 	void destroy(ObjectID id);
 
@@ -101,6 +99,7 @@ class ObjectManager
 	template <typename C>
 	const C *getComponentPtr(const ObjectID id) const;
 
+  private:
 	uint32_t m_objectIDCounter = 0;
 
 	EventManager &m_evtMgr;
