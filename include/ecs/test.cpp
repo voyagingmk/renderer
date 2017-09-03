@@ -17,17 +17,19 @@ void ECSDemo::setup()
 
 	obj = m_objMgr.create();
 	obj.addComponent<Position>(rand() % 100, rand() % 100);
+	obj.addComponent<Direction>(rand() % 10, rand() % 10);
+	/*
 	auto pos = obj.component<Position>();
 	pos->x = 333;
 	pos->y = 999;
 	obj.removeComponent<Position>();
-	obj.addComponent<Direction>(rand() % 10, rand() % 10);
 	auto dir = obj.component<Direction>();
 	cout << "old " << dir->x << "," << dir->y << endl;
 	obj.replace<Direction>(100, 999);
 	cout << "new " << dir->x << "," << dir->y << endl;
 	obj.removeComponent<Direction>();
 	// cout << "after delete " << dir->x << "," << dir->y << endl;
+	*/
 	obj.destroy();
 }
 

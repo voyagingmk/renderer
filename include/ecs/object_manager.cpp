@@ -6,7 +6,7 @@
 namespace ecs
 {
 
-int ComponentTypeBase::counter = 0;
+ComponentTypeID ComponentTypeBase::typeIDCounter = 0;
 
 ObjectManager::ObjectManager(EventManager &evtMgr) : m_evtMgr(evtMgr) {}
 
@@ -46,8 +46,11 @@ void ObjectManager::destroy(ObjectID id)
 {
 	// TODO com delete
 	ComponentHash h = m_comHashes[id];
-	for (auto idx : h) {
-		idx.second;
+	for (auto pair : h) {
+		ComponentTypeID typeID = pair.first;
+		size_t idx = pair.second;
+		ComponentMetaInfo& info = m_comMetaInfo[typeID];
+		info.pool->deleteElementByIdx(idx);
 	}
 	m_evtMgr.emit<ObjectDestroyedEvent>(id);
 	m_freeList.push_back(id);

@@ -11,20 +11,22 @@ class ComponentHandle;
 
 class EventManager;
 
+typedef size_t ComponentTypeID;
+
 class ComponentTypeBase
 {
   protected:
-	static int counter;
+	static ComponentTypeID typeIDCounter;
 };
 
 template <typename C>
 class ComponentType : public ComponentTypeBase
 {
   public:
-	static int typeID()
+	static ComponentTypeID typeID()
 	{
-		static int id = ++counter;
-		return id;
+		static ComponentTypeID typeID = ++typeIDCounter;
+		return typeID;
 	}
 };
 
@@ -105,15 +107,15 @@ class ObjectManager
 	std::vector<uint32_t> m_freeList;
 	std::vector<bool> m_isAlive;
 
-	typedef std::map<size_t, size_t> ComponentHash;
+	typedef std::map<ComponentTypeID, size_t> ComponentHash;
 	std::vector<ComponentHash> m_comHashes;
 
 	struct ComponentMetaInfo
 	{
-		MemoryPoolBase *pool;
+		MemoryPoolBase *pool = nullptr;
 	};
 
-	std::vector<ComponentMetaInfo> m_comMetaInfo;
+	std::map<ComponentTypeID, ComponentMetaInfo> m_comMetaInfo;
 };
 
 template <typename C, typename... Args>
@@ -122,6 +124,13 @@ ComponentHandle<C> ObjectManager::addComponent(ObjectID id, Args &&... args)
 
 	// Placement new into the component pool.
 	MemoryPool<C> *pool = getComponentPool<C>();
+	ComponentTypeID typeID = ComponentType<C>::typeID();
+	if (m_comMetaInfo.find(typeID) == m_comMetaInfo.end()) {
+		ComponentMetaInfo info;
+		info.pool = pool;
+		m_comMetaInfo[typeID] = info;
+	}
+
 	MemoryPool<C>::ElementIdx idx = pool->dispatchIdx();
 
 	pool->newElementByIdx(idx, std::forward<Args>(args)...);
@@ -140,7 +149,7 @@ template <typename C>
 MemoryPool<C> *ObjectManager::getComponentPool() const
 {
 	static MemoryPool<C> pool;
-	ComponentType<C>::typeID();
+	ComponentTypeID typeID = ComponentType<C>::typeID();
 	return &pool;
 }
 

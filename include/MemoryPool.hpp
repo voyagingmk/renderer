@@ -58,6 +58,7 @@ public:
 		auto ret = recycledIdxes.insert(idx);
 		return ret.second == true;
 	}
+	virtual void deleteElementByIdx(ElementIdx idx) = 0;
 
 protected:
 	std::set<ElementIdx> recycledIdxes;
@@ -74,6 +75,10 @@ public:
 	explicit MemoryPool(std::size_t chunkElements = 8192):
 		MemoryPoolBase(chunkElements, sizeof(T))
 	{
+	}
+
+	virtual ~MemoryPool() {
+		recycledPtrs.clear();
 	}
 
 	inline const T* get(ElementIdx idx) const {

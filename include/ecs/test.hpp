@@ -9,14 +9,18 @@ using namespace ecs;
 struct Position
 {
 	Position(float x = 0.0f, float y = 0.0f) : x(x), y(y) {}
-
+	~Position() {
+		std::cout << "~Position()" << std::endl;
+	}
 	float x, y;
 };
 
 struct Direction
 {
 	Direction(float x = 0.0f, float y = 0.0f) : x(x), y(y) {}
-
+	~Direction() {
+		std::cout << "~Direction()" << std::endl;
+	}
 	float x, y;
 };
 
