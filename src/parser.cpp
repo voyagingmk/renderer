@@ -284,9 +284,9 @@ void SceneParser::parseLights(nlohmann::json &config, Lights &lights)
 	for (auto objinfo : config["light"])
 	{
 		Light *pLight = nullptr;
-		bool shadow = objinfo["shadow"].is_null() ? false : objinfo["shadow"];
-		bool softshadow = objinfo["softshadow"].is_null() ? false : objinfo["softshadow"];
-		float radius = objinfo["radius"].is_null() ? 1.0f : objinfo["radius"];
+		bool shadow = objinfo["shadow"].is_null() ? false : (bool)objinfo["shadow"];
+		bool softshadow = objinfo["softshadow"].is_null() ? false : (bool)objinfo["softshadow"];
+		float radius = objinfo["radius"].is_null() ? 1.0f : (float)objinfo["radius"];
 		if (objinfo["type"] == "DirectionLight")
 		{
 			auto dir = objinfo["dir"];
@@ -299,7 +299,7 @@ void SceneParser::parseLights(nlohmann::json &config, Lights &lights)
 		else if (objinfo["type"] == "PointLight")
 		{
 			auto pos = objinfo["pos"];
-			int shadowrays = objinfo["shadowrays"].is_null() ? 0 : objinfo["shadowrays"];
+			int shadowrays = objinfo["shadowrays"].is_null() ? 0 : (int)objinfo["shadowrays"];
 			auto pool = GetPool<PointLight>();
 			pLight = static_cast<Light *>(pool->newElement(
 				Vector3dF(pos[0], pos[1], pos[2]),
@@ -313,9 +313,9 @@ void SceneParser::parseLights(nlohmann::json &config, Lights &lights)
 			pLight->ambient = parseColor(objinfo["ambient"]);
 			pLight->diffuse = parseColor(objinfo["diffuse"]);
 			pLight->specular = parseColor(objinfo["specular"]);
-			pLight->constant = objinfo["constant"].is_null() ? 1.0f : objinfo["constant"];
-			pLight->linear = objinfo["linear"].is_null() ? 0.014f : objinfo["linear"];
-			pLight->quadratic = objinfo["quadratic"].is_null() ? 0.0007f : objinfo["linear"];
+			pLight->constant = objinfo["constant"].is_null() ? 1.0f : (float)objinfo["constant"];
+			pLight->linear = objinfo["linear"].is_null() ? 0.014f : (float)objinfo["linear"];
+			pLight->quadratic = objinfo["quadratic"].is_null() ? 0.0007f : (float)objinfo["linear"];
 			lights.push_back(pLight);
 		}
 	}

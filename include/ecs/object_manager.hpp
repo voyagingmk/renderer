@@ -2,6 +2,10 @@
 #define RENDERER_ECS_OBJECT_MANAGER_HPP
 
 #include "setting.hpp"
+#include "../MemoryPool.hpp"
+#include "event.hpp"
+#include "event_builtin.hpp"
+
 namespace ecs
 {
 class Object;
@@ -117,6 +121,51 @@ class ObjectManager
 	std::map<ComponentTypeID, ComponentMetaInfo> m_comMetaInfo;
 };
 
+    
+    template <typename C>
+    void Object::removeComponent()
+    {
+        assert(valid() && hasComponent<C>());
+        m_manager->removeComponent<C>(m_id);
+    }
+    
+    template <typename C>
+    ComponentHandle<C> Object::component() const
+    {
+        assert(valid());
+        return m_manager->component<C>(m_id);
+    }
+    
+    template <typename C, typename... Args>
+    ComponentHandle<C> Object::addComponent(Args &&... args)
+    {
+        assert(valid());
+        return m_manager->addComponent<C>(m_id, std::forward<Args>(args)...);
+    }
+    
+    template <typename C, typename... Args>
+    ComponentHandle<C> Object::replace(Args &&... args)
+    {
+        assert(valid());
+        auto handle = component<C>();
+        if (handle)
+        {
+            *(handle.get()) = C(std::forward<Args>(args)...);
+        }
+        else
+        {
+            handle = m_manager->addComponent<C>(m_id, std::forward<Args>(args)...);
+        }
+        return handle;
+    }
+    
+    template <typename C>
+    bool Object::hasComponent() const
+    {
+        assert(valid());
+        return m_manager->hasComponent<C>(m_id);
+    }
+    
 template <typename C, typename... Args>
 ComponentHandle<C> ObjectManager::addComponent(ObjectID id, Args &&... args)
 {
@@ -139,7 +188,7 @@ ComponentHandle<C> ObjectManager::addComponent(ObjectID id, Args &&... args)
 		ComponentHandle<C> component(this, id);
 		return component;
 	}
-	MemoryPool<C>::ElementIdx idx = pool->dispatchIdx();
+	auto idx = pool->dispatchIdx();
 	pool->newElementByIdx(idx, std::forward<Args>(args)...);
 	h[typeID] = idx;
 	m_comHashes[id] = h;
@@ -219,6 +268,88 @@ const C *ObjectManager::getComponentPtr(const ObjectID id) const
 	auto idx = getComponentIdx<C>(id);
 	return static_cast<const C *>(pool->get(idx));
 }
+    
+    
+    template <typename C>
+    bool ComponentHandle<C>::valid() const
+    {
+        return m_manager && m_manager->valid(m_id) && m_manager->template hasComponent<C>(m_id);
+    }
+    
+    template <typename C>
+    ComponentHandle<C>::operator bool() const
+    {
+        return valid();
+    }
+    
+    template <typename C>
+    inline C *ComponentHandle<C>::operator->()
+    {
+        assert(valid());
+        return const_cast<C *>(m_manager->template getComponentPtr<C>(m_id));
+    }
+    
+    template <typename C>
+    inline const C *ComponentHandle<C>::operator->() const
+    {
+        assert(valid());
+        return m_manager->template getComponentPtr<C>(m_id);
+    }
+    
+    template <typename C>
+    C &ComponentHandle<C>::operator*()
+    {
+        assert(valid());
+        return *m_manager->template getComponentPtr<C>(m_id);
+    }
+    
+    template <typename C>
+    const C &ComponentHandle<C>::operator*() const
+    {
+        assert(valid());
+        return *m_manager->template getComponentPtr<C>(m_id);
+    }
+    
+    template <typename C>
+    C *ComponentHandle<C>::get()
+    {
+        assert(valid());
+        return const_cast<C *>(m_manager->template getComponentPtr<C>(m_id));
+    }
+    
+    template <typename C>
+    const C *ComponentHandle<C>::get() const
+    {
+        assert(valid());
+        return m_manager->template getComponentPtr<C>(m_id);
+    }
+    
+    template <typename C>
+    void ComponentHandle<C>::remove()
+    {
+        assert(valid());
+        m_manager->template removeComponent<C>(m_id);
+    }
+    
+    template <typename C>
+    Object ComponentHandle<C>::object()
+    {
+        assert(valid());
+        return m_manager->get(m_id);
+    }
+    
+    template <typename C>
+    bool ComponentHandle<C>::operator==(const ComponentHandle<C> &other) const
+    {
+        return m_manager == other.m_manager && m_id == other.m_id;
+    }
+    
+    template <typename C>
+    bool ComponentHandle<C>::operator!=(const ComponentHandle<C> &other) const
+    {
+        return !(*this == other);
+    }
+
 };
 
 #endif

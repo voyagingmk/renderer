@@ -79,7 +79,7 @@ public:
 	void update(float dt)
 	{
 		assert(m_inited && "SystemManager::init() not called");
-		std::shared_ptr<S> s = system<S>();
+		std::shared_ptr<S> s = get<S>();
 		s->update(m_objMgr, m_evtMgr, dt);
 	}
 

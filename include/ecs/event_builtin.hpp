@@ -2,6 +2,7 @@
 #define RENDERER_ECS_EVENT_BUILTIN_HPP
 
 #include "event.hpp"
+#include "object.hpp"
 #include "component_handle.hpp"
 
 namespace ecs

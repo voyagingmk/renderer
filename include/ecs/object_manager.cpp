@@ -54,4 +54,5 @@ Object ObjectManager::get(ObjectID id)
 {
 	return Object(this, id);
 }
+
 }
