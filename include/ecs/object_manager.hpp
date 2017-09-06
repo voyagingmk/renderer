@@ -127,7 +127,7 @@ class ObjectManager
 	template <bool All>
 	class BaseView {
 	public:
-		template <class Delegate, bool All = false>
+		template <class Delegate>
 		class ViewIterator : public std::iterator<std::input_iterator_tag, Entity::Id> {
 		public:
 			Delegate &operator ++() {
@@ -142,14 +142,14 @@ class ObjectManager
 
 		protected:
 			ViewIterator(EntityManager *manager, uint32_t index)
-				: m_ObjMgr(manager), m_idx(index), capacity_(m_ObjMgr->capacity()), free_cursor_(~0UL) {
+				: m_ObjMgr(manager), m_idx(index), m_capacity(m_ObjMgr->capacity()), free_cursor_(~0UL) {
 				if (All) {
 					std::sort(m_ObjMgr->free_list_.begin(), m_ObjMgr->free_list_.end());
 					free_cursor_ = 0;
 				}
 			}
 			ViewIterator(EntityManager *manager, const ComponentMask mask, uint32_t index)
-				: m_ObjMgr(manager), m_idx(index), capacity_(m_ObjMgr->capacity()), free_cursor_(~0UL) {
+				: m_ObjMgr(manager), m_idx(index), m_capacity(m_ObjMgr->capacity()), free_cursor_(~0UL) {
 				if (All) {
 					std::sort(m_ObjMgr->free_list_.begin(), m_ObjMgr->free_list_.end());
 					free_cursor_ = 0;
@@ -157,11 +157,11 @@ class ObjectManager
 			}
 
 			void next() {
-				while (m_idx < capacity_ && !predicate()) {
+				while (m_idx < m_capacity && !predicate()) {
 					++m_idx;
 				}
 
-				if (m_idx < capacity_) {
+				if (m_idx < m_capacity) {
 					Entity entity = m_ObjMgr->get(m_ObjMgr->create_id(m_idx));
 					static_cast<Delegate*>(this)->next_entity(entity);
 				}
@@ -182,7 +182,7 @@ class ObjectManager
 
 			EntityManager *m_ObjMgr;
 			uint32_t m_idx;
-			size_t capacity_;
+			size_t m_capacity;
 			size_t free_cursor_;
 		};
 
