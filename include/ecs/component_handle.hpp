@@ -6,45 +6,45 @@
 namespace ecs
 {
 
-class Object;
-class ObjectManager;
+	class Object;
+	class ObjectManager;
 
-template <typename C>
-class ComponentHandle
-{
-  public:
-	ComponentHandle(const ObjectManager *manager, ObjectID id) : m_manager(manager), m_id(id) {}
+	template <typename C>
+	class ComponentHandle
+	{
+	  public:
+		ComponentHandle(const ObjectManager *manager, ObjectID id) : m_manager(manager), m_id(id) {}
 
-	ComponentHandle() : m_manager(nullptr), m_id(0) {}
+		ComponentHandle() : m_manager(nullptr), m_id(0) {}
 
-	bool valid() const;
+		bool valid() const;
 
-	operator bool() const;
+		operator bool() const;
 
-	C *operator->();
+		C *operator->();
 
-	const C *operator->() const;
+		const C *operator->() const;
 
-	C &operator*();
+		C &operator*();
 
-	const C &operator*() const;
+		const C &operator*() const;
 
-	C *get();
+		C *get();
 
-	const C *get() const;
+		const C *get() const;
 
-	void remove();
+		void remove();
 
-	Object object();
+		Object object();
 
-	bool operator==(const ComponentHandle<C> &other) const;
+		bool operator==(const ComponentHandle<C> &other) const;
 
-	bool operator!=(const ComponentHandle<C> &other) const;
+		bool operator!=(const ComponentHandle<C> &other) const;
 
-  private:
-	const ObjectManager *m_manager;
-	ObjectID m_id;
-};
+	  private:
+		const ObjectManager *m_manager;
+		ObjectID m_id;
+	};
 };
 
 #endif
