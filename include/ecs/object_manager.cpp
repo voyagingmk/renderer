@@ -44,6 +44,8 @@ void ObjectManager::destroy(ObjectID id)
 		size_t idx = pair.second;
 		ComponentMetaInfo& info = m_comMetaInfo[typeID];
 		info.pool->deleteElementByIdx(idx);
+		ObjectIDs& objectIDs = m_ObjectIDs[typeID];
+		objectIDs.erase(id);
 	}
 	m_evtMgr.emit<ObjectDestroyedEvent>(id);
 	m_freeList.push_back(id);

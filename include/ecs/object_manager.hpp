@@ -113,6 +113,9 @@ class ObjectManager
 	typedef std::map<ComponentTypeID, size_t> ComponentHash;
 	std::vector<ComponentHash> m_comHashes;
 
+	typedef std::set<ObjectID> ObjectIDs;
+	std::vector<ObjectIDs> m_ObjectIDs;
+
 	struct ComponentMetaInfo
 	{
 		MemoryPoolBase *pool = nullptr;
@@ -192,6 +195,12 @@ ComponentHandle<C> ObjectManager::addComponent(ObjectID id, Args &&... args)
 	pool->newElementByIdx(idx, std::forward<Args>(args)...);
 	h[typeID] = idx;
 	m_comHashes[id] = h;
+	if (m_ObjectIDs.size() <= typeID) {
+		m_ObjectIDs.resize(typeID + 1);
+	}
+	ObjectIDs& objectIDs = m_ObjectIDs[typeID];
+	objectIDs.insert(id);
+
 	// Create and return handle.
 	ComponentHandle<C> component(this, id);
 	m_evtMgr.emit<ComponentAddedEvent<C>>(Object(this, id), component);
@@ -210,6 +219,9 @@ template <typename C>
 void ObjectManager::removeComponent(ObjectID id)
 {
 	size_t idx = getComponentIdx<C>(id);
+	if (idx == -1) {
+		return;
+	}
 	MemoryPool<C> *pool = getComponentPool<C>();
 	ComponentHandle<C> component(this, id);
 	m_evtMgr.emit<ComponentRemovedEvent<C>>(Object(this, id), component);
@@ -218,6 +230,8 @@ void ObjectManager::removeComponent(ObjectID id)
 	auto typeID = ComponentType<C>::typeID();
 	auto it = h.find(typeID);
 	assert(it != h.end());
+	ObjectIDs& objectIDs = m_ObjectIDs[typeID];
+	objectIDs.erase(id);
 	h.erase(it);
 }
 
