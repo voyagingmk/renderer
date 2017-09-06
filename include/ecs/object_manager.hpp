@@ -124,81 +124,54 @@ class ObjectManager
 	std::map<ComponentTypeID, ComponentMetaInfo> m_comMetaInfo;
 
   public:
-	template <bool All>
 	class BaseView {
 	public:
-		template <class Delegate>
-		class ViewIterator : public std::iterator<std::input_iterator_tag, Entity::Id> {
-		public:
-			Delegate &operator ++() {
-				++m_idx;
-				next();
-				return *static_cast<Delegate*>(this);
-			}
-			bool operator == (const Delegate& rhs) const { return m_idx == rhs.m_idx; }
-			bool operator != (const Delegate& rhs) const { return m_idx != rhs.m_idx; }
-			Object operator * () { return Object(m_ObjMgr, m_ObjMgr->create_id(m_idx)); }
-			const Entity operator * () const { return Object(m_ObjMgr, m_ObjMgr->create_id(m_idx)); }
-
-		protected:
-			ViewIterator(EntityManager *manager, uint32_t index)
-				: m_ObjMgr(manager), m_idx(index), m_capacity(m_ObjMgr->capacity()), free_cursor_(~0UL) {
-				if (All) {
-					std::sort(m_ObjMgr->free_list_.begin(), m_ObjMgr->free_list_.end());
-					free_cursor_ = 0;
-				}
-			}
-			ViewIterator(EntityManager *manager, const ComponentMask mask, uint32_t index)
-				: m_ObjMgr(manager), m_idx(index), m_capacity(m_ObjMgr->capacity()), free_cursor_(~0UL) {
-				if (All) {
-					std::sort(m_ObjMgr->free_list_.begin(), m_ObjMgr->free_list_.end());
-					free_cursor_ = 0;
-				}
-			}
-
-			void next() {
-				while (m_idx < m_capacity && !predicate()) {
+		class ViewIterator : public std::iterator<std::input_iterator_tag, Object> {
+			public:
+				ViewIterator &operator ++() {
 					++m_idx;
+					next();
+					return *this;
+				}
+				bool operator == (const ViewIterator& rhs) const { return m_idx == rhs.m_idx; }
+				bool operator != (const ViewIterator& rhs) const { return m_idx != rhs.m_idx; }
+				Object operator * () { return Object(m_ObjMgr, *m_idx); }
+				const Object operator * () const { return Object(m_ObjMgr, *m_idx); }
+
+			public:
+				ViewIterator(ObjectManager *objMgr, ObjectIDs::iterator idx)
+					: m_ObjMgr(objMgr), m_idx(idx), m_capacity(m_ObjMgr->capacity()) {
 				}
 
-				if (m_idx < m_capacity) {
-					Entity entity = m_ObjMgr->get(m_ObjMgr->create_id(m_idx));
-					static_cast<Delegate*>(this)->next_entity(entity);
+				void next() {
 				}
-			}
 
-			inline bool predicate() {
-				return true;
-			}
-
-			inline bool valid_entity() {
-				const std::vector<uint32_t> &free_list = m_ObjMgr->free_list_;
-				if (free_cursor_ < free_list.size() && free_list[free_cursor_] == m_idx) {
-					++free_cursor_;
-					return false;
+				inline bool predicate() {
+					return true;
 				}
-				return true;
-			}
 
-			EntityManager *m_ObjMgr;
-			uint32_t m_idx;
-			size_t m_capacity;
-			size_t free_cursor_;
+				inline bool valid_entity() {
+					return true;
+				}
+
+				ObjectManager *m_ObjMgr;
+				ObjectIDs::iterator m_idx;
+				size_t m_capacity;
 		};
 
-		ViewIterator begin() { return ViewIterator(m_ObjMgr, 0); }
-		ViewIterator end() { return ViewIterator(m_ObjMgr, m_ObjMgr->capacity()); }
-		const ViewIterator begin() const { return ViewIterator(m_ObjMgr, 0); }
-		const ViewIterator end() const { return ViewIterator(m_ObjMgr, m_ObjMgr->capacity()); }
+		ViewIterator begin() { return ViewIterator(m_ObjMgr, m_ObjMgr->m_ObjectIDs[typeID].begin()); }
+		ViewIterator end() { return ViewIterator(m_ObjMgr, m_ObjMgr->m_ObjectIDs[typeID].end()); }
+		const ViewIterator begin() const { return ViewIterator(m_ObjMgr, m_ObjMgr->m_ObjectIDs[typeID].begin()); }
+		const ViewIterator end() const { return ViewIterator(m_ObjMgr, m_ObjMgr->m_ObjectIDs[typeID].end()); }
 
 	private:
 		friend class ObjectManager;
 
-		explicit BaseView(ObjectManager *manager) : m_ObjMgr(manager) { }
 		BaseView(ObjectManager *manager) :
 			m_ObjMgr(manager) {}
 
-		EntityManager *m_ObjMgr;
+		ObjectManager *m_ObjMgr;
+		ComponentTypeID typeID;
 	};
 };
 
