@@ -187,7 +187,7 @@ class ObjectManager
 		};
 
 		ViewIterator begin() { return ViewIterator(m_ObjMgr, 0); }
-		ViewIterator end() { return ViewIterator(m_ObjMgr, uint32_t(m_ObjMgr->capacity())); }
+		ViewIterator end() { return ViewIterator(m_ObjMgr, m_ObjMgr->capacity()); }
 		const ViewIterator begin() const { return ViewIterator(m_ObjMgr, 0); }
 		const ViewIterator end() const { return ViewIterator(m_ObjMgr, m_ObjMgr->capacity()); }
 
