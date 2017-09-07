@@ -24,6 +24,15 @@ struct Direction
 	float x, y;
 };
 
+struct ObjectColor
+{
+	ObjectColor(float r = 0.0f, float g = 0.0f, float b = 0.0f) : r(r), g(g), b(b) {}
+	~ObjectColor() {
+		std::cout << "~ObjectColor()" << std::endl;
+	}
+	float r, g, b;
+};
+
 class MovementSystem : public System<MovementSystem>
 {
   public:

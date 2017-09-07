@@ -30,7 +30,20 @@ void ECSDemo::setup()
 	obj.removeComponent<Direction>();
 	// cout << "after delete " << dir->x << "," << dir->y << endl;
 	*/
+	std::cout << "<Position, Direction>:" << std::endl;
+	for (auto it : m_objMgr.entities<std::tuple<Position, Direction>>()) {
+		std::cout << "ID " << it.ID() << std::endl;
+	}
+	std::cout << "<ObjectColor>:" << std::endl;
+	for (auto it : m_objMgr.entities<std::tuple<ObjectColor>>()) {
+		std::cout << "ID " << it.ID() << std::endl;
+	}
 	obj.destroy();
+
+	std::cout << "after destroy" << std::endl;
+	for(auto it: m_objMgr.entities<std::tuple<Position, Direction>>()){
+		std::cout << "ID" << it.ID() << std::endl;
+	}
 }
 
 void ECSDemo::update(float dt)

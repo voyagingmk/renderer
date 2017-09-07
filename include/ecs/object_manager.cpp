@@ -57,4 +57,19 @@ Object ObjectManager::get(ObjectID id)
 	return Object(this, id);
 }
 
+size_t ObjectManager::getComponentIdx(ComponentTypeID typeID, ObjectID id) const
+{
+	if (id >= m_comHashes.size())
+	{
+		return -1;
+	}
+	const ComponentHash &h = m_comHashes[id];
+	auto it2 = h.find(typeID);
+	if (it2 == h.end())
+	{
+		return -1;
+	}
+	return it2->second;
 }
+}
+

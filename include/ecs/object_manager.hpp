@@ -36,6 +36,7 @@ class ComponentType : public ComponentTypeBase
 
 class ObjectManager
 {
+	typedef std::set<ObjectID> ObjectIDs;
   public:
 	explicit ObjectManager(EventManager &evtMgr);
 	virtual ~ObjectManager();
@@ -67,12 +68,24 @@ class ObjectManager
 	template <typename C>
 	bool hasComponent(ObjectID id) const
 	{
-
 		return getComponentIdx<C>(id) != -1;
 	}
 
 	template <typename C>
 	ComponentHandle<C> component(ObjectID id) const;
+
+
+	bool hasObjectIDs(ComponentTypeID typeID) {
+		return typeID < m_ObjectIDs.size();
+	}
+
+	ObjectIDs& getObjectIDs(ComponentTypeID typeID) {
+		// TODO 
+		if (m_ObjectIDs.size() <= typeID) {
+			m_ObjectIDs.resize(typeID + 1);
+		}
+		return m_ObjectIDs[typeID];
+	}
 
 	void reset()
 	{
@@ -89,6 +102,92 @@ class ObjectManager
 		m_objectIDCounter = 0;
 	}
 
+	template<typename ComTuple>
+	class BaseView {
+	public:
+		class ViewIterator : public std::iterator<std::input_iterator_tag, Object> {
+		public:
+			ViewIterator &operator ++() {
+				++m_idx;
+				next();
+				return *this;
+			}
+			bool operator == (const ViewIterator& rhs) const { return m_idx == rhs.m_idx; }
+			bool operator != (const ViewIterator& rhs) const { return m_idx != rhs.m_idx; }
+			Object operator * () { return Object(m_ObjMgr, *m_idx); }
+			const Object operator * () const { return Object(m_ObjMgr, *m_idx); }
+
+			ViewIterator(ObjectManager *objMgr)
+				: m_ObjMgr(objMgr) {
+			}
+
+			ViewIterator(ObjectManager *objMgr, ObjectIDs::iterator idx)
+				: m_ObjMgr(objMgr), m_idx(idx) {
+			}
+
+			void next() {
+				while ((m_idx != viewItEnd().m_idx) && !hasAllRequiredComs()) {
+					++m_idx;
+				}
+			}
+
+			template<std::size_t I = 0, typename FuncT>
+			inline typename std::enable_if<I < std::tuple_size<ComTuple>::value, void>::type
+			for_index(int index, FuncT f) {
+				f(getTypeID<I>());
+				if (index + 1 == getTypeCount()) {
+					return;
+				}
+				for_index<(I+1)<std::tuple_size<ComTuple>::value?I+1:0, FuncT>(index + 1, f);
+			}
+
+
+			bool hasAllRequiredComs() {
+				bool check = true;
+				for_index(0, [&](ComponentTypeID typeID) {
+					check &= m_ObjMgr->getComponentIdx(typeID, *m_idx) != -1;
+				});
+				return check;
+			}
+
+
+			const ViewIterator viewItBegin() const { return ViewIterator(m_ObjMgr, m_ObjMgr->getObjectIDs(getTypeID<0>()).begin()); }
+			const ViewIterator viewItEnd() const { return ViewIterator(m_ObjMgr, m_ObjMgr->getObjectIDs(getTypeID<0>()).end()); }
+
+			template<size_t Idx>
+			const ComponentTypeID getTypeID() const {
+				using C = typename std::tuple_element<Idx, ComTuple>::type;
+				return ComponentType<C>::typeID();
+			}
+
+			inline const size_t getTypeCount() const {
+				return std::tuple_size<ComTuple>::value;
+			}
+
+		protected:
+			ObjectManager *m_ObjMgr;
+			ObjectIDs::iterator m_idx;
+		};
+
+		ViewIterator begin() { return ViewIterator(m_ObjMgr).viewItBegin(); }
+		ViewIterator end() { return ViewIterator(m_ObjMgr).viewItEnd(); }
+		const ViewIterator begin() const { return ViewIterator(m_ObjMgr)_.viewItBegin(); }
+		const ViewIterator end() const { return ViewIterator(m_ObjMgr).viewItEnd(); }
+
+	private:
+		friend class ObjectManager;
+
+		BaseView(ObjectManager *manager) :
+			m_ObjMgr(manager) {}
+
+		ObjectManager *m_ObjMgr;
+	};
+
+
+	template<typename ComTuple>
+	BaseView<ComTuple> entities() {
+		return BaseView<ComTuple>(this);
+	}
   private:
 	friend class Object;
 	template <typename C>
@@ -96,6 +195,8 @@ class ObjectManager
 
 	template <typename C>
 	size_t getComponentIdx(ObjectID id) const;
+
+	size_t getComponentIdx(ComponentTypeID typeID, ObjectID id) const;
 
 	template <typename C>
 	C *getComponentPtr(ObjectID id);
@@ -112,8 +213,6 @@ class ObjectManager
 
 	typedef std::map<ComponentTypeID, size_t> ComponentHash;
 	std::vector<ComponentHash> m_comHashes;
-
-	typedef std::set<ObjectID> ObjectIDs;
 	std::vector<ObjectIDs> m_ObjectIDs;
 
 	struct ComponentMetaInfo
@@ -123,55 +222,6 @@ class ObjectManager
 
 	std::map<ComponentTypeID, ComponentMetaInfo> m_comMetaInfo;
 
-  public:
-	class BaseView {
-	public:
-		class ViewIterator : public std::iterator<std::input_iterator_tag, Object> {
-			public:
-				ViewIterator &operator ++() {
-					++m_idx;
-					next();
-					return *this;
-				}
-				bool operator == (const ViewIterator& rhs) const { return m_idx == rhs.m_idx; }
-				bool operator != (const ViewIterator& rhs) const { return m_idx != rhs.m_idx; }
-				Object operator * () { return Object(m_ObjMgr, *m_idx); }
-				const Object operator * () const { return Object(m_ObjMgr, *m_idx); }
-
-			public:
-				ViewIterator(ObjectManager *objMgr, ObjectIDs::iterator idx)
-					: m_ObjMgr(objMgr), m_idx(idx) {
-				}
-
-				void next() {
-				}
-
-				inline bool predicate() {
-					return true;
-				}
-
-				inline bool valid_entity() {
-					return true;
-				}
-
-				ObjectManager *m_ObjMgr;
-				ObjectIDs::iterator m_idx;
-		};
-
-		ViewIterator begin() { return ViewIterator(m_ObjMgr, m_ObjMgr->m_ObjectIDs[typeID].begin()); }
-		ViewIterator end() { return ViewIterator(m_ObjMgr, m_ObjMgr->m_ObjectIDs[typeID].end()); }
-		const ViewIterator begin() const { return ViewIterator(m_ObjMgr, m_ObjMgr->m_ObjectIDs[typeID].begin()); }
-		const ViewIterator end() const { return ViewIterator(m_ObjMgr, m_ObjMgr->m_ObjectIDs[typeID].end()); }
-
-	private:
-		friend class ObjectManager;
-
-		BaseView(ObjectManager *manager) :
-			m_ObjMgr(manager) {}
-
-		ObjectManager *m_ObjMgr;
-		ComponentTypeID typeID;
-	};
 };
 
     
@@ -245,10 +295,7 @@ ComponentHandle<C> ObjectManager::addComponent(ObjectID id, Args &&... args)
 	pool->newElementByIdx(idx, std::forward<Args>(args)...);
 	h[typeID] = idx;
 	m_comHashes[id] = h;
-	if (m_ObjectIDs.size() <= typeID) {
-		m_ObjectIDs.resize(typeID + 1);
-	}
-	ObjectIDs& objectIDs = m_ObjectIDs[typeID];
+	ObjectIDs& objectIDs = getObjectIDs(typeID);
 	objectIDs.insert(id);
 
 	// Create and return handle.
@@ -280,7 +327,7 @@ void ObjectManager::removeComponent(ObjectID id)
 	auto typeID = ComponentType<C>::typeID();
 	auto it = h.find(typeID);
 	assert(it != h.end());
-	ObjectIDs& objectIDs = m_ObjectIDs[typeID];
+	ObjectIDs& objectIDs = getObjectIDs(typeID);
 	objectIDs.erase(id);
 	h.erase(it);
 }
@@ -301,6 +348,7 @@ size_t ObjectManager::getComponentIdx(ObjectID id) const
 	}
 	return it2->second;
 }
+
 
 template <typename C>
 ComponentHandle<C> ObjectManager::component(ObjectID id) const
