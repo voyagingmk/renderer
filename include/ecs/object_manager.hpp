@@ -140,7 +140,7 @@ class ObjectManager
 
 			public:
 				ViewIterator(ObjectManager *objMgr, ObjectIDs::iterator idx)
-					: m_ObjMgr(objMgr), m_idx(idx), m_capacity(m_ObjMgr->capacity()) {
+					: m_ObjMgr(objMgr), m_idx(idx) {
 				}
 
 				void next() {
@@ -156,7 +156,6 @@ class ObjectManager
 
 				ObjectManager *m_ObjMgr;
 				ObjectIDs::iterator m_idx;
-				size_t m_capacity;
 		};
 
 		ViewIterator begin() { return ViewIterator(m_ObjMgr, m_ObjMgr->m_ObjectIDs[typeID].begin()); }
