@@ -47,6 +47,7 @@ class MyContext : public RendererContextSDL
                   renderType(RenderType::Normal)
     {
     }
+
     virtual void onSDLEvent(SDL_Event &e) override
     {
         switch (e.type)
@@ -77,10 +78,12 @@ class MyContext : public RendererContextSDL
         front = front.Normalize();
         camera.SetTargetVector(camera.GetCameraPosition() + front);
     }
+
     virtual void onSDLMouseEvent(SDL_MouseButtonEvent &e) override
     {
         printf("mButton, t:%u, state:%u, btn:%u, (%d,%d), clicks:%d\n", e.type, e.state, e.button, e.x, e.y, e.clicks);
     }
+
     virtual void onSDLKeyboardEvent(SDL_KeyboardEvent &e) override
     {
         auto k = e.keysym.sym;
@@ -111,6 +114,7 @@ class MyContext : public RendererContextSDL
             }
         }
     }
+
     virtual void onCustomSetup() override
     {
 

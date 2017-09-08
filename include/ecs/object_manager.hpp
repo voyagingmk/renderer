@@ -74,7 +74,6 @@ class ObjectManager
 	template <typename C>
 	ComponentHandle<C> component(ObjectID id) const;
 
-
 	bool hasObjectIDs(ComponentTypeID typeID) {
 		return typeID < m_objectIDs.size();
 	}
@@ -189,8 +188,11 @@ class ObjectManager
 	BaseView<Coms...> entities() {
 		return BaseView<Coms...>(this);
 	}
+
   private:
+
 	friend class Object;
+
 	template <typename C>
 	friend class ComponentHandle;
 
