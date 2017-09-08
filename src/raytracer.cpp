@@ -4,7 +4,7 @@
 #include "camera.hpp"
 #include "shape.hpp"
 #include "intersect_result.hpp"
-#include "geometry.hpp"
+#include "com/geometry.hpp"
 #include "material.hpp"
 #include "color.hpp"
 #include "ray.hpp"

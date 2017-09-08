@@ -2,7 +2,7 @@
 #define RENDERER_MATRIX_HPP
 
 #include "base.hpp"
-#include "geometry.hpp"
+#include "com/geometry.hpp"
 
 namespace renderer {
 

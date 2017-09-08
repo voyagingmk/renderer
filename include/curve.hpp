@@ -2,7 +2,7 @@
 #define RENDERER_CURVE_HPP
 
 #include "base.hpp"
-#include "geometry.hpp"
+#include "com/geometry.hpp"
 #include <vector>
 
 namespace renderer {

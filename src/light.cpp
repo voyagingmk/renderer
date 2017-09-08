@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "light.hpp"
-#include "geometry.hpp"
+#include "com/geometry.hpp"
 #include "color.hpp"
 #include "realtime/texturemgr.hpp"
 

@@ -2,7 +2,7 @@
 #define RENDERER_QUATERNION_HPP
 
 #include "base.hpp"
-#include "geometry.hpp"
+#include "com/geometry.hpp"
 #include "matrix.hpp"
 
 namespace renderer {

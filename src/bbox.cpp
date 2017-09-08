@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "bbox.hpp"
+#include "com/bbox.hpp"
 
 namespace renderer {
 	BBox::BBox() noexcept

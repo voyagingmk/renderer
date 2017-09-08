@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "geometry.hpp"
+#include "com/geometry.hpp"
 #include <algorithm>
 
 namespace renderer {

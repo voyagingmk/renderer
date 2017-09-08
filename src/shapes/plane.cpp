@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "plane.hpp"
-#include "geometry.hpp"
+#include "com/geometry.hpp"
 #include "ray.hpp"
 #include "intersect_result.hpp"
 

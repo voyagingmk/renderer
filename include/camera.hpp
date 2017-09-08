@@ -2,18 +2,18 @@
 #define RENDERER_CAMERA_HPP
 
 #include "base.hpp"
-#include "geometry.hpp"
+#include "com/geometry.hpp"
 #include "ray.hpp"
 #include "matrix.hpp"
 
 namespace renderer {
     class CameraBase {
-    protected:
+      protected:
         Matrix4x4 cameraMat;
-    protected:
+      protected:
         CameraBase() {}
         virtual void UpdateMatrix() {}
-    public:
+      public:
         Matrix4x4 GetMatrix() { return cameraMat; }
         virtual void SetCameraPosition(Vector3dF p) { }
         virtual Vector3dF GetCameraPosition() { return Vector3dF(0.0f, 0.0f, 0.0f); }

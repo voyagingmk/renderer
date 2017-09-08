@@ -3,7 +3,7 @@
 
 #include "base.hpp"
 #include "color.hpp"
-#include "geometry.hpp"
+#include "com/geometry.hpp"
 
 namespace renderer {
     

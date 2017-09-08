@@ -2,7 +2,7 @@
 #define RENDERER_GLCOMMON_HPP
 
 #include "base.hpp"
-#include "../geometry.hpp"
+#include "../com/geometry.hpp"
 
 namespace renderer {
 

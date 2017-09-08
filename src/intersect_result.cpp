@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "intersect_result.hpp"
-#include "geometry.hpp"
+#include "com/geometry.hpp"
 
 namespace renderer {
 	IntersectResult::IntersectResult() :

@@ -2,7 +2,7 @@
 #define RENDERER_INTERSECT_RESULT_HPP
 
 #include "base.hpp"
-#include "geometry.hpp"
+#include "com/geometry.hpp"
 
 namespace renderer {
 

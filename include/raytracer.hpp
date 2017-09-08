@@ -2,7 +2,7 @@
 #define RENDERER_RAYTRACER_HPP
 
 #include "base.hpp"
-#include "geometry.hpp"
+#include "com/geometry.hpp"
 #include "material.hpp"
 #include "light.hpp"
 #include "camera.hpp"

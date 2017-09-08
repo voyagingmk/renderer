@@ -2,7 +2,7 @@
 #define RENDERER_LIGHT_HPP
 
 #include "base.hpp"
-#include "geometry.hpp"
+#include "com/geometry.hpp"
 #include "color.hpp"
 
 namespace renderer {

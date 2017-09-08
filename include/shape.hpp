@@ -3,7 +3,7 @@
 
 #include "base.hpp"
 #include "transform.hpp"
-#include "bbox.hpp"
+#include "com/bbox.hpp"
 #include "quaternion.hpp"
 #include "material.hpp"
 

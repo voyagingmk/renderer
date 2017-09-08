@@ -3,8 +3,8 @@
 
 #include "base.hpp"
 #include "shape.hpp"
-#include "../geometry.hpp"
-#include "../bbox.hpp"
+#include "../com/geometry.hpp"
+#include "../com/bbox.hpp"
 
 namespace renderer {
 

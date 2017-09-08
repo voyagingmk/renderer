@@ -4,7 +4,7 @@
 #include "plane.hpp"
 #include "ray.hpp"
 #include "intersect_result.hpp"
-#include "geometry.hpp"
+#include "com/geometry.hpp"
 #include "material.hpp"
 
 namespace renderer {

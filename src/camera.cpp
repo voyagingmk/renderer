@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "camera.hpp"
-#include "geometry.hpp"
+#include "com/geometry.hpp"
 #include "ray.hpp"
 
 namespace renderer {
