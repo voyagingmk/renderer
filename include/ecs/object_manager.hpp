@@ -171,7 +171,7 @@ class ObjectManager
 
 		ViewIterator begin() { return ViewIterator(m_ObjMgr).viewItBegin(); }
 		ViewIterator end() { return ViewIterator(m_ObjMgr).viewItEnd(); }
-		const ViewIterator begin() const { return ViewIterator(m_ObjMgr)_.viewItBegin(); }
+		const ViewIterator begin() const { return ViewIterator(m_ObjMgr).viewItBegin(); }
 		const ViewIterator end() const { return ViewIterator(m_ObjMgr).viewItEnd(); }
 
 	private:
