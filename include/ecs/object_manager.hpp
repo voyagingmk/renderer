@@ -76,15 +76,15 @@ class ObjectManager
 
 
 	bool hasObjectIDs(ComponentTypeID typeID) {
-		return typeID < m_ObjectIDs.size();
+		return typeID < m_objectIDs.size();
 	}
 
 	ObjectIDs& getObjectIDs(ComponentTypeID typeID) {
 		// TODO 
-		if (m_ObjectIDs.size() <= typeID) {
-			m_ObjectIDs.resize(typeID + 1);
+		if (m_objectIDs.size() <= typeID) {
+			m_objectIDs.resize(typeID + 1);
 		}
-		return m_ObjectIDs[typeID];
+		return m_objectIDs[typeID];
 	}
 
 	void reset()
@@ -102,9 +102,10 @@ class ObjectManager
 		m_objectIDCounter = 0;
 	}
 
-	template<typename ComTuple>
+	template<typename... Coms>
 	class BaseView {
 	public:
+		typedef std::tuple<Coms...> ComTuple;
 		class ViewIterator : public std::iterator<std::input_iterator_tag, Object> {
 		public:
 			ViewIterator &operator ++() {
@@ -184,9 +185,9 @@ class ObjectManager
 	};
 
 
-	template<typename ComTuple>
-	BaseView<ComTuple> entities() {
-		return BaseView<ComTuple>(this);
+	template<typename... Coms>
+	BaseView<Coms...> entities() {
+		return BaseView<Coms...>(this);
 	}
   private:
 	friend class Object;
@@ -212,8 +213,8 @@ class ObjectManager
 	std::vector<bool> m_isAlive;
 
 	typedef std::map<ComponentTypeID, size_t> ComponentHash;
-	std::vector<ComponentHash> m_comHashes;
-	std::vector<ObjectIDs> m_ObjectIDs;
+	std::vector<ComponentHash> m_comHashes; // m_comHashes[objectID]
+	std::vector<ObjectIDs> m_objectIDs; // m_objectIDs[comTypeID]
 
 	struct ComponentMetaInfo
 	{
