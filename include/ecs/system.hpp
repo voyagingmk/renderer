@@ -51,8 +51,8 @@ private:
 class SystemManager
 {
 public:
-	SystemManager(ObjectManager &objMgr, EventManager &evtMgr) : m_objMgr(objMgr),
-																															 m_evtMgr(evtMgr) {}
+	SystemManager(ObjectManager &objMgr, EventManager &evtMgr) : 
+		m_objMgr(objMgr), m_evtMgr(evtMgr) {}
 
 	template <typename S>
 	void add(std::shared_ptr<S> system)
