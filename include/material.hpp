@@ -2,8 +2,8 @@
 #define RENDERER_MATERIAL_HPP
 
 #include "base.hpp"
-#include "color.hpp"
-#include "com/geometry.hpp"
+#include "../com/color.hpp"
+#include "../com/geometry.hpp"
 
 namespace renderer {
     

@@ -5,7 +5,7 @@
 #include "sphere.hpp"
 #include "camera.hpp"
 #include "material.hpp"
-#include "color.hpp"
+#include "com/color.hpp"
 #include "plane.hpp"
 #include "union.hpp"
 #include "film.hpp"

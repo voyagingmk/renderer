@@ -4,7 +4,7 @@
 #include "glcommon.hpp"
 #include "texturemgr.hpp"
 #include "shadermgr.hpp"
-#include "../color.hpp"
+#include "../com/color.hpp"
 #include "sdf.hpp"
 #include <ft2build.h>
 #include FT_FREETYPE_H

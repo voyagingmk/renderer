@@ -4,7 +4,7 @@
 #include "realtime/texturemgr.hpp"
 #include "realtime/context.hpp"
 #include "transform.hpp"
-#include "geometry.cpp"
+#include "com/geometry.hpp"
 #include "quaternion.hpp"
 #include "buffermgr.hpp"
 #include "realtime/glutils.hpp"

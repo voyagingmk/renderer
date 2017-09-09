@@ -6,7 +6,7 @@
 #include "intersect_result.hpp"
 #include "com/geometry.hpp"
 #include "material.hpp"
-#include "color.hpp"
+#include "com/color.hpp"
 #include "ray.hpp"
 #include "film.hpp"
 #include "light.hpp"

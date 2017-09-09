@@ -3,7 +3,7 @@
 
 #include "base.hpp"
 #include "film.hpp"
-#include "color.hpp"
+#include "com/color.hpp"
 
 namespace renderer {
 	class DrawPen {

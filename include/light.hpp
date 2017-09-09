@@ -3,7 +3,7 @@
 
 #include "base.hpp"
 #include "com/geometry.hpp"
-#include "color.hpp"
+#include "com/color.hpp"
 
 namespace renderer {
     enum class LightType {

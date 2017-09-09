@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "color.hpp"
+#include "com/color.hpp"
 #include "defines.hpp"
 
 namespace renderer {

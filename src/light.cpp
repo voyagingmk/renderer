@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "light.hpp"
 #include "com/geometry.hpp"
-#include "color.hpp"
+#include "com/color.hpp"
 #include "realtime/texturemgr.hpp"
 
 namespace renderer {
