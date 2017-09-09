@@ -2,7 +2,7 @@
 #define RENDERER_ECS_EVENT_HPP
 
 #include "base.hpp"
-#include "../simplesignal.h"
+#include "simplesignal.h"
 
 namespace ecs
 {

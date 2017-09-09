@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "parser.hpp"
-#include "geometry.hpp"
+#include "com/geometry.hpp"
 #include "raytracer.hpp"
 #include "sphere.hpp"
 #include "camera.hpp"

@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "material.hpp"
-#include "geometry.hpp"
+#include "com/geometry.hpp"
 #include "color.hpp"
 #include "ray.hpp"
 #include "realtime/shadermgr.hpp"

@@ -3,7 +3,7 @@
 
 #include "base.hpp"
 #include "raytracer.hpp"
-
+#include "tiny_obj_loader.h"
 
 namespace renderer {
 	class Film;
