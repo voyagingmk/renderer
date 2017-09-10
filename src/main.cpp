@@ -5,7 +5,7 @@
 #include "realtime/context.hpp"
 #include "transform.hpp"
 #include "com/geometry.hpp"
-#include "quaternion.hpp"
+#include "com/quaternion.hpp"
 #include "buffermgr.hpp"
 #include "realtime/glutils.hpp"
 #include "realtime/model.hpp"

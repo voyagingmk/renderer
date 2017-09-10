@@ -4,7 +4,7 @@
 #include "base.hpp"
 #include "transform.hpp"
 #include "com/bbox.hpp"
-#include "quaternion.hpp"
+#include "com/quaternion.hpp"
 #include "material.hpp"
 
 namespace renderer {
