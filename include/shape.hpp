@@ -2,7 +2,7 @@
 #define RENDERER_SHAPE_HPP
 
 #include "base.hpp"
-#include "transform.hpp"
+#include "com/transform.hpp"
 #include "com/bbox.hpp"
 #include "com/quaternion.hpp"
 #include "material.hpp"

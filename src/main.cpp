@@ -3,7 +3,7 @@
 #include "realtime/shadermgr.hpp"
 #include "realtime/texturemgr.hpp"
 #include "realtime/context.hpp"
-#include "transform.hpp"
+#include "com/transform.hpp"
 #include "com/geometry.hpp"
 #include "com/quaternion.hpp"
 #include "buffermgr.hpp"

@@ -11,7 +11,7 @@
 #include "film.hpp"
 #include "mesh.hpp"
 #include "light.hpp"
-#include "transform.hpp"
+#include "com/transform.hpp"
 #include "bvh.hpp"
 #include "realtime/shadermgr.hpp"
 #include "realtime/texturemgr.hpp"

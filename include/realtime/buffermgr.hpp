@@ -4,7 +4,7 @@
 #include "base.hpp"
 #include "glcommon.hpp"
 #include "../com/matrix.hpp"
-#include "transform.hpp"
+#include "../com/transform.hpp"
 #include "mesh.hpp"
 
 namespace renderer {
