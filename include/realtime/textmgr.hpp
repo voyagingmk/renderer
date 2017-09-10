@@ -1,7 +1,7 @@
 #ifndef RENDERER_TEXTMGR_HPP
 #define RENDERER_TEXTMGR_HPP
 #include "glutils.hpp"
-#include "glcommon.hpp"
+#include "../com/glcommon.hpp"
 #include "texturemgr.hpp"
 #include "shadermgr.hpp"
 #include "../com/color.hpp"

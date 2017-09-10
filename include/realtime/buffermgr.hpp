@@ -2,7 +2,7 @@
 #define RENDERER_BUFFERMGR_HPP
 
 #include "base.hpp"
-#include "glcommon.hpp"
+#include "../com/glcommon.hpp"
 #include "../com/matrix.hpp"
 #include "../com/transform.hpp"
 #include "mesh.hpp"

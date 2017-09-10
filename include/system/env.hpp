@@ -1,5 +1,5 @@
-#ifndef RENDERER_SYSTEM_RENDERER_HPP
-#define RENDERER_SYSTEM_RENDERER_HPP
+#ifndef RENDERER_SYSTEM_ENV_HPP
+#define RENDERER_SYSTEM_ENV_HPP
 
 #include "base.hpp"
 #include "../ecs/ecs.hpp"

@@ -99,7 +99,8 @@ struct Character {
     int         Advance;    // Offset to advance to next glyph
 };
     
-    
+
+typedef std::map<std::string, TexRef> TextureDict;
 };
 
 #endif

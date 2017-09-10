@@ -2,12 +2,11 @@
 #define RENDERER_TEXTUREMGR_HPP
 
 #include "base.hpp"
-#include "glcommon.hpp"
+#include "com/glcommon.hpp"
 
 namespace renderer
 {
 
-typedef std::map<std::string, TexRef> TextureDict;
 
 class TextureMgrBase
 {
