@@ -81,41 +81,7 @@ namespace renderer {
 			}
 		}
 
-		void receive(const CustomSDLKeyboardEvent &evt)
-		{
-			auto context = evt.obj.component<SDLContext>();
-			auto renderMode = evt.obj.component<RenderMode>();
-			auto keyState = evt.obj.component<KeyState>();
-
-			auto k = evt.e.keysym.sym;
-			keyState->state[k] = evt.e.state;
-
-			if (evt.e.state == SDL_PRESSED)
-			{
-				switch (k)
-				{
-				case SDLK_ESCAPE:
-				{
-					context->shouldExit = true;
-					break;
-				}
-				case SDLK_1:
-				{
-					// normal
-					renderMode->mode = RenderModeEnum::Normal;
-					break;
-				}
-				case SDLK_2:
-				{
-					// depth map
-					renderMode->mode = RenderModeEnum::DepthMap;
-					break;
-				}
-				default:
-					break;
-				}
-			}
-		}
+		void receive(const CustomSDLKeyboardEvent &evt);
 	};
 
 }
