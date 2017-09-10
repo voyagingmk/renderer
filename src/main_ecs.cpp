@@ -1,8 +1,10 @@
 #include "stdafx.h"
 #include "base.hpp"
 #include "ecs/ecs.hpp"
+#include "system/renderer.hpp"
 
-using namespace ecs; 
+using namespace ecs;
+using namespace renderer;
 
 class MainECS: public ECS
 {
@@ -20,11 +22,12 @@ MainECS::MainECS() {
 }
 
 void MainECS::setup() {
-
+	m_systemMgr.add<RendererSystem>();
+	m_systemMgr.init();
 }
 
 void MainECS::update(float dt) {
-
+	m_systemMgr.updateAll(dt);
 }
 
 int ecsMain(int argc, char *argv[])
