@@ -4,7 +4,7 @@
 #include "base.hpp"
 #include "com/geometry.hpp"
 #include "ray.hpp"
-#include "matrix.hpp"
+#include "com/matrix.hpp"
 
 namespace renderer {
     class CameraBase {

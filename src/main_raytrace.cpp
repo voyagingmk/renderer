@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "parser.hpp"
-#include "matrix.hpp"
+#include "com/matrix.hpp"
 #include "com/geometry.hpp"
 #include "curve.hpp"
 #include "film.hpp"

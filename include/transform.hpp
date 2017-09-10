@@ -3,7 +3,7 @@
 
 #include "base.hpp"
 #include "com/geometry.hpp"
-#include "matrix.hpp"
+#include "../com/matrix.hpp"
 #include "com/bbox.hpp"
 
 namespace renderer {

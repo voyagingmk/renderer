@@ -1,5 +1,5 @@
 #include "UnitTest++/UnitTest++.h"
-#include "matrix.hpp"
+#include "com/matrix.hpp"
 
 using namespace renderer;
 

@@ -3,7 +3,6 @@
 
 #include "base.hpp"
 #include "com/geometry.hpp"
-#include <vector>
 
 namespace renderer {
 
