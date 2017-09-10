@@ -12,7 +12,7 @@
 #include "light.hpp"
 #include "union.hpp"
 #include "profiler.hpp"
-#include "defines.hpp"
+#include "utils/defines.hpp"
 
 namespace renderer {
 

@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "bvh.hpp"
-#include "defines.hpp"
+#include "utils/defines.hpp"
 #include "intersect_result.hpp"
 
 namespace renderer {

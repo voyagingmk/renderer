@@ -6,7 +6,7 @@
 #include "film.hpp"
 #include "draw.hpp"
 #include "profiler.hpp"
-#include "defines.hpp"
+#include "utils/defines.hpp"
 #include "bvh.hpp"
 #include "main_raytrace.hpp"
 

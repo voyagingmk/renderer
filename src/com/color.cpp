@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "com/color.hpp"
-#include "defines.hpp"
+#include "utils/defines.hpp"
 
 namespace renderer {
 	Color::Color() {

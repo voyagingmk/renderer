@@ -3,7 +3,7 @@
 #include "com/geometry.hpp"
 #include "ray.hpp"
 #include "intersect_result.hpp"
-#include "defines.hpp"
+#include "utils/defines.hpp"
 #include "union.hpp"
 
 namespace renderer {
