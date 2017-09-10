@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "film.hpp"
-#include "profiler.hpp"
+#include "utils/profiler.hpp"
 
 namespace renderer {
 #ifdef cimg_OS

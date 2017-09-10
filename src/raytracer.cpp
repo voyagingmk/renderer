@@ -11,7 +11,7 @@
 #include "film.hpp"
 #include "light.hpp"
 #include "union.hpp"
-#include "profiler.hpp"
+#include "utils/profiler.hpp"
 #include "utils/defines.hpp"
 
 namespace renderer {
