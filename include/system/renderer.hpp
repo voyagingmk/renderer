@@ -45,7 +45,7 @@ namespace renderer {
 		SDL_MouseButtonEvent e;
 	};
 
-	class RendererSystem : public System<RendererSystem>, public Receiver<RendererSystem>
+	class EnvSystem : public System<EnvSystem>, public Receiver<EnvSystem>
 	{
 	public:
 		void init(ObjectManager &objMgr, EventManager &evtMgr);

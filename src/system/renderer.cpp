@@ -4,7 +4,7 @@
 using namespace std;
 
 namespace renderer {
-	void RendererSystem::init(ObjectManager &objMgr, EventManager &evtMgr)
+	void EnvSystem::init(ObjectManager &objMgr, EventManager &evtMgr)
 	{
 		evtMgr.on<ComponentAddedEvent<SDLContext>>(*this);
 		evtMgr.on<ComponentRemovedEvent<SDLContext>>(*this);
@@ -21,7 +21,7 @@ namespace renderer {
 		obj.addComponent<KeyState>();
 	}
 
-	void RendererSystem::update(ObjectManager &objMgr, EventManager &evtMgr, float dt) {
+	void EnvSystem::update(ObjectManager &objMgr, EventManager &evtMgr, float dt) {
 		for (auto obj : objMgr.entities<SDLContext>()) {
 			auto com = obj.component<SDLContext>();
 			while (1) {
@@ -53,7 +53,7 @@ namespace renderer {
 		}
 	}
 
-	void RendererSystem::receive(const ComponentAddedEvent<SDLContext> &evt) {
+	void EnvSystem::receive(const ComponentAddedEvent<SDLContext> &evt) {
 		if (SDL_Init(SDL_INIT_VIDEO) < 0) {
 			shutdown("Unable to initialize SDL");
 			return;
@@ -112,7 +112,7 @@ namespace renderer {
 		cout << "Maximum nr of vertex attributes supported: " << nrAttributes << endl;
 	}
 
-	void RendererSystem::receive(const ComponentRemovedEvent<SDLContext> &evt) {
+	void EnvSystem::receive(const ComponentRemovedEvent<SDLContext> &evt) {
 		ComponentHandle<SDLContext> com = evt.component;
 		if (com->rendererSDL) {
 			SDL_DestroyRenderer(com->rendererSDL);
@@ -125,7 +125,7 @@ namespace renderer {
 		}
 	}
 
-	void RendererSystem::receive(const CustomSDLKeyboardEvent &evt)
+	void EnvSystem::receive(const CustomSDLKeyboardEvent &evt)
 	{
 		auto context = evt.obj.component<SDLContext>();
 		auto renderMode = evt.obj.component<RenderMode>();
@@ -161,7 +161,7 @@ namespace renderer {
 		}
 	}
 
-	void RendererSystem::shutdown(const char *msg) {
+	void EnvSystem::shutdown(const char *msg) {
 		printf("%s, SDLErr: %s\n", msg ? msg : "no msg", SDL_GetError());
 		SDL_Quit();
 		exit(1);

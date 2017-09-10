@@ -22,7 +22,7 @@ MainECS::MainECS() {
 }
 
 void MainECS::setup() {
-	m_systemMgr.add<RendererSystem>();
+	m_systemMgr.add<EnvSystem>();
 	m_systemMgr.init();
 }
 
