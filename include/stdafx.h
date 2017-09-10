@@ -3,5 +3,5 @@
 #include "CImg.h"
 #endif
 #include "json.hpp"
-#include "MemoryPool.hpp"
+#include "utils/MemoryPool.hpp"
 #include "utils/error.hpp"
