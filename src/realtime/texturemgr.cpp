@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "texturemgr.hpp"
-#include "common.hpp"
 #include "glutils.hpp"
 #include "SOIL.h"
 
