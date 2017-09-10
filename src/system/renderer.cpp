@@ -4,6 +4,54 @@
 using namespace std;
 
 namespace renderer {
+	void RendererSystem::init(ObjectManager &objMgr, EventManager &evtMgr)
+	{
+		evtMgr.on<ComponentAddedEvent<SDLContext>>(*this);
+		evtMgr.on<ComponentRemovedEvent<SDLContext>>(*this);
+
+		evtMgr.on<CustomSDLEvent>(*this);
+		evtMgr.on<CustomSDLKeyboardEvent>(*this);
+		evtMgr.on<CustomSDLMouseMotionEvent>(*this);
+		evtMgr.on<CustomSDLMouseButtonEvent>(*this);
+
+
+		Object obj = objMgr.create();
+		obj.addComponent<SDLContext>(800, 600);
+		obj.addComponent<RenderMode>();
+		obj.addComponent<KeyState>();
+	}
+
+	void RendererSystem::update(ObjectManager &objMgr, EventManager &evtMgr, float dt) {
+		for (auto obj : objMgr.entities<SDLContext>()) {
+			auto com = obj.component<SDLContext>();
+			while (1) {
+				SDL_Event e;
+				if (SDL_PollEvent(&e)) {
+					if (e.type == SDL_KEYDOWN || e.type == SDL_KEYUP) {
+						evtMgr.emit<CustomSDLKeyboardEvent>(obj, e.key);
+					}
+					else if (e.type == SDL_MOUSEMOTION) {
+						evtMgr.emit<CustomSDLMouseMotionEvent>(obj, e.motion);
+					}
+					else if (e.type == SDL_MOUSEBUTTONDOWN ||
+						e.type == SDL_MOUSEBUTTONUP ||
+						e.type == SDL_MOUSEWHEEL) {
+						evtMgr.emit<CustomSDLMouseButtonEvent>(obj, e.button);
+					}
+					else {
+						evtMgr.emit<CustomSDLEvent>(obj, e);
+					}
+				}
+				if (com->shouldExit) {
+					break;
+				}
+				// onPoll();
+				SDL_GL_SwapWindow(com->win);
+				// SDL_RenderPresent(rendererSDL);
+			}
+			break;
+		}
+	}
 
 	void RendererSystem::receive(const ComponentAddedEvent<SDLContext> &evt) {
 		if (SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -74,6 +122,42 @@ namespace renderer {
 		}
 		if (com->win) {
 			SDL_DestroyWindow(com->win);
+		}
+	}
+
+	void RendererSystem::receive(const CustomSDLKeyboardEvent &evt)
+	{
+		auto context = evt.obj.component<SDLContext>();
+		auto renderMode = evt.obj.component<RenderMode>();
+		auto keyState = evt.obj.component<KeyState>();
+
+		auto k = evt.e.keysym.sym;
+		keyState->state[k] = evt.e.state;
+
+		if (evt.e.state == SDL_PRESSED)
+		{
+			switch (k)
+			{
+			case SDLK_ESCAPE:
+			{
+				context->shouldExit = true;
+				break;
+			}
+			case SDLK_1:
+			{
+				// normal
+				renderMode->mode = RenderModeEnum::Normal;
+				break;
+			}
+			case SDLK_2:
+			{
+				// depth map
+				renderMode->mode = RenderModeEnum::DepthMap;
+				break;
+			}
+			default:
+				break;
+			}
 		}
 	}
 

@@ -29,7 +29,6 @@ namespace renderer {
 		SDL_KeyboardEvent e;
 	};
 
-
 	class CustomSDLMouseMotionEvent {
 	public:
 		CustomSDLMouseMotionEvent(Object obj, SDL_MouseMotionEvent e) :
@@ -49,56 +48,11 @@ namespace renderer {
 	class RendererSystem : public System<RendererSystem>, public Receiver<RendererSystem>
 	{
 	public:
-		void init(ObjectManager &objMgr, EventManager &evtMgr)
-		{
-			evtMgr.on<ComponentAddedEvent<SDLContext>>(*this);
-			evtMgr.on<ComponentRemovedEvent<SDLContext>>(*this);
-
-			evtMgr.on<CustomSDLEvent>(*this);
-			evtMgr.on<CustomSDLKeyboardEvent>(*this);
-			evtMgr.on<CustomSDLMouseMotionEvent>(*this);
-			evtMgr.on<CustomSDLMouseButtonEvent>(*this);
-
-
-			Object obj = objMgr.create();
-			obj.addComponent<SDLContext>(800, 600);
-			obj.addComponent<RenderMode>();
-			obj.addComponent<KeyState>();
-		}
+		void init(ObjectManager &objMgr, EventManager &evtMgr);
 
 		void shutdown(const char *msg);
 
-		void update(ObjectManager &objMgr, EventManager &evtMgr, float dt) override {
-			for (auto obj : objMgr.entities<SDLContext>()) {
-				auto com = obj.component<SDLContext>();
-				while (1) {
-					SDL_Event e;
-					if (SDL_PollEvent(&e)) {
-						if (e.type == SDL_KEYDOWN || e.type == SDL_KEYUP) {
-							evtMgr.emit<CustomSDLKeyboardEvent>(obj, e.key);
-						}
-						else if (e.type == SDL_MOUSEMOTION) {
-							evtMgr.emit<CustomSDLMouseMotionEvent>(obj, e.motion);
-						}
-						else if (e.type == SDL_MOUSEBUTTONDOWN ||
-							e.type == SDL_MOUSEBUTTONUP ||
-							e.type == SDL_MOUSEWHEEL) {
-							evtMgr.emit<CustomSDLMouseButtonEvent>(obj, e.button);
-						}
-						else {
-							evtMgr.emit<CustomSDLEvent>(obj, e);
-						}
-					}
-					if (com->shouldExit) {
-						break;
-					}
-					// onPoll();
-					SDL_GL_SwapWindow(com->win);
-					// SDL_RenderPresent(rendererSDL);
-				}
-				break;
-			}
-		}
+		void update(ObjectManager &objMgr, EventManager &evtMgr, float dt) override;
 
 		void receive(const ComponentAddedEvent<SDLContext> &evt);
 
