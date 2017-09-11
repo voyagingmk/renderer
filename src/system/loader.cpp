@@ -7,7 +7,8 @@ using namespace std;
 
 namespace renderer {
 	void LoaderSystem::init(ObjectManager &objMgr, EventManager &evtMgr) {
-		json config = readJson("demo.json");
+        printf("LoaderSystem init\n");
+        json config = readJson("demo.json");
 		string assetsDir = config["assetsDir"];
 		string texSubDir = config["texSubDir"];
 		string texDir = assetsDir + texSubDir;

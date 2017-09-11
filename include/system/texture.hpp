@@ -14,7 +14,9 @@ namespace renderer {
 	{
 	public:
 		void init(ObjectManager &objMgr, EventManager &evtMgr);
-
+		
+        virtual void update(ObjectManager &objMgr, EventManager &evtMgr, float dt) override {}
+        
 		void receive(const LoadTextureEvent &evt);
 
 		void receive(const DestroyTextureEvent &evt);

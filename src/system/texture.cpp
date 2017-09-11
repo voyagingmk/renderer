@@ -6,7 +6,8 @@ using namespace std;
 
 namespace renderer {
 	void TextureSystem::init(ObjectManager &objMgr, EventManager &evtMgr) {
-		evtMgr.on<LoadTextureEvent>(*this);
+		printf("TextureSystem init\n");
+        evtMgr.on<LoadTextureEvent>(*this);
 		evtMgr.on<DestroyTextureEvent>(*this);
 		evtMgr.on<ActiveTextureEvent>(*this);
 	}

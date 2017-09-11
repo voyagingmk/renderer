@@ -4,7 +4,11 @@
 using namespace std;
 
 namespace renderer {
-	void RenderSystem::update(ObjectManager &objMgr, EventManager &evtMgr, float dt) {
+    void RenderSystem::init(ObjectManager &objMgr, EventManager &evtMgr) {
+        printf("RenderSystem init\n");
+    }
+    
+    void RenderSystem::update(ObjectManager &objMgr, EventManager &evtMgr, float dt) {
 
 	}
 };

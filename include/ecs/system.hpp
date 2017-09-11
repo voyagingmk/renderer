@@ -91,7 +91,7 @@ private:
 	bool m_inited = false;
 	ObjectManager &m_objMgr;
 	EventManager &m_evtMgr;
-	std::unordered_map<BaseSystem::TypeID, std::shared_ptr<BaseSystem>> m_evtTypeID2System;
+	std::map<BaseSystem::TypeID, std::shared_ptr<BaseSystem>> m_evtTypeID2System;
 };
 }
 

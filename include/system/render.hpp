@@ -11,7 +11,8 @@ using namespace ecs;
 namespace renderer {
 	class RenderSystem : public System<RenderSystem>, public Receiver<RenderSystem>
 	{
-	public:
+    public:
+        void init(ObjectManager &objMgr, EventManager &evtMgr);
 		void update(ObjectManager &objMgr, EventManager &evtMgr, float dt);
 	};
 
