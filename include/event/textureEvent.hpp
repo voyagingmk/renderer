@@ -49,6 +49,17 @@ namespace renderer {
 		uint32_t idx;
 		std::string aliasname;
 	};
+    
+    class DisableTextureEvent {
+    public:
+        DisableTextureEvent(ecs::Object obj, uint32_t idx) :
+        obj(obj),
+        idx(idx)
+        {}
+        ecs::Object obj;
+        uint32_t idx;
+    };
+
 }
 
 #endif

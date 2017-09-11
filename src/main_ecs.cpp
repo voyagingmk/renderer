@@ -4,6 +4,7 @@
 #include "system/env.hpp"
 #include "system/texture.hpp"
 #include "system/render.hpp"
+#include "system/shader.hpp"
 #include "system/loader.hpp"
 
 using namespace ecs;
@@ -27,6 +28,7 @@ MainECS::MainECS() {
 void MainECS::setup() {
     m_systemMgr.add<EnvSystem>();
     m_systemMgr.add<TextureSystem>();
+    m_systemMgr.add<ShaderSystem>();
 	m_systemMgr.add<RenderSystem>();
 	m_systemMgr.add<LoaderSystem>();
 	m_systemMgr.init();

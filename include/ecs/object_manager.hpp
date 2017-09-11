@@ -415,7 +415,7 @@ const C *ObjectManager::getComponentPtr(const ObjectID id) const
     C &ComponentHandle<C>::operator*()
     {
         assert(valid());
-        return *m_manager->template getComponentPtr<C>(m_id);
+        return const_cast<C&>(*m_manager->template getComponentPtr<C>(m_id));
     }
     
     template <typename C>

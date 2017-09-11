@@ -17,7 +17,9 @@ namespace renderer {
 
 		virtual void update(ObjectManager &objMgr, EventManager &evtMgr, float dt) override {}
 
-		void loadTextures(EventManager &evtMgr, Object obj, std::string& texDir, json &config);
+		void loadTextures(EventManager &evtMgr, Object obj, std::string texDir, json &config);
+        
+        void loadShaders(EventManager &evtMgr, Object obj, std::string shaderDir, json &config);
 	};
 
 };

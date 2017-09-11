@@ -75,4 +75,9 @@ namespace renderer {
 			glBindTexture(GL_TEXTURE_CUBE_MAP, texRef.texID);
 		}
 	}
+    
+    void TextureSystem::receive(const DisableTextureEvent &evt) {
+        glActiveTexture(GL_TEXTURE0 + evt.idx);
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
 };

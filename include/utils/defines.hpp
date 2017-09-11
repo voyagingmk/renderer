@@ -28,4 +28,5 @@ static int logDebug(char const* const _Format, ...) {
     return 0;
 }
 
+
 #endif // RENDERER_DEFINES_HPP

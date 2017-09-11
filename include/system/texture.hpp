@@ -21,7 +21,9 @@ namespace renderer {
 
 		void receive(const DestroyTextureEvent &evt);
 
-		void receive(const ActiveTextureEvent &evt);
+        void receive(const ActiveTextureEvent &evt);
+        
+        void receive(const DisableTextureEvent &evt);
 	};
 
 
