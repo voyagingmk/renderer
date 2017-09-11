@@ -465,7 +465,7 @@ class MyContext : public RendererContextSDL
         glViewport(0, 0, buf.width, buf.height);
         glClearColor(clearColor.r(), clearColor.g(), clearColor.b(), clearColor.a());
         glClear(clearBits);
-        shader.setLight(light);
+        // shader.setLight(light);
         drawTerrian(shader);
         drawObjs(shader);
         CheckGLError;

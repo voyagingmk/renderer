@@ -3,6 +3,7 @@
 
 using namespace renderer;
 
+
 UniLoc Shader::getUniformLocation(const char* name) {
     return (UniLoc)glGetUniformLocation(spHDL, name);
 }

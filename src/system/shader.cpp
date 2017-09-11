@@ -3,11 +3,13 @@
 #include "realtime/glutils.hpp"
 
 using namespace std;
+ 
 
 namespace renderer {
     void ShaderSystem::init(ObjectManager &objMgr, EventManager &evtMgr) {
 		printf("ShaderSystem init\n");
-        evtMgr.on<LoadShaderEvent>(*this);
+        
+		evtMgr.on<LoadShaderEvent>(*this);
 	}
 
     
