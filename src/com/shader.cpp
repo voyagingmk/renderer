@@ -4,7 +4,7 @@
 using namespace renderer;
 
 UniLoc Shader::getUniformLocation(const char* name) {
-    return (UniLoc)glGetUniformLocation(hdl, name);
+    return (UniLoc)glGetUniformLocation(spHDL, name);
 }
 
 void Shader::set4f(UniLoc loc, float f1, float f2, float f3, float f4) {
@@ -137,7 +137,7 @@ void Shader::setTransform4f(const char* name, Transform4x4 trans) {
 }
 
 void Shader::use() {
-    glUseProgram(hdl);
+    glUseProgram(spHDL);
 }
 
 
