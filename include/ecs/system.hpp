@@ -57,7 +57,7 @@ public:
 	template <typename S>
 	void add(std::shared_ptr<S> system)
 	{
-		m_evtTypeID2System.insert(std::make_pair(S::typeID(), system));
+		m_sysTypeID2System.insert(std::make_pair(S::typeID(), system));
 	}
 
 	template <typename S, typename... Args>
@@ -71,8 +71,8 @@ public:
 	template <typename S>
 	std::shared_ptr<S> get()
 	{
-		auto it = m_evtTypeID2System.find(S::typeID());
-		return it == m_evtTypeID2System.end() ? nullptr : std::shared_ptr<S>(std::static_pointer_cast<S>(it->second));
+		auto it = m_sysTypeID2System.find(S::typeID());
+		return it == m_sysTypeID2System.end() ? nullptr : std::shared_ptr<S>(std::static_pointer_cast<S>(it->second));
 	}
 
 	template <typename S>
@@ -91,7 +91,7 @@ private:
 	bool m_inited = false;
 	ObjectManager &m_objMgr;
 	EventManager &m_evtMgr;
-	std::map<BaseSystem::TypeID, std::shared_ptr<BaseSystem>> m_evtTypeID2System;
+	std::map<BaseSystem::TypeID, std::shared_ptr<BaseSystem>> m_sysTypeID2System;
 };
 }
 

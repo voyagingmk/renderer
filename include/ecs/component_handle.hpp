@@ -35,7 +35,9 @@ namespace ecs
 
 		void remove();
 
-		Object object();
+		Object object();	
+		
+		const Object object() const;
 
 		bool operator==(const ComponentHandle<C> &other) const;
 

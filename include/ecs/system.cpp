@@ -12,7 +12,7 @@ BaseSystem::TypeID BaseSystem::m_SystemTypeCounter = 0;
 void SystemManager::updateAll(float dt)
 {
 	assert(m_inited && "SystemManager::init() not called");
-	for (auto &pair : m_evtTypeID2System)
+	for (auto &pair : m_sysTypeID2System)
 	{
 		pair.second->update(m_objMgr, m_evtMgr, dt);
 	}
@@ -20,7 +20,7 @@ void SystemManager::updateAll(float dt)
 
 void SystemManager::init()
 {
-	for (auto &pair : m_evtTypeID2System)
+	for (auto &pair : m_sysTypeID2System)
 	{
 		pair.second->init(m_objMgr, m_evtMgr);
 	}

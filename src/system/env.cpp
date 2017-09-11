@@ -22,34 +22,23 @@ namespace renderer {
 	}
 
 	void EnvSystem::update(ObjectManager &objMgr, EventManager &evtMgr, float dt) {
-		for (auto obj : objMgr.entities<SDLContext>()) {
-			auto com = obj.component<SDLContext>();
-			while (1) {
-				SDL_Event e;
-				if (SDL_PollEvent(&e)) {
-					if (e.type == SDL_KEYDOWN || e.type == SDL_KEYUP) {
-						evtMgr.emit<CustomSDLKeyboardEvent>(obj, e.key);
-					}
-					else if (e.type == SDL_MOUSEMOTION) {
-						evtMgr.emit<CustomSDLMouseMotionEvent>(obj, e.motion);
-					}
-					else if (e.type == SDL_MOUSEBUTTONDOWN ||
-						e.type == SDL_MOUSEBUTTONUP ||
-						e.type == SDL_MOUSEWHEEL) {
-						evtMgr.emit<CustomSDLMouseButtonEvent>(obj, e.button);
-					}
-					else {
-						evtMgr.emit<CustomSDLEvent>(obj, e);
-					}
-				}
-				if (com->shouldExit) {
-					break;
-				}
-				// onPoll();
-				SDL_GL_SwapWindow(com->win);
-				// SDL_RenderPresent(rendererSDL);
+		auto com = objMgr.getSingltonComponent<SDLContext>();
+		SDL_Event e;
+		if (SDL_PollEvent(&e)) {
+			if (e.type == SDL_KEYDOWN || e.type == SDL_KEYUP) {
+				evtMgr.emit<CustomSDLKeyboardEvent>(com.object(), e.key);
 			}
-			break;
+			else if (e.type == SDL_MOUSEMOTION) {
+				evtMgr.emit<CustomSDLMouseMotionEvent>(com.object(), e.motion);
+			}
+			else if (e.type == SDL_MOUSEBUTTONDOWN ||
+				e.type == SDL_MOUSEBUTTONUP ||
+				e.type == SDL_MOUSEWHEEL) {
+				evtMgr.emit<CustomSDLMouseButtonEvent>(com.object(), e.button);
+			}
+			else {
+				evtMgr.emit<CustomSDLEvent>(com.object(), e);
+			}
 		}
 	}
 

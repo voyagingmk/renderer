@@ -14,7 +14,7 @@ class Object
 {
   public:
 	Object() = default;
-	Object(ObjectManager *manager, ObjectID id);
+	Object(const ObjectManager *manager, ObjectID id);
 	Object(const Object &other) = default;
 	Object &operator=(const Object &other) = default;
 

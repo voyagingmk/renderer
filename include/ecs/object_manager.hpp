@@ -54,7 +54,9 @@ class ObjectManager
 
 	void destroy(ObjectID id);
 
-	Object get(ObjectID id);
+	Object get(ObjectID id); 
+
+	const Object get(ObjectID id) const;
 
 	template <typename C, typename... Args>
 	ComponentHandle<C> addComponent(ObjectID id, Args &&... args);
@@ -84,6 +86,31 @@ class ObjectManager
 			m_objectIDs.resize(typeID + 1);
 		}
 		return m_objectIDs[typeID];
+	}
+
+	template <typename C>
+	bool hasObjectIDs() {
+		ComponentTypeID typeID = ComponentType<C>::typeID();
+		return typeID < m_objectIDs.size();
+	}
+
+	template <typename C>
+	ObjectIDs& getObjectIDs() {
+		ComponentTypeID typeID = ComponentType<C>::typeID();
+		if (m_objectIDs.size() <= typeID) {
+			m_objectIDs.resize(typeID + 1);
+		}
+		return m_objectIDs[typeID];
+	}
+
+	template <typename C>
+	ComponentHandle<C> getSingltonComponent() {
+		ObjectIDs& objectIDs = getObjectIDs<C>();
+		if (objectIDs.size() > 0) {
+			Object obj = get(*(objectIDs.begin()));
+			return obj.component<C>();
+		}
+		return ComponentHandle<C>();
 	}
 
 	void reset()
@@ -452,6 +479,13 @@ const C *ObjectManager::getComponentPtr(const ObjectID id) const
         assert(valid());
         return m_manager->get(m_id);
     }
+
+	template <typename C>
+	const Object ComponentHandle<C>::object() const
+	{
+		assert(valid());
+		return m_manager->get(m_id);
+	}
     
     template <typename C>
     bool ComponentHandle<C>::operator==(const ComponentHandle<C> &other) const

@@ -4,8 +4,8 @@
 
 namespace ecs {
 
-	Object::Object(ObjectManager *manager, ObjectID id) :
-		m_manager(manager), m_id(id)
+	Object::Object(const ObjectManager *manager, ObjectID id) :
+		m_manager(const_cast<ObjectManager *>(manager)), m_id(id)
 	{}
 
 	bool Object::valid() const

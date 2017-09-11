@@ -57,6 +57,11 @@ Object ObjectManager::get(ObjectID id)
 	return Object(this, id);
 }
 
+const Object ObjectManager::get(ObjectID id) const
+{
+	return Object(this, id);
+}
+
 size_t ObjectManager::getComponentIdx(ComponentTypeID typeID, ObjectID id) const
 {
 	if (id >= m_comHashes.size())

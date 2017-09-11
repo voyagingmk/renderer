@@ -42,7 +42,9 @@ int ecsMain(int argc, char *argv[])
 {
 	MainECS ecsObj;
 	ecsObj.setup();
-	ecsObj.update(0.1f);
+	while (1) {
+		ecsObj.update(0.1f);
+	}
 	return 0;
 }
 
