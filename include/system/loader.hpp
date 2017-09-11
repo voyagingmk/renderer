@@ -13,7 +13,7 @@ namespace renderer {
 	class LoaderSystem : public System<LoaderSystem>
 	{
 	public:
-		void init(ObjectManager &objMgr, EventManager &evtMgr);
+		void init(ObjectManager &objMgr, EventManager &evtMgr) override;
 
 		virtual void update(ObjectManager &objMgr, EventManager &evtMgr, float dt) override {}
 

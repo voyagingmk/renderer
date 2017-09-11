@@ -12,8 +12,8 @@ namespace renderer {
 	class RenderSystem : public System<RenderSystem>, public Receiver<RenderSystem>
 	{
     public:
-        void init(ObjectManager &objMgr, EventManager &evtMgr);
-		void update(ObjectManager &objMgr, EventManager &evtMgr, float dt);
+        void init(ObjectManager &objMgr, EventManager &evtMgr) override;
+		void update(ObjectManager &objMgr, EventManager &evtMgr, float dt) override;
 	};
 
 };
