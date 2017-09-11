@@ -2,9 +2,9 @@
 #define RENDERER_TRANSFORM_HPP
 
 #include "base.hpp"
-#include "../com/geometry.hpp"
-#include "../com/matrix.hpp"
-#include "../com/bbox.hpp"
+#include "geometry.hpp"
+#include "matrix.hpp"
+#include "bbox.hpp"
 
 namespace renderer {
 

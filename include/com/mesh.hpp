@@ -1,9 +1,10 @@
-#ifndef RENDERER_MESH_HPP
-#define RENDERER_MESH_HPP
+#ifndef RENDERER_COM_MESH_HPP
+#define RENDERER_COM_MESH_HPP
 
 #include "base.hpp"
+#include "vertex.hpp"
 #include "shape.hpp"
-#include "../com/geometry.hpp"
+#include "geometry.hpp"
 
 namespace renderer {
 	class Mesh;
@@ -23,17 +24,6 @@ namespace renderer {
 		virtual BBox Bound() const override; 
 		virtual BBox WorldBound() const override;
 	};
-
-	struct Vertex {
-		// Position
-		Vector3dF position;
-		// Normal
-		Normal3dF normal;
-        Vector3dF color;
-		// TexCoords
-		Vector2dF texCoords;
-	};
-	typedef std::vector<Vertex> Vertices;
 
 	class Mesh: public Shape {
 	public:

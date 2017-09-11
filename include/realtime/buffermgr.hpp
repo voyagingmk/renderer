@@ -2,10 +2,10 @@
 #define RENDERER_BUFFERMGR_HPP
 
 #include "base.hpp"
-#include "../com/glcommon.hpp"
-#include "../com/matrix.hpp"
-#include "../com/transform.hpp"
-#include "mesh.hpp"
+#include "com/glcommon.hpp"
+#include "com/matrix.hpp"
+#include "com/transform.hpp"
+#include "com/mesh.hpp"
 
 namespace renderer {
 

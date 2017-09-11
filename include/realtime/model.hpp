@@ -2,7 +2,7 @@
 #define RENDERER_MODEL_HPP
 
 #include "base.hpp"
-#include "mesh.hpp"
+#include "com/mesh.hpp"
 #include "importer.hpp"
 #include "buffermgr.hpp"
 #include "shadermgr.hpp"
@@ -14,13 +14,9 @@ class Model : public Shape
   public:
     uint8_t type;
     vector<Mesh> meshs;
-    static size_t modelCount;
-
   public:
     Model()
     {
-        modelCount += 1;
-        id = modelCount;
         InitIdentityTransform();
     }
 

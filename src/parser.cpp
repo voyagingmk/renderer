@@ -9,7 +9,7 @@
 #include "plane.hpp"
 #include "union.hpp"
 #include "film.hpp"
-#include "mesh.hpp"
+#include "com/mesh.hpp"
 #include "light.hpp"
 #include "com/transform.hpp"
 #include "bvh.hpp"

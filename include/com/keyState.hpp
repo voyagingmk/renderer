@@ -1,5 +1,5 @@
-#ifndef RENDERER_KEYSTATE_HPP
-#define RENDERER_KEYSTATE_HPP
+#ifndef RENDERER_COM_KEYSTATE_HPP
+#define RENDERER_COM_KEYSTATE_HPP
 
 #include "base.hpp"
 

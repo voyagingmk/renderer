@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "mesh.hpp"
+#include "com/mesh.hpp"
 #include "com/geometry.hpp"
 #include "ray.hpp"
 #include "intersect_result.hpp"

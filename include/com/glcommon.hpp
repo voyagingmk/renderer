@@ -1,5 +1,5 @@
-#ifndef RENDERER_GLCOMMON_HPP
-#define RENDERER_GLCOMMON_HPP
+#ifndef RENDERER_COM_GLCOMMON_HPP
+#define RENDERER_COM_GLCOMMON_HPP
 
 #include "base.hpp"
 #include "../com/geometry.hpp"

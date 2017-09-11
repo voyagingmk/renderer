@@ -2,8 +2,8 @@
 #define RENDERER_REALTIME_IMPORTER_HPP
 
 #include "base.hpp"
-#include "../com/geometry.hpp"
-#include "mesh.hpp"
+#include "com/geometry.hpp"
+#include "com/mesh.hpp"
 
 #include <assimp/Importer.hpp>      // C++ importer interface
 #include <assimp/scene.h>           // Output data structure

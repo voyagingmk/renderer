@@ -18,6 +18,8 @@ namespace renderer {
         
         void receive(const LoadShaderEvent& evt);
         
+    private:
+
         ShaderProgramHDL createShaderProgram(SPHDLList& spHDLs, ShaderHDLSet shaderHDLSet);
         
         ShaderHDL loadShaderFromFile(ShaderType type, const char* path);
