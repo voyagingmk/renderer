@@ -17,7 +17,7 @@ namespace renderer {
         string texSubDir = config["texSubDir"];
         string shaderSubDir = config["shaderSubDir"];
 
-		Object obj = objMgr.create(); // manager kinds of resources
+		Object obj = objMgr.create(); // singleTon, manage kinds of resources
         obj.addComponent<TextureDict>();
         obj.addComponent<SPHDLList>();
         obj.addComponent<ShaderProgramAlias>();
