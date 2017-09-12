@@ -5,6 +5,7 @@
 #include "com/meshes.hpp"
 #include "com/materialCom.hpp"
 #include "com/cameraCom.hpp"
+#include "com/bufferCom.hpp"
 #include "system/spatialSys.hpp"
 #include "event/materialEvent.hpp"
 #include "event/spatialEvent.hpp"
@@ -57,7 +58,7 @@ namespace renderer {
 		glClear(evt.clearBits);
 
 		// TODO: sort by material
-		for (const Object obj : objMgr.entities<Meshes, MaterialCom, SpatialData>()) {
+		for (const Object obj : objMgr.entities<Meshes, MaterialCom, SpatialData, BufferSetsCom>()) {
 			auto matCom = obj.component<MaterialCom>();
 			auto setting = matSetCom->settings[matCom->settingID];
 			Shader shader(spSeCom->alias2HDL[setting.shaderName]);

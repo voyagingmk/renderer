@@ -14,4 +14,11 @@ struct BufferSet {
 
 typedef std::map<std::string, BufferSet> BufferDict;
 
+typedef std::vector<BufferSet> BufferSets;
+
+struct BufferSetsCom {
+	BufferSets sets;
+};
+
+
 #endif

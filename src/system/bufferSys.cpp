@@ -8,14 +8,22 @@ namespace renderer {
 
 
 	void BufferSystem::init(ObjectManager &objMgr, EventManager &evtMgr) {
-
+		evtMgr.on<ComponentAddedEvent<Meshes>>(*this);
 	}
 
 	void BufferSystem::update(ObjectManager &objMgr, EventManager &evtMgr, float dt) {
 
 	}
 
-	void BufferSystem::createMeshBuffer(OneMesh& mesh) {
+	void BufferSystem::receive(const ComponentAddedEvent<Meshes> &evt) {
+		Object obj = evt.m_obj;
+		auto com = obj.addComponent<BufferSetsCom>();
+		for(const OneMesh& mesh : evt.component->meshes){
+			com->sets.push_back(createMeshBuffer(mesh));
+		}
+	}
+
+	BufferSet BufferSystem::createMeshBuffer(const OneMesh& mesh) {
 		GLuint VBO, VAO, EBO;
 		BufferSet bufferSet;
 		glGenVertexArrays(1, &VAO);
@@ -51,9 +59,9 @@ namespace renderer {
 		bufferSet.vbo = VBO;
 		bufferSet.ebo = EBO;
 		assert(VAO > 0 && VBO > 0 && EBO > 0);
-		//bufferSet.triangles = mesh.indexes.size() / 3;
+		bufferSet.triangles = mesh.indexes.size() / 3;
 		//bufferDict[aliasname] = bufferSet;
-		//return bufferSet;
+		return bufferSet;
 	}
 
 };

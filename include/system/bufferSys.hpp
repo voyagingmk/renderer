@@ -18,10 +18,12 @@ namespace renderer {
 		void init(ObjectManager &objMgr, EventManager &evtMgr);
 
 		void update(ObjectManager &objMgr, EventManager &evtMgr, float dt) override;
-	
+
+		void receive(const ComponentAddedEvent<Meshes> &evt);
+
 	private:
 
-		void createMeshBuffer(OneMesh& mesh);
+		BufferSet createMeshBuffer(const OneMesh& mesh);
 	};
 };
 
