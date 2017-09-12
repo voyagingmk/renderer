@@ -5,6 +5,7 @@
 #include "com/glcommon.hpp"
 #include "com/matrix.hpp"
 #include "com/transform.hpp"
+#include "com/bufferCom.hpp"
 #include "com/mesh.hpp"
 
 namespace renderer {

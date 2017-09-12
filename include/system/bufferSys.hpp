@@ -3,6 +3,9 @@
 
 #include "base.hpp"
 #include "ecs/ecs.hpp"
+#include "com/meshes.hpp"
+#include "com/bufferCom.hpp"
+
 
 
 using namespace ecs;
@@ -15,7 +18,10 @@ namespace renderer {
 		void init(ObjectManager &objMgr, EventManager &evtMgr);
 
 		void update(ObjectManager &objMgr, EventManager &evtMgr, float dt) override;
+	
+	private:
 
+		void createMeshBuffer(OneMesh& mesh);
 	};
 };
 

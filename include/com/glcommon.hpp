@@ -33,17 +33,6 @@ enum class DepthTexType {
 };
 
 
-typedef uint32_t bufferID;
-
-struct BufferSet {
-    size_t triangles;
-    bufferID vao;
-    bufferID vbo;
-    bufferID ebo;
-};
-
-typedef std::map<std::string, BufferSet> BufferDict;
-
 class TexRef {
 public:
     TexID texID;
