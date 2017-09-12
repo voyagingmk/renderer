@@ -14,7 +14,12 @@ namespace renderer {
     }
     
 	// renderpipe loop
-    void RenderSystem::update(ObjectManager &objMgr, EventManager &evtMgr, float dt) {
+	void RenderSystem::update(ObjectManager &objMgr, EventManager &evtMgr, float dt) {
+
+	}
+
+	void RenderSystem::receive(const RenderSceneEvent &evt) {
+		ObjectManager& objMgr = evt.cameraObj.objMgr();
 		auto context = objMgr.getSingletonComponent<SDLContext>();
 		if (!context.valid()) {
 			return;
@@ -26,7 +31,7 @@ namespace renderer {
 		glClear(GL_COLOR_BUFFER_BIT);
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_STENCIL_TEST);
-		for(auto objs: objMgr.entities<Meshes, MaterialCom, SpatialData>()) {
+		for(const Object objs: objMgr.entities<Meshes, MaterialCom, SpatialData>()) {
             
         }
 		SDL_GL_SwapWindow(context->win);

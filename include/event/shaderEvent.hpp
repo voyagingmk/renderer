@@ -7,7 +7,7 @@
 
 namespace renderer {
 
-	class LoadShaderEvent {
+	class LoadShaderEvent : public ecs::Event<LoadShaderEvent> {
 	public:
 		LoadShaderEvent(ecs::Object obj,
 			std::string &dirpath,

@@ -6,7 +6,7 @@
 
 namespace renderer {
 
-	class LoadTextureEvent {
+	class LoadTextureEvent : public ecs::Event<LoadTextureEvent> {
 	public:
 		LoadTextureEvent(ecs::Object obj,
 			std::string &dirpath,
@@ -28,7 +28,7 @@ namespace renderer {
 		bool toLinear;
 	};
 
-	class DestroyTextureEvent {
+	class DestroyTextureEvent : public ecs::Event<DestroyTextureEvent> {
 	public:
 		DestroyTextureEvent(ecs::Object obj, std::string& aliasname):
 			obj(obj),
@@ -38,7 +38,7 @@ namespace renderer {
 		std::string aliasname;
 	};
 
-	class ActiveTextureEvent {
+	class ActiveTextureEvent : public ecs::Event<ActiveTextureEvent> {
 	public:
 		ActiveTextureEvent(ecs::Object obj, uint32_t idx, std::string& aliasname) :
 			obj(obj),
@@ -50,7 +50,7 @@ namespace renderer {
 		std::string aliasname;
 	};
     
-    class DisableTextureEvent {
+    class DisableTextureEvent : public ecs::Event<DisableTextureEvent> {
     public:
         DisableTextureEvent(ecs::Object obj, uint32_t idx) :
         obj(obj),

@@ -63,6 +63,10 @@ class Object
 	template <typename C>
 	bool hasComponent() const;
 
+	ObjectManager& objMgr() const {
+		return *m_manager;
+	}
+
   private:
 	ObjectManager *m_manager = nullptr;
 	ObjectID m_id;

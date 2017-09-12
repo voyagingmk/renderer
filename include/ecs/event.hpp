@@ -34,6 +34,7 @@ class Event : public BaseEvent
 	}
 };
 
+
 class BaseReceiver
 {
   public:
@@ -78,6 +79,11 @@ class EventManager
 {
   public:
 	EventManager() {}
+
+	EventManager(const EventManager&) = delete;
+
+	EventManager& operator=(const EventManager &) = delete;
+
 	virtual ~EventManager() {}
 
 	template <typename E, typename Receiver>
@@ -85,49 +91,49 @@ class EventManager
 	{
 		typedef void (Receiver::*receiveFunc)(const E &);
 		receiveFunc receive = &Receiver::receive;
-		auto sig = newSignal(Event<E>::typeID());
+		auto sig = newSignal(E::typeID());
 		ConnectionID connection = sig->connect([&](const void *evt) {
 			receiver.receive(*(static_cast<const E *>(evt)));
 		});
 		BaseReceiver &base = receiver;
-		base.connections.insert(std::make_pair(Event<E>::typeID(), std::make_pair(EventSignalWeakPtr(sig), connection)));
+		base.connections.insert(std::make_pair(E::typeID(), std::make_pair(EventSignalWeakPtr(sig), connection)));
 	}
 
 	template <typename E, typename Receiver>
 	void off(Receiver &receiver)
 	{
 		BaseReceiver &base = receiver;
-		assert(base.connections.find(Event<E>::typeID()) != base.connections.end());
-		auto pair = base.connections[Event<E>::typeID()];
+		assert(base.connections.find(E::typeID()) != base.connections.end());
+		auto pair = base.connections[E::typeID()];
 		auto connection = pair.second;
 		auto &ptr = pair.first;
 		if (!ptr.expired())
 		{
 			ptr.lock()->disconnect(connection);
 		}
-		base.connections.erase(Event<E>::typeID());
+		base.connections.erase(E::typeID());
 	}
 
 	template <typename E>
-	void emit(const E &event)
+	void emit(const E &evt)
 	{
-		auto sig = newSignal(Event<E>::typeID());
-		sig->emit(&event);
+		auto sig = newSignal(E::typeID());
+		sig->emit(&evt);
 	}
 
 	template <typename E>
-	void emit(std::unique_ptr<E> event)
+	void emit(std::unique_ptr<E> evt)
 	{
-		auto sig = newSignal(Event<E>::typeID());
-		sig->emit(event.get());
+		auto sig = newSignal(E::typeID());
+		sig->emit(evt.get());
 	}
 
 	template <typename E, typename... Args>
 	void emit(Args &&... args)
 	{
-		E event = E(std::forward<Args>(args)...);
-		auto sig = newSignal(std::size_t(Event<E>::typeID()));
-		sig->emit(&event);
+		E evt = E(std::forward<Args>(args)...);
+		auto sig = newSignal(std::size_t(E::typeID()));
+		sig->emit(&evt);
 	}
 
   private:
@@ -139,7 +145,6 @@ class EventManager
 			m_evtTypeID2Signal[evtTypeID] = std::make_shared<EventSignal>();
 		return m_evtTypeID2Signal[evtTypeID];
 	}
-
 	std::vector<EventSignalPtr> m_evtTypeID2Signal;
 };
 };

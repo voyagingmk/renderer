@@ -45,7 +45,7 @@ class MovementSystem : public System<MovementSystem>
 	};
 };
 
-struct Collision
+struct Collision: public Event<Collision>
 {
   public:
 	Collision(Object left, Object right) : left(left), right(right) {}

@@ -4,6 +4,7 @@
 #include "com/shader.hpp"
 #include "com/spatialData.hpp"
 #include "com/meshes.hpp"
+#include "com/cameraCom.hpp"
 #include "com/materialCom.hpp"
 #include "event/textureEvent.hpp"
 #include "event/shaderEvent.hpp"
@@ -23,7 +24,7 @@ namespace renderer {
         obj.addComponent<TextureDict>();
         obj.addComponent<ShaderProgramSet>();
         obj.addComponent<MaterialSet>();
-        
+		obj.addComponent<PerspectiveCameraView>();
 
         loadTextures(evtMgr, obj, assetsDir + texSubDir, config);
         loadShaders(evtMgr, obj, assetsDir + shaderSubDir, config);

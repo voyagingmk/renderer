@@ -5,7 +5,7 @@
 
 namespace renderer {
 
-	class UpdateSpatialDataEvent {
+	class UpdateSpatialDataEvent : public ecs::Event<UpdateSpatialDataEvent> {
 	public:
 		UpdateSpatialDataEvent(ecs::Object obj):
             obj(obj)

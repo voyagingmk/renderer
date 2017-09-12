@@ -39,6 +39,11 @@ class ObjectManager
 	typedef std::set<ObjectID> ObjectIDs;
   public:
 	explicit ObjectManager(EventManager &evtMgr);
+
+	ObjectManager(const ObjectManager&) = delete;
+
+	ObjectManager& operator=(const ObjectManager&) = delete;
+
 	virtual ~ObjectManager();
 
 	size_t size() const { return m_isAlive.size() - m_freeList.size(); }
@@ -47,7 +52,7 @@ class ObjectManager
 
 	bool valid(ObjectID id) const
 	{
-		return m_isAlive[id];
+		return m_isAlive.size() >= id + 1 && m_isAlive[id];
 	}
 
 	Object create();

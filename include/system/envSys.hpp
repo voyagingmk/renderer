@@ -7,44 +7,14 @@
 #include "../com/renderMode.hpp"
 #include "../com/keyState.hpp"
 #include "../com/screenSize.hpp"
+#include "event/winEvent.hpp"
 
 
 
 using namespace ecs;
 
 namespace renderer {
-	class CustomSDLEvent {
-	public:
-		CustomSDLEvent(Object obj, SDL_Event e) :
-			obj(obj), e(e) {}
-		Object obj;
-		SDL_Event e;
-	};
-
-	class CustomSDLKeyboardEvent {
-	public:
-		CustomSDLKeyboardEvent(Object obj, SDL_KeyboardEvent e) :
-			obj(obj), e(e) {}
-		Object obj;
-		SDL_KeyboardEvent e;
-	};
-
-	class CustomSDLMouseMotionEvent {
-	public:
-		CustomSDLMouseMotionEvent(Object obj, SDL_MouseMotionEvent e) :
-			obj(obj), e(e) {}
-		Object obj;
-		SDL_MouseMotionEvent e;
-	};
-
-	class CustomSDLMouseButtonEvent {
-	public:
-		CustomSDLMouseButtonEvent(Object obj, SDL_MouseButtonEvent e) :
-			obj(obj), e(e) {}
-		Object obj;
-		SDL_MouseButtonEvent e;
-	};
-
+	
 	class EnvSystem : public System<EnvSystem>, public Receiver<EnvSystem>
 	{
 	public:

@@ -54,6 +54,10 @@ public:
 	SystemManager(ObjectManager &objMgr, EventManager &evtMgr) : 
 		m_objMgr(objMgr), m_evtMgr(evtMgr) {}
 
+	SystemManager(const SystemManager&) = delete;
+
+	SystemManager& operator=(const SystemManager &) = delete;
+
 	template <typename S>
 	void add(std::shared_ptr<S> system)
 	{
