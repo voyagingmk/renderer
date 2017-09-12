@@ -31,4 +31,8 @@ static int logDebug(char const* const _Format, ...) {
 typedef size_t MaterialSettingID;
 typedef size_t MaterialID;
 
+
+
+typedef std::tuple<size_t, size_t, size_t, size_t> Viewport;
+
 #endif // RENDERER_DEFINES_HPP
