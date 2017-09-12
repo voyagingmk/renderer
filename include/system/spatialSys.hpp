@@ -4,7 +4,7 @@
 #include "base.hpp"
 #include "ecs/ecs.hpp"
 #include "event/spatialEvent.hpp"
-
+#include "com/spatialData.hpp"
 
 
 using namespace ecs;
@@ -14,8 +14,15 @@ namespace renderer {
 	{
     public:
         void init(ObjectManager &objMgr, EventManager &evtMgr) override;
+        
         void update(ObjectManager &objMgr, EventManager &evtMgr, float dt) override;
+        
         void receive(const UpdateSpatialDataEvent& evt);
+        
+        void receive(const ComponentAddedEvent<SpatialData> &evt);
+            
+        void updateSpatialData(Object obj);
+        
 	};
 
 };

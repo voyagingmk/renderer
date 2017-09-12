@@ -32,9 +32,9 @@ void MainECS::setup() {
     m_systemMgr.add<TextureSystem>();
     m_systemMgr.add<ShaderSystem>();
 	m_systemMgr.add<RenderSystem>();
-	m_systemMgr.add<MaterialSystem>();
+    m_systemMgr.add<MaterialSystem>();
+    m_systemMgr.add<SpatialSystem>();
 	m_systemMgr.add<LoaderSystem>();
-	m_systemMgr.add<SpatialSystem>();
 	m_systemMgr.init();
 }
 

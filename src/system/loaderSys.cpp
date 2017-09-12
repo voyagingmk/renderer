@@ -34,7 +34,7 @@ namespace renderer {
         objCenter.addComponent<SpatialData>(
            Vector3dF{0.0f, 0.0f, 0.0f},
            Vector3dF{0.0f, 0.0f, 0.0f},
-           QuaternionF{0.0f, 0.0f, 0.0f, 0.0f}
+           QuaternionF{1.0f, 0.0f, 0.0f, 0.0f}
         );
         objCenter.addComponent<MaterialCom>(1);
         

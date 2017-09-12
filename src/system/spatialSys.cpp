@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "system/spatialSys.hpp"
-#include "com/spatialData.hpp"
 
 using namespace std;
 
@@ -9,15 +8,24 @@ namespace renderer {
 
 	void SpatialSystem::init(ObjectManager &objMgr, EventManager &evtMgr) {
         evtMgr.on<UpdateSpatialDataEvent>(*this);
+        evtMgr.on<ComponentAddedEvent<SpatialData>>(*this);
     }
     
 
 	void SpatialSystem::update(ObjectManager &objMgr, EventManager &evtMgr, float dt) {
 
 	}
-
+    
+    void SpatialSystem::receive(const ComponentAddedEvent<SpatialData> &evt) {
+        updateSpatialData(evt.m_obj);
+    }
+    
 	void SpatialSystem::receive(const UpdateSpatialDataEvent &evt) {
-        auto com = evt.obj.component<SpatialData>();
+        updateSpatialData(evt.obj);
+    }
+    
+    void SpatialSystem::updateSpatialData(Object obj) {
+        auto com = obj.component<SpatialData>();
         Matrix4x4 T = Translate<Matrix4x4>({com->pos.x, com->pos.y, com->pos.z});
         Matrix4x4 S = Scale<Matrix4x4>({com->scale.x, com->scale.y, com->scale.z});
         com->orientation = com->orientation.Normalize();
