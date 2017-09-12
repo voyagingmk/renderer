@@ -27,7 +27,11 @@ namespace renderer {
         std::map<MaterialSettingID, MaterialSettingCom> settings;
     };
 
-    struct MaterialCom {
+    class MaterialCom {
+    public:
+        MaterialCom(MaterialSettingID id):
+            settingID(id)
+        {}
         MaterialSettingID settingID;
     };
         

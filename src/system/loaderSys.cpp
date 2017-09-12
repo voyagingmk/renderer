@@ -30,11 +30,14 @@ namespace renderer {
         loadMaterials(evtMgr, obj, config);
         
         Object objCenter = objMgr.create();
+        
         objCenter.addComponent<SpatialData>(
            Vector3dF{0.0f, 0.0f, 0.0f},
            Vector3dF{0.0f, 0.0f, 0.0f},
            QuaternionF{0.0f, 0.0f, 0.0f, 0.0f}
         );
+        objCenter.addComponent<MaterialCom>(1);
+        
         auto com = objCenter.addComponent<Meshes>();
         
         OneMesh mesh;
@@ -55,7 +58,6 @@ namespace renderer {
             0, 1, 2,
             0, 2, 3};
         com->meshes.push_back(mesh);
-        
 	}
 
 	void LoaderSystem::loadTextures(EventManager &evtMgr, Object obj, string texDir, json &config)
