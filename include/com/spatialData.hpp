@@ -4,6 +4,7 @@
 #include "base.hpp"
 #include "geometry.hpp"
 #include "quaternion.hpp"
+#include "transform.hpp"
 
 namespace renderer {
     
@@ -11,11 +12,13 @@ namespace renderer {
 		SpatialData(Vector3dF p, Vector3dF s, QuaternionF o):
 			pos(p),
             scale(s),
-            orientation(o)
+            orientation(o),
+            o2w(Matrix4x4::newIdentity())
 		{}
         Vector3dF pos;
         Vector3dF scale;
         QuaternionF orientation;
+        Transform4x4 o2w;
 	};
 
 }
