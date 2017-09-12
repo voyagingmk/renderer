@@ -3,6 +3,7 @@
 
 #include "base.hpp"
 #include "ecs/ecs.hpp"
+#include "utils/defines.hpp"
 
 namespace renderer {
     using json = nlohmann::json;
@@ -17,6 +18,17 @@ namespace renderer {
         ecs::Object obj;
         json& matInfo;
     };
+
+	class ActiveMaterialEvent : public ecs::Event<ActiveMaterialEvent> {
+	public:
+		ActiveMaterialEvent(ecs::Object obj,
+			MaterialSettingID settingID) :
+			obj(obj),
+			settingID(settingID)
+		{}
+		ecs::Object obj;
+		MaterialSettingID settingID;
+	}; 
 
 };
 

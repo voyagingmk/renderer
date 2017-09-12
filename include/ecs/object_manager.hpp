@@ -46,6 +46,8 @@ class ObjectManager
 
 	virtual ~ObjectManager();
 
+	EventManager& evtMgr() const { return m_evtMgr; }
+
 	size_t size() const { return m_isAlive.size() - m_freeList.size(); }
 
 	size_t capacity() const { return m_isAlive.size(); }

@@ -6,6 +6,7 @@
 #include "com/materialCom.hpp"
 #include "com/cameraCom.hpp"
 #include "system/spatialSys.hpp"
+#include "event/materialEvent.hpp"
 
 
 using namespace std;
@@ -38,6 +39,7 @@ namespace renderer {
 
 	void RenderSystem::receive(const RenderSceneEvent &evt) {
 		ObjectManager& objMgr = evt.objCamera.objMgr();
+		EventManager& evtMgr = objMgr.evtMgr();
 
 		// ShaderMgr &shaderMgr = ShaderMgr::getInstance();
 		// Shader &shader = shaderMgr.getShader(shaderALias);
@@ -53,8 +55,11 @@ namespace renderer {
 		// shader.setLight(light);
 		// drawTerrian(shader);
 		// drawObjs(shader);
-		for (const Object objs : objMgr.entities<Meshes, MaterialCom, SpatialData>()) {
-
+		// TODO: sort by material
+		for (const Object obj : objMgr.entities<Meshes, MaterialCom, SpatialData>()) {
+			auto matCom = obj.component<MaterialCom>();
+			
+			evtMgr.emit<ActiveMaterialEvent>(obj, matCom->settingID);
 		}
 		CheckGLError;
 	}

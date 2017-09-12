@@ -9,18 +9,28 @@
 namespace renderer {
     class MaterialSettingCom {
     public:
-        MaterialSettingCom(Color a, Color d, Color s, float r, float sh):
+		MaterialSettingCom():
+			ambient(Color::White),
+			diffuse(Color::White),
+			specular(Color::White),
+			reflectiveness(1.0f),
+			shininess(1.0f),
+			shaderName("")
+		{}
+        MaterialSettingCom(Color a, Color d, Color s, float r, float sh, std::string shd):
          ambient(a),
          diffuse(d),
          specular(s),
          reflectiveness(r),
-         shininess(sh)
+         shininess(sh),
+		 shaderName(shd)
         {}
         Color ambient;
         Color diffuse;
         Color specular;
         float reflectiveness;
         float shininess;
+		std::string shaderName;
     };
 
     struct MaterialSet {

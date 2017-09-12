@@ -4,6 +4,8 @@
 #include "base.hpp"
 #include "ecs/ecs.hpp"
 #include "event/materialEvent.hpp"
+#include "com/materialCom.hpp"
+#include "com/shader.hpp"
 
 
 using namespace ecs;
@@ -18,6 +20,10 @@ namespace renderer {
 		void update(ObjectManager &objMgr, EventManager &evtMgr, float dt) override;
 
 		void receive(const LoadMaterialEvent &evt);
+
+		void receive(const ActiveMaterialEvent &evt);
+
+		void activeMaterial(Shader& shader, MaterialSettingCom& com);
 	};
 };
 
