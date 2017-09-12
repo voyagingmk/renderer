@@ -2,13 +2,12 @@
 #define RENDERER_MATERIAL_HPP
 
 #include "base.hpp"
+#include "utils/defines.hpp"
 #include "../com/color.hpp"
 #include "../com/geometry.hpp"
 
 namespace renderer {
     
-    typedef size_t MaterialSettingID;
-    typedef size_t MaterialID;
     class MaterialMgr;
     class Shader;
     

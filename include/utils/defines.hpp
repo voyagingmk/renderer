@@ -28,5 +28,7 @@ static int logDebug(char const* const _Format, ...) {
     return 0;
 }
 
+typedef size_t MaterialSettingID;
+typedef size_t MaterialID;
 
 #endif // RENDERER_DEFINES_HPP

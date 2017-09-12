@@ -4,8 +4,10 @@
 #include "com/shader.hpp"
 #include "com/spatialData.hpp"
 #include "com/meshes.hpp"
+#include "com/materialCom.hpp"
 #include "event/textureEvent.hpp"
 #include "event/shaderEvent.hpp"
+#include "event/materialEvent.hpp"
 
 using namespace std;
 
@@ -20,9 +22,12 @@ namespace renderer {
 		Object obj = objMgr.create(); // singleTon, manage kinds of resources
         obj.addComponent<TextureDict>();
         obj.addComponent<ShaderProgramSet>();
+        obj.addComponent<MaterialSet>();
+        
 
         loadTextures(evtMgr, obj, assetsDir + texSubDir, config);
         loadShaders(evtMgr, obj, assetsDir + shaderSubDir, config);
+        loadMaterials(evtMgr, obj, config);
         
         Object objCenter = objMgr.create();
         objCenter.addComponent<SpatialData>(
@@ -87,5 +92,12 @@ namespace renderer {
             evtMgr.emit<LoadShaderEvent>(obj, shaderDir, names, aliasName);
         }
     }
-
+    
+    void LoaderSystem::loadMaterials(EventManager &evtMgr, Object obj, json &config)
+    {
+        for (auto matInfo : config["material"])
+        {
+            evtMgr.emit<LoadMaterialEvent>(obj, matInfo);
+        }
+    }
 };

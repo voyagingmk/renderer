@@ -6,6 +6,7 @@
 #include "system/renderSys.hpp"
 #include "system/shaderSys.hpp"
 #include "system/loaderSys.hpp"
+#include "system/materialSys.hpp"
 
 using namespace ecs;
 using namespace renderer;
@@ -30,6 +31,7 @@ void MainECS::setup() {
     m_systemMgr.add<TextureSystem>();
     m_systemMgr.add<ShaderSystem>();
 	m_systemMgr.add<RenderSystem>();
+	m_systemMgr.add<MaterialSystem>();
 	m_systemMgr.add<LoaderSystem>();
 	m_systemMgr.init();
 }

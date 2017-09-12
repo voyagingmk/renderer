@@ -3,22 +3,34 @@
 
 #include "base.hpp"
 #include "color.hpp"
+#include "utils/defines.hpp"
 
-struct MaterialSettingCom {
-    Color ambient;
-    Color diffuse;
-    Color specular;
-    float reflectiveness;
-    float shininess;
-};
 
-struct MaterialSet {
-    std::map<std::string, MaterialSettingCom*> byAlias;
-	std::map<size_t, MaterialSettingCom*> byID;
-};
+namespace renderer {
+    class MaterialSettingCom {
+    public:
+        MaterialSettingCom(Color a, Color d, Color s, float r, float sh):
+         ambient(a),
+         diffuse(d),
+         specular(s),
+         reflectiveness(r),
+         shininess(sh)
+        {}
+        Color ambient;
+        Color diffuse;
+        Color specular;
+        float reflectiveness;
+        float shininess;
+    };
 
-struct MaterialCom {
-	std::shared_ptr<MaterialSettingCom> setting;
+    struct MaterialSet {
+        std::map<MaterialSettingID, MaterialSettingCom> settings;
+    };
+
+    struct MaterialCom {
+        MaterialSettingID settingID;
+    };
+        
 };
 
 #endif

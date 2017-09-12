@@ -129,6 +129,7 @@
         {
             "id": 1,
             "type": "Phone",
+            "ambient": "White",
             "diffuse": "White",
             "specular": "White",
             "shininess": 32,
@@ -137,6 +138,7 @@
         {
             "id": 2,
             "type": "Phone",
+            "ambient": "White",
             "diffuse": "Blue",
             "specular": "White",
             "shininess": 16,

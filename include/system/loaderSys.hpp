@@ -20,6 +20,8 @@ namespace renderer {
 		void loadTextures(EventManager &evtMgr, Object obj, std::string texDir, json &config);
         
         void loadShaders(EventManager &evtMgr, Object obj, std::string shaderDir, json &config);
+        
+        void loadMaterials(EventManager &evtMgr, Object obj, json &config);
 	};
 
 };
