@@ -14,9 +14,8 @@ namespace renderer {
 
     
     void ShaderSystem::receive(const LoadShaderEvent& evt) {
-        auto programAlias = evt.obj.component<ShaderProgramAlias>();
-        auto spHDLs = evt.obj.component<SPHDLList>();
-        
+        auto com = evt.obj.getSingletonComponent<ShaderProgramSet>();
+
         const ShaderFileNames& names = evt.names;
         ShaderHDLSet shaderHDLSet;
         for (auto pair: names) {
@@ -27,13 +26,13 @@ namespace renderer {
             ShaderHDL hdl = loadShaderFromFile(pair.first, (evt.dirpath + path).c_str());
             shaderHDLSet[pair.first] = hdl;
         }
-        auto spHDL = createShaderProgram(*spHDLs, shaderHDLSet);
+        auto spHDL = createShaderProgram(com->spHDLs, shaderHDLSet);
         assert(spHDL);
         if (!spHDL)
         {
             return;
         }
-        (*programAlias)[evt.aliasname] = spHDL;
+        com->alias2HDL[evt.aliasname] = spHDL;
         printf("ShaderSystem load %s\n", evt.aliasname.c_str());
     }
     

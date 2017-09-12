@@ -22,7 +22,7 @@ namespace renderer {
 	}
 
 	void EnvSystem::update(ObjectManager &objMgr, EventManager &evtMgr, float dt) {
-		auto com = objMgr.getSingltonComponent<SDLContext>();
+		auto com = objMgr.getSingletonComponent<SDLContext>();
 		SDL_Event e;
 		if (SDL_PollEvent(&e)) {
 			if (e.type == SDL_KEYDOWN || e.type == SDL_KEYUP) {

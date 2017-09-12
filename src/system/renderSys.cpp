@@ -12,7 +12,7 @@ namespace renderer {
     
 	// renderpipe loop
     void RenderSystem::update(ObjectManager &objMgr, EventManager &evtMgr, float dt) {
-		auto context = objMgr.getSingltonComponent<SDLContext>();
+		auto context = objMgr.getSingletonComponent<SDLContext>();
 		if (!context.valid()) {
 			return;
 		}

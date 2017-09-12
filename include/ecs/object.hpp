@@ -58,6 +58,9 @@ class Object
 	ComponentHandle<C> component() const;
 
 	template <typename C>
+	ComponentHandle<C> getSingletonComponent() const;
+
+	template <typename C>
 	bool hasComponent() const;
 
   private:

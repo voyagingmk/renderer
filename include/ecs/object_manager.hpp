@@ -104,7 +104,7 @@ class ObjectManager
 	}
 
 	template <typename C>
-	ComponentHandle<C> getSingltonComponent() {
+	ComponentHandle<C> getSingletonComponent() {
 		ObjectIDs& objectIDs = getObjectIDs<C>();
 		if (objectIDs.size() > 0) {
 			Object obj = get(*(objectIDs.begin()));
@@ -267,6 +267,13 @@ class ObjectManager
     {
         assert(valid());
         return m_manager->component<C>(m_id);
+    }
+            
+    template <typename C>
+    ComponentHandle<C> Object::getSingletonComponent() const
+    {
+        assert(valid());
+        return m_manager->getSingletonComponent<C>();
     }
     
     template <typename C, typename... Args>

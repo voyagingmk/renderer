@@ -19,8 +19,7 @@ namespace renderer {
 
 		Object obj = objMgr.create(); // singleTon, manage kinds of resources
         obj.addComponent<TextureDict>();
-        obj.addComponent<SPHDLList>();
-        obj.addComponent<ShaderProgramAlias>();
+        obj.addComponent<ShaderProgramSet>();
 
         loadTextures(evtMgr, obj, assetsDir + texSubDir, config);
         loadShaders(evtMgr, obj, assetsDir + shaderSubDir, config);
