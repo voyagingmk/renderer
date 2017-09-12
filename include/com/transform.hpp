@@ -86,6 +86,12 @@ namespace renderer {
         Transform4x4 operator*(const Transform4x4 &t) const{
             return Transform4x4(m * t.m, t.mInv * mInv);
         }
+
+		Transform4x4& operator=(const Matrix4x4& _m) {
+			m = _m;
+			mInv = m.inverse();
+			return *this;
+		}
         
         ////////////////////////////////////////////////////
         //  kinds of Transform

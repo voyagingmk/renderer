@@ -30,8 +30,10 @@ namespace renderer {
         Matrix4x4 S = Scale<Matrix4x4>({com->scale.x, com->scale.y, com->scale.z});
         com->orientation = com->orientation.Normalize();
         Matrix4x4 R = com->orientation.toMatrix4x4();
-        com->o2w.m = T * R * S;
-        com->o2w.mInv = com->o2w.m.inverse();
+		T.debug();
+		S.debug();
+		R.debug();
+        com->o2w = T * R * S;
     }
 
 };

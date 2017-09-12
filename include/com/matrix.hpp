@@ -276,8 +276,8 @@ namespace renderer {
             Matrix<T> inv;
             std::vector<V> P;
             int ret = LUPDecompose(tmp, P);
+			assert(ret && "[Matrix] inverse failed");
             if (ret == 0) {
-                std::cout << "[Matrix] inverse failed" << std::endl;
                 return inv;
             }
             LUPInvert(tmp, inv, P);
@@ -575,6 +575,7 @@ namespace renderer {
     
     template<class T>
     static T Scale(const Vector3dF &v) {
+		assert(v.x && v.y && v.z && "[Scale] has zero value");
         return T{
             v.x, 0, 0, 0,
             0, v.y, 0, 0,
