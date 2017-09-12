@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "system/shader.hpp"
+#include "system/shaderSys.hpp"
 #include "realtime/glutils.hpp"
 
 using namespace std;

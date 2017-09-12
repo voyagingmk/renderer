@@ -1,11 +1,11 @@
 #include "stdafx.h"
 #include "base.hpp"
 #include "ecs/ecs.hpp"
-#include "system/env.hpp"
-#include "system/texture.hpp"
-#include "system/render.hpp"
-#include "system/shader.hpp"
-#include "system/loader.hpp"
+#include "system/envSys.hpp"
+#include "system/textureSys.hpp"
+#include "system/renderSys.hpp"
+#include "system/shaderSys.hpp"
+#include "system/loaderSys.hpp"
 
 using namespace ecs;
 using namespace renderer;

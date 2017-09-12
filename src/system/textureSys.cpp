@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "system/texture.hpp"
+#include "system/textureSys.hpp"
 #include "SOIL.h"
 
 using namespace std;
