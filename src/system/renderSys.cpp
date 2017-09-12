@@ -3,6 +3,7 @@
 #include "com/sdlContext.hpp"
 #include "com/meshes.hpp"
 #include "com/materialCom.hpp"
+#include "system/spatialSys.hpp"
 
 
 using namespace std;
@@ -25,7 +26,7 @@ namespace renderer {
 		glClear(GL_COLOR_BUFFER_BIT);
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_STENCIL_TEST);
-		for(auto objs: objMgr.entities<Meshes, MaterialCom>()) {
+		for(auto objs: objMgr.entities<Meshes, MaterialCom, SpatialData>()) {
             
         }
 		SDL_GL_SwapWindow(context->win);
