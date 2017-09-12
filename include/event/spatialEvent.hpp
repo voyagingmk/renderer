@@ -2,6 +2,7 @@
 #define RENDERER_EVENT_SPATIAL_HPP
 
 #include "base.hpp"
+#include "com/shader.hpp"
 
 namespace renderer {
 
@@ -12,6 +13,16 @@ namespace renderer {
 		{}
         ecs::Object obj;
 	};
+
+	class ActiveSpatialDataEvent : public ecs::Event<ActiveSpatialDataEvent> {
+	public:
+		ActiveSpatialDataEvent(ecs::Object obj, Shader shader) :
+			obj(obj),
+			shader(shader)
+		{}
+		ecs::Object obj;
+		Shader shader;
+	};	
 
 }
 

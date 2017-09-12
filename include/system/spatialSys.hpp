@@ -20,9 +20,12 @@ namespace renderer {
         void receive(const UpdateSpatialDataEvent& evt);
         
         void receive(const ComponentAddedEvent<SpatialData> &evt);
-            
+
+		void receive(const ActiveSpatialDataEvent &evt);
+       
+	private:
+
         void updateSpatialData(Object obj);
-        
 	};
 
 };

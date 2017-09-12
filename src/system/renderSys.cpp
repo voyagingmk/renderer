@@ -7,6 +7,7 @@
 #include "com/cameraCom.hpp"
 #include "system/spatialSys.hpp"
 #include "event/materialEvent.hpp"
+#include "event/spatialEvent.hpp"
 
 
 using namespace std;
@@ -40,6 +41,8 @@ namespace renderer {
 	void RenderSystem::receive(const RenderSceneEvent &evt) {
 		ObjectManager& objMgr = evt.objCamera.objMgr();
 		EventManager& evtMgr = objMgr.evtMgr();
+		auto matSetCom = objMgr.getSingletonComponent<MaterialSet>();
+		auto spSeCom = objMgr.getSingletonComponent<ShaderProgramSet>();
 
 		// ShaderMgr &shaderMgr = ShaderMgr::getInstance();
 		// Shader &shader = shaderMgr.getShader(shaderALias);
@@ -52,13 +55,16 @@ namespace renderer {
 			std::get<3>(evt.viewport));
 		glClearColor(evt.clearColor.r(), evt.clearColor.g(), evt.clearColor.b(), evt.clearColor.a());
 		glClear(evt.clearBits);
-		// shader.setLight(light);
-		// drawTerrian(shader);
-		// drawObjs(shader);
+
 		// TODO: sort by material
 		for (const Object obj : objMgr.entities<Meshes, MaterialCom, SpatialData>()) {
 			auto matCom = obj.component<MaterialCom>();
-			evtMgr.emit<ActiveMaterialEvent>(obj, matCom->settingID);
+			auto setting = matSetCom->settings[matCom->settingID];
+			Shader shader(spSeCom->alias2HDL[setting.shaderName]);
+			shader.use();
+			evtMgr.emit<ActiveMaterialEvent>(shader, setting);
+			evtMgr.emit<ActiveSpatialDataEvent>(obj, shader);
+
 		}
 		CheckGLError;
 	}

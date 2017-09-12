@@ -4,6 +4,8 @@
 #include "base.hpp"
 #include "ecs/ecs.hpp"
 #include "utils/defines.hpp"
+#include "com/shader.hpp"
+#include "com/materialCom.hpp"
 
 namespace renderer {
     using json = nlohmann::json;
@@ -21,13 +23,12 @@ namespace renderer {
 
 	class ActiveMaterialEvent : public ecs::Event<ActiveMaterialEvent> {
 	public:
-		ActiveMaterialEvent(ecs::Object obj,
-			MaterialSettingID settingID) :
-			obj(obj),
-			settingID(settingID)
+		ActiveMaterialEvent(Shader shader, MaterialSettingCom& setting) :
+			shader(shader),
+			setting(setting)
 		{}
-		ecs::Object obj;
-		MaterialSettingID settingID;
+		Shader shader; 
+		MaterialSettingCom& setting;
 	}; 
 
 };

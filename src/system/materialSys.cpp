@@ -30,13 +30,7 @@ namespace renderer {
     }
 
 	void MaterialSystem::receive(const ActiveMaterialEvent &evt) {
-		ObjectManager& objMgr = evt.obj.objMgr();
-		auto matSetCom = objMgr.getSingletonComponent<MaterialSet>();
-		auto mat = matSetCom->settings[evt.settingID];
-		auto spSeCom = objMgr.getSingletonComponent<ShaderProgramSet>();
-		Shader shader(spSeCom->alias2HDL[mat.shaderName]);
-		shader.use();
-		activeMaterial(shader, mat);
+		activeMaterial(const_cast<Shader&>(evt.shader), const_cast<MaterialSettingCom&>(evt.setting));
 	}
 
 	void MaterialSystem::activeMaterial(Shader& shader, MaterialSettingCom& setting) {
