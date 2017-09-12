@@ -35,6 +35,7 @@ namespace renderer {
 		auto mat = matSetCom->settings[evt.settingID];
 		auto spSeCom = objMgr.getSingletonComponent<ShaderProgramSet>();
 		Shader shader(spSeCom->alias2HDL[mat.shaderName]);
+		shader.use();
 		activeMaterial(shader, mat);
 	}
 

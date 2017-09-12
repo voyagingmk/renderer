@@ -58,7 +58,6 @@ namespace renderer {
 		// TODO: sort by material
 		for (const Object obj : objMgr.entities<Meshes, MaterialCom, SpatialData>()) {
 			auto matCom = obj.component<MaterialCom>();
-			
 			evtMgr.emit<ActiveMaterialEvent>(obj, matCom->settingID);
 		}
 		CheckGLError;
