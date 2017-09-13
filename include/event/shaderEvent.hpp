@@ -25,6 +25,15 @@ namespace renderer {
         ShaderType type;
     };
 
-}
+	class UploadMatrixToShaderEvent : public ecs::Event<UploadMatrixToShaderEvent> {
+		public:
+			UploadMatrixToShaderEvent(ecs::Object obj, Shader shader):
+				obj(obj),
+				shader(shader)
+			{}
+			ecs::Object obj;
+			Shader shader;
+	};
+};
 
 #endif

@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "com/spatialData.hpp"
 #include "system/shaderSys.hpp"
 #include "realtime/glutils.hpp"
 
@@ -8,8 +9,8 @@ using namespace std;
 namespace renderer {
     void ShaderSystem::init(ObjectManager &objMgr, EventManager &evtMgr) {
 		printf("ShaderSystem init\n");
-        
 		evtMgr.on<LoadShaderEvent>(*this);
+		evtMgr.on<UploadMatrixToShaderEvent>(*this);
 	}
 
     
@@ -35,6 +36,13 @@ namespace renderer {
         com->alias2HDL[evt.aliasname] = spHDL;
         printf("ShaderSystem load %s\n", evt.aliasname.c_str());
     }
+
+	void ShaderSystem::receive(const UploadMatrixToShaderEvent& evt) {
+		auto com = evt.obj.component<SpatialData>();
+		Shader& shader = const_cast<Shader&>(evt.shader);
+		shader.setMatrix4f("model", com->o2w.m);
+		shader.setMatrix4f("normalMat", com->o2w.mInv.transpose());
+	}
     
     ShaderProgramHDL ShaderSystem::createShaderProgram(SPHDLList& spHDLs, ShaderHDLSet shaderHDLSet) {
         for (auto pair: shaderHDLSet) {

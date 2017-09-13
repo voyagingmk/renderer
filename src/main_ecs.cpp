@@ -6,6 +6,7 @@
 #include "system/renderSys.hpp"
 #include "system/shaderSys.hpp"
 #include "system/loaderSys.hpp"
+#include "system/bufferSys.hpp"
 #include "system/materialSys.hpp"
 #include "system/spatialSys.hpp"
 
@@ -33,6 +34,7 @@ void MainECS::setup() {
     m_systemMgr.add<ShaderSystem>();
 	m_systemMgr.add<RenderSystem>();
     m_systemMgr.add<MaterialSystem>();
+	m_systemMgr.add<BufferSystem>();
     m_systemMgr.add<SpatialSystem>();
 	m_systemMgr.add<LoaderSystem>();
 	m_systemMgr.init();

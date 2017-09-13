@@ -17,6 +17,8 @@ namespace renderer {
         void update(ObjectManager &objMgr, EventManager &evtMgr, float dt) override {}
         
         void receive(const LoadShaderEvent& evt);
+
+		void receive(const UploadMatrixToShaderEvent& evt);
         
     private:
 

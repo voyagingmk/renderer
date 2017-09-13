@@ -36,9 +36,8 @@ namespace renderer {
            QuaternionF{1.0f, 0.0f, 0.0f, 0.0f}
         );
         objCenter.addComponent<MaterialCom>(1);
-        
-        auto com = objCenter.addComponent<Meshes>();
-        
+
+		std::vector<OneMesh> meshes;
         OneMesh mesh;
         Vertex v;
         v.position = {-1.0f, 1.0f, 0.0f}; // Left Top
@@ -56,7 +55,9 @@ namespace renderer {
         mesh.indexes = {
             0, 1, 2,
             0, 2, 3};
-        com->meshes.push_back(mesh);
+		meshes.push_back(mesh);
+		objCenter.addComponent<Meshes>(meshes);
+
 
 	}
 

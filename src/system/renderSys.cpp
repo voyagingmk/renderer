@@ -8,6 +8,7 @@
 #include "com/bufferCom.hpp"
 #include "system/spatialSys.hpp"
 #include "event/materialEvent.hpp"
+#include "event/shaderEvent.hpp"
 #include "event/spatialEvent.hpp"
 
 
@@ -65,6 +66,7 @@ namespace renderer {
 			shader.use();
 			evtMgr.emit<ActiveMaterialEvent>(shader, setting);
 			evtMgr.emit<ActiveSpatialDataEvent>(obj, shader);
+			evtMgr.emit<UploadMatrixToShaderEvent>(obj, shader);
 
 		}
 		CheckGLError;
