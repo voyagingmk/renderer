@@ -5,6 +5,7 @@
 #include "ecs/ecs.hpp"
 #include "com/meshes.hpp"
 #include "com/bufferCom.hpp"
+#include "event/bufferEvent.hpp"
 
 
 
@@ -20,6 +21,8 @@ namespace renderer {
 		void update(ObjectManager &objMgr, EventManager &evtMgr, float dt) override;
 
 		void receive(const ComponentAddedEvent<Meshes> &evt);
+		
+		void receive(const DrawBufferEvent& evt);
 
 	private:
 

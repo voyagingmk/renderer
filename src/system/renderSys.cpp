@@ -10,6 +10,7 @@
 #include "event/materialEvent.hpp"
 #include "event/shaderEvent.hpp"
 #include "event/spatialEvent.hpp"
+#include "event/bufferEvent.hpp"
 
 
 using namespace std;
@@ -30,7 +31,6 @@ namespace renderer {
 		}
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
-		glViewport(0, 0, context->width, context->height);
 
 		auto com = objMgr.getSingletonComponent<PerspectiveCameraView>();
 		evtMgr.emit<RenderSceneEvent>(
@@ -67,6 +67,7 @@ namespace renderer {
 			evtMgr.emit<ActiveMaterialEvent>(shader, setting);
 			evtMgr.emit<ActiveSpatialDataEvent>(obj, shader);
 			evtMgr.emit<UploadMatrixToShaderEvent>(obj, shader);
+			evtMgr.emit<DrawBufferEvent>(obj);
 
 		}
 		CheckGLError;

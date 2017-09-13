@@ -2,6 +2,7 @@
 #define RENDERER_EVENT_SPATIAL_HPP
 
 #include "base.hpp"
+#include "ecs/ecs.hpp"
 #include "com/shader.hpp"
 
 namespace renderer {

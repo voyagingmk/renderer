@@ -9,6 +9,7 @@ namespace renderer {
 
 	void BufferSystem::init(ObjectManager &objMgr, EventManager &evtMgr) {
 		evtMgr.on<ComponentAddedEvent<Meshes>>(*this);
+		evtMgr.on<DrawBufferEvent>(*this);
 	}
 
 	void BufferSystem::update(ObjectManager &objMgr, EventManager &evtMgr, float dt) {
@@ -22,6 +23,19 @@ namespace renderer {
 			com->sets.push_back(createMeshBuffer(mesh));
 		}
 	}
+
+	void BufferSystem::receive(const DrawBufferEvent& evt) {
+		Object obj = evt.obj; 
+		auto com = obj.component<BufferSetsCom>();
+		for (auto bufferSet : com->sets) {
+			glBindVertexArray(bufferSet.vao);
+			//glDrawArrays(GL_TRIANGLES, 0, bufferSet.triangles);
+			glDrawElements(GL_TRIANGLES, bufferSet.triangles * 3, GL_UNSIGNED_INT, 0);
+			glBindVertexArray(0);
+			CheckGLError;
+		}
+	}
+
 
 	BufferSet BufferSystem::createMeshBuffer(const OneMesh& mesh) {
 		GLuint VBO, VAO, EBO;
