@@ -2,6 +2,7 @@
 #include "com/spatialData.hpp"
 #include "system/shaderSys.hpp"
 #include "realtime/glutils.hpp"
+#include "com/cameraCom.hpp"
 
 using namespace std;
  
@@ -11,6 +12,7 @@ namespace renderer {
 		printf("ShaderSystem init\n");
 		evtMgr.on<LoadShaderEvent>(*this);
 		evtMgr.on<UploadMatrixToShaderEvent>(*this);
+		evtMgr.on<UploadCameraToShaderEvent>(*this);
 	}
 
     
@@ -42,6 +44,18 @@ namespace renderer {
 		Shader& shader = const_cast<Shader&>(evt.shader);
 		shader.setMatrix4f("model", com->o2w.m);
 		shader.setMatrix4f("normalMat", com->o2w.mInv.transpose());
+	}
+
+
+	void ShaderSystem::receive(const UploadCameraToShaderEvent& evt) {
+		Object objCamera = evt.objCamera;
+		auto com = objCamera.component<PerspectiveCameraView>();
+		Shader& shader = const_cast<Shader&>(evt.shader);
+		auto viewMat = LookAt(com->eye, com->target, com->up);
+		auto projMat = Perspective(com->fov, com->aspect, com->near, com->far);
+		auto cameraMat = projMat * viewMat;
+		shader.set3f("viewPos", com->eye);
+		shader.setMatrix4f("PV", cameraMat);
 	}
     
     ShaderProgramHDL ShaderSystem::createShaderProgram(SPHDLList& spHDLs, ShaderHDLSet shaderHDLSet) {

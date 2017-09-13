@@ -34,6 +34,16 @@ namespace renderer {
 			ecs::Object obj;
 			Shader shader;
 	};
+
+	class UploadCameraToShaderEvent : public ecs::Event<UploadCameraToShaderEvent> {
+	public:
+		UploadCameraToShaderEvent(ecs::Object objCamera, Shader shader) :
+			objCamera(objCamera),
+			shader(shader)
+		{}
+		ecs::Object objCamera;
+		Shader shader;
+	};
 };
 
 #endif

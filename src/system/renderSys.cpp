@@ -45,7 +45,6 @@ namespace renderer {
 		EventManager& evtMgr = objMgr.evtMgr();
 		auto matSetCom = objMgr.getSingletonComponent<MaterialSet>();
 		auto spSeCom = objMgr.getSingletonComponent<ShaderProgramSet>();
-
 		// ShaderMgr &shaderMgr = ShaderMgr::getInstance();
 		// Shader &shader = shaderMgr.getShader(shaderALias);
 		// shader.set3f("viewPos", viewPos);
@@ -58,6 +57,7 @@ namespace renderer {
 		glClearColor(evt.clearColor.r(), evt.clearColor.g(), evt.clearColor.b(), evt.clearColor.a());
 		glClear(evt.clearBits);
 
+
 		// TODO: sort by material
 		for (const Object obj : objMgr.entities<Meshes, MaterialCom, SpatialData, BufferSetsCom>()) {
 			auto matCom = obj.component<MaterialCom>();
@@ -66,6 +66,7 @@ namespace renderer {
 			shader.use();
 			evtMgr.emit<ActiveMaterialEvent>(shader, setting);
 			evtMgr.emit<ActiveSpatialDataEvent>(obj, shader);
+			evtMgr.emit<UploadCameraToShaderEvent>(evt.objCamera, shader);
 			evtMgr.emit<UploadMatrixToShaderEvent>(obj, shader);
 			evtMgr.emit<DrawBufferEvent>(obj);
 

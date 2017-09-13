@@ -19,6 +19,8 @@ namespace renderer {
         void receive(const LoadShaderEvent& evt);
 
 		void receive(const UploadMatrixToShaderEvent& evt);
+
+		void receive(const UploadCameraToShaderEvent& evt);
         
     private:
 
