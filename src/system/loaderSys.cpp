@@ -63,6 +63,7 @@ namespace renderer {
 			QuaternionF{ 1.0f, 0.0f, 0.0f, 0.0f }
 		);
 		*/
+		
 
 
 	}
@@ -81,8 +82,9 @@ namespace renderer {
 				Vector3dF{ (float)scale[0], (float)scale[1], (float)scale[2] },
 				QuaternionF{ (float)o[0], (float)o[1], (float)o[2], (float)o[3] }
 			);
-			auto com = obj.addComponent<Meshes>();
-			loadMesh(modelsDir + filename, *com);
+			Meshes meshes;
+			loadMesh(modelsDir + filename, meshes);
+			auto com = obj.addComponent<Meshes>(meshes);
             obj.addComponent<MaterialCom>(1);
 		}
 	}
