@@ -83,6 +83,7 @@ namespace renderer {
 			);
 			auto com = obj.addComponent<Meshes>();
 			loadMesh(modelsDir + filename, *com);
+            obj.addComponent<MaterialCom>(1);
 		}
 	}
 

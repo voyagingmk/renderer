@@ -203,7 +203,7 @@ class ObjectManager
 			ObjectIDs::iterator m_idx;
 		};
 
-		ViewIterator begin() { return ViewIterator(m_ObjMgr).viewItBegin(); }
+        ViewIterator begin() { auto it = ViewIterator(m_ObjMgr).viewItBegin(); it.next(); return it; }
 		ViewIterator end() { return ViewIterator(m_ObjMgr).viewItEnd(); }
 		const ViewIterator begin() const { return ViewIterator(m_ObjMgr).viewItBegin(); }
 		const ViewIterator end() const { return ViewIterator(m_ObjMgr).viewItEnd(); }
