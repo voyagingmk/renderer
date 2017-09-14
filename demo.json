@@ -7,6 +7,11 @@
     "shaderSubDir": "shaders/",
     "shader": [
         {
+            "alias": "test",
+            "vs": "test.vs",
+            "fs": "test.fs"
+        },       
+        {
             "alias": "main2",
             "vs": "main.vs",
             "fs": "main.fs"
@@ -134,7 +139,7 @@
             "specular": "White",
             "shininess": 32,
             "reflectiveness": 0.5,
-            "shaderName": "main2"
+            "shaderName": "test"
         },
         {
             "id": 2,
@@ -144,7 +149,7 @@
             "specular": "White",
             "shininess": 16,
             "reflectiveness": 0.25,
-            "shaderName": "main2"
+            "shaderName": "test"
         }
     ]
 }

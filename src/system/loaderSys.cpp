@@ -29,12 +29,7 @@ namespace renderer {
         loadMaterials(evtMgr, obj, config);
         
         Object objCenter = objMgr.create();
-        
-        objCenter.addComponent<SpatialData>(
-           Vector3dF{0.0f, 0.0f, 0.0f},
-           Vector3dF{1.0f, 1.0f, 1.0f},
-           QuaternionF{1.0f, 0.0f, 0.0f, 0.0f}
-        );
+
         objCenter.addComponent<MaterialCom>(1);
 
 		std::vector<OneMesh> meshes;
@@ -57,6 +52,12 @@ namespace renderer {
             0, 2, 3};
 		meshes.push_back(mesh);
 		objCenter.addComponent<Meshes>(meshes);
+
+		objCenter.addComponent<SpatialData>(
+			Vector3dF{ 0.0f, 0.0f, -10.0f },
+			Vector3dF{ 0.5f, 0.5f, 0.5f },
+			QuaternionF{ 1.0f, 0.0f, 0.0f, 0.0f }
+		);
 
 
 	}
