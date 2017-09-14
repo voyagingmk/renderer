@@ -3,8 +3,12 @@
 #include "com/glcommon.hpp"
 #include "com/shader.hpp"
 #include "com/spatialData.hpp"
+#include "com/cameraCom.hpp"
 #include "com/meshes.hpp"
 #include "com/materialCom.hpp"
+#include "com/sdlContext.hpp"
+#include "com/renderMode.hpp"
+#include "com/keyState.hpp"
 #include "event/textureEvent.hpp"
 #include "event/shaderEvent.hpp"
 #include "event/materialEvent.hpp"
@@ -22,16 +26,22 @@ namespace renderer {
 		string modelsDir = config["modelsDir"];
 
 		Object obj = objMgr.create(); // singleTon, manage kinds of resources
+		obj.addComponent<SDLContext>(800, 600);
+		obj.addComponent<RenderMode>();
+		obj.addComponent<KeyState>();
         obj.addComponent<TextureDict>();
         obj.addComponent<ShaderProgramSet>();
         obj.addComponent<MaterialSet>();
+
+		Object objCamera = objMgr.create();
+		objCamera.addComponent<PerspectiveCameraView>();
 
         loadTextures(evtMgr, obj, assetsDir + texSubDir, config);
         loadShaders(evtMgr, obj, assetsDir + shaderSubDir, config);
         loadMaterials(evtMgr, obj, config);
 		loadSceneObjects(objMgr, evtMgr, assetsDir + modelsDir, config);
         
-		/*
+		
         Object objCenter = objMgr.create();
 		
         objCenter.addComponent<MaterialCom>(1);
@@ -62,7 +72,7 @@ namespace renderer {
 			Vector3dF{ 0.5f, 0.5f, 0.5f },
 			QuaternionF{ 1.0f, 0.0f, 0.0f, 0.0f }
 		);
-		*/
+		
 		
 
 

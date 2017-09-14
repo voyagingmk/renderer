@@ -19,8 +19,6 @@ namespace renderer {
     void RenderSystem::init(ObjectManager &objMgr, EventManager &evtMgr) {
         printf("RenderSystem init\n");
 		evtMgr.on<RenderSceneEvent>(*this);	
-		Object objCamera = objMgr.create();
-		objCamera.addComponent<PerspectiveCameraView>();
     }
     
 	// renderpipe loop, could move to another system

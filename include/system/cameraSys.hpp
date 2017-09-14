@@ -4,6 +4,8 @@
 #include "base.hpp"
 #include "ecs/ecs.hpp"
 #include "event/winEvent.hpp"
+#include "com/cameraCom.hpp"
+#include "com/sdlContext.hpp"
 
 
 using namespace ecs;
@@ -17,7 +19,7 @@ namespace renderer {
 
 		void update(ObjectManager &objMgr, EventManager &evtMgr, float dt) override;
 
-		void receive(const WinResizeEvent &evt);
+		void receive(const CustomSDLMouseMotionEvent &evt);
 	};
 };
 

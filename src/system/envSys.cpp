@@ -13,12 +13,6 @@ namespace renderer {
 		evtMgr.on<CustomSDLKeyboardEvent>(*this);
 		evtMgr.on<CustomSDLMouseMotionEvent>(*this);
 		evtMgr.on<CustomSDLMouseButtonEvent>(*this);
-
-
-		Object obj = objMgr.create();
-		obj.addComponent<SDLContext>(800, 600);
-		obj.addComponent<RenderMode>();
-		obj.addComponent<KeyState>();
 	}
 
 	void EnvSystem::update(ObjectManager &objMgr, EventManager &evtMgr, float dt) {

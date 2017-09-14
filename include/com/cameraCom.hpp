@@ -14,13 +14,52 @@ namespace renderer {
 			eye( 0.0f, 0.0f, 1.0f ),
 			target( 0.0f, 0.0f, 0.0f ),
 			up( 0.0f, 1.0f, 0.0f ),
-			right( 1.0f, 0.0f, 0.0f )
+			right( 1.0f, 0.0f, 0.0f ),
+			yaw(-90.0f),
+			pitch(0)
 		{}
 		Vector3dF eye;
 		Vector3dF target;
 		Vector3dF up;
 		Vector3dF right;
 		Matrix4x4 cameraMat;
+		float yaw;
+		float pitch;
+		
+		Vector3dF GetCameraPosition() {
+			return eye;
+		}
+
+		Vector3dF GetTargetVector() {
+			return target;
+		}
+
+		Vector3dF GetFrontVector() {
+			return target - eye;
+		}
+
+		Vector3dF GetUpVector() {
+			return up;
+		}
+
+		Vector3dF GetRightVector() {
+			return right;
+		}
+
+		void SetTargetVector(Vector3dF v) {
+			target = v;
+			UpdateRightVector();
+		}
+
+		void SetCameraPosition(Vector3dF p) {
+			eye = p;
+			UpdateRightVector();
+		}
+
+		void UpdateRightVector() {
+			Vector3dF focal = (target - eye).Normalize();
+			right = (focal.Cross(up)).Normalize();
+		}
 	};
 
 	class PerspectiveCameraView: public CameraView {
@@ -37,6 +76,18 @@ namespace renderer {
 		float near;
 		float far;
 		float fovScale;
+
+		float GetFov() {
+			return fov;
+		}
+
+		float GetNear() {
+			return near;
+		}
+
+		float GetFar() {
+			return far;
+		}
 	};
 
 
