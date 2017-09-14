@@ -14,6 +14,7 @@ namespace renderer {
 
     class Meshes {
         public:
+			Meshes() {}
 			Meshes(std::vector<OneMesh>& meshes):
 				meshes(meshes)
 			{}

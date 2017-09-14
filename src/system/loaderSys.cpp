@@ -8,6 +8,7 @@
 #include "event/textureEvent.hpp"
 #include "event/shaderEvent.hpp"
 #include "event/materialEvent.hpp"
+#include "importer.hpp"
 
 using namespace std;
 
@@ -18,6 +19,7 @@ namespace renderer {
 		string assetsDir = config["assetsDir"];
         string texSubDir = config["texSubDir"];
         string shaderSubDir = config["shaderSubDir"];
+		string modelsDir = config["modelsDir"];
 
 		Object obj = objMgr.create(); // singleTon, manage kinds of resources
         obj.addComponent<TextureDict>();
@@ -27,9 +29,11 @@ namespace renderer {
         loadTextures(evtMgr, obj, assetsDir + texSubDir, config);
         loadShaders(evtMgr, obj, assetsDir + shaderSubDir, config);
         loadMaterials(evtMgr, obj, config);
+		loadSceneObjects(objMgr, evtMgr, assetsDir + modelsDir, config);
         
+		/*
         Object objCenter = objMgr.create();
-
+		
         objCenter.addComponent<MaterialCom>(1);
 
 		std::vector<OneMesh> meshes;
@@ -58,8 +62,28 @@ namespace renderer {
 			Vector3dF{ 0.5f, 0.5f, 0.5f },
 			QuaternionF{ 1.0f, 0.0f, 0.0f, 0.0f }
 		);
+		*/
 
 
+	}
+
+	void LoaderSystem::loadSceneObjects(ObjectManager &objMgr, EventManager &evtMgr, std::string modelsDir, json &config) {
+		for (auto objInfo : config["object"])
+		{
+			Object obj = objMgr.create();
+			std::string filename = objInfo["model"];
+			auto spatial = objInfo["spatial"];
+			auto pos = spatial[0];
+			auto scale = spatial[1];
+			auto o = spatial[2];
+			obj.addComponent<SpatialData>(
+				Vector3dF{ (float)pos[0], (float)pos[1], (float)pos[2] },
+				Vector3dF{ (float)scale[0], (float)scale[1], (float)scale[2] },
+				QuaternionF{ (float)o[0], (float)o[1], (float)o[2], (float)o[3] }
+			);
+			auto com = obj.addComponent<Meshes>();
+			loadMesh(modelsDir + filename, *com);
+		}
 	}
 
 	void LoaderSystem::loadTextures(EventManager &evtMgr, Object obj, string texDir, json &config)
@@ -104,4 +128,11 @@ namespace renderer {
             evtMgr.emit<LoadMaterialEvent>(obj, matInfo);
         }
     }
+
+	void LoaderSystem::loadMesh(const std::string &filename, Meshes& meshes)
+	{
+		ImporterAssimp &importer = ImporterAssimp::getInstance();
+		meshes.meshes.push_back(OneMesh());
+		importer.Import<OneMesh>(filename, meshes.meshes[meshes.meshes.size()- 1]);
+	}
 };

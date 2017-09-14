@@ -5,6 +5,7 @@
     "assetsDir": "assets/",
     "texSubDir": "images/",
     "shaderSubDir": "shaders/",
+    "modelsDir": "models/",
     "shader": [
         {
             "alias": "test",
@@ -128,6 +129,16 @@
             ],
             "radius": 10,
             "shadow": true
+        }
+    ],
+    "object": [
+        {
+            "model": "plane.obj",
+            "spatial": [
+                [-10, 0, -10],
+                [1, 1, 1],
+                [1, 0, 1, 0]
+            ]
         }
     ],
     "material": [

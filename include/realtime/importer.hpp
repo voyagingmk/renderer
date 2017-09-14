@@ -36,7 +36,8 @@ public:
         return mgr;
     }
     
-    bool Import(const std::string& pFile, Mesh& mesh) {
+	template<typename MeshClass>
+    bool Import(const std::string& pFile, MeshClass& mesh) {
         // Create an instance of the Importer class
         Assimp::Importer importer;
         
