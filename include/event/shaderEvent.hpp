@@ -9,16 +9,13 @@ namespace renderer {
 
 	class LoadShaderEvent : public ecs::Event<LoadShaderEvent> {
 	public:
-		LoadShaderEvent(ecs::Object obj,
-			std::string &dirpath,
+		LoadShaderEvent(std::string &dirpath,
 			ShaderFileNames names,
 			std::string &aliasname):
-			obj(obj),
 			dirpath(dirpath),
 			names(names),
 			aliasname(aliasname)
 		{}
-		ecs::Object obj;
 		std::string dirpath;
 		ShaderFileNames names;
 		std::string aliasname;

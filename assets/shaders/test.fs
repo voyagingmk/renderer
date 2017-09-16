@@ -8,7 +8,18 @@ in vec3 VColor;
 
 out vec4 color;
 
+struct Material {
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+    float shininess;
+}; 
+
+uniform sampler2D texture1;
+uniform sampler2D texture2;
+
 void main()
 {
-    color = vec4(1.0,1.0,0.0, 1.0);
+	color = texture(texture1, TexCoord);
+  //  color = vec4(1.0,1.0,0.0, 1.0);
 }

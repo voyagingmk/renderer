@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "system/materialSys.hpp"
 #include "utils/helper.hpp"
+#include "event/textureEvent.hpp"
 
 using namespace std;
 
@@ -10,6 +11,7 @@ namespace renderer {
 	void MaterialSystem::init(ObjectManager &objMgr, EventManager &evtMgr) {
         evtMgr.on<LoadMaterialEvent>(*this);
 		evtMgr.on<ActiveMaterialEvent>(*this);
+		evtMgr.on<DeactiveMaterialEvent>(*this);
     }
     
 
@@ -18,7 +20,7 @@ namespace renderer {
 	}
 
 	void MaterialSystem::receive(const LoadMaterialEvent &evt) {
-        auto com = evt.obj.getSingletonComponent<MaterialSet>();
+        auto com = m_objMgr->getSingletonComponent<MaterialSet>();
         com->settings.insert({evt.matInfo["id"], {
             parseColor(evt.matInfo["ambient"]),
             parseColor(evt.matInfo["diffuse"]),
@@ -35,6 +37,10 @@ namespace renderer {
 
 	void MaterialSystem::receive(const ActiveMaterialEvent &evt) {
 		activeMaterial(const_cast<Shader&>(evt.shader), const_cast<MaterialSettingCom&>(evt.setting));
+		uint32_t idx = 0;
+		for (auto texName: evt.setting.texList) {
+			m_evtMgr->emit<ActiveTextureEvent>(idx, texName);
+		}
 	}
 
 	void MaterialSystem::activeMaterial(Shader& shader, MaterialSettingCom& setting) {
@@ -44,4 +50,10 @@ namespace renderer {
 		shader.set1f("material.shininess", setting.shininess);
 	}
 
+	void MaterialSystem::receive(const DeactiveMaterialEvent &evt) {
+		uint32_t idx = 0;
+		for (auto texName: evt.setting.texList) {
+			m_evtMgr->emit<DeactiveTextureEvent>(idx);
+		}	
+	}
 };

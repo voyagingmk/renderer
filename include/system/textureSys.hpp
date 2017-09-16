@@ -23,7 +23,7 @@ namespace renderer {
 
         void receive(const ActiveTextureEvent &evt);
         
-        void receive(const DisableTextureEvent &evt);
+        void receive(const DeactiveTextureEvent &evt);
 	};
 
 

@@ -30,6 +30,8 @@ public:
 	static TypeID m_SystemTypeCounter;
 
 protected:
+	EventManager* m_evtMgr;
+	ObjectManager* m_objMgr;
 };
 
 template <typename Derived>
@@ -62,6 +64,8 @@ public:
 	void add(std::shared_ptr<S> system)
 	{
 		m_sysTypeID2System.insert(std::make_pair(S::typeID(), system));
+		system->m_evtMgr = &m_evtMgr;
+		system->m_objMgr = &m_objMgr;
 	}
 
 	template <typename S, typename... Args>

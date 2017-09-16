@@ -23,6 +23,8 @@ namespace renderer {
 
 		void receive(const ActiveMaterialEvent &evt);
 
+		void receive(const DeactiveMaterialEvent &evt);
+
 		void activeMaterial(Shader& shader, MaterialSettingCom& com);
 	};
 };

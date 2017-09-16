@@ -163,7 +163,7 @@
             "shininess": 16,
             "reflectiveness": 0.25,
             "shaderName": "test",
-            "textures": ["dog"]
+            "textures": ["terrian"]
         }
     ]
 }

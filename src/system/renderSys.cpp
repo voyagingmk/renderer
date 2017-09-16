@@ -62,11 +62,13 @@ namespace renderer {
 			auto setting = matSetCom->settings[matCom->settingID];
 			Shader shader(spSeCom->alias2HDL[setting.shaderName]);
 			shader.use();
-			evtMgr.emit<ActiveMaterialEvent>(shader, setting);
+			evtMgr.emit<ActiveMaterialEvent>(setting, shader);
 			evtMgr.emit<ActiveSpatialDataEvent>(obj, shader);
 			evtMgr.emit<UploadCameraToShaderEvent>(evt.objCamera, shader);
 			evtMgr.emit<UploadMatrixToShaderEvent>(obj, shader);
 			evtMgr.emit<DrawBufferEvent>(obj);
+			evtMgr.emit<DeactiveMaterialEvent>(setting);
+			
 
 		}
 		CheckGLError;

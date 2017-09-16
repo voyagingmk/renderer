@@ -10,10 +10,12 @@ namespace renderer {
         evtMgr.on<LoadTextureEvent>(*this);
 		evtMgr.on<DestroyTextureEvent>(*this);
 		evtMgr.on<ActiveTextureEvent>(*this);
+		evtMgr.on<DeactiveTextureEvent>(*this);
+		
 	}
 
 	void TextureSystem::receive(const LoadTextureEvent &evt) {
-		auto texDict = evt.obj.component<TextureDict>();
+		auto texDict = m_objMgr->getSingletonComponent<TextureDict>();
 		
 		// Load and create a texture
 		TexRef texRef;
@@ -51,7 +53,7 @@ namespace renderer {
 	}
 
 	void TextureSystem::receive(const DestroyTextureEvent &evt) {
-		auto texDict = evt.obj.component<TextureDict>();
+		auto texDict = m_objMgr->getSingletonComponent<TextureDict>();
 		auto it = texDict->find(evt.aliasname);
 		if (it == texDict->end()) {
 			return;
@@ -61,7 +63,7 @@ namespace renderer {
 	}
 
 	void TextureSystem::receive(const ActiveTextureEvent &evt) {
-		auto texDict = evt.obj.component<TextureDict>();
+		auto texDict = m_objMgr->getSingletonComponent<TextureDict>();
 		auto it = texDict->find(evt.aliasname);
 		if (it == texDict->end()) {
 			return;
@@ -76,8 +78,7 @@ namespace renderer {
 		}
 	}
     
-    void TextureSystem::receive(const DisableTextureEvent &evt) {
-        glActiveTexture(GL_TEXTURE0 + evt.idx);
+    void TextureSystem::receive(const DeactiveTextureEvent &evt) {
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 };

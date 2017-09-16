@@ -36,15 +36,15 @@ namespace renderer {
 		Object objCamera = objMgr.create();
 		objCamera.addComponent<PerspectiveCameraView>();
 
-        loadTextures(evtMgr, obj, assetsDir + texSubDir, config);
-        loadShaders(evtMgr, obj, assetsDir + shaderSubDir, config);
-        loadMaterials(evtMgr, obj, config);
+        loadTextures(evtMgr, assetsDir + texSubDir, config);
+        loadShaders(evtMgr, assetsDir + shaderSubDir, config);
+        loadMaterials(evtMgr, config);
 		loadSceneObjects(objMgr, evtMgr, assetsDir + modelsDir, config);
         
 		
         Object objCenter = objMgr.create();
 		
-        objCenter.addComponent<MaterialCom>(1);
+        objCenter.addComponent<MaterialCom>(2);
 
 		std::vector<OneMesh> meshes;
         OneMesh mesh;
@@ -100,7 +100,7 @@ namespace renderer {
 		}
 	}
 
-	void LoaderSystem::loadTextures(EventManager &evtMgr, Object obj, string texDir, json &config)
+	void LoaderSystem::loadTextures(EventManager &evtMgr,  string texDir, json &config)
 	{
 		for (auto texnfo : config["texture"])
 		{
@@ -108,11 +108,11 @@ namespace renderer {
 			string aliasName = texnfo["alias"];
 			bool hasAlpha = texnfo["hasAlpha"];
 			bool toLinear = texnfo["toLinear"];
-			evtMgr.emit<LoadTextureEvent>(obj, texDir, fileName.c_str(), aliasName, hasAlpha, toLinear);
+			evtMgr.emit<LoadTextureEvent>(texDir, fileName.c_str(), aliasName, hasAlpha, toLinear);
 		}
 	}
     
-    void LoaderSystem::loadShaders(EventManager &evtMgr, Object obj, string shaderDir, json &config)
+    void LoaderSystem::loadShaders(EventManager &evtMgr, string shaderDir, json &config)
     {
         for (auto shaderInfo : config["shader"])
         {
@@ -131,15 +131,15 @@ namespace renderer {
                     shaderInfo["fs"].get<std::string>()
                 }
             });
-            evtMgr.emit<LoadShaderEvent>(obj, shaderDir, names, aliasName);
+            evtMgr.emit<LoadShaderEvent>(shaderDir, names, aliasName);
         }
     }
     
-    void LoaderSystem::loadMaterials(EventManager &evtMgr, Object obj, json &config)
+    void LoaderSystem::loadMaterials(EventManager &evtMgr, json &config)
     {
         for (auto matInfo : config["material"])
         {
-            evtMgr.emit<LoadMaterialEvent>(obj, matInfo);
+            evtMgr.emit<LoadMaterialEvent>(matInfo);
         }
     }
 

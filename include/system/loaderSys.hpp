@@ -19,11 +19,11 @@ namespace renderer {
 		
 		void loadSceneObjects(ObjectManager &objMgr, EventManager &evtMgr, std::string modelsDir, json &config);
 
-		void loadTextures(EventManager &evtMgr, Object obj, std::string texDir, json &config);
+		void loadTextures(EventManager &evtMgr, std::string texDir, json &config);
         
-        void loadShaders(EventManager &evtMgr, Object obj, std::string shaderDir, json &config);
+        void loadShaders(EventManager &evtMgr, std::string shaderDir, json &config);
         
-        void loadMaterials(EventManager &evtMgr, Object obj, json &config);
+        void loadMaterials(EventManager &evtMgr, json &config);
 
 		void loadMesh(const std::string &filename, Meshes& meshes);
 	};

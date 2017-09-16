@@ -12,24 +12,31 @@ namespace renderer {
 
 	class LoadMaterialEvent : public ecs::Event<LoadMaterialEvent> {
 	public:
-        LoadMaterialEvent(ecs::Object obj,
-        json& matInfo):
-			obj(obj),
+        LoadMaterialEvent(json& matInfo):
 			matInfo(matInfo)
 		{}
-        ecs::Object obj;
         json& matInfo;
     };
 
 	class ActiveMaterialEvent : public ecs::Event<ActiveMaterialEvent> {
 	public:
-		ActiveMaterialEvent(Shader shader, MaterialSettingCom& setting) :
+		ActiveMaterialEvent(MaterialSettingCom& setting, Shader shader) :
 			shader(shader),
 			setting(setting)
 		{}
 		Shader shader; 
 		MaterialSettingCom& setting;
 	}; 
+
+	
+	class DeactiveMaterialEvent : public ecs::Event<DeactiveMaterialEvent> {
+	public:
+		DeactiveMaterialEvent(MaterialSettingCom& setting) :
+			setting(setting)
+		{}
+		MaterialSettingCom& setting;
+	};
+
 
 };
 

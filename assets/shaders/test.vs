@@ -21,7 +21,7 @@ uniform mat4 normalMat;
 void main()
 {
 	mat4 mvp = PV * model;
-	// mat4 mvp =  proj * view * model;
+	// mat4 mvp = proj * view * model;
 	gl_Position = mvp * vec4(position, 1.0f);
 	FragPos = vec3(model * vec4(position, 1.0f));
 	Normal =  mat3(normalMat) * normal;

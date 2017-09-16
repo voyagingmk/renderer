@@ -17,7 +17,7 @@ namespace renderer {
 
     
     void ShaderSystem::receive(const LoadShaderEvent& evt) {
-        auto com = evt.obj.getSingletonComponent<ShaderProgramSet>();
+        auto com = m_objMgr->getSingletonComponent<ShaderProgramSet>();
 
         const ShaderFileNames& names = evt.names;
         ShaderHDLSet shaderHDLSet;
