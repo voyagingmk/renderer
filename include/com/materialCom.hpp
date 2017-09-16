@@ -17,7 +17,10 @@ namespace renderer {
 			shininess(1.0f),
 			shaderName("")
 		{}
-        MaterialSettingCom(Color a, Color d, Color s, float r, float sh, std::string shd):
+        MaterialSettingCom(
+			Color a, Color d, Color s,
+			float r, float sh, 
+			std::string shd):
          ambient(a),
          diffuse(d),
          specular(s),
@@ -31,6 +34,7 @@ namespace renderer {
         float reflectiveness;
         float shininess;
 		std::string shaderName;
+		std::vector<std::string> texList;
     };
 
     struct MaterialSet {

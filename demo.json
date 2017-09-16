@@ -134,6 +134,7 @@
     "object": [
         {
             "model": "dog.obj",
+            "material": 1,
             "spatial": [
                 [-10, 0, -100],
                 [1, 1, 1],
@@ -150,7 +151,8 @@
             "specular": "White",
             "shininess": 32,
             "reflectiveness": 0.5,
-            "shaderName": "test"
+            "shaderName": "test",
+            "textures": ["dog"]
         },
         {
             "id": 2,
@@ -160,7 +162,8 @@
             "specular": "White",
             "shininess": 16,
             "reflectiveness": 0.25,
-            "shaderName": "test"
+            "shaderName": "test",
+            "textures": ["dog"]
         }
     ]
 }

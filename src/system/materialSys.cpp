@@ -25,7 +25,11 @@ namespace renderer {
             parseColor(evt.matInfo["specular"]),
             evt.matInfo["shininess"],
             evt.matInfo["reflectiveness"],
-			evt.matInfo["shaderName"] }});
+			evt.matInfo["shaderName"]}});
+		MaterialSettingCom& setting = com->settings[evt.matInfo["id"]];
+		for (auto tex : evt.matInfo["textures"]) {
+			setting.texList.push_back(tex);
+		}
         printf("LoadMaterial: %d\n", (int)(evt.matInfo["id"]));
     }
 

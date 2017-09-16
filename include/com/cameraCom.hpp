@@ -15,7 +15,7 @@ namespace renderer {
 			target( 0.0f, 0.0f, 0.0f ),
 			up( 0.0f, 1.0f, 0.0f ),
 			right( 1.0f, 0.0f, 0.0f ),
-			yaw(-90.0f),
+			yaw(-180.0f),
 			pitch(0)
 		{}
 		Vector3dF eye;

@@ -84,6 +84,7 @@ namespace renderer {
 			Object obj = objMgr.create();
 			std::string filename = objInfo["model"];
 			auto spatial = objInfo["spatial"];
+			int materialID = objInfo["material"];
 			auto pos = spatial[0];
 			auto scale = spatial[1];
 			auto o = spatial[2];
@@ -95,7 +96,7 @@ namespace renderer {
 			Meshes meshes;
 			loadMesh(modelsDir + filename, meshes);
 			auto com = obj.addComponent<Meshes>(meshes);
-            obj.addComponent<MaterialCom>(1);
+            obj.addComponent<MaterialCom>(materialID);
 		}
 	}
 
