@@ -6,7 +6,6 @@ using namespace std;
 
 namespace renderer {
 
-
 	void BufferSystem::init(ObjectManager &objMgr, EventManager &evtMgr) {
 		evtMgr.on<ComponentAddedEvent<Meshes>>(*this);
 		evtMgr.on<DrawMeshBufferEvent>(*this);
@@ -20,7 +19,7 @@ namespace renderer {
 		Object obj = evt.m_obj;
 		auto com = obj.addComponent<MeshBufferDictsCom>();
 		for(const OneMesh& mesh : evt.component->meshes){
-			com->dicts.push_back(createMeshBuffer(mesh));
+			com->dicts.push_back(CreateMeshBuffer(mesh));
 		}
 	}
 

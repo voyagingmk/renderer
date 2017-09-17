@@ -6,7 +6,6 @@
 #include "com/meshes.hpp"
 #include "com/bufferCom.hpp"
 #include "event/bufferEvent.hpp"
-#include "com/glcommon.hpp"
 
 
 
@@ -24,7 +23,12 @@ namespace renderer {
 		void receive(const ComponentAddedEvent<Meshes> &evt);
 		
 		void receive(const DrawMeshBufferEvent& evt);
-		void receive(const DrawMeshBufferEvent& evt);
+
+		void receive(const CreateGBufferEvent& evt);
+
+		void receive(const UseGBufferEvent& evt);
+
+		void receive(const UnuseGBufferEvent& evt);
 
 	private:
 

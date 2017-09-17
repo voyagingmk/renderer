@@ -13,6 +13,32 @@ namespace renderer {
         {}
         ecs::Object obj;
     };
+
+    
+    class CreateGBufferEvent : public ecs::Event<CreateGBufferEvent> {
+    public:
+        CreateGBufferEvent(ecs::Object obj):
+            obj(obj)
+        {}
+        ecs::Object obj;
+    };
+    
+    class UseGBufferEvent : public ecs::Event<UseGBufferEvent> {
+    public:
+        UseGBufferEvent(ecs::Object obj):
+            obj(obj)
+        {}
+        ecs::Object obj;
+    };   
+    
+    class UnuseGBufferEvent : public ecs::Event<UnuseGBufferEvent> {
+    public:
+        UnuseGBufferEvent(ecs::Object obj):
+            obj(obj)
+        {}
+        ecs::Object obj;
+    };
+    
 }
 
 #endif

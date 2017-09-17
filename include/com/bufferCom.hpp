@@ -3,22 +3,93 @@
 
 #include "base.hpp"
 
-typedef uint32_t BufferID;
+namespace renderer {
+    
+    #ifdef USE_GL
+    typedef GLuint TexID; // texture buffer
+    typedef GLuint FboID; // frame buffer object 
+    typedef GLuint RboID; // render buffer object
+    #else
+    typedef uint32_t TexID;
+    typedef uint32_t FboID;
+    typedef uint32_t RboID;
+    #endif
 
-struct MeshBufferRef {
-    size_t triangles;
-    BufferID vao;
-    BufferID vbo;
-    BufferID ebo;
-};
+    enum class TexType {
+        Tex2D = 1,
+        CubeMap = 2
+    };
 
-typedef std::map<std::string, MeshBufferRef> MeshBufferDict;
+    enum class DepthTexType {
+        DepthOnly = 1,
+        DepthStencil = 2,
+        CubeMap = 3
+    };
 
-typedef std::vector<MeshBufferRef> MeshBufferDicts;
 
-struct MeshBufferDictsCom {
-	MeshBufferDicts dicts;
-};
+    enum class BufType {
+        Tex = 1, // texture
+        RBO = 2  // render buffer
+    };
 
+    class TexRef {
+    public:
+        TexID texID;
+        TexType type;
+        size_t width;
+        size_t height;
+    public:
+        TexRef():
+        texID(0),
+        type(TexType::Tex2D),
+        width(1),
+        height(1)
+        {}
+    };
+
+	typedef uint32_t BufferID;
+
+	class FrameBufferBase {
+	public:
+		FboID fboID;
+		size_t width;
+		size_t height;
+	};
+
+
+	class ColorBufferRef : public FrameBufferBase {
+	public:
+		TexRef tex;
+		size_t MSAA; // default: 0
+		FboID innerFboID;
+		TexRef innerTex;
+		BufType depthType;
+		TexRef depthTex; // include stencil
+		RboID depthRboID; // include stencil
+	};
+
+	class GBufferRef : public FrameBufferBase {
+	public:
+		RboID depthRboID; // include stencil
+
+	};
+
+
+	struct MeshBufferRef {
+		size_t triangles;
+		BufferID vao;
+		BufferID vbo;
+		BufferID ebo;
+	};
+
+	typedef std::map<std::string, MeshBufferRef> MeshBufferDict;
+
+	typedef std::vector<MeshBufferRef> MeshBufferDicts;
+
+	struct MeshBufferDictsCom {
+		MeshBufferDicts dicts;
+	};
+
+}
 
 #endif
