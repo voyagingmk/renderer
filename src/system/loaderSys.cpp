@@ -10,6 +10,7 @@
 #include "com/sdlContext.hpp"
 #include "com/renderMode.hpp"
 #include "com/keyState.hpp"
+#include "com/miscCom.hpp"
 #include "event/textureEvent.hpp"
 #include "event/shaderEvent.hpp"
 #include "event/materialEvent.hpp"
@@ -52,6 +53,8 @@ namespace renderer {
 		loadSceneObjects(assetsDir + modelsDir, config);
 
 		m_evtMgr->emit<CreateGBufferEvent>(winWidth, winHeight, "main");
+
+		CreateGlobalQuadObject();
 	}
 
 	void LoaderSystem::CreateGlobalQuadObject() {
@@ -77,6 +80,7 @@ namespace renderer {
 		meshes.push_back(mesh);
 		objQuad.addComponent<Meshes>(meshes);
 		m_evtMgr->emit<CreateMeshBufferEvent>(objQuad);
+		objQuad.addComponent<GlobalQuadTag>();
 	}
 
 	void LoaderSystem::loadSceneObjects(std::string modelsDir, const json &config) {

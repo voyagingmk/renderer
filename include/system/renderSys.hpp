@@ -2,8 +2,10 @@
 #define RENDERER_SYSTEM_RENDER_HPP
 
 #include "base.hpp"
-#include "../ecs/ecs.hpp"
+#include "ecs/ecs.hpp"
 #include "event/renderEvent.hpp"
+#include "com/materialCom.hpp"
+#include "com/shader.hpp"
 
 
 
@@ -19,7 +21,11 @@ namespace renderer {
 
 		void receive(const RenderSceneEvent &evt);
 
-		void RenderSystem::renderQuad();
+		void renderQuad();
+
+		Shader getShader(MaterialSettingCom& matCom);
+
+		Shader getShader(std::string shaderName);
 	};
 
 };

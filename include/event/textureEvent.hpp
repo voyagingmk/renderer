@@ -35,14 +35,25 @@ namespace renderer {
 
 	class ActiveTextureEvent : public ecs::Event<ActiveTextureEvent> {
 	public:
-		ActiveTextureEvent(uint32_t idx, std::string& aliasname) :
+		ActiveTextureEvent(uint32_t idx, std::string aliasname) :
 			idx(idx),
 			aliasname(aliasname)
 		{}
 		uint32_t idx;
 		std::string aliasname;
 	};
-    
+
+	
+	class ActiveTextureByIDEvent : public ecs::Event<ActiveTextureByIDEvent> {
+	public:
+		ActiveTextureByIDEvent(uint32_t idx, TexID texID) :
+			idx(idx),
+			texID(texID)
+		{}
+		uint32_t idx;
+		TexID texID;
+	};
+
     class DeactiveTextureEvent : public ecs::Event<DeactiveTextureEvent> {
     public:
         DeactiveTextureEvent(uint32_t idx) :

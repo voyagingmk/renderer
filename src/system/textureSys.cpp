@@ -8,7 +8,8 @@ namespace renderer {
 	void TextureSystem::init(ObjectManager &objMgr, EventManager &evtMgr) {
 		printf("TextureSystem init\n");
         evtMgr.on<LoadTextureEvent>(*this);
-		evtMgr.on<DestroyTextureEvent>(*this);
+		evtMgr.on<DestroyTextureEvent>(*this); 
+		evtMgr.on<ActiveTextureByIDEvent>(*this);
 		evtMgr.on<ActiveTextureEvent>(*this);
 		evtMgr.on<DeactiveTextureEvent>(*this);
 		
@@ -61,8 +62,19 @@ namespace renderer {
 		glDeleteTextures(1, &it->second.texID);
 		texDict->erase(it);
 	}
+	
+	void TextureSystem::receive(const ActiveTextureByIDEvent &evt) {
+		if (evt.texID > 0) {
+			assert(glIsTexture(evt.texID));
+			glBindTexture(GL_TEXTURE_2D, evt.texID);
+			return;
+		}
+	}
 
 	void TextureSystem::receive(const ActiveTextureEvent &evt) {
+		if (evt.aliasname == "") {
+			return;
+		}
 		auto texDict = m_objMgr->getSingletonComponent<TextureDict>();
 		auto it = texDict->find(evt.aliasname);
 		if (it == texDict->end()) {

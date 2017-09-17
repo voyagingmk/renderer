@@ -3,14 +3,15 @@
 #include "system/renderSys.hpp"
 #include "com/sdlContext.hpp"
 #include "com/meshes.hpp"
-#include "com/materialCom.hpp"
 #include "com/cameraCom.hpp"
 #include "com/bufferCom.hpp"
+#include "com/miscCom.hpp"
 #include "system/spatialSys.hpp"
 #include "event/materialEvent.hpp"
 #include "event/shaderEvent.hpp"
 #include "event/spatialEvent.hpp"
 #include "event/bufferEvent.hpp"
+#include "event/textureEvent.hpp"
 
 
 using namespace std;
@@ -30,14 +31,27 @@ namespace renderer {
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
 
-		// evtMgr.emit<UseGBufferEvent>("main");
+		evtMgr.emit<UseGBufferEvent>("main");
 
+		Shader gBufferShader = getShader("gBuffer");
 		auto com = objMgr.getSingletonComponent<PerspectiveCameraView>();
 		evtMgr.emit<RenderSceneEvent>(
 			com.object(),
-			std::make_tuple(0, 0, context->width, context->height));
-		// evtMgr.emit<UnuseGBufferEvent>("main");
+			std::make_tuple(0, 0, context->width, context->height),
+			Color(0.5f, 0.5f, 0.5f, 1.0f),
+			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT,
+			&gBufferShader);
+		evtMgr.emit<UnuseGBufferEvent>("main");
+		
+		Shader shader = getShader("screen");
+		shader.use();
+		auto gBufferCom = m_objMgr->getSingletonComponent<GBufferDictCom>();
+		GBufferRef& buf = gBufferCom->dict["main"];
+		evtMgr.emit<ActiveTextureByIDEvent>(0, buf.normalTexID);
+		
+		renderQuad();
 
+		CheckGLError;
 		SDL_GL_SwapWindow(context->win);
 	}
 
@@ -45,7 +59,6 @@ namespace renderer {
 		ObjectManager& objMgr = evt.objCamera.objMgr();
 		EventManager& evtMgr = objMgr.evtMgr();
 		auto matSetCom = objMgr.getSingletonComponent<MaterialSet>();
-		auto spSeCom = objMgr.getSingletonComponent<ShaderProgramSet>();
 		// ShaderMgr &shaderMgr = ShaderMgr::getInstance();
 		// Shader &shader = shaderMgr.getShader(shaderALias);
 		// shader.set3f("viewPos", viewPos);
@@ -57,27 +70,51 @@ namespace renderer {
 			std::get<3>(evt.viewport));
 		glClearColor(evt.clearColor.r(), evt.clearColor.g(), evt.clearColor.b(), evt.clearColor.a());
 		glClear(evt.clearBits);
+		
+		Shader shader;
 
+		if (evt.shader != nullptr) {
+			shader = *evt.shader;
+			shader.use();
+		}
 
 		// TODO: sort by material
 		for (const Object obj : objMgr.entities<Meshes, MaterialCom, SpatialData, MeshBuffersCom>()) {
 			auto matCom = obj.component<MaterialCom>();
 			auto setting = matSetCom->settings[matCom->settingID];
-			Shader shader(spSeCom->alias2HDL[setting.shaderName]);
-			shader.use();
+			if (evt.shader == nullptr) {
+				shader = getShader(setting);
+				shader.use();
+			}
 			evtMgr.emit<ActiveMaterialEvent>(setting, shader);
+			CheckGLError; 
 			evtMgr.emit<ActiveSpatialDataEvent>(obj, shader);
+			CheckGLError; 
 			evtMgr.emit<UploadCameraToShaderEvent>(evt.objCamera, shader);
+			CheckGLError; 
 			evtMgr.emit<UploadMatrixToShaderEvent>(obj, shader);
+			CheckGLError; 
 			evtMgr.emit<DrawMeshBufferEvent>(obj);
+			CheckGLError;
 			evtMgr.emit<DeactiveMaterialEvent>(setting);
+			CheckGLError;
 		}
 		CheckGLError;
 	}
 
+	Shader RenderSystem::getShader(MaterialSettingCom& com) {
+		auto spSetCom = m_objMgr->getSingletonComponent<ShaderProgramSet>();
+		return Shader(spSetCom->alias2HDL[com.shaderName]);
+	}
+
+	Shader RenderSystem::getShader(std::string shaderName) {
+		auto spSetCom = m_objMgr->getSingletonComponent<ShaderProgramSet>();
+		return Shader(spSetCom->alias2HDL[shaderName]);
+	}
+
 	void RenderSystem::renderQuad() {
-		//Object obj = m_objMgr->create();
-		// obj.addComponent<
-		// m_evtMgr->emit<DrawMeshBufferEvent>(obj);
+		for (auto obj : m_objMgr->entities<GlobalQuadTag>()) {
+			m_evtMgr->emit<DrawMeshBufferEvent>(obj);
+		}
 	}
 };
