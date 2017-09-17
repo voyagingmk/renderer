@@ -71,7 +71,9 @@ namespace renderer {
 	class GBufferRef : public FrameBufferBase {
 	public:
 		RboID depthRboID; // include stencil
-
+		TexID posTexID;
+		TexID normalTexID; 
+		TexID albedoSpecTexID;
 	};
 
 
