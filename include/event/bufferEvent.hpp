@@ -22,6 +22,14 @@ namespace renderer {
         {}
         ecs::Object obj;
     };
+
+	class DestroyGBufferEvent: public ecs::Event<DestroyGBufferEvent>{
+	public:
+		DestroyGBufferEvent(ecs::Object obj) :
+			obj(obj)
+		{}
+		ecs::Object obj;
+	};
     
     class UseGBufferEvent : public ecs::Event<UseGBufferEvent> {
     public:
