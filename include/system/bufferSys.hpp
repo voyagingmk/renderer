@@ -6,6 +6,7 @@
 #include "com/meshes.hpp"
 #include "com/bufferCom.hpp"
 #include "event/bufferEvent.hpp"
+#include "com/glcommon.hpp"
 
 
 
@@ -26,7 +27,17 @@ namespace renderer {
 
 	private:
 
-		MeshBufferRef createMeshBuffer(const OneMesh& mesh);
+		void DestroyFrameBuffer(FrameBufferBase& buf);
+
+		void UseFrameBuffer(FrameBufferBase& buf);
+
+		void UnuseFrameBuffer(FrameBufferBase& buf);
+
+		MeshBufferRef CreateMeshBuffer(const OneMesh& mesh);
+		
+		ColorBufferRef CreateColorBuffer(size_t width, size_t height, BufType depthType, size_t MSAA);
+		
+		GBufferRef CreateGBuffer(size_t width, size_t height);
 	};
 };
 

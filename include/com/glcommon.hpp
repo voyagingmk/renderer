@@ -8,9 +8,9 @@ namespace renderer {
 
     
 #ifdef USE_GL
-typedef GLuint TexID;
-typedef GLuint FboID;
-typedef GLuint RboID;
+typedef GLuint TexID; // texture buffer
+typedef GLuint FboID; // frame buffer object 
+typedef GLuint RboID; // render buffer object
 #else
 typedef uint32_t TexID;
 typedef uint32_t FboID;
@@ -48,6 +48,13 @@ public:
     {}
 };
 
+class FrameBufferBase {
+public:
+    FboID fboID;
+    size_t width;
+    size_t height;
+};
+
 class FrameBuf {
 public:
     FboID fboID;
@@ -79,6 +86,23 @@ public:
         printf("FBO:%d, TexID:%d, depthTexID:%d, width:%d, height:%d \n",
                fboID, tex.texID, depthTex.texID, (int)width, (int)height);
     }
+};
+
+class ColorBufferRef: public FrameBufferBase {
+public:
+	TexRef tex;
+	size_t MSAA; // default: 0
+	FboID innerFboID;
+	TexRef innerTex;
+	BufType depthType;
+	TexRef depthTex; // include stencil
+	RboID depthRboID; // include stencil
+};
+
+class GBufferRef: public FrameBufferBase {
+public:
+    RboID depthRboID; // include stencil
+
 };
 
 struct Character {
