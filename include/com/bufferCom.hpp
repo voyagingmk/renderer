@@ -5,19 +5,19 @@
 
 typedef uint32_t BufferID;
 
-struct BufferSet {
+struct MeshBufferRef {
     size_t triangles;
     BufferID vao;
     BufferID vbo;
     BufferID ebo;
 };
 
-typedef std::map<std::string, BufferSet> BufferDict;
+typedef std::map<std::string, MeshBufferRef> MeshBufferDict;
 
-typedef std::vector<BufferSet> BufferSets;
+typedef std::vector<MeshBufferRef> MeshBufferDicts;
 
-struct BufferSetsCom {
-	BufferSets sets;
+struct MeshBufferDictsCom {
+	MeshBufferDicts dicts;
 };
 
 

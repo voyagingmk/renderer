@@ -18,28 +18,28 @@ namespace renderer {
 
 	void BufferSystem::receive(const ComponentAddedEvent<Meshes> &evt) {
 		Object obj = evt.m_obj;
-		auto com = obj.addComponent<BufferSetsCom>();
+		auto com = obj.addComponent<MeshBufferDictsCom>();
 		for(const OneMesh& mesh : evt.component->meshes){
-			com->sets.push_back(createMeshBuffer(mesh));
+			com->dicts.push_back(createMeshBuffer(mesh));
 		}
 	}
 
 	void BufferSystem::receive(const DrawBufferEvent& evt) {
 		Object obj = evt.obj; 
-		auto com = obj.component<BufferSetsCom>();
-		for (auto bufferSet : com->sets) {
-			glBindVertexArray(bufferSet.vao);
-			//glDrawArrays(GL_TRIANGLES, 0, bufferSet.triangles);
-			glDrawElements(GL_TRIANGLES, bufferSet.triangles * 3, GL_UNSIGNED_INT, 0);
+		auto com = obj.component<MeshBufferDictsCom>();
+		for (auto meshBuffer : com->dicts) {
+			glBindVertexArray(meshBuffer.vao);
+			//glDrawArrays(GL_TRIANGLES, 0, meshBuffer.triangles);
+			glDrawElements(GL_TRIANGLES, meshBuffer.triangles * 3, GL_UNSIGNED_INT, 0);
 			glBindVertexArray(0);
 			CheckGLError;
 		}
 	}
 
 
-	BufferSet BufferSystem::createMeshBuffer(const OneMesh& mesh) {
+	MeshBufferRef BufferSystem::createMeshBuffer(const OneMesh& mesh) {
 		GLuint VBO, VAO, EBO;
-		BufferSet bufferSet;
+		MeshBufferRef meshBuffer;
 		glGenVertexArrays(1, &VAO);
 		glGenBuffers(1, &VBO);
 		glGenBuffers(1, &EBO);
@@ -69,13 +69,13 @@ namespace renderer {
 		glBindVertexArray(0); // Unbind VAO (it's always a good thing to unbind any buffer/array to prevent strange bugs), remember: do NOT unbind the EBO, keep it bound to this VAO
 		CheckGLError;
 
-		bufferSet.vao = VAO;
-		bufferSet.vbo = VBO;
-		bufferSet.ebo = EBO;
+		meshBuffer.vao = VAO;
+		meshBuffer.vbo = VBO;
+		meshBuffer.ebo = EBO;
 		assert(VAO > 0 && VBO > 0 && EBO > 0);
-		bufferSet.triangles = mesh.indexes.size() / 3;
-		//bufferDict[aliasname] = bufferSet;
-		return bufferSet;
+		meshBuffer.triangles = mesh.indexes.size() / 3;
+		//bufferDict[aliasname] = meshBuffer;
+		return meshBuffer;
 	}
 
 };

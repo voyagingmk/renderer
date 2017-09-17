@@ -26,7 +26,7 @@ namespace renderer {
 
 	private:
 
-		BufferSet createMeshBuffer(const OneMesh& mesh);
+		MeshBufferRef createMeshBuffer(const OneMesh& mesh);
 	};
 };
 

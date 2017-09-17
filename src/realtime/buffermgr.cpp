@@ -9,9 +9,9 @@ BufferMgrBase::~BufferMgrBase() {
 }
 
 
-BufferSet BufferMgrOpenGL::CreateMeshBuffer(const std::string& aliasname, Mesh& mesh) {
+MeshBufferRef BufferMgrOpenGL::CreateMeshBuffer(const std::string& aliasname, Mesh& mesh) {
     GLuint VBO, VAO, EBO;
-    BufferSet bufferSet;
+    MeshBufferRef bufferSet;
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
     glGenBuffers(1, &EBO);
@@ -51,7 +51,7 @@ BufferSet BufferMgrOpenGL::CreateMeshBuffer(const std::string& aliasname, Mesh& 
 }
 
 void BufferMgrOpenGL::DrawBuffer(const std::string& aliasname) {
-    BufferSet bufferSet = bufferDict[aliasname];
+    MeshBufferRef bufferSet = bufferDict[aliasname];
     glBindVertexArray(bufferSet.vao);
     //glDrawArrays(GL_TRIANGLES, 0, bufferSet.triangles);
     glDrawElements(GL_TRIANGLES, bufferSet.triangles * 3, GL_UNSIGNED_INT, 0);

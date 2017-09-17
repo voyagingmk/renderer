@@ -12,14 +12,14 @@ namespace renderer {
 
     class BufferMgrBase {
     protected:
-        BufferDict bufferDict;
+        MeshBufferDict bufferDict;
     public:
         virtual	~BufferMgrBase();
-        BufferSet GetBufferSet(const char * aliasname) {
+        MeshBufferRef GetBufferSet(const char * aliasname) {
             return bufferDict[aliasname];
         }
-        virtual BufferSet CreateMeshBuffer(const std::string& aliasname, Mesh& mesh) {
-            return BufferSet();
+        virtual MeshBufferRef CreateMeshBuffer(const std::string& aliasname, Mesh& mesh) {
+            return MeshBufferRef();
         }
         virtual void DrawBuffer(const std::string& aliasname) {}
         virtual void release() {}
@@ -41,7 +41,7 @@ namespace renderer {
             return mgr;
         }
         // override
-        virtual BufferSet CreateMeshBuffer(const std::string& aliasname, Mesh& mesh);
+        virtual MeshBufferRef CreateMeshBuffer(const std::string& aliasname, Mesh& mesh);
         virtual void DrawBuffer(const std::string& aliasname);
         virtual FrameBuf CreateDepthFrameBuffer(DepthTexType dtType, TexRef texRef);
         virtual FrameBuf CreateColorFrameBuffer(size_t width, size_t height, BufType depthType, size_t MSAA = 0);

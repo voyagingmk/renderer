@@ -57,7 +57,7 @@ namespace renderer {
 
 
 		// TODO: sort by material
-		for (const Object obj : objMgr.entities<Meshes, MaterialCom, SpatialData, BufferSetsCom>()) {
+		for (const Object obj : objMgr.entities<Meshes, MaterialCom, SpatialData, MeshBufferDictsCom>()) {
 			auto matCom = obj.component<MaterialCom>();
 			auto setting = matSetCom->settings[matCom->settingID];
 			Shader shader(spSeCom->alias2HDL[setting.shaderName]);
