@@ -9,6 +9,10 @@ namespace renderer {
 	void BufferSystem::init(ObjectManager &objMgr, EventManager &evtMgr) {
 		evtMgr.on<ComponentAddedEvent<Meshes>>(*this);
 		evtMgr.on<DrawMeshBufferEvent>(*this);
+		evtMgr.on<CreateGBufferEvent>(*this);
+		evtMgr.on<DestroyGBufferEvent>(*this);
+		evtMgr.on<UseGBufferEvent>(*this);
+		evtMgr.on<UnuseGBufferEvent>(*this);
 	}
 
 	void BufferSystem::update(ObjectManager &objMgr, EventManager &evtMgr, float dt) {
@@ -17,22 +21,56 @@ namespace renderer {
 
 	void BufferSystem::receive(const ComponentAddedEvent<Meshes> &evt) {
 		Object obj = evt.m_obj;
-		auto com = obj.addComponent<MeshBufferDictsCom>();
+		auto com = obj.addComponent<MeshBuffersCom>();
 		for(const OneMesh& mesh : evt.component->meshes){
-			com->dicts.push_back(CreateMeshBuffer(mesh));
+			com->buffers.push_back(CreateMeshBuffer(mesh));
 		}
 	}
 
 	void BufferSystem::receive(const DrawMeshBufferEvent& evt) {
 		Object obj = evt.obj; 
-		auto com = obj.component<MeshBufferDictsCom>();
-		for (auto meshBuffer : com->dicts) {
+		auto com = obj.component<MeshBuffersCom>();
+		for (auto meshBuffer : com->buffers) {
 			glBindVertexArray(meshBuffer.vao);
 			//glDrawArrays(GL_TRIANGLES, 0, meshBuffer.triangles);
 			glDrawElements(GL_TRIANGLES, meshBuffer.triangles * 3, GL_UNSIGNED_INT, 0);
 			glBindVertexArray(0);
 			CheckGLError;
 		}
+	}
+
+	void BufferSystem::receive(const CreateGBufferEvent& evt) {
+		auto com = m_objMgr->getSingletonComponent<GBufferDictCom>();
+		GBufferRef buf = CreateGBuffer(evt.width, evt.height);
+		com->dict[evt.aliasName] = buf;
+	}
+
+	void BufferSystem::receive(const DestroyGBufferEvent& evt) {
+		auto com = m_objMgr->getSingletonComponent<GBufferDictCom>();
+		auto it = com->dict.find(evt.aliasName);
+		if (it == com->dict.end()) {
+			return;
+		}
+		DestroyGBuffer(it->second);
+		com->dict.erase(it);
+	}
+
+	void BufferSystem::receive(const UseGBufferEvent& evt) {
+		auto com = m_objMgr->getSingletonComponent<GBufferDictCom>();
+		auto it = com->dict.find(evt.aliasName);
+		if (it == com->dict.end()) {
+			return;
+		}
+		UseFrameBuffer(it->second);
+	}
+
+	void BufferSystem::receive(const UnuseGBufferEvent& evt) {
+		auto com = m_objMgr->getSingletonComponent<GBufferDictCom>();
+		auto it = com->dict.find(evt.aliasName);
+		if (it == com->dict.end()) {
+			return;
+		}
+		UnuseFrameBuffer(it->second);
 	}
 
 	void BufferSystem::DestroyFrameBuffer(FrameBufferBase& buf) {

@@ -84,14 +84,23 @@ namespace renderer {
 		BufferID ebo;
 	};
 
+
 	typedef std::map<std::string, MeshBufferRef> MeshBufferDict;
 
-	typedef std::vector<MeshBufferRef> MeshBufferDicts;
+	typedef std::vector<MeshBufferRef> MeshBufferRefs;
 
-	struct MeshBufferDictsCom {
-		MeshBufferDicts dicts;
+	struct MeshBuffersCom {
+		MeshBufferRefs buffers;
 	};
 
+
+	typedef std::map<std::string, GBufferRef> GBufferDict;
+
+	typedef std::vector<GBufferRef> GBuffers;
+
+	struct GBufferDictCom {
+		GBufferDict dict;
+	};
 }
 
 #endif

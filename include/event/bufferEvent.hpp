@@ -17,34 +17,38 @@ namespace renderer {
     
     class CreateGBufferEvent : public ecs::Event<CreateGBufferEvent> {
     public:
-        CreateGBufferEvent(ecs::Object obj):
-            obj(obj)
+        CreateGBufferEvent(size_t width, size_t height, std::string aliasName):
+			width(width),
+			height(height),
+			aliasName(aliasName)
         {}
-        ecs::Object obj;
+		size_t width;
+		size_t height;
+		std::string aliasName;
     };
 
 	class DestroyGBufferEvent: public ecs::Event<DestroyGBufferEvent>{
 	public:
-		DestroyGBufferEvent(ecs::Object obj) :
-			obj(obj)
+		DestroyGBufferEvent(std::string aliasName) :
+			aliasName(aliasName)
 		{}
-		ecs::Object obj;
+		std::string aliasName;
 	};
     
     class UseGBufferEvent : public ecs::Event<UseGBufferEvent> {
     public:
-        UseGBufferEvent(ecs::Object obj):
-            obj(obj)
+        UseGBufferEvent(std::string aliasName):
+			aliasName(aliasName)
         {}
-        ecs::Object obj;
+		std::string aliasName;
     };   
     
     class UnuseGBufferEvent : public ecs::Event<UnuseGBufferEvent> {
     public:
-        UnuseGBufferEvent(ecs::Object obj):
-            obj(obj)
+        UnuseGBufferEvent(std::string aliasName):
+			aliasName(aliasName)
         {}
-        ecs::Object obj;
+		std::string aliasName;
     };
     
 }

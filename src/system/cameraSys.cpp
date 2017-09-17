@@ -14,7 +14,6 @@ namespace renderer {
 
 
 	void CameraSystem::update(ObjectManager &objMgr, EventManager &evtMgr, float dt) {
-
 		auto com = objMgr.getSingletonComponent<KeyState>();
 		auto cameraView = objMgr.getSingletonComponent<PerspectiveCameraView>();
 		Vector3dF p = { 0.0f, 0.0f, 0.0f };

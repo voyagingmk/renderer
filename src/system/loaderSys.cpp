@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "system/loaderSys.hpp"
+#include "com/bufferCom.hpp"
 #include "com/glcommon.hpp"
 #include "com/shader.hpp"
 #include "com/spatialData.hpp"
@@ -12,6 +13,7 @@
 #include "event/textureEvent.hpp"
 #include "event/shaderEvent.hpp"
 #include "event/materialEvent.hpp"
+#include "event/bufferEvent.hpp"
 #include "importer.hpp"
 
 using namespace std;
@@ -25,13 +27,17 @@ namespace renderer {
         string shaderSubDir = config["shaderSubDir"];
 		string modelsDir = config["modelsDir"];
 
+		const size_t winWidth = 800;
+		const size_t winHeight = 600;
+
 		Object obj = objMgr.create(); // singleTon, manage kinds of resources
-		obj.addComponent<SDLContext>(800, 600);
+		obj.addComponent<SDLContext>(winWidth, winHeight);
 		obj.addComponent<RenderMode>();
 		obj.addComponent<KeyState>();
         obj.addComponent<TextureDict>();
         obj.addComponent<ShaderProgramSet>();
         obj.addComponent<MaterialSet>();
+		obj.addComponent<GBufferDictCom>();
 
 		Object objCamera = objMgr.create();
 		objCamera.addComponent<PerspectiveCameraView>();
@@ -41,6 +47,7 @@ namespace renderer {
         loadMaterials(evtMgr, config);
 		loadSceneObjects(objMgr, evtMgr, assetsDir + modelsDir, config);
         
+		evtMgr.emit<CreateGBufferEvent>(winWidth, winHeight, "main");
 		
         Object objCenter = objMgr.create();
 		
