@@ -51,7 +51,7 @@ namespace renderer {
 		Object objCamera = evt.objCamera;
 		auto com = objCamera.component<PerspectiveCameraView>();
 		Shader& shader = const_cast<Shader&>(evt.shader);
-		auto viewMat = LookAt(com->eye, com->target, com->up);
+		auto viewMat = LookAt(com->GetCameraPosition(), com->GetTargetVector(), com->GetUpVector());
 		auto projMat = Perspective(com->fov, com->aspect, com->near, com->far);
 		auto cameraMat = projMat * viewMat;
 		shader.set3f("viewPos", com->eye);

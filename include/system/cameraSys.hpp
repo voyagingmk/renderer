@@ -20,6 +20,8 @@ namespace renderer {
 		void update(ObjectManager &objMgr, EventManager &evtMgr, float dt) override;
 
 		void receive(const CustomSDLMouseMotionEvent &evt);
+	private:
+		void UpdateCameraVectors(ComponentHandle<PerspectiveCameraView> cameraView);
 	};
 };
 

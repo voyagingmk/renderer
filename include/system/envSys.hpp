@@ -27,29 +27,8 @@ namespace renderer {
 		void receive(const ComponentAddedEvent<SDLContext> &evt);
 
 		void receive(const ComponentRemovedEvent<SDLContext> &evt);
-
-		void receive(const CustomSDLMouseMotionEvent &evt)
-		{
-			std::cout << "CustomSDLMouseMotionEvent: " << std::endl;
-		}
-
-		void receive(const CustomSDLMouseButtonEvent &evt)
-		{
-			std::cout << "CustomSDLMouseButtonEvent: " << std::endl;
-		}
-
-		void receive(const CustomSDLEvent &evt)
-		{
-			auto com = evt.obj.component<SDLContext>();
-			switch (evt.e.type)
-			{
-			case SDL_QUIT:
-				com->shouldExit = true;
-				break;
-			default:
-				break;
-			}
-		}
+		
+		void receive(const CustomSDLEvent &evt);
 
 		void receive(const CustomSDLKeyboardEvent &evt);
 	};

@@ -11,31 +11,37 @@ namespace renderer {
 	class CameraView {
 	public:
 		CameraView() :
-			eye( 0.0f, 0.0f, 1.0f ),
-			target( 0.0f, 0.0f, 0.0f ),
+			eye( 0.0f, 0.0f, 0.0f ),
+			front( 0.0f, 0.0f, -1.0f ),
 			up( 0.0f, 1.0f, 0.0f ),
 			right( 1.0f, 0.0f, 0.0f ),
-			yaw(-180.0f),
-			pitch(0)
+			yaw(-90.0f),
+			pitch(0.0f),
+			mouseSense(0.1f),
+			moveSpeed(2.5f),
+			zoom(45.0f)
 		{}
 		Vector3dF eye;
-		Vector3dF target;
+		Vector3dF front;
 		Vector3dF up;
 		Vector3dF right;
 		Matrix4x4 cameraMat;
 		float yaw;
 		float pitch;
+		float moveSpeed;
+		float mouseSense;
+		float zoom;
 		
 		Vector3dF GetCameraPosition() {
 			return eye;
 		}
 
 		Vector3dF GetTargetVector() {
-			return target;
+			return eye + front;
 		}
 
 		Vector3dF GetFrontVector() {
-			return target - eye;
+			return front;
 		}
 
 		Vector3dF GetUpVector() {
@@ -46,19 +52,20 @@ namespace renderer {
 			return right;
 		}
 
-		void SetTargetVector(Vector3dF v) {
-			target = v;
-			UpdateRightVector();
+		void SetFrontVector(Vector3dF v) {
+			front = v;
+			UpdateCameraVector();
 		}
 
 		void SetCameraPosition(Vector3dF p) {
 			eye = p;
-			UpdateRightVector();
+			UpdateCameraVector();
 		}
 
-		void UpdateRightVector() {
-			Vector3dF focal = (target - eye).Normalize();
-			right = (focal.Cross(up)).Normalize();
+		void UpdateCameraVector() {
+			const Vector3dF worldUp(0.0f, 1.0f, 0.0f);
+			right = (front.Cross(worldUp)).Normalize();
+			up = (right.Cross(front)).Normalize();
 		}
 	};
 

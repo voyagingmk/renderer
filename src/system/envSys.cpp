@@ -9,16 +9,13 @@ namespace renderer {
 		evtMgr.on<ComponentAddedEvent<SDLContext>>(*this);
 		evtMgr.on<ComponentRemovedEvent<SDLContext>>(*this);
 
-		evtMgr.on<CustomSDLEvent>(*this);
 		evtMgr.on<CustomSDLKeyboardEvent>(*this);
-		evtMgr.on<CustomSDLMouseMotionEvent>(*this);
-		evtMgr.on<CustomSDLMouseButtonEvent>(*this);
 	}
 
 	void EnvSystem::update(ObjectManager &objMgr, EventManager &evtMgr, float dt) {
 		auto com = objMgr.getSingletonComponent<SDLContext>();
 		SDL_Event e;
-		if (SDL_PollEvent(&e)) {
+		while (SDL_PollEvent(&e)) {
 			if (e.type == SDL_KEYDOWN || e.type == SDL_KEYUP) {
 				evtMgr.emit<CustomSDLKeyboardEvent>(com.object(), e.key);
 			}
@@ -60,7 +57,8 @@ namespace renderer {
 			SDL_WINDOWPOS_CENTERED,
 			sdlContext->width,
 			sdlContext->height,
-			SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+			SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN |
+			SDL_WINDOW_INPUT_FOCUS | SDL_WINDOW_MOUSE_FOCUS);
 		if (!sdlContext->win) {
 			shutdown("Unable to create window");
 			return;
@@ -93,6 +91,11 @@ namespace renderer {
 		GLint nrAttributes;
 		glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
 		cout << "Maximum nr of vertex attributes supported: " << nrAttributes << endl;
+
+		//SDL_ShowCursor(SDL_DISABLE);
+		//SDL_SetWindowGrab(sdlContext->win, SDL_TRUE);
+		// SDL_SetHintWithPriority(SDL_HINT_MOUSE_RELATIVE_MODE_WARP, "1", SDL_HINT_OVERRIDE);
+		SDL_SetRelativeMouseMode(SDL_TRUE);
 	}
 
 	void EnvSystem::receive(const ComponentRemovedEvent<SDLContext> &evt) {
@@ -116,6 +119,7 @@ namespace renderer {
 
 		auto k = evt.e.keysym.sym;
 		keyState->state[k] = evt.e.state;
+		// printf("key event: %d\n", k, evt.e.state);
 
 		if (evt.e.state == SDL_PRESSED)
 		{
@@ -141,6 +145,19 @@ namespace renderer {
 			default:
 				break;
 			}
+		}
+	}
+
+	void EnvSystem::receive(const CustomSDLEvent &evt)
+	{
+		auto com = evt.obj.component<SDLContext>();
+		switch (evt.e.type)
+		{
+		case SDL_QUIT:
+			com->shouldExit = true;
+			break;
+		default:
+			break;
 		}
 	}
 

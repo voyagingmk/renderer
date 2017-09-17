@@ -52,6 +52,7 @@ int ecsMain(int argc, char *argv[])
 	ecsObj.setup();
 	while (1) {
 		ecsObj.update(0.1f);
+		SDL_Delay(1);
 	}
 	return 0;
 }

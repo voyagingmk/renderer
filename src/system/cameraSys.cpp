@@ -43,7 +43,6 @@ namespace renderer {
 			p = -cameraView->GetUpVector().Normalize();
 		}
 
-		cameraView->SetTargetVector(cameraView->GetTargetVector() + p * 0.2f);
 		cameraView->SetCameraPosition(cameraView->GetCameraPosition() + p * 0.2f);
 		//camera.SetTargetVector(p + Vector3dF(0.0, 0.0, -1.0));
 		// cameraView->eye.debug();
@@ -67,22 +66,31 @@ namespace renderer {
 	void  CameraSystem::receive(const CustomSDLMouseMotionEvent &evt) {
 		auto cameraView = evt.obj.objMgr().getSingletonComponent<PerspectiveCameraView>();
 		auto e = evt.e;
-		//printf("mMotion, t:%u, state:%u, (%d,%d), rel:(%d,%d)\n", e.type, e.state, e.x, e.y, e.xrel, e.yrel);
 		float scale = 0.3f;
-		Vector2dF cameraVec;
-		cameraVec = { scale * e.xrel, -scale * e.yrel };
-		cameraView->yaw += cameraVec.x;
-		cameraView->pitch += cameraVec.y;
+		int xrel, yrel;
+		SDL_GetRelativeMouseState(&xrel, &yrel);
+		if (xrel == 0 && yrel == 0) {
+			return;
+		}
+		Vector2dF vec;
+		vec = { cameraView->mouseSense * xrel, cameraView->mouseSense * (-yrel) };
+		cameraView->yaw += vec.x;
+		cameraView->pitch += vec.y;
 		if (cameraView->pitch > 89.0f)
 			cameraView->pitch = 89.0f;
 		if (cameraView->pitch < -89.0f)
 			cameraView->pitch = -89.0f;
+		UpdateCameraVectors(cameraView);
+		// printf("mMotion, rel:(%d,%d), yaw: %.2f, pitch: %.2f\n", e.xrel, e.yrel, cameraView->yaw, cameraView->pitch);
+	}
+
+	void  CameraSystem::UpdateCameraVectors(ComponentHandle<PerspectiveCameraView> cameraView) {
 		Vector3dF front;
 		front.x = cos(Radians(cameraView->yaw)) * cos(Radians(cameraView->pitch)); // 0
 		front.y = sin(Radians(cameraView->pitch));                     // 0
 		front.z = sin(Radians(cameraView->yaw)) * cos(Radians(cameraView->pitch)); // -1
 		front = front.Normalize();
-		cameraView->SetTargetVector(cameraView->GetCameraPosition() + front);
+		cameraView->SetFrontVector(front);
 	}
 
 };
