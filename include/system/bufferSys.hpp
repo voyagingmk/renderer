@@ -23,7 +23,8 @@ namespace renderer {
 
 		void receive(const ComponentAddedEvent<Meshes> &evt);
 		
-		void receive(const DrawBufferEvent& evt);
+		void receive(const DrawMeshBufferEvent& evt);
+		void receive(const DrawMeshBufferEvent& evt);
 
 	private:
 

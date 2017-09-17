@@ -66,7 +66,7 @@ namespace renderer {
 			evtMgr.emit<ActiveSpatialDataEvent>(obj, shader);
 			evtMgr.emit<UploadCameraToShaderEvent>(evt.objCamera, shader);
 			evtMgr.emit<UploadMatrixToShaderEvent>(obj, shader);
-			evtMgr.emit<DrawBufferEvent>(obj);
+			evtMgr.emit<DrawMeshBufferEvent>(obj);
 			evtMgr.emit<DeactiveMaterialEvent>(setting);
 			
 

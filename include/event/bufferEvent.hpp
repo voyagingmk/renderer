@@ -6,9 +6,9 @@
 
 namespace renderer {
 
-    class DrawBufferEvent : public ecs::Event<DrawBufferEvent> {
+    class DrawMeshBufferEvent : public ecs::Event<DrawMeshBufferEvent> {
     public:
-        DrawBufferEvent(ecs::Object obj):
+        DrawMeshBufferEvent(ecs::Object obj):
             obj(obj)
         {}
         ecs::Object obj;

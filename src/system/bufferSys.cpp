@@ -9,7 +9,7 @@ namespace renderer {
 
 	void BufferSystem::init(ObjectManager &objMgr, EventManager &evtMgr) {
 		evtMgr.on<ComponentAddedEvent<Meshes>>(*this);
-		evtMgr.on<DrawBufferEvent>(*this);
+		evtMgr.on<DrawMeshBufferEvent>(*this);
 	}
 
 	void BufferSystem::update(ObjectManager &objMgr, EventManager &evtMgr, float dt) {
@@ -24,7 +24,7 @@ namespace renderer {
 		}
 	}
 
-	void BufferSystem::receive(const DrawBufferEvent& evt) {
+	void BufferSystem::receive(const DrawMeshBufferEvent& evt) {
 		Object obj = evt.obj; 
 		auto com = obj.component<MeshBufferDictsCom>();
 		for (auto meshBuffer : com->dicts) {
