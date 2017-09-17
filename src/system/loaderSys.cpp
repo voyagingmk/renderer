@@ -20,18 +20,22 @@ using namespace std;
 
 namespace renderer {
 	void LoaderSystem::init(ObjectManager &objMgr, EventManager &evtMgr) {
-        printf("LoaderSystem init\n");
-        json config = readJson("demo.json");
+		printf("LoaderSystem init\n");
+		evtMgr.on<LoadConfigEvent>(*this);
+	}
+
+	void LoaderSystem::receive(const LoadConfigEvent &evt) {
+		const json& config = evt.config;
+		size_t winWidth = config["width"];
+		size_t winHeight = config["height"];
+		m_evtMgr->emit<SetupSDLEvent>(winWidth, winHeight);
+
 		string assetsDir = config["assetsDir"];
         string texSubDir = config["texSubDir"];
         string shaderSubDir = config["shaderSubDir"];
 		string modelsDir = config["modelsDir"];
 
-		const size_t winWidth = 800;
-		const size_t winHeight = 600;
-
-		Object obj = objMgr.create(); // singleTon, manage kinds of resources
-		obj.addComponent<SDLContext>(winWidth, winHeight);
+		Object obj = m_objMgr->create(); // singleTon, manage kinds of resources
 		obj.addComponent<RenderMode>();
 		obj.addComponent<KeyState>();
         obj.addComponent<TextureDict>();
@@ -39,56 +43,46 @@ namespace renderer {
         obj.addComponent<MaterialSet>();
 		obj.addComponent<GBufferDictCom>();
 
-		Object objCamera = objMgr.create();
+		Object objCamera = m_objMgr->create();
 		objCamera.addComponent<PerspectiveCameraView>();
 
-        loadTextures(evtMgr, assetsDir + texSubDir, config);
-        loadShaders(evtMgr, assetsDir + shaderSubDir, config);
-        loadMaterials(evtMgr, config);
-		loadSceneObjects(objMgr, evtMgr, assetsDir + modelsDir, config);
-        
-		evtMgr.emit<CreateGBufferEvent>(winWidth, winHeight, "main");
-		
-        Object objCenter = objMgr.create();
-		
-        objCenter.addComponent<MaterialCom>(2);
+        loadTextures(assetsDir + texSubDir, config);
+        loadShaders(assetsDir + shaderSubDir, config);
+        loadMaterials(config);
+		loadSceneObjects(assetsDir + modelsDir, config);
 
-		std::vector<OneMesh> meshes;
-        OneMesh mesh;
-        Vertex v;
-        v.position = {-1.0f, 1.0f, 0.0f}; // Left Top
-        v.texCoords = {0.0f, 1.0f};
-        mesh.vertices.push_back(v);
-        v.position = {-1.0f, -1.0f, 0.0f}; // Left Bottom
-        v.texCoords = {0.0f, 0.0f};
-        mesh.vertices.push_back(v);
-        v.position = {1.0f, -1.0f, 0.0f}; // Right Bottom
-        v.texCoords = {1.0f, 0.0f};
-        mesh.vertices.push_back(v);
-        v.position = {1.0f, 1.0f, 0.0f}; // Right Top
-        v.texCoords = {1.0f, 1.0f};
-        mesh.vertices.push_back(v);
-        mesh.indexes = {
-            0, 1, 2,
-            0, 2, 3};
-		meshes.push_back(mesh);
-		objCenter.addComponent<Meshes>(meshes);
-
-		objCenter.addComponent<SpatialData>(
-			Vector3dF{ 0.0f, 0.0f, -10.0f },
-			Vector3dF{ 0.5f, 0.5f, 0.5f },
-			QuaternionF{ 1.0f, 0.0f, 0.0f, 0.0f }
-		);
-		
-		
-
-
+		m_evtMgr->emit<CreateGBufferEvent>(winWidth, winHeight, "main");
 	}
 
-	void LoaderSystem::loadSceneObjects(ObjectManager &objMgr, EventManager &evtMgr, std::string modelsDir, json &config) {
+	void LoaderSystem::CreateGlobalQuadObject() {
+		Object objQuad = m_objMgr->create();
+		std::vector<OneMesh> meshes;
+		OneMesh mesh;
+		Vertex v;
+		v.position = { -1.0f, 1.0f, 0.0f }; // Left Top
+		v.texCoords = { 0.0f, 1.0f };
+		mesh.vertices.push_back(v);
+		v.position = { -1.0f, -1.0f, 0.0f }; // Left Bottom
+		v.texCoords = { 0.0f, 0.0f };
+		mesh.vertices.push_back(v);
+		v.position = { 1.0f, -1.0f, 0.0f }; // Right Bottom
+		v.texCoords = { 1.0f, 0.0f };
+		mesh.vertices.push_back(v);
+		v.position = { 1.0f, 1.0f, 0.0f }; // Right Top
+		v.texCoords = { 1.0f, 1.0f };
+		mesh.vertices.push_back(v);
+		mesh.indexes = {
+			0, 1, 2,
+			0, 2, 3 };
+		meshes.push_back(mesh);
+		objQuad.addComponent<Meshes>(meshes);
+		m_evtMgr->emit<CreateMeshBufferEvent>(objQuad);
+	}
+
+	void LoaderSystem::loadSceneObjects(std::string modelsDir, const json &config) {
 		for (auto objInfo : config["object"])
 		{
-			Object obj = objMgr.create();
+			Object obj = m_objMgr->create();
 			std::string filename = objInfo["model"];
 			auto spatial = objInfo["spatial"];
 			int materialID = objInfo["material"];
@@ -104,10 +98,11 @@ namespace renderer {
 			loadMesh(modelsDir + filename, meshes);
 			auto com = obj.addComponent<Meshes>(meshes);
             obj.addComponent<MaterialCom>(materialID);
+			m_evtMgr->emit<CreateMeshBufferEvent>(obj);
 		}
 	}
 
-	void LoaderSystem::loadTextures(EventManager &evtMgr,  string texDir, json &config)
+	void LoaderSystem::loadTextures(string texDir, const json &config)
 	{
 		for (auto texnfo : config["texture"])
 		{
@@ -115,11 +110,11 @@ namespace renderer {
 			string aliasName = texnfo["alias"];
 			bool hasAlpha = texnfo["hasAlpha"];
 			bool toLinear = texnfo["toLinear"];
-			evtMgr.emit<LoadTextureEvent>(texDir, fileName.c_str(), aliasName, hasAlpha, toLinear);
+			m_evtMgr->emit<LoadTextureEvent>(texDir, fileName.c_str(), aliasName, hasAlpha, toLinear);
 		}
 	}
     
-    void LoaderSystem::loadShaders(EventManager &evtMgr, string shaderDir, json &config)
+    void LoaderSystem::loadShaders(string shaderDir, const json &config)
     {
         for (auto shaderInfo : config["shader"])
         {
@@ -138,15 +133,15 @@ namespace renderer {
                     shaderInfo["fs"].get<std::string>()
                 }
             });
-            evtMgr.emit<LoadShaderEvent>(shaderDir, names, aliasName);
+			m_evtMgr->emit<LoadShaderEvent>(shaderDir, names, aliasName);
         }
     }
     
-    void LoaderSystem::loadMaterials(EventManager &evtMgr, json &config)
+    void LoaderSystem::loadMaterials(const json &config)
     {
         for (auto matInfo : config["material"])
         {
-            evtMgr.emit<LoadMaterialEvent>(matInfo);
+            m_evtMgr->emit<LoadMaterialEvent>(matInfo);
         }
     }
 

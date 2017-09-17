@@ -7,7 +7,8 @@ using namespace std;
 namespace renderer {
 
 	void BufferSystem::init(ObjectManager &objMgr, EventManager &evtMgr) {
-		evtMgr.on<ComponentAddedEvent<Meshes>>(*this);
+		printf("BufferSystem init\n"); 
+		evtMgr.on<CreateMeshBufferEvent>(*this);
 		evtMgr.on<DrawMeshBufferEvent>(*this);
 		evtMgr.on<CreateGBufferEvent>(*this);
 		evtMgr.on<DestroyGBufferEvent>(*this);
@@ -19,10 +20,10 @@ namespace renderer {
 
 	}
 
-	void BufferSystem::receive(const ComponentAddedEvent<Meshes> &evt) {
-		Object obj = evt.m_obj;
+	void BufferSystem::receive(const CreateMeshBufferEvent &evt) {
+		Object obj = evt.obj;
 		auto com = obj.addComponent<MeshBuffersCom>();
-		for(const OneMesh& mesh : evt.component->meshes){
+		for(const OneMesh& mesh :obj.component<Meshes>()->meshes){
 			com->buffers.push_back(CreateMeshBuffer(mesh));
 		}
 	}

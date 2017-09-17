@@ -18,6 +18,8 @@ namespace renderer {
 		void update(ObjectManager &objMgr, EventManager &evtMgr, float dt) override;
 
 		void receive(const RenderSceneEvent &evt);
+
+		void RenderSystem::renderQuad();
 	};
 
 };

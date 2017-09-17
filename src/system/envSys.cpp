@@ -6,9 +6,10 @@ using namespace std;
 namespace renderer {
 	void EnvSystem::init(ObjectManager &objMgr, EventManager &evtMgr)
 	{
+		printf("EnvSystem init\n");
+		evtMgr.on<SetupSDLEvent>(*this);
 		evtMgr.on<ComponentAddedEvent<SDLContext>>(*this);
 		evtMgr.on<ComponentRemovedEvent<SDLContext>>(*this);
-
 		evtMgr.on<CustomSDLKeyboardEvent>(*this);
 	}
 
@@ -17,20 +18,25 @@ namespace renderer {
 		SDL_Event e;
 		while (SDL_PollEvent(&e)) {
 			if (e.type == SDL_KEYDOWN || e.type == SDL_KEYUP) {
-				evtMgr.emit<CustomSDLKeyboardEvent>(com.object(), e.key);
+				evtMgr.emit<CustomSDLKeyboardEvent>(e.key);
 			}
 			else if (e.type == SDL_MOUSEMOTION) {
-				evtMgr.emit<CustomSDLMouseMotionEvent>(com.object(), e.motion);
+				evtMgr.emit<CustomSDLMouseMotionEvent>(e.motion);
 			}
 			else if (e.type == SDL_MOUSEBUTTONDOWN ||
 				e.type == SDL_MOUSEBUTTONUP ||
 				e.type == SDL_MOUSEWHEEL) {
-				evtMgr.emit<CustomSDLMouseButtonEvent>(com.object(), e.button);
+				evtMgr.emit<CustomSDLMouseButtonEvent>(e.button);
 			}
 			else {
-				evtMgr.emit<CustomSDLEvent>(com.object(), e);
+				evtMgr.emit<CustomSDLEvent>(e);
 			}
 		}
+	}
+
+	void EnvSystem::receive(const SetupSDLEvent &evt) {
+		Object obj = m_objMgr->create(); // singleTon, manage kinds of resources
+		obj.addComponent<SDLContext>(evt.winWidth, evt.winHeight);
 	}
 
 	void EnvSystem::receive(const ComponentAddedEvent<SDLContext> &evt) {
@@ -113,9 +119,9 @@ namespace renderer {
 
 	void EnvSystem::receive(const CustomSDLKeyboardEvent &evt)
 	{
-		auto context = evt.obj.component<SDLContext>();
-		auto renderMode = evt.obj.component<RenderMode>();
-		auto keyState = evt.obj.component<KeyState>();
+		auto context = m_objMgr->getSingletonComponent<SDLContext>();
+		auto renderMode = m_objMgr->getSingletonComponent<RenderMode>();
+		auto keyState = m_objMgr->getSingletonComponent<KeyState>();
 
 		auto k = evt.e.keysym.sym;
 		keyState->state[k] = evt.e.state;
@@ -150,7 +156,7 @@ namespace renderer {
 
 	void EnvSystem::receive(const CustomSDLEvent &evt)
 	{
-		auto com = evt.obj.component<SDLContext>();
+		auto com = m_objMgr->getSingletonComponent<SDLContext>();
 		switch (evt.e.type)
 		{
 		case SDL_QUIT:

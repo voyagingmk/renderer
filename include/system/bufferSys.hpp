@@ -20,7 +20,7 @@ namespace renderer {
 
 		void update(ObjectManager &objMgr, EventManager &evtMgr, float dt) override;
 
-		void receive(const ComponentAddedEvent<Meshes> &evt);
+		void receive(const CreateMeshBufferEvent &evt);
 		
 		void receive(const DrawMeshBufferEvent& evt);
 

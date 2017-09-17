@@ -4,26 +4,32 @@
 #include "base.hpp"
 #include "../ecs/ecs.hpp"
 #include "com/meshes.hpp"
+#include "event/winEvent.hpp"
+#include "event/miscEvent.hpp"
 
 
 using json = nlohmann::json;
 using namespace ecs;
 
 namespace renderer {
-	class LoaderSystem : public System<LoaderSystem>
+	class LoaderSystem : public System<LoaderSystem>, public Receiver<LoaderSystem>
 	{
 	public:
 		void init(ObjectManager &objMgr, EventManager &evtMgr) override;
 
 		virtual void update(ObjectManager &objMgr, EventManager &evtMgr, float dt) override {}
-		
-		void loadSceneObjects(ObjectManager &objMgr, EventManager &evtMgr, std::string modelsDir, json &config);
 
-		void loadTextures(EventManager &evtMgr, std::string texDir, json &config);
+		void receive(const LoadConfigEvent &evt);
+
+		void CreateGlobalQuadObject();
+
+		void loadSceneObjects(std::string modelsDir, const json &config);
+
+		void loadTextures(std::string texDir, const json &config);
         
-        void loadShaders(EventManager &evtMgr, std::string shaderDir, json &config);
+        void loadShaders(std::string shaderDir, const json &config);
         
-        void loadMaterials(EventManager &evtMgr, json &config);
+        void loadMaterials(const json &config);
 
 		void loadMesh(const std::string &filename, Meshes& meshes);
 	};

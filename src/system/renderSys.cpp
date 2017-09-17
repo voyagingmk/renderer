@@ -30,10 +30,13 @@ namespace renderer {
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
 
+		// evtMgr.emit<UseGBufferEvent>("main");
+
 		auto com = objMgr.getSingletonComponent<PerspectiveCameraView>();
 		evtMgr.emit<RenderSceneEvent>(
 			com.object(),
 			std::make_tuple(0, 0, context->width, context->height));
+		// evtMgr.emit<UnuseGBufferEvent>("main");
 
 		SDL_GL_SwapWindow(context->win);
 	}
@@ -68,9 +71,13 @@ namespace renderer {
 			evtMgr.emit<UploadMatrixToShaderEvent>(obj, shader);
 			evtMgr.emit<DrawMeshBufferEvent>(obj);
 			evtMgr.emit<DeactiveMaterialEvent>(setting);
-			
-
 		}
 		CheckGLError;
+	}
+
+	void RenderSystem::renderQuad() {
+		//Object obj = m_objMgr->create();
+		// obj.addComponent<
+		// m_evtMgr->emit<DrawMeshBufferEvent>(obj);
 	}
 };

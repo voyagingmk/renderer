@@ -23,6 +23,8 @@ namespace renderer {
 		void shutdown(const char *msg);
 
 		void update(ObjectManager &objMgr, EventManager &evtMgr, float dt) override;
+		
+		void receive(const SetupSDLEvent &evt);
 
 		void receive(const ComponentAddedEvent<SDLContext> &evt);
 

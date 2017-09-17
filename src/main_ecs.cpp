@@ -10,6 +10,7 @@
 #include "system/materialSys.hpp"
 #include "system/spatialSys.hpp"
 #include "system/cameraSys.hpp"
+#include "system/configSys.hpp"
 
 using namespace ecs;
 using namespace renderer;
@@ -39,6 +40,7 @@ void MainECS::setup() {
     m_systemMgr.add<SpatialSystem>();
 	m_systemMgr.add<CameraSystem>();
 	m_systemMgr.add<LoaderSystem>();
+	m_systemMgr.add<ConfigSystem>();
 	m_systemMgr.init();
 }
 

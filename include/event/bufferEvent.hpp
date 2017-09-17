@@ -6,7 +6,16 @@
 
 namespace renderer {
 
-    class DrawMeshBufferEvent : public ecs::Event<DrawMeshBufferEvent> {
+	
+	class CreateMeshBufferEvent: public ecs::Event<CreateMeshBufferEvent> {
+	public:
+		CreateMeshBufferEvent(ecs::Object obj) :
+			obj(obj)
+		{}
+		ecs::Object obj;
+	};
+
+    class DrawMeshBufferEvent: public ecs::Event<DrawMeshBufferEvent> {
     public:
         DrawMeshBufferEvent(ecs::Object obj):
             obj(obj)
@@ -51,6 +60,6 @@ namespace renderer {
 		std::string aliasName;
     };
     
-}
+};
 
 #endif

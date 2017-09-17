@@ -46,7 +46,6 @@ namespace renderer {
 		shader.setMatrix4f("normalMat", com->o2w.mInv.transpose());
 	}
 
-
 	void ShaderSystem::receive(const UploadCameraToShaderEvent& evt) {
 		Object objCamera = evt.objCamera;
 		auto com = objCamera.component<PerspectiveCameraView>();

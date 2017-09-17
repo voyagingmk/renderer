@@ -7,7 +7,8 @@ namespace renderer {
 
 
 	void SpatialSystem::init(ObjectManager &objMgr, EventManager &evtMgr) {
-        evtMgr.on<UpdateSpatialDataEvent>(*this);
+		printf("SpatialSystem init\n"); 
+		evtMgr.on<UpdateSpatialDataEvent>(*this);
         evtMgr.on<ComponentAddedEvent<SpatialData>>(*this);
     }
     

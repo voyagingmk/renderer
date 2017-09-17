@@ -6,35 +6,41 @@
 
 namespace renderer {
 
-	class CustomSDLEvent : public ecs::Event<CustomSDLEvent> {
+	class SetupSDLEvent: public ecs::Event<SetupSDLEvent> {
 	public:
-		CustomSDLEvent(ecs::Object obj, SDL_Event e) :
-			obj(obj), e(e) {}
-		ecs::Object obj;
+		SetupSDLEvent(size_t winWidth, size_t winHeight):
+			winWidth(winWidth),
+			winHeight(winHeight)
+		{}
+		size_t winWidth;
+		size_t winHeight;
+	};
+
+	class CustomSDLEvent: public ecs::Event<CustomSDLEvent> {
+	public:
+		CustomSDLEvent(SDL_Event e) :
+			e(e) {}
 		SDL_Event e;
 	};
 
 	class CustomSDLKeyboardEvent : public ecs::Event<CustomSDLKeyboardEvent> {
 	public:
-		CustomSDLKeyboardEvent(ecs::Object obj, SDL_KeyboardEvent e) :
-			obj(obj), e(e) {}
-		ecs::Object obj;
+		CustomSDLKeyboardEvent(SDL_KeyboardEvent e) :
+			e(e) {}
 		SDL_KeyboardEvent e;
 	};
 
 	class CustomSDLMouseMotionEvent : public ecs::Event<CustomSDLMouseMotionEvent> {
 	public:
-		CustomSDLMouseMotionEvent(ecs::Object obj, SDL_MouseMotionEvent e) :
-			obj(obj), e(e) {}
-		ecs::Object obj;
+		CustomSDLMouseMotionEvent(SDL_MouseMotionEvent e) :
+			e(e) {}
 		SDL_MouseMotionEvent e;
 	};
 
 	class CustomSDLMouseButtonEvent : public ecs::Event<CustomSDLMouseButtonEvent> {
 	public:
-		CustomSDLMouseButtonEvent(ecs::Object obj, SDL_MouseButtonEvent e) :
-			obj(obj), e(e) {}
-		ecs::Object obj;
+		CustomSDLMouseButtonEvent(SDL_MouseButtonEvent e) :
+			e(e) {}
 		SDL_MouseButtonEvent e;
 	};
 

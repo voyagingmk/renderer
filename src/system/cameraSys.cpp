@@ -9,6 +9,7 @@ namespace renderer {
 
 
 	void CameraSystem::init(ObjectManager &objMgr, EventManager &evtMgr) {
+		printf("CameraSystem init\n"); 
 		evtMgr.on<CustomSDLMouseMotionEvent>(*this);
 	}
 
@@ -64,7 +65,7 @@ namespace renderer {
 
 
 	void  CameraSystem::receive(const CustomSDLMouseMotionEvent &evt) {
-		auto cameraView = evt.obj.objMgr().getSingletonComponent<PerspectiveCameraView>();
+		auto cameraView = m_objMgr->getSingletonComponent<PerspectiveCameraView>();
 		auto e = evt.e;
 		float scale = 0.3f;
 		int xrel, yrel;
