@@ -20,6 +20,8 @@ namespace renderer {
 		void update(ObjectManager &objMgr, EventManager &evtMgr, float dt) override;
 
 		void receive(const RenderSceneEvent &evt);
+        
+    private:
 
         void setViewport(const Viewport& viewport);
         
@@ -32,6 +34,8 @@ namespace renderer {
 		Shader getShader(MaterialSettingCom& matCom);
 
 		Shader getShader(std::string shaderName);
+        
+        void renderGBufferDebug(std::string gBufferAliasName, size_t winWidth, size_t winHeight);
 	};
 
 };

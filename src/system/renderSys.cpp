@@ -43,28 +43,7 @@ namespace renderer {
 			&gBufferShader);
 		evtMgr.emit<UnuseGBufferEvent>("main");
 		
-		Shader shader = getShader("screen");
-		shader.use();
-		auto gBufferCom = m_objMgr->getSingletonComponent<GBufferDictCom>();
-        GBufferRef& buf = gBufferCom->dict["main"];
-        
-        clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
-                  GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-        
-        // left-top: position
-        setViewport(std::make_tuple(0, context->height / 2, context->width / 2, context->height / 2));
-        evtMgr.emit<ActiveTextureByIDEvent>(0, buf.posTexID);
-		renderQuad();
-        
-        // right-top: normal
-        setViewport(std::make_tuple(context->width / 2, context->height / 2, context->width / 2, context->height / 2));
-        evtMgr.emit<ActiveTextureByIDEvent>(0, buf.normalTexID);
-        renderQuad();
-
-        // left-bottom: albedo
-        setViewport(std::make_tuple(0, 0, context->width / 2, context->height / 2));
-        evtMgr.emit<ActiveTextureByIDEvent>(0, buf.albedoSpecTexID);
-        renderQuad();
+        renderGBufferDebug("main", context->width, context->height);
         
 		CheckGLError;
 		SDL_GL_SwapWindow(context->win);
@@ -93,10 +72,6 @@ namespace renderer {
 		ObjectManager& objMgr = evt.objCamera.objMgr();
 		EventManager& evtMgr = objMgr.evtMgr();
 		auto matSetCom = objMgr.getSingletonComponent<MaterialSet>();
-		// ShaderMgr &shaderMgr = ShaderMgr::getInstance();
-		// Shader &shader = shaderMgr.getShader(shaderALias);
-		// shader.set3f("viewPos", viewPos);
-		// shader.setMatrix4f("PV", PV);
 		glEnable(GL_DEPTH_TEST);
         setViewport(evt.viewport);
         clearView(evt.clearColor, evt.clearBits);
@@ -147,4 +122,30 @@ namespace renderer {
 			m_evtMgr->emit<DrawMeshBufferEvent>(obj);
 		}
 	}
+    
+    void RenderSystem::renderGBufferDebug(std::string gBufferAliasName, size_t winWidth, size_t winHeight) {
+        Shader shader = getShader("screen");
+        shader.use();
+        auto gBufferCom = m_objMgr->getSingletonComponent<GBufferDictCom>();
+        GBufferRef& buf = gBufferCom->dict[gBufferAliasName];
+        
+        clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
+                  GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        
+        // left-top: position
+        setViewport(std::make_tuple(0, winHeight / 2, winWidth / 2, winHeight / 2));
+        m_evtMgr->emit<ActiveTextureByIDEvent>(0, buf.posTexID);
+        renderQuad();
+        
+        // right-top: normal
+        setViewport(std::make_tuple(winWidth / 2, winHeight / 2, winWidth / 2, winHeight / 2));
+        m_evtMgr->emit<ActiveTextureByIDEvent>(0, buf.normalTexID);
+        renderQuad();
+        
+        // left-bottom: albedo
+        setViewport(std::make_tuple(0, 0, winWidth / 2, winHeight / 2));
+        m_evtMgr->emit<ActiveTextureByIDEvent>(0, buf.albedoSpecTexID);
+        renderQuad();
+        
+    }
 };
