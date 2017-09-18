@@ -100,7 +100,7 @@ namespace renderer {
 			);
 			Meshes meshes;
 			loadMesh(modelsDir + filename, meshes);
-			auto com = obj.addComponent<Meshes>(meshes);
+			obj.addComponent<Meshes>(meshes);
             obj.addComponent<MaterialCom>(materialID);
 			m_evtMgr->emit<CreateMeshBufferEvent>(obj);
 		}

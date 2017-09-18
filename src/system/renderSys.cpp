@@ -47,14 +47,23 @@ namespace renderer {
 		shader.use();
 		auto gBufferCom = m_objMgr->getSingletonComponent<GBufferDictCom>();
 		GBufferRef& buf = gBufferCom->dict["main"];
-		evtMgr.emit<ActiveTextureByIDEvent>(0, buf.normalTexID);
+        evtMgr.emit<ActiveTextureByIDEvent>(0, buf.normalTexID);
 		
-		renderQuad();
+		renderQuad(context->width, context->height);
 
 		CheckGLError;
 		SDL_GL_SwapWindow(context->win);
 	}
-
+    
+    void RenderSystem::resetView(const Viewport& viewport, const Color clearColor, const uint32_t clearBits) {
+        glViewport(std::get<0>(viewport),
+                   std::get<1>(viewport),
+                   std::get<2>(viewport),
+                   std::get<3>(viewport));
+        glClearColor(clearColor.r(), clearColor.g(), clearColor.b(), clearColor.a());
+        glClear(clearBits);
+    }
+    
 	void RenderSystem::receive(const RenderSceneEvent &evt) {
 		ObjectManager& objMgr = evt.objCamera.objMgr();
 		EventManager& evtMgr = objMgr.evtMgr();
@@ -64,12 +73,7 @@ namespace renderer {
 		// shader.set3f("viewPos", viewPos);
 		// shader.setMatrix4f("PV", PV);
 		glEnable(GL_DEPTH_TEST);
-		glViewport(std::get<0>(evt.viewport),
-			std::get<1>(evt.viewport), 
-			std::get<2>(evt.viewport),
-			std::get<3>(evt.viewport));
-		glClearColor(evt.clearColor.r(), evt.clearColor.g(), evt.clearColor.b(), evt.clearColor.a());
-		glClear(evt.clearBits);
+        resetView(evt.viewport, evt.clearColor, evt.clearBits);
 		
 		Shader shader;
 
@@ -112,8 +116,12 @@ namespace renderer {
 		return Shader(spSetCom->alias2HDL[shaderName]);
 	}
 
-	void RenderSystem::renderQuad() {
-		for (auto obj : m_objMgr->entities<GlobalQuadTag>()) {
+    void RenderSystem::renderQuad(size_t winWidth, size_t winHeight) {
+        resetView(std::make_tuple(0, 0, winWidth, winHeight),
+            Color(0.0f, 0.0f, 0.0f, 1.0f),
+            GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        
+        for (auto obj : m_objMgr->entities<GlobalQuadTag>()) {
 			m_evtMgr->emit<DrawMeshBufferEvent>(obj);
 		}
 	}

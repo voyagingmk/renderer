@@ -14,6 +14,8 @@ vec4 EdgeDetection();
 
 void main()
 { 
+   // color = vec4(1.0, 0.0, 0.0, 1.0);
+    // return;
     color = texture(texture1, TexCoord);
 
      // reinhard tone mapping

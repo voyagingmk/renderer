@@ -21,7 +21,9 @@ namespace renderer {
 
 		void receive(const RenderSceneEvent &evt);
 
-		void renderQuad();
+        void resetView(const Viewport& viewport, const Color clearColor, const uint32_t clearBits);
+        
+		void renderQuad(size_t winWidth, size_t winHeight);
 
 		Shader getShader(MaterialSettingCom& matCom);
 
