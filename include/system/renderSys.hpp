@@ -34,6 +34,8 @@ namespace renderer {
 		Shader getShader(MaterialSettingCom& matCom);
 
 		Shader getShader(std::string shaderName);
+
+		void deferredLightingPass(std::string gBufferAliasName, size_t winWidth, size_t winHeight);
         
         void renderGBufferDebug(std::string gBufferAliasName, size_t winWidth, size_t winHeight);
 	};

@@ -6,13 +6,16 @@
 
 namespace renderer {
 
-	struct LightBase {
+	class LightBase {
+	public:
 		enum class Type {
 			Direction = 1,
 			Point = 2
 		};
 	};
-	struct PointLightCom: public LightBase {
+	
+	class PointLightCom: public LightBase {
+	public:
 		PointLightCom(Color ambient,
 			Color diffuse,
 			Color specular,

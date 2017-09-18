@@ -4,6 +4,7 @@
 #include "base.hpp"
 #include "matrix.hpp"
 #include "transform.hpp"
+#include "color.hpp"
 
 namespace renderer
 {    
@@ -45,6 +46,7 @@ namespace renderer
         virtual void set4f(const char *name, float f1, float f2, float f3, float f4);
         virtual void set3f(const char *name, float f1, float f2, float f3);
         virtual void set3f(const char *name, Vector3dF v);
+		virtual void set3f(const char *name, Color c);
         virtual void set2f(const char *name, float f1, float f2);
         virtual void set1f(const char *name, float f1);
         virtual void set1i(const char *name, int i1);

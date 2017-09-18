@@ -66,7 +66,12 @@
         {
             "alias": "deferredShading",
             "vs": "deferred_shading.vs",
-            "fs": "deferred_shading.fs"
+            "fs": "deferred_shading.fs",
+            "textures": {
+                "gPosition": 0,
+                "gNormal": 1,
+                "gAlbedoSpec": 2
+            }
         }
     ],
     "texture": [

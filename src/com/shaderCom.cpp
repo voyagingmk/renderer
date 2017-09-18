@@ -79,6 +79,14 @@ void Shader::set3f(const char* name, Vector3dF v) {
     set3f(loc, v.x, v.y, v.z);
 }
 
+void Shader::set3f(const char *name, Color c) {
+	UniLoc loc = getUniformLocation(name);
+	if (loc == -1) {
+		return;
+	}
+	set3f(loc, c.r(), c.g(), c.b());
+}
+
 
 void Shader::set2f(const char* name, float f1, float f2) {
     UniLoc loc = getUniformLocation(name);

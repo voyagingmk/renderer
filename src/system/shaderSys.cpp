@@ -36,6 +36,16 @@ namespace renderer {
             return;
         }
         com->alias2HDL[evt.aliasname] = spHDL;
+		CheckGLError;
+		if (evt.textures.size() > 0) {
+			Shader shader(spHDL);
+			shader.use();
+			for (auto it = evt.textures.begin(); it != evt.textures.end(); it++) {
+				printf("set texture pos: %s, %d\n", it->first.c_str(), it->second);
+				shader.set1i(it->first.c_str(), it->second);
+				CheckGLError;
+			}
+		}
         printf("ShaderSystem load %s\n", evt.aliasname.c_str());
     }
 

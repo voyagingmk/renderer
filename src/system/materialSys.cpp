@@ -44,9 +44,9 @@ namespace renderer {
 	}
 
 	void MaterialSystem::activeMaterial(Shader& shader, MaterialSettingCom& setting) {
-		shader.set3f("material.ambient", setting.ambient.r(), setting.ambient.g(), setting.ambient.b());
-		shader.set3f("material.diffuse", setting.diffuse.r(), setting.diffuse.g(), setting.diffuse.b());
-		shader.set3f("material.specular", setting.specular.r(), setting.specular.g(), setting.specular.b());
+		shader.set3f("material.ambient", setting.ambient);
+		shader.set3f("material.diffuse", setting.diffuse);
+		shader.set3f("material.specular", setting.specular);
 		shader.set1f("material.shininess", setting.shininess);
 	}
 

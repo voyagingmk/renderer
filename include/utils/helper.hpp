@@ -7,7 +7,7 @@
 
 namespace renderer{
 
-    Color parseColor(nlohmann::json &c)
+    static Color parseColor(nlohmann::json &c)
     {
         if (c.is_null())
         {

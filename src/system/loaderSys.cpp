@@ -150,7 +150,12 @@ namespace renderer {
                     shaderInfo["fs"].get<std::string>()
                 }
             });
-			m_evtMgr->emit<LoadShaderEvent>(shaderDir, names, aliasName);
+			LoadShaderEvent::TextureInfo textures;
+			auto texturesInfo = shaderInfo["textures"];
+			for (json::iterator it = texturesInfo.begin(); it != texturesInfo.end(); it++) {
+				textures.push_back(std::make_pair(it.key(), it.value()));
+			}
+			m_evtMgr->emit<LoadShaderEvent>(shaderDir, names, aliasName, textures);
         }
     }
     

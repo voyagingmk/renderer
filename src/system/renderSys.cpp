@@ -5,6 +5,7 @@
 #include "com/meshes.hpp"
 #include "com/cameraCom.hpp"
 #include "com/bufferCom.hpp"
+#include "com/lightCom.hpp"
 #include "com/miscCom.hpp"
 #include "system/spatialSys.hpp"
 #include "event/materialEvent.hpp"
@@ -31,7 +32,9 @@ namespace renderer {
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
 
-		/*----- first-pass: deferred rendering -----*/
+		/*----- first-pass: deferred rendering-----*/
+		
+		//  geometry pass
 		evtMgr.emit<UseGBufferEvent>("main");
 		Shader gBufferShader = getShader("gBuffer");
 		evtMgr.emit<RenderSceneEvent>(
@@ -42,9 +45,11 @@ namespace renderer {
 			&gBufferShader);
 		evtMgr.emit<UnuseGBufferEvent>("main");
 		
+		// lighting pass
+		deferredLightingPass("main", context->width, context->height);
 		/*----- first-pass end -----*/
 
-        renderGBufferDebug("main", context->width, context->height);
+        // renderGBufferDebug("main", context->width, context->height);
         
 		CheckGLError;
 		SDL_GL_SwapWindow(context->win);
@@ -122,6 +127,31 @@ namespace renderer {
 		}
 	}
     
+	void RenderSystem::deferredLightingPass(std::string gBufferAliasName, size_t winWidth, size_t winHeight) {
+		Shader shader = getShader("deferredShading");
+		shader.use();
+		auto gBufferCom = m_objMgr->getSingletonComponent<GBufferDictCom>();
+		GBufferRef& buf = gBufferCom->dict[gBufferAliasName];
+		m_evtMgr->emit<ActiveTextureByIDEvent>(0, buf.posTexID);
+		m_evtMgr->emit<ActiveTextureByIDEvent>(1, buf.normalTexID);
+		m_evtMgr->emit<ActiveTextureByIDEvent>(2, buf.albedoSpecTexID);
+		setViewport(std::make_tuple(0, 0, winWidth, winHeight));
+		clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
+			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+		uint32_t i = 0;
+		for (auto obj : m_objMgr->entities<PointLightCom, SpatialData>()) {
+			auto spatialDataCom = obj.component<SpatialData>();
+			auto lightCom = obj.component<PointLightCom>();
+			shader.set3f(("lights[" + std::to_string(i) + "].Position").c_str(), spatialDataCom->pos);
+			shader.set3f(("lights[" + std::to_string(i) + "].Color").c_str(), lightCom->ambient);
+			shader.set1f(("lights[" + std::to_string(i) + "].Linear").c_str(), lightCom->linear);
+			shader.set1f(("lights[" + std::to_string(i) + "].Quadratic").c_str(), lightCom->quadratic);
+			shader.set1f(("lights[" + std::to_string(i) + "].constant").c_str(), lightCom->constant);
+			i++;
+		}
+		renderQuad();
+	}
+
     void RenderSystem::renderGBufferDebug(std::string gBufferAliasName, size_t winWidth, size_t winHeight) {
         Shader shader = getShader("screen");
         shader.use();
