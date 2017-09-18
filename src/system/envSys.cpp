@@ -31,6 +31,10 @@ namespace renderer {
 			else {
 				evtMgr.emit<CustomSDLEvent>(e);
 			}
+			if (com->shouldExit) {
+				exit(0);
+				break;
+			}
 		}
 	}
 

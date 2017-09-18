@@ -88,12 +88,12 @@ void RendererContextSDL::loop() {
                 onSDLEvent(e);
             }
 		}
-		if (shouldExit) {
-			break;
-		}
 		onPoll();
         SDL_GL_SwapWindow(win);
 		// SDL_RenderPresent(rendererSDL);
+		if (shouldExit) {
+			break;
+		}
 	}
 }
 
