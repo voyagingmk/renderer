@@ -31,18 +31,19 @@ namespace renderer {
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
 
+		/*----- first-pass: deferred rendering -----*/
 		evtMgr.emit<UseGBufferEvent>("main");
-
 		Shader gBufferShader = getShader("gBuffer");
-		auto com = objMgr.getSingletonComponent<PerspectiveCameraView>();
 		evtMgr.emit<RenderSceneEvent>(
-			com.object(),
+			objMgr.getSingletonComponent<PerspectiveCameraView>().object(),
 			std::make_tuple(0, 0, context->width, context->height),
 			Color(0.0f, 0.0f, 0.0f, 1.0f),
 			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT,
 			&gBufferShader);
 		evtMgr.emit<UnuseGBufferEvent>("main");
 		
+		/*----- first-pass end -----*/
+
         renderGBufferDebug("main", context->width, context->height);
         
 		CheckGLError;
@@ -69,9 +70,7 @@ namespace renderer {
     }
     
 	void RenderSystem::receive(const RenderSceneEvent &evt) {
-		ObjectManager& objMgr = evt.objCamera.objMgr();
-		EventManager& evtMgr = objMgr.evtMgr();
-		auto matSetCom = objMgr.getSingletonComponent<MaterialSet>();
+		auto matSetCom = m_objMgr->getSingletonComponent<MaterialSet>();
 		glEnable(GL_DEPTH_TEST);
         setViewport(evt.viewport);
         clearView(evt.clearColor, evt.clearBits);
@@ -84,24 +83,24 @@ namespace renderer {
 		}
 
 		// TODO: sort by material
-		for (const Object obj : objMgr.entities<Meshes, MaterialCom, SpatialData, MeshBuffersCom>()) {
+		for (const Object obj : m_objMgr->entities<Meshes, MaterialCom, SpatialData, MeshBuffersCom>()) {
 			auto matCom = obj.component<MaterialCom>();
 			auto setting = matSetCom->settings[matCom->settingID];
 			if (evt.shader == nullptr) {
 				shader = getShader(setting);
 				shader.use();
 			}
-			evtMgr.emit<ActiveMaterialEvent>(setting, shader);
+			m_evtMgr->emit<ActiveMaterialEvent>(setting, shader);
 			CheckGLError; 
-			evtMgr.emit<ActiveSpatialDataEvent>(obj, shader);
+			m_evtMgr->emit<ActiveSpatialDataEvent>(obj, shader);
 			CheckGLError; 
-			evtMgr.emit<UploadCameraToShaderEvent>(evt.objCamera, shader);
+			m_evtMgr->emit<UploadCameraToShaderEvent>(evt.objCamera, shader);
 			CheckGLError; 
-			evtMgr.emit<UploadMatrixToShaderEvent>(obj, shader);
+			m_evtMgr->emit<UploadMatrixToShaderEvent>(obj, shader);
 			CheckGLError; 
-			evtMgr.emit<DrawMeshBufferEvent>(obj);
+			m_evtMgr->emit<DrawMeshBufferEvent>(obj);
 			CheckGLError;
-			evtMgr.emit<DeactiveMaterialEvent>(setting);
+			m_evtMgr->emit<DeactiveMaterialEvent>(setting);
 			CheckGLError;
 		}
 		CheckGLError;
