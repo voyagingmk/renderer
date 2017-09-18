@@ -6,6 +6,7 @@
 #include "com/spatialData.hpp"
 #include "com/cameraCom.hpp"
 #include "com/meshes.hpp"
+#include "com/lightCom.hpp"
 #include "com/materialCom.hpp"
 #include "com/sdlContext.hpp"
 #include "com/renderMode.hpp"
@@ -16,6 +17,7 @@
 #include "event/materialEvent.hpp"
 #include "event/bufferEvent.hpp"
 #include "importer.hpp"
+#include "utils/helper.hpp"
 
 using namespace std;
 
@@ -50,7 +52,8 @@ namespace renderer {
         loadTextures(assetsDir + texSubDir, config);
         loadShaders(assetsDir + shaderSubDir, config);
         loadMaterials(config);
-		loadSceneObjects(assetsDir + modelsDir, config);
+		loadSceneObjects(assetsDir + modelsDir, config); 
+		loadLights(config);
 
 		m_evtMgr->emit<CreateGBufferEvent>(winWidth, winHeight, "main");
 
@@ -83,6 +86,23 @@ namespace renderer {
 		objQuad.addComponent<GlobalQuadTag>();
 	}
 
+	void LoaderSystem::loadLights(const json &config) {
+		for (auto lightInfo : config["light"])
+		{
+			Object obj = m_objMgr->create();
+			auto spatial = lightInfo["spatial"];
+			loadSpatialData(obj, spatial);
+
+			obj.addComponent<PointLightCom>(
+				parseColor(lightInfo["ambient"]),
+				parseColor(lightInfo["diffuse"]),
+				parseColor(lightInfo["specular"]),
+				lightInfo["constant"],
+				lightInfo["linear"],
+				lightInfo["quadratic"]);
+		}
+	}
+
 	void LoaderSystem::loadSceneObjects(std::string modelsDir, const json &config) {
 		for (auto objInfo : config["object"])
 		{
@@ -90,14 +110,7 @@ namespace renderer {
 			std::string filename = objInfo["model"];
 			auto spatial = objInfo["spatial"];
 			int materialID = objInfo["material"];
-			auto pos = spatial[0];
-			auto scale = spatial[1];
-			auto o = spatial[2];
-			obj.addComponent<SpatialData>(
-				Vector3dF{ (float)pos[0], (float)pos[1], (float)pos[2] },
-				Vector3dF{ (float)scale[0], (float)scale[1], (float)scale[2] },
-				QuaternionF{ (float)o[0], (float)o[1], (float)o[2], (float)o[3] }
-			);
+			loadSpatialData(obj, spatial);
 			Meshes meshes;
 			loadMesh(modelsDir + filename, meshes);
 			obj.addComponent<Meshes>(meshes);
@@ -154,5 +167,16 @@ namespace renderer {
 		ImporterAssimp &importer = ImporterAssimp::getInstance();
 		meshes.meshes.push_back(OneMesh());
 		importer.Import<OneMesh>(filename, meshes.meshes[meshes.meshes.size()- 1]);
+	}
+
+	void LoaderSystem::loadSpatialData(Object obj, const json &spatial) {
+		auto pos = spatial[0];
+		auto scale = spatial[1];
+		auto o = spatial[2];
+		obj.addComponent<SpatialData>(
+			Vector3dF{ (float)pos[0], (float)pos[1], (float)pos[2] },
+			Vector3dF{ (float)scale[0], (float)scale[1], (float)scale[2] },
+			QuaternionF{ (float)o[0], (float)o[1], (float)o[2], (float)o[3] }
+		);
 	}
 };

@@ -47,6 +47,8 @@ namespace renderer {
 		GBufferRef CreateGBuffer(size_t width, size_t height);
 
 		void DestroyGBuffer(GBufferRef);
+
+		void CopyFrameBufferDepth(FrameBufferBase& buf);
 	};
 };
 

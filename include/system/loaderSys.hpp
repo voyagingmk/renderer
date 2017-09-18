@@ -23,6 +23,8 @@ namespace renderer {
 
 		void CreateGlobalQuadObject();
 
+		void loadLights(const json &config);
+
 		void loadSceneObjects(std::string modelsDir, const json &config);
 
 		void loadTextures(std::string texDir, const json &config);
@@ -32,6 +34,10 @@ namespace renderer {
         void loadMaterials(const json &config);
 
 		void loadMesh(const std::string &filename, Meshes& meshes);
+
+	private:
+		void loadSpatialData(Object obj, const json &config);
+
 	};
 
 };

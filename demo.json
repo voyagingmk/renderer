@@ -97,20 +97,11 @@
     ],
     "light": [
         {
-            "type": "DirectionLight",
-            "dir": [
-                -1,
-                -1,
-                0
-            ],
-            "softshadow": false
-        },
-        {
             "type": "PointLight",
-            "pos": [
-                0,
-                0,
-                90
+            "spatial": [
+                [0, 100, 0],
+                [1, 1, 1],
+                [1, 0, 0, 0]
             ],
             "ambient": [
                 0.5,
@@ -128,6 +119,9 @@
                 1.0
             ],
             "radius": 10,
+            "constant": 1.0,
+            "linear": 0.7,
+            "quadratic": 1.8,
             "shadow": true
         }
     ],
