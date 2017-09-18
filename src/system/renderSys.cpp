@@ -38,7 +38,7 @@ namespace renderer {
 		evtMgr.emit<RenderSceneEvent>(
 			com.object(),
 			std::make_tuple(0, 0, context->width, context->height),
-			Color(0.5f, 0.5f, 0.5f, 1.0f),
+			Color(0.0f, 0.0f, 0.0f, 1.0f),
 			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT,
 			&gBufferShader);
 		evtMgr.emit<UnuseGBufferEvent>("main");
@@ -46,20 +46,45 @@ namespace renderer {
 		Shader shader = getShader("screen");
 		shader.use();
 		auto gBufferCom = m_objMgr->getSingletonComponent<GBufferDictCom>();
-		GBufferRef& buf = gBufferCom->dict["main"];
+        GBufferRef& buf = gBufferCom->dict["main"];
+        
+        clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
+                  GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        
+        // left-top: position
+        setViewport(std::make_tuple(0, context->height / 2, context->width / 2, context->height / 2));
+        evtMgr.emit<ActiveTextureByIDEvent>(0, buf.posTexID);
+		renderQuad();
+        
+        // right-top: normal
+        setViewport(std::make_tuple(context->width / 2, context->height / 2, context->width / 2, context->height / 2));
         evtMgr.emit<ActiveTextureByIDEvent>(0, buf.normalTexID);
-		
-		renderQuad(context->width, context->height);
+        renderQuad();
 
+        // left-bottom: albedo
+        setViewport(std::make_tuple(0, 0, context->width / 2, context->height / 2));
+        evtMgr.emit<ActiveTextureByIDEvent>(0, buf.albedoSpecTexID);
+        renderQuad();
+        
 		CheckGLError;
 		SDL_GL_SwapWindow(context->win);
 	}
     
-    void RenderSystem::resetView(const Viewport& viewport, const Color clearColor, const uint32_t clearBits) {
+    void RenderSystem::setViewport(const Viewport& viewport) {
         glViewport(std::get<0>(viewport),
                    std::get<1>(viewport),
                    std::get<2>(viewport),
                    std::get<3>(viewport));
+    }
+    
+    void RenderSystem::scissorView(const Viewport& viewport) {
+        glScissor(std::get<0>(viewport),
+                   std::get<1>(viewport),
+                   std::get<2>(viewport),
+                   std::get<3>(viewport));
+    }
+    
+    void RenderSystem::clearView(const Color clearColor, const uint32_t clearBits) {
         glClearColor(clearColor.r(), clearColor.g(), clearColor.b(), clearColor.a());
         glClear(clearBits);
     }
@@ -73,7 +98,8 @@ namespace renderer {
 		// shader.set3f("viewPos", viewPos);
 		// shader.setMatrix4f("PV", PV);
 		glEnable(GL_DEPTH_TEST);
-        resetView(evt.viewport, evt.clearColor, evt.clearBits);
+        setViewport(evt.viewport);
+        clearView(evt.clearColor, evt.clearBits);
 		
 		Shader shader;
 
@@ -116,11 +142,7 @@ namespace renderer {
 		return Shader(spSetCom->alias2HDL[shaderName]);
 	}
 
-    void RenderSystem::renderQuad(size_t winWidth, size_t winHeight) {
-        resetView(std::make_tuple(0, 0, winWidth, winHeight),
-            Color(0.0f, 0.0f, 0.0f, 1.0f),
-            GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-        
+    void RenderSystem::renderQuad() {
         for (auto obj : m_objMgr->entities<GlobalQuadTag>()) {
 			m_evtMgr->emit<DrawMeshBufferEvent>(obj);
 		}
