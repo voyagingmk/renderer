@@ -43,14 +43,12 @@ void main()
         vec3 halfwayDir = normalize(lightDir + viewDir);  
         float spec = pow(max(dot(Normal, halfwayDir), 0.0), 16.0);
         vec3 specular = lights[i].Color * spec * 1.0;
-       // FragColor = vec4(specular, 1.0);
-       // return;
         // attenuation
         float distance = length(frag2light);
-        float attenuation = 1.0;// 1.0 / (1.0 + lights[i].Linear * distance + lights[i].Quadratic * distance * distance);
+        float attenuation = 1.0 / (1.0 + lights[i].Linear * distance + lights[i].Quadratic * distance * distance);
         diffuse *= attenuation;
         specular *= attenuation;
-        lighting += diffuse; // + specular;        
+        lighting += diffuse + specular;
     }
     FragColor = vec4(lighting, 1.0);
     // reinhard tone mapping

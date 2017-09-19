@@ -10,6 +10,7 @@
 #include "system/materialSys.hpp"
 #include "system/spatialSys.hpp"
 #include "system/cameraSys.hpp"
+#include "system/motionSys.hpp"
 #include "system/configSys.hpp"
 
 using namespace ecs;
@@ -38,7 +39,8 @@ void MainECS::setup() {
     m_systemMgr.add<MaterialSystem>();
 	m_systemMgr.add<BufferSystem>();
     m_systemMgr.add<SpatialSystem>();
-	m_systemMgr.add<CameraSystem>();
+    m_systemMgr.add<CameraSystem>();
+    m_systemMgr.add<MotionSystem>();
 	m_systemMgr.add<LoaderSystem>();
 	m_systemMgr.add<ConfigSystem>();
 	m_systemMgr.init();
@@ -48,12 +50,18 @@ void MainECS::update(float dt) {
 	m_systemMgr.updateAll(dt);
 }
 
+class TT {
+public:
+    TT() { printf("TT ctor \n"); }
+    ~TT() { printf("TT dtor \n"); }
+};
+
 int ecsMain(int argc, char *argv[])
 {
 	MainECS ecsObj;
 	ecsObj.setup();
 	while (1) {
-		ecsObj.update(0.1f);
+		ecsObj.update(0.001f);
 		SDL_Delay(1);
 	}
 	return 0;

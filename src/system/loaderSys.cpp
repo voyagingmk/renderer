@@ -12,10 +12,12 @@
 #include "com/renderMode.hpp"
 #include "com/keyState.hpp"
 #include "com/miscCom.hpp"
+#include "com/motionCom.hpp"
 #include "event/textureEvent.hpp"
 #include "event/shaderEvent.hpp"
 #include "event/materialEvent.hpp"
 #include "event/bufferEvent.hpp"
+#include "event/actionEvent.hpp"
 #include "importer.hpp"
 #include "utils/helper.hpp"
 
@@ -116,6 +118,13 @@ namespace renderer {
 			obj.addComponent<Meshes>(meshes);
             obj.addComponent<MaterialCom>(materialID);
 			m_evtMgr->emit<CreateMeshBufferEvent>(obj);
+            
+            obj.addComponent<MotionCom>();
+            ActionData data;
+            data.repeat = -1;
+            data.actions.push_back(std::make_shared<MoveByAction>(0.5f, Vector3dF(-1.0f, 0.0f, 0.0f)));
+            data.actions.push_back(std::make_shared<MoveByAction>(0.5f, Vector3dF(1.0f, 0.0f, 0.0f)));
+            m_evtMgr->emit<AddActionEvent>(obj, "test", data);
 		}
 	}
 
