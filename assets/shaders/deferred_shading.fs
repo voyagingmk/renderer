@@ -29,7 +29,7 @@ void main()
     float Specular = texture(gAlbedoSpec, TexCoord).a;
     
     // then calculate lighting as usual
-    vec3 lighting  = Diffuse * 1.0; // hard-coded ambient component
+    vec3 lighting  = Diffuse * 0.1; // hard-coded ambient component
     vec3 viewDir  = normalize(viewPos - FragPos);
     for(int i = 0; i < LightNum; ++i)
     {
@@ -53,4 +53,9 @@ void main()
         lighting += diffuse; // + specular;        
     }
     FragColor = vec4(lighting, 1.0);
+    // reinhard tone mapping
+    vec3 mapped = FragColor.rgb / (FragColor.rgb + vec3(1.0));
+     
+    // gamma correction
+    FragColor.rgb = pow(mapped, vec3(1.0 / 2.2));
 }
