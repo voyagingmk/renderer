@@ -148,11 +148,13 @@ namespace renderer {
             float pitchRadian = T(0.5) * Radians(angle);
             return Quaternion<T>{T(cos(pitchRadian)), T(sin(pitchRadian)), T(0.0), T(0.0)};
         }
+        
         // y-axis clockwise
         static Quaternion<T> RotateY(T angle) {
             T yawRadian = T(0.5) * Radians(angle);
             return Quaternion<T>{T(cos(yawRadian)), T(0.0), T(sin(yawRadian)), T(0.0)};
         }
+        
         // z-axis clockwise
         static Quaternion<T> RotateZ(T angle) {
             T rollRadian = T(0.5) * Radians(angle);
@@ -175,6 +177,22 @@ namespace renderer {
                 2.0f*(xy + zs), 1.0f - 2.0f*(x2 + z2), 2.0f*(yz - xs), 0.0f,
                 2.0f*(xz - ys), 2.0f*(yz + xs), 1.0f - 2.0f*(x2 + y2), 0.0f,
                 0.0f, 0.0f, 0.0f, 1.0f};
+        }
+        
+        void FromAxis(const T phi, const Axis axis) {
+            s = cos(phi/(T(2.0)));
+            T sinphi = sin(phi/(T(2.0)));
+            Vector3dF a;
+            if (axis == Axis::x) {
+                a = Vector3dF(1.0f, 0.0f, 0.0f);
+            } else if (axis == Axis::y) {
+                a = Vector3dF(0.0f, 1.0f, 0.0f);
+            } else if (axis == Axis::z) {
+                a = Vector3dF(0.0f, 0.0f, 1.0f);
+            }
+            x = a[0] * sinphi;
+            y = a[1] * sinphi;
+            z = a[2] * sinphi;
         }
         
         void FromAxis(const T phi, const Vector3dF a) {

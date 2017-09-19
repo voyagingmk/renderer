@@ -13,6 +13,7 @@
 #include "com/keyState.hpp"
 #include "com/miscCom.hpp"
 #include "com/motionCom.hpp"
+#include "com/actionCom.hpp"
 #include "event/textureEvent.hpp"
 #include "event/shaderEvent.hpp"
 #include "event/materialEvent.hpp"
@@ -122,8 +123,10 @@ namespace renderer {
             obj.addComponent<MotionCom>();
             ActionData data;
             data.repeat = -1;
-            data.actions.push_back(std::make_shared<MoveByAction>(0.5f, Vector3dF(-1.0f, 0.0f, 0.0f)));
-            data.actions.push_back(std::make_shared<MoveByAction>(0.5f, Vector3dF(1.0f, 0.0f, 0.0f)));
+            //data.actions.push_back(std::make_shared<MoveByAction>(0.5f, Vector3dF(-1.0f, 0.0f, 0.0f)));
+            //data.actions.push_back(std::make_shared<MoveByAction>(0.5f, Vector3dF(1.0f, 0.0f, 0.0f)));
+            data.actions.push_back(std::make_shared<RotateByAction>(0.5f, Axis::y, 90.0f));
+            data.actions.push_back(std::make_shared<RotateByAction>(0.5f, Axis::y, -90.0f));
             m_evtMgr->emit<AddActionEvent>(obj, "test", data);
 		}
 	}

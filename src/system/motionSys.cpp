@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "system/motionSys.hpp"
-#include "com/motionCom.hpp"
 #include "com/spatialData.hpp"
 #include "event/spatialEvent.hpp"
 
@@ -23,31 +22,41 @@ namespace renderer {
                 // printf("acData t: %.2f, idx: %u, state: %u  \n", acData.t, acData.idx, acData.state);
                 auto ptr = acData.actions[acData.idx];
                 ActionBase* base = ptr.get();
-                switch(base->type) {
-                    case ActionType::MoveBy: {
-                        MoveByAction* ac = dynamic_cast<MoveByAction*>(base);
-                        if (acData.state == 0) {
-                            ac->o = spatial->pos;
-                            acData.state = 1;
-                        } else {
-                            acData.t += dt;
-                            float p = acData.t / ac->duration;
-                            // interpolate
-                            Vector3dF pos = ac->o + ac->by * p;
-                            spatial->pos = pos;
-                            m_evtMgr->emit<UpdateSpatialDataEvent>(obj);
-                            if(p >= 1.0f) {
-                                acData.t = 0;
-                                acData.state = 0;
-                                acData.idx++;
-                                pos.debug();
-                            }
+                if (acData.state == 0) {
+                    acData.state = 1;
+                    switch(base->type) {
+                        case ActionType::MoveBy: {
+                            BeginAction(obj, dynamic_cast<MoveByAction*>(base));
+                            break;
                         }
-                        
-                        break;
+                        case ActionType::RotateBy: {
+                            BeginAction(obj, dynamic_cast<RotateByAction*>(base));
+                            break;
+                        }
+                        default: {
+                            break;
+                        }
                     }
-                    default: {
-                        break;
+                } else {
+                    acData.t += dt;
+                    float p = acData.t / base->duration;
+                    switch(base->type) {
+                        case ActionType::MoveBy: {
+                            InterpolateAction(obj, dynamic_cast<MoveByAction*>(base), p);
+                            break;
+                        }
+                        case ActionType::RotateBy: {
+                            InterpolateAction(obj, dynamic_cast<RotateByAction*>(base), p);
+                            break;
+                        }
+                        default: {
+                            break;
+                        }
+                    }
+                    if(p >= 1.0f) {
+                        acData.t = 0;
+                        acData.state = 0;
+                        acData.idx++;
                     }
                 }
                 if (acData.idx == acData.actions.size()) {
@@ -68,5 +77,27 @@ namespace renderer {
         com->acContainer.insert(std::make_pair(evt.name, evt.actionData));
     }
 
-
+    void MotionSystem::BeginAction(Object obj, MoveByAction* ac) {
+        auto spatial = obj.component<SpatialData>();
+        ac->o = spatial->pos;
+    }
+    
+    void MotionSystem::InterpolateAction(Object obj, MoveByAction* ac, float p) {
+        auto spatial = obj.component<SpatialData>();
+        Vector3dF pos = ac->o + ac->by * p;
+        spatial->pos = pos;
+        m_evtMgr->emit<UpdateSpatialDataEvent>(obj);
+    }
+    
+    void MotionSystem::BeginAction(Object obj, RotateByAction* ac) {
+        auto spatial = obj.component<SpatialData>();
+        ac->o = spatial->orientation;
+    }
+    
+    void MotionSystem::InterpolateAction(Object obj, RotateByAction* ac, float p) {
+        auto spatial = obj.component<SpatialData>();
+        spatial->orientation = ac->o + ac->diff * p;
+        // spatial->orientation.debug();
+        m_evtMgr->emit<UpdateSpatialDataEvent>(obj);
+    }
 };

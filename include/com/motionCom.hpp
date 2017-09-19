@@ -11,37 +11,20 @@ namespace renderer {
         MoveTo,
         ScaleBy,
         ScaleTo,
+        RotateBy,
+        RotateTo,
         DelayTime
     };
 
     class ActionBase {
     public:
         ActionBase(float duration, ActionType type):
-            duration(duration),
-            type(type)
+            type(type),
+            duration(duration)
         {}
         virtual ~ActionBase() {}
         ActionType type;
         float duration;
-    };
-
-    class MoveByAction: public ActionBase {
-    public:
-        MoveByAction(float duration, Vector3dF by):
-            ActionBase(duration, ActionType::MoveBy),
-            by(by)
-        {}
-        Vector3dF o;
-        Vector3dF by;
-    };
-
-    class MoveToAction: public ActionBase {
-    public:
-        MoveToAction(float duration, Vector3dF to):
-            ActionBase(duration, ActionType::MoveTo),
-            to(to)
-        {}
-        Vector3dF to;
     };
 
     typedef std::vector<std::shared_ptr<ActionBase>> Actions;
