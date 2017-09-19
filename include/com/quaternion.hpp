@@ -204,42 +204,32 @@ namespace renderer {
             y = a[1] * sinphi;
             z = a[2] * sinphi;
         }
-        
-        // https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles#Euler_Angles_to_Quaternion_Conversion
-        // phi, theta, psi convention
-        void FromEulerAngles(T phi, T theta, T psi)
+   
+        void ToEulerAngles(T &alpha, T &beta, T &gamma) const
         {
-            T cosphi = cos(phi / 2.0);
-            T costheta = cos(theta / 2.0);
-            T cospsi = cos(psi / 2.0);
-            T sinphi = sin(phi / 2.0);
-            T sintheta = sin(theta / 2.0);
-            T sinpsi = sin(psi / 2.0);
-            s = cosphi * costheta * cospsi + sinphi * sintheta * sinpsi;
-            x = sinphi * costheta * cospsi - cosphi * sintheta * sinpsi;
-            y = cosphi * sintheta * cospsi + sinphi * costheta * sinpsi;
-            z = cosphi * costheta * sinpsi - sinphi * sintheta * cospsi;
+#define P(a,b,c,d) (2*((a)*(b)+(c)*(d)))
+#define M(a,b,c,d) (2*((a)*(b)-(c)*(d)))
+            alpha = atan2( P(s,x,y,z) , 1-P(x,x,y,y) );
+            beta  = asin ( M(s,y,z,x) );
+            gamma = atan2( P(s,z,x,y) , 1-P(y,y,z,z) );
+#undef P
+#undef M
         }
         
-        void toEulerianAngle(const Quaternion& q, double& roll, double& pitch, double& yaw)
+
+        void FromEulerAngles(T alpha, T beta, T gamma)
         {
-            double ysqr = q.y() * q.y();
+            T cosalpha = cos(alpha / 2.0);
+            T cosbeta = cos(beta / 2.0);
+            T cosgamma = cos(gamma / 2.0);
+            T sinalpha = sin(alpha / 2.0);
+            T sinbeta = sin(beta / 2.0);
+            T singamma = sin(gamma / 2.0);
             
-            // roll (x-axis rotation)
-            double t0 = +2.0 * (q.w() * q.x() + q.y() * q.z());
-            double t1 = +1.0 - 2.0 * (q.x() * q.x() + ysqr);
-            roll = std::atan2(t0, t1);
-            
-            // pitch (y-axis rotation)
-            double t2 = +2.0 * (q.w() * q.y() - q.z() * q.x());
-            t2 = ((t2 > 1.0) ? 1.0 : t2);
-            t2 = ((t2 < -1.0) ? -1.0 : t2);
-            pitch = std::asin(t2);
-            
-            // yaw (z-axis rotation)
-            double t3 = +2.0 * (q.w() * q.z() + q.x() * q.y());
-            double t4 = +1.0 - 2.0 * (ysqr + q.z() * q.z());  
-            yaw = std::atan2(t3, t4);
+            s = cosalpha * cosbeta * cosgamma + sinalpha * sinbeta * singamma;
+            x = sinalpha * cosbeta * cosgamma - cosalpha * sinbeta * singamma;
+            y = cosalpha * sinbeta * cosgamma + sinalpha * cosbeta * singamma;
+            z = cosalpha * cosbeta * singamma - sinalpha * sinbeta * cosgamma;
         }
 
 	};

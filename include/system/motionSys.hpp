@@ -23,11 +23,11 @@ namespace renderer {
     private:
         void BeginAction(Object obj, MoveByAction* ac);
         
-        void InterpolateAction(Object obj, MoveByAction* ac, float p);
+        void InterpolateAction(Object obj, MoveByAction* ac, float p, float duration, float dt);
         
         void BeginAction(Object obj, RotateByAction* ac);
         
-        void InterpolateAction(Object obj, RotateByAction* ac, float p);
+        void InterpolateAction(Object obj, RotateByAction* ac, float p, float duration, float dt);
         
     };
 };

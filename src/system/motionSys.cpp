@@ -42,11 +42,11 @@ namespace renderer {
                     float p = acData.t / base->duration;
                     switch(base->type) {
                         case ActionType::MoveBy: {
-                            InterpolateAction(obj, dynamic_cast<MoveByAction*>(base), p);
+                            InterpolateAction(obj, dynamic_cast<MoveByAction*>(base), p, base->duration, dt);
                             break;
                         }
                         case ActionType::RotateBy: {
-                            InterpolateAction(obj, dynamic_cast<RotateByAction*>(base), p);
+                            InterpolateAction(obj, dynamic_cast<RotateByAction*>(base), p, base->duration, dt);
                             break;
                         }
                         default: {
@@ -82,22 +82,22 @@ namespace renderer {
         ac->o = spatial->pos;
     }
     
-    void MotionSystem::InterpolateAction(Object obj, MoveByAction* ac, float p) {
+    void MotionSystem::InterpolateAction(Object obj, MoveByAction* ac, float p, float duration, float dt) {
         auto spatial = obj.component<SpatialData>();
         Vector3dF pos = ac->o + ac->by * p;
         spatial->pos = pos;
         m_evtMgr->emit<UpdateSpatialDataEvent>(obj);
     }
     
-    void MotionSystem::BeginAction(Object obj, RotateByAction* ac) {
-        auto spatial = obj.component<SpatialData>();
-        ac->o = spatial->orientation;
-    }
+    void MotionSystem::BeginAction(Object obj, RotateByAction* ac) {    }
     
-    void MotionSystem::InterpolateAction(Object obj, RotateByAction* ac, float p) {
+    void MotionSystem::InterpolateAction(Object obj, RotateByAction* ac, float p, float duration, float dt) {
         auto spatial = obj.component<SpatialData>();
-        spatial->orientation = ac->o + ac->diff * p;
-        // spatial->orientation.debug();
+       // auto q = ac->diff * (dt / duration);
+        // spatial->orientation = q * spatial->orientation * q.Inverse();
+       // qt=sin((1−t)θ)sinθq1+sin(tθ)sinθq2
+        // spatial->orientation = spatial->orientation.Normalize();
+        spatial->orientation.debug();
         m_evtMgr->emit<UpdateSpatialDataEvent>(obj);
     }
 };

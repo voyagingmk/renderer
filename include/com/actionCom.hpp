@@ -38,23 +38,38 @@ namespace renderer {
     };
  
     
-    class RotateByAction: public ActionBase {
+    class RotateToAction: public ActionBase {
     public:
-        RotateByAction(float duration, Axis axis, float angle):
-            ActionBase(duration, ActionType::RotateBy)
+        RotateToAction(float duration, float phi, float theta, float psi):
+            ActionBase(duration, ActionType::RotateTo)
         {
-            diff.FromAxis(angle, axis);
+            to.FromEulerAngles(phi, theta, psi);
         }
         
-        RotateByAction(float duration, QuaternionF diff):
-        ActionBase(duration, ActionType::RotateBy),
-        diff(diff)
+        RotateToAction(float duration, QuaternionF to):
+            ActionBase(duration, ActionType::RotateTo),
+            to(to)
         {}
-        
         QuaternionF o;
-        QuaternionF diff;
+        QuaternionF to;
     };
     
+    
+    class RotateByAction: public ActionBase {
+    public:
+        RotateByAction(float duration, float phi, float theta, float psi):
+        ActionBase(duration, ActionType::RotateBy)
+        {
+            to.FromEulerAngles(phi, theta, psi);
+        }
+        
+        RotateByAction(float duration, QuaternionF to):
+        ActionBase(duration, ActionType::RotateBy),
+        to(to)
+        {}
+        QuaternionF o;
+        QuaternionF to;
+    };
     
     class DelayTimeAction: public ActionBase {
     public:
