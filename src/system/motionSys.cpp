@@ -92,6 +92,8 @@ namespace renderer {
     void MotionSystem::BeginAction(Object obj, RotateByAction* ac) { 
 		auto spatial = obj.component<SpatialData>();
 		ac->o = spatial->orientation;
+		auto by = ac->to;
+		ac->to = by * spatial->orientation;
 	}
     
     void MotionSystem::InterpolateAction(Object obj, RotateByAction* ac, float p, float duration, float dt) {
