@@ -56,13 +56,20 @@ public:
     ~TT() { printf("TT dtor \n"); }
 };
 
+
+
+
 int ecsMain(int argc, char *argv[])
 {
 	MainECS ecsObj;
 	ecsObj.setup();
+	int interval = 10;
+	int lastTick = SDL_GetTicks();
 	while (1) {
-		ecsObj.update(0.001f);
-		SDL_Delay(1);
+		ecsObj.update(0.01f);
+		while (SDL_GetTicks() < lastTick + interval) {
+		}
+		lastTick = SDL_GetTicks();
 	}
 	return 0;
 }
