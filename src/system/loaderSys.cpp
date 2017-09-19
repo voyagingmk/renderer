@@ -125,8 +125,8 @@ namespace renderer {
             data.repeat = -1;
             //data.actions.push_back(std::make_shared<MoveByAction>(0.5f, Vector3dF(-1.0f, 0.0f, 0.0f)));
             //data.actions.push_back(std::make_shared<MoveByAction>(0.5f, Vector3dF(1.0f, 0.0f, 0.0f)));
-            data.actions.push_back(std::make_shared<RotateByAction>(0.5f, 0.0f, 90.0f, 0.0f));
-            data.actions.push_back(std::make_shared<RotateByAction>(0.5f, 0.0f, -90.0f, 0.0f));
+            data.actions.push_back(std::make_shared<RotateByAction>(1.0f, 0.0f, 180.0f, 0.0f));
+            data.actions.push_back(std::make_shared<RotateByAction>(2.0f, 0.0f, -180.0f, 0.0f));
             m_evtMgr->emit<AddActionEvent>(obj, "test", data);
 		}
 	}

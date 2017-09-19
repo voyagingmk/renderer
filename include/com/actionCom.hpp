@@ -58,17 +58,18 @@ namespace renderer {
     class RotateByAction: public ActionBase {
     public:
         RotateByAction(float duration, float alpha, float beta, float gamma):
-        ActionBase(duration, ActionType::RotateBy)
+			ActionBase(duration, ActionType::RotateBy)
         {
-            to.FromEulerAngles(Radians(alpha), Radians(beta), Radians(gamma));
+            by.FromEulerAngles(Radians(alpha), Radians(beta), Radians(gamma));
         }
         
-        RotateByAction(float duration, QuaternionF to):
-        ActionBase(duration, ActionType::RotateBy),
-        to(to)
+        RotateByAction(float duration, QuaternionF by):
+			ActionBase(duration, ActionType::RotateBy),
+			by(by)
         {}
         QuaternionF o;
-        QuaternionF to;
+        QuaternionF by;
+		QuaternionF to;
     };
     
     class DelayTimeAction: public ActionBase {
