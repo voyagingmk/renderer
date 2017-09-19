@@ -205,6 +205,7 @@ namespace renderer {
             z = a[2] * sinphi;
         }
    
+		// copy from vcglib
         void ToEulerAngles(T &alpha, T &beta, T &gamma) const
         {
 #define P(a,b,c,d) (2*((a)*(b)+(c)*(d)))

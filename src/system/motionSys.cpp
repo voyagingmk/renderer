@@ -93,7 +93,7 @@ namespace renderer {
 		auto spatial = obj.component<SpatialData>();
 		ac->o = spatial->orientation;
 		auto by = ac->to;
-		ac->to = by * spatial->orientation;
+		ac->to = spatial->orientation * by;
 	}
     
     void MotionSystem::InterpolateAction(Object obj, RotateByAction* ac, float p, float duration, float dt) {
