@@ -17,23 +17,25 @@ namespace renderer {
 
 	void TextureSystem::receive(const LoadTextureEvent &evt) {
 		auto texDict = m_objMgr->getSingletonComponent<TextureDict>();
-		
+		// Load, create texture and generate mipmaps
+		int width, height, channels;
+		unsigned char* image = SOIL_load_image((evt.dirpath + std::string(evt.filename)).c_str(),
+			&width, &height, &channels, evt.channels);
+		if (evt.channels > 0) {
+			channels = evt.channels;
+		}
+		std::cout << "SOIL: image[" << evt.filename << "] loaded, w:" << width << ", h:" << height << std::endl;
+
 		// Load and create a texture
 		TexRef texRef;
 		glGenTextures(1, &texRef.texID);
 		glBindTexture(GL_TEXTURE_2D, texRef.texID); // All upcoming GL_TEXTURE_2D operations now have effect on our texture object
 													// Set our texture parameters
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, evt.hasAlpha ? GL_CLAMP_TO_EDGE : GL_REPEAT);	// Set texture wrapping to GL_REPEAT
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, evt.hasAlpha ? GL_CLAMP_TO_EDGE : GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, channels == 4 ? GL_CLAMP_TO_EDGE : GL_REPEAT);	// Set texture wrapping to GL_REPEAT
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, channels == 4 ? GL_CLAMP_TO_EDGE : GL_REPEAT);
 		// Set texture filtering
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		// Load, create texture and generate mipmaps
-		int width, height;
-		unsigned char* image = SOIL_load_image((evt.dirpath + std::string(evt.filename)).c_str(),
-			&width, &height, 0, evt.hasAlpha ? SOIL_LOAD_RGBA : SOIL_LOAD_RGB);
-
-		std::cout << "SOIL: image[" << evt.filename << "] loaded, w:" << width << ", h:" << height << std::endl;
 
 		auto format = GL_RGB;
 		auto formatWithAlpha = GL_RGBA;
@@ -42,8 +44,8 @@ namespace renderer {
 			formatWithAlpha = GL_SRGB_ALPHA;
 		}
 
-		glTexImage2D(GL_TEXTURE_2D, 0, evt.hasAlpha ? formatWithAlpha : format, 
-			width, height, 0, evt.hasAlpha ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, image);
+		glTexImage2D(GL_TEXTURE_2D, 0, channels == 4 ? formatWithAlpha : format,
+			width, height, 0, channels == 4 ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, image);
 		glGenerateMipmap(GL_TEXTURE_2D);
 		SOIL_free_image_data(image);
 		glBindTexture(GL_TEXTURE_2D, 0); // Unbind texture when done, so we won't accidentily mess up our texture.

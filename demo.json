@@ -76,34 +76,39 @@
     ],
     "texture": [
         {
+            "alias": "spiderman.dff",
+            "file": "spiderman.dff.png",
+            "toLinear": true,
+            "channels": 3
+        },{
             "alias": "dog",
             "file": "dog.png",
-            "hasAlpha": false,
-            "toLinear": true
+            "toLinear": true,
+            "channels": 3
         },
         {
             "alias": "terrian",
             "file": "brickwall.jpg",
-            "hasAlpha": false,
-            "toLinear": true
+            "toLinear": true,
+            "channels": 3
         },
         {
             "alias": "terrianNorm",
             "file": "brickwall_normal.jpg",
-            "hasAlpha": false,
-            "toLinear": true
+            "toLinear": true,
+            "channels": 3
         },
         {
             "alias": "msdf",
             "file": "msdf.png",
-            "hasAlpha": false,
-            "toLinear": true
+            "toLinear": true,
+            "channels": 3
         },
-        {
-            "alias": "spiderman.dff",
-            "file": "spiderman.dff.png",
-            "hasAlpha": false,
-            "toLinear": true
+         {
+            "alias": "ashcanyon_bk",
+            "file": "ashcanyon_bk.tga",
+            "toLinear": true,
+            "channels": 0
         }
     ],
     "light": [

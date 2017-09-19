@@ -137,9 +137,9 @@ namespace renderer {
 		{
 			string fileName = texnfo["file"];
 			string aliasName = texnfo["alias"];
-			bool hasAlpha = texnfo["hasAlpha"];
+			size_t channels = texnfo["channels"];
 			bool toLinear = texnfo["toLinear"];
-			m_evtMgr->emit<LoadTextureEvent>(texDir, fileName.c_str(), aliasName, hasAlpha, toLinear);
+			m_evtMgr->emit<LoadTextureEvent>(texDir, fileName.c_str(), aliasName, channels, toLinear);
 		}
 	}
     

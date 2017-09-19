@@ -12,17 +12,17 @@ namespace renderer {
 		LoadTextureEvent(std::string &dirpath,
 			const char *filename,
 			std::string &aliasname,
-			bool hasAlpha = false, bool toLinear = true) :
+			size_t channels, bool toLinear = true) :
 			dirpath(dirpath),
 			filename(filename),
 			aliasname(aliasname),
-			hasAlpha(hasAlpha),
+			channels(channels),
 			toLinear(toLinear)
 		{}
 		std::string dirpath;
 		const char *filename;
 		std::string aliasname;
-		bool hasAlpha;
+		size_t channels;
 		bool toLinear;
 	};
 
