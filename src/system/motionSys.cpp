@@ -89,7 +89,10 @@ namespace renderer {
         m_evtMgr->emit<UpdateSpatialDataEvent>(obj);
     }
     
-    void MotionSystem::BeginAction(Object obj, RotateByAction* ac) {    }
+    void MotionSystem::BeginAction(Object obj, RotateByAction* ac) { 
+		auto spatial = obj.component<SpatialData>();
+		ac->o = spatial->orientation;
+	}
     
     void MotionSystem::InterpolateAction(Object obj, RotateByAction* ac, float p, float duration, float dt) {
         auto spatial = obj.component<SpatialData>();
@@ -97,7 +100,20 @@ namespace renderer {
         // spatial->orientation = q * spatial->orientation * q.Inverse();
        // qt=sin((1−t)θ)sinθq1+sin(tθ)sinθq2
         // spatial->orientation = spatial->orientation.Normalize();
-        spatial->orientation.debug();
+		// spatial->orientation = ac->o + (ac->to - ac->o) * p;
+		// spatial->orientation = ac->o + (ac->o.Inverse() * ac->to) * p;
+		float dot =ac->o.Dot(ac->to);
+		float norm = ac->o.Norm() * ac->to.Norm();
+		float theta = acos( dot / norm);
+		float sintheta = sin(theta);
+		if (almost_equal(sintheta, 0.f, 2)) {
+			return;
+		}
+		QuaternionF q = (ac->o * sin((1 - p) * theta)) / sintheta + (ac->to * (p * theta)) / sintheta;
+		spatial->orientation = q;
+
+		// spatial->orientation = spatial->orientation.Normalize();
+        // spatial->orientation.debug();
         m_evtMgr->emit<UpdateSpatialDataEvent>(obj);
     }
 };

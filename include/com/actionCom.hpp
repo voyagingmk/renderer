@@ -57,10 +57,10 @@ namespace renderer {
     
     class RotateByAction: public ActionBase {
     public:
-        RotateByAction(float duration, float phi, float theta, float psi):
+        RotateByAction(float duration, float alpha, float beta, float gamma):
         ActionBase(duration, ActionType::RotateBy)
         {
-            to.FromEulerAngles(phi, theta, psi);
+            to.FromEulerAngles(alpha, beta, gamma);
         }
         
         RotateByAction(float duration, QuaternionF to):
