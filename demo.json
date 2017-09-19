@@ -98,30 +98,120 @@
             "file": "msdf.png",
             "hasAlpha": false,
             "toLinear": true
+        },
+        {
+            "alias": "spiderman.dff",
+            "file": "spiderman.dff.png",
+            "hasAlpha": false,
+            "toLinear": true
         }
     ],
     "light": [
         {
             "type": "PointLight",
             "spatial": [
-                [0, 100, 0],
+                [-100, -50, -50],
                 [1, 1, 1],
                 [1, 0, 0, 0]
             ],
             "ambient": [
-                0.5,
-                0.5,
-                0.5
+                255,
+                0,
+                0
             ],
             "diffuse": [
-                1.0,
-                1.0,
-                1.0
+                255,
+                255,
+                255
             ],
             "specular": [
-                1.0,
-                1.0,
-                1.0
+                255,
+                255,
+                255
+            ],
+            "radius": 10,
+            "constant": 1.0,
+            "linear": 0.7,
+            "quadratic": 1.8,
+            "shadow": true
+        },
+        {
+            "type": "PointLight",
+            "spatial": [
+                [-50, -50, -50],
+                [1, 1, 1],
+                [1, 0, 0, 0]
+            ],
+            "ambient": [
+                255,
+                255,
+                0
+            ],
+            "diffuse": [
+                255,
+                255,
+                255
+            ],
+            "specular": [
+                255,
+                255,
+                255
+            ],
+            "radius": 10,
+            "constant": 1.0,
+            "linear": 0.7,
+            "quadratic": 1.8,
+            "shadow": true
+        },
+        {
+            "type": "PointLight",
+            "spatial": [
+                [0, -50, -50],
+                [1, 1, 1],
+                [1, 0, 0, 0]
+            ],
+            "ambient": [
+                0,
+                0,
+                255
+            ],
+            "diffuse": [
+                255,
+                255,
+                255
+            ],
+            "specular": [
+                255,
+                255,
+                255
+            ],
+            "radius": 10,
+            "constant": 1.0,
+            "linear": 0.7,
+            "quadratic": 1.8,
+            "shadow": true
+        },
+        {
+            "type": "PointLight",
+            "spatial": [
+                [50, -50, -50],
+                [1, 1, 1],
+                [1, 0, 0, 0]
+            ],
+            "ambient": [
+                255,
+                0,
+                255
+            ],
+            "diffuse": [
+                255,
+                255,
+                255
+            ],
+            "specular": [
+                255,
+                255,
+                255
             ],
             "radius": 10,
             "constant": 1.0,
@@ -132,21 +222,12 @@
     ],
     "object": [
         {
-            "model": "dog.obj",
-            "material": 1,
+            "model": "spiderman.obj",
+            "material": 3,
             "spatial": [
-                [0, 0, -100],
+                [0, 0, -3],
                 [1, 1, 1],
                 [1, 0, 1, 0]
-            ]
-        },
-        {
-            "model": "dog.obj",
-            "material": 1,
-            "spatial": [
-                [-100, 0, -100],
-                [0.5, 0.5, 0.5],
-                [1, 0, 0, 0]
             ]
         }
     ],
@@ -172,6 +253,14 @@
             "reflectiveness": 0.25,
             "shaderName": "test",
             "textures": ["terrian"]
+        },
+        {
+            "id": 3,
+            "type": "Phone",
+            "shininess": 32,
+            "reflectiveness": 0.5,
+            "shaderName": "test",
+            "textures": ["spiderman.dff"]
         }
     ]
 }

@@ -22,7 +22,7 @@ namespace renderer {
 	void MaterialSystem::receive(const LoadMaterialEvent &evt) {
         auto com = m_objMgr->getSingletonComponent<MaterialSet>();
         com->settings.insert({evt.matInfo["id"], {
-            parseColor(evt.matInfo["ambient"]),
+			parseColor(evt.matInfo["ambient"]),
             parseColor(evt.matInfo["diffuse"]),
             parseColor(evt.matInfo["specular"]),
             evt.matInfo["shininess"],

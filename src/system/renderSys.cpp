@@ -33,12 +33,12 @@ namespace renderer {
 		glCullFace(GL_BACK);
 
 		/*----- first-pass: deferred rendering-----*/
-		
+		Object objCamera = objMgr.getSingletonComponent<PerspectiveCameraView>().object();
 		//  geometry pass
 		evtMgr.emit<UseGBufferEvent>("main");
 		Shader gBufferShader = getShader("gBuffer");
 		evtMgr.emit<RenderSceneEvent>(
-			objMgr.getSingletonComponent<PerspectiveCameraView>().object(),
+			objCamera,
 			std::make_tuple(0, 0, context->width, context->height),
 			Color(0.0f, 0.0f, 0.0f, 1.0f),
 			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT,
@@ -46,7 +46,7 @@ namespace renderer {
 		evtMgr.emit<UnuseGBufferEvent>("main");
 		
 		// lighting pass
-		deferredLightingPass("main", context->width, context->height);
+		deferredLightingPass(objCamera, "main", context->width, context->height);
 		/*----- first-pass end -----*/
 
         // renderGBufferDebug("main", context->width, context->height);
@@ -127,9 +127,10 @@ namespace renderer {
 		}
 	}
     
-	void RenderSystem::deferredLightingPass(std::string gBufferAliasName, size_t winWidth, size_t winHeight) {
+	void RenderSystem::deferredLightingPass(Object objCamera, std::string gBufferAliasName, size_t winWidth, size_t winHeight) {
 		Shader shader = getShader("deferredShading");
 		shader.use();
+		m_evtMgr->emit<UploadCameraToShaderEvent>(objCamera, shader);
 		auto gBufferCom = m_objMgr->getSingletonComponent<GBufferDictCom>();
 		GBufferRef& buf = gBufferCom->dict[gBufferAliasName];
 		m_evtMgr->emit<ActiveTextureByIDEvent>(0, buf.posTexID);
@@ -142,6 +143,7 @@ namespace renderer {
 		for (auto obj : m_objMgr->entities<PointLightCom, SpatialData>()) {
 			auto spatialDataCom = obj.component<SpatialData>();
 			auto lightCom = obj.component<PointLightCom>();
+			Color c = lightCom->ambient;
 			shader.set3f(("lights[" + std::to_string(i) + "].Position").c_str(), spatialDataCom->pos);
 			shader.set3f(("lights[" + std::to_string(i) + "].Color").c_str(), lightCom->ambient);
 			shader.set1f(("lights[" + std::to_string(i) + "].Linear").c_str(), lightCom->linear);
@@ -149,6 +151,7 @@ namespace renderer {
 			shader.set1f(("lights[" + std::to_string(i) + "].constant").c_str(), lightCom->constant);
 			i++;
 		}
+		shader.set1i("LightNum", i);
 		renderQuad();
 	}
 

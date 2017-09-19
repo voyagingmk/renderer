@@ -66,6 +66,7 @@ namespace renderer {
 	void TextureSystem::receive(const ActiveTextureByIDEvent &evt) {
 		if (evt.texID > 0) {
 			assert(glIsTexture(evt.texID));
+			glActiveTexture(GL_TEXTURE0 + evt.idx);
 			glBindTexture(GL_TEXTURE_2D, evt.texID);
 			return;
 		}

@@ -35,7 +35,7 @@ namespace renderer {
 
 		Shader getShader(std::string shaderName);
 
-		void deferredLightingPass(std::string gBufferAliasName, size_t winWidth, size_t winHeight);
+		void deferredLightingPass(Object objCamera, std::string gBufferAliasName, size_t winWidth, size_t winHeight);
         
         void renderGBufferDebug(std::string gBufferAliasName, size_t winWidth, size_t winHeight);
 	};
