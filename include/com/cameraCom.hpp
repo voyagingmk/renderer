@@ -71,9 +71,9 @@ namespace renderer {
 
 	class PerspectiveCameraView: public CameraView {
 	public:
-		PerspectiveCameraView() :
-			fov(45.0f),
-			aspect(1.0f),
+		PerspectiveCameraView(float fov = 45.0f, float aspect = 1.0f) :
+			fov(fov),
+			aspect(aspect),
 			near(0.1f),
 			far(1000.0f),
 			fovScale(1.0f)

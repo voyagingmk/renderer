@@ -47,7 +47,7 @@ namespace renderer {
 		obj.addComponent<GBufferDictCom>();
 
 		Object objCamera = m_objMgr->create();
-		objCamera.addComponent<PerspectiveCameraView>();
+		objCamera.addComponent<PerspectiveCameraView>(45.0f, (float)winWidth / (float)winHeight);
 
         loadTextures(assetsDir + texSubDir, config);
         loadShaders(assetsDir + shaderSubDir, config);
