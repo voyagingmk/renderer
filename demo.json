@@ -105,8 +105,38 @@
             "channels": 3
         },
          {
-            "alias": "ashcanyon_bk",
-            "file": "ashcanyon_bk.tga",
+            "alias": "alps_bk",
+            "file": "alps_bk.tga",
+            "toLinear": true,
+            "channels": 0
+        },
+         {
+            "alias": "alps_dn",
+            "file": "alps_dn.tga",
+            "toLinear": true,
+            "channels": 0
+        },
+        {
+            "alias": "alps_ft",
+            "file": "alps_ft.tga",
+            "toLinear": true,
+            "channels": 0
+        },
+        {
+            "alias": "alps_lf",
+            "file": "alps_lf.tga",
+            "toLinear": true,
+            "channels": 0
+        },
+        {
+            "alias": "alps_rt",
+            "file": "alps_rt.tga",
+            "toLinear": true,
+            "channels": 0
+        },
+        {
+            "alias": "alps_up",
+            "file": "alps_up.tga",
             "toLinear": true,
             "channels": 0
         }
