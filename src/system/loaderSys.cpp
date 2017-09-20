@@ -121,13 +121,24 @@ namespace renderer {
 			m_evtMgr->emit<CreateMeshBufferEvent>(obj);
             
             obj.addComponent<MotionCom>();
-            ActionData data;
-            data.repeat = -1;
-            //data.actions.push_back(std::make_shared<MoveByAction>(0.5f, Vector3dF(-1.0f, 0.0f, 0.0f)));
-            //data.actions.push_back(std::make_shared<MoveByAction>(0.5f, Vector3dF(1.0f, 0.0f, 0.0f)));
-            data.actions.push_back(std::make_shared<RotateByAction>(1.0f, DegreeF(90.0f), DegreeF(0.0f),  DegreeF(0.0f)));
-            data.actions.push_back(std::make_shared<RotateByAction>(2.0f, DegreeF(-90.0f), DegreeF(0.0f), DegreeF(0.0f)));
-            m_evtMgr->emit<AddActionEvent>(obj, "test", data);
+			{
+				ActionData data;
+				data.repeat = -1;
+				//data.actions.push_back(std::make_shared<MoveByAction>(0.5f, Vector3dF(-1.0f, 0.0f, 0.0f)));
+				//data.actions.push_back(std::make_shared<MoveByAction>(0.5f, Vector3dF(1.0f, 0.0f, 0.0f)));
+				data.actions.push_back(std::make_shared<RotateByAction>(1.0f, DegreeF(90.0f), DegreeF(0.0f), DegreeF(0.0f)));
+				data.actions.push_back(std::make_shared<RotateByAction>(1.0f, DegreeF(-90.0f), DegreeF(0.0f), DegreeF(0.0f)));
+				m_evtMgr->emit<AddActionEvent>(obj, "test", data);
+			}
+			{
+				ActionData data;
+				data.repeat = -1;
+				//data.actions.push_back(std::make_shared<MoveByAction>(0.5f, Vector3dF(-1.0f, 0.0f, 0.0f)));
+				//data.actions.push_back(std::make_shared<MoveByAction>(0.5f, Vector3dF(1.0f, 0.0f, 0.0f)));
+				data.actions.push_back(std::make_shared<MoveByAction>(1.0f, Vector3dF{ 5.0f, 0.0f, 0.0f }));
+				data.actions.push_back(std::make_shared<MoveByAction>(1.0f, Vector3dF{ 5.0f, 0.0f, 0.0f }));
+				m_evtMgr->emit<AddActionEvent>(obj, "test", data);
+			}
 		}
 	}
 

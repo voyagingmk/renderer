@@ -14,7 +14,8 @@ namespace renderer {
     
 
 	void MotionSystem::update(ObjectManager &objMgr, EventManager &evtMgr, float dt) {
-        for (const Object obj : m_objMgr->entities<SpatialData, MotionCom>()) {
+		std::vector<std::string> expired;
+		for (const Object obj : m_objMgr->entities<SpatialData, MotionCom>()) {
             auto spatial = obj.component<SpatialData>();
             auto com = obj.component<MotionCom>();
             for(auto it = com->acContainer.begin(); it != com->acContainer.end(); it++) {
@@ -62,10 +63,16 @@ namespace renderer {
                 if (acData.idx == acData.actions.size()) {
                     if (acData.repeat == -1) {
                         acData.idx = 0;
-                    }
+					}
+					else if (acData.repeat > 0) {
+						acData.repeat--;
+						expired.push_back(it->first);
+					}
                 }
-                
             }
+			for (auto name: expired) {
+				com->acContainer.erase(name);
+			}
         }
 	}
     
@@ -74,6 +81,9 @@ namespace renderer {
         if(!com.valid()) {
             return;
         }
+		if (com->acContainer.find(evt.name) != com->acContainer.end()) {
+			return;
+		}
         com->acContainer.insert(std::make_pair(evt.name, evt.actionData));
     }
 
