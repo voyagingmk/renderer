@@ -35,6 +35,8 @@ namespace renderer {
 
 		Shader getShader(std::string shaderName);
 
+		void renderSkybox(Object objCamera);
+
 		void deferredLightingPass(Object objCamera, std::string gBufferAliasName, size_t winWidth, size_t winHeight);
         
         void renderGBufferDebug(std::string gBufferAliasName, size_t winWidth, size_t winHeight);

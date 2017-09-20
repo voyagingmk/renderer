@@ -32,9 +32,11 @@ namespace renderer {
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
 
+	
 		/*----- first-pass: deferred rendering-----*/
+		
 		Object objCamera = objMgr.getSingletonComponent<PerspectiveCameraView>().object();
-		//  geometry pass
+		/*//  geometry pass
 		evtMgr.emit<UseGBufferEvent>("main");
 		Shader gBufferShader = getShader("gBuffer");
 		evtMgr.emit<RenderSceneEvent>(
@@ -44,13 +46,18 @@ namespace renderer {
 			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT,
 			&gBufferShader);
 		evtMgr.emit<UnuseGBufferEvent>("main");
-		
+		*/
 		// lighting pass
-		deferredLightingPass(objCamera, "main", context->width, context->height);
-		/*----- first-pass end -----*/
+		//deferredLightingPass(objCamera, "main", context->width, context->height);
 
+		//setViewport(std::make_tuple(0, 0, context->width, context->height));
+		//clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
+		//	GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+		renderSkybox(objCamera);
+		/*----- first-pass end -----*/
         // renderGBufferDebug("main", context->width, context->height);
-        
+		
 		CheckGLError;
 		SDL_GL_SwapWindow(context->win);
 	}
@@ -127,6 +134,23 @@ namespace renderer {
 		}
 	}
     
+	void RenderSystem::renderSkybox(Object objCamera) {
+		for (const Object obj : m_objMgr->entities<GlobalSkyboxTag>()) {
+			// glDisable(GL_CULL_FACE);
+			// draw skybox as last
+			glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
+			Shader skyboxShader = getShader("skybox");
+			skyboxShader.use();
+			m_evtMgr->emit<UploadCameraToShaderEvent>(objCamera, skyboxShader);
+			m_evtMgr->emit<ActiveTextureEvent>(0, "alps");
+			m_evtMgr->emit<DrawMeshBufferEvent>(obj);
+			glDepthFunc(GL_LESS); // set depth function back to default
+								  // glEnable(GL_CULL_FACE);
+			checkGLError;
+			break;
+		}
+	}
+
 	void RenderSystem::deferredLightingPass(Object objCamera, std::string gBufferAliasName, size_t winWidth, size_t winHeight) {
 		Shader shader = getShader("deferredShading");
 		shader.use();

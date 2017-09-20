@@ -59,6 +59,11 @@
             "fs": "text.fs"
         },
         {
+            "alias": "skybox",
+            "vs": "skybox.vs",
+            "fs": "skybox.fs"
+        },
+        {
             "alias": "gBuffer",
             "vs": "g_buffer.vs",
             "fs": "g_buffer.fs"
@@ -77,14 +82,15 @@
     "cubemaps": {
         "alps": {
             "files": [
-                "alps_bk.tga",
-                "alps_dn.tga",
-                "alps_ft.tga",
-                "alps_lf.tga",
                 "alps_rt.tga",
-                "alps_up.tga"
+                "alps_lf.tga",
+                "alps_up.tga",
+                "alps_dn.tga",
+                "alps_bk.tga",
+                "alps_ft.tga"
             ],
-            "channels": 0
+            "channels": 0,
+            "shaderName": "skybox"
         }
     },
     "texture": [

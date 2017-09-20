@@ -40,6 +40,8 @@ namespace renderer {
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 
+		texRef.type = TexType::CubeMap;
+
 		texDict->insert({ evt.aliasname, texRef });
 		CheckGLError;
 		std::cout << "TextureSystem: cubemap[" << evt.aliasname << "] loaded, w:" << width << ", h:" << height << std::endl;

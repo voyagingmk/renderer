@@ -53,7 +53,7 @@ namespace renderer {
 		auto com = objCamera.addComponent<PerspectiveCameraView>(45.0f, (float)winWidth / (float)winHeight);
         com->eye = Vector3dF(0.0f, 0.0f, 10.0f);
         loadTextures(assetsDir + texSubDir, config);
-		loadCubemapTextures(assetsDir + texSubDir, config);
+		loadCubemaps(assetsDir + texSubDir, config);
         loadShaders(assetsDir + shaderSubDir, config);
         loadMaterials(config);
 		loadSceneObjects(assetsDir + modelsDir, config); 
@@ -155,11 +155,14 @@ namespace renderer {
 		}
 	}
 
-	void LoaderSystem::loadCubemapTextures(string texDir, const json &config)
+	void LoaderSystem::loadCubemaps(string texDir, const json &config)
 	{
 		auto cubemaps = config["cubemaps"];
 		for (auto it = cubemaps.begin(); it != cubemaps.end(); it++)
 		{
+			Object objSkybox = m_objMgr->create();
+			m_evtMgr->emit<CreateSkyboxBufferEvent>(objSkybox);
+
 			string aliasname = it.key();
 			json& data = it.value();
 			std::vector<std::string> filenames;
@@ -169,6 +172,9 @@ namespace renderer {
 			}
 			size_t channels = data["channels"];
 			m_evtMgr->emit<LoadCubemapEvent>(texDir, filenames, aliasname, channels);
+
+			objSkybox.addComponent<SkyboxCom>(aliasname);
+			objSkybox.addComponent<GlobalSkyboxTag>();
 		}
 	}
 	

@@ -15,6 +15,14 @@ namespace renderer {
 		ecs::Object obj;
 	};
 
+	class CreateSkyboxBufferEvent : public ecs::Event<CreateSkyboxBufferEvent> {
+	public:
+		CreateSkyboxBufferEvent(ecs::Object obj) :
+			obj(obj)
+		{}
+		ecs::Object obj;
+	};
+
     class DrawMeshBufferEvent: public ecs::Event<DrawMeshBufferEvent> {
     public:
         DrawMeshBufferEvent(ecs::Object obj):

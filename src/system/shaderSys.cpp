@@ -65,6 +65,8 @@ namespace renderer {
 		auto cameraMat = projMat * viewMat;
 		shader.set3f("viewPos", com->eye);
 		shader.setMatrix4f("PV", cameraMat);
+		shader.setMatrix4f("proj", projMat);
+		shader.setMatrix4f("view", viewMat);
 	}
     
     ShaderProgramHDL ShaderSystem::createShaderProgram(SPHDLList& spHDLs, ShaderHDLSet shaderHDLSet) {

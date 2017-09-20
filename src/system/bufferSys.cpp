@@ -7,8 +7,9 @@ using namespace std;
 namespace renderer {
 
 	void BufferSystem::init(ObjectManager &objMgr, EventManager &evtMgr) {
-		printf("BufferSystem init\n"); 
+		printf("BufferSystem init\n");
 		evtMgr.on<CreateMeshBufferEvent>(*this);
+		evtMgr.on<CreateSkyboxBufferEvent>(*this);
 		evtMgr.on<DrawMeshBufferEvent>(*this);
 		evtMgr.on<CreateGBufferEvent>(*this);
 		evtMgr.on<DestroyGBufferEvent>(*this);
@@ -23,18 +24,28 @@ namespace renderer {
 	void BufferSystem::receive(const CreateMeshBufferEvent &evt) {
 		Object obj = evt.obj;
 		auto com = obj.addComponent<MeshBuffersCom>();
-		for(const OneMesh& mesh :obj.component<Meshes>()->meshes){
+		for (const OneMesh& mesh : obj.component<Meshes>()->meshes) {
 			com->buffers.push_back(CreateMeshBuffer(mesh));
 		}
 	}
 
+	void BufferSystem::receive(const CreateSkyboxBufferEvent &evt) {
+		Object obj = evt.obj;
+		auto com = obj.addComponent<MeshBuffersCom>();
+		com->buffers.push_back(CreateSkyboxBuffer());
+	}
+
 	void BufferSystem::receive(const DrawMeshBufferEvent& evt) {
-		Object obj = evt.obj; 
+		Object obj = evt.obj;
 		auto com = obj.component<MeshBuffersCom>();
 		for (auto meshBuffer : com->buffers) {
 			glBindVertexArray(meshBuffer.vao);
-			//glDrawArrays(GL_TRIANGLES, 0, meshBuffer.triangles);
-			glDrawElements(GL_TRIANGLES, meshBuffer.triangles * 3, GL_UNSIGNED_INT, 0);
+			if (meshBuffer.noIndices) {
+				glDrawArrays(GL_TRIANGLES, 0, meshBuffer.triangles * 3);
+			}
+			else {
+				glDrawElements(GL_TRIANGLES, meshBuffer.triangles * 3, GL_UNSIGNED_INT, 0);
+			}
 			glBindVertexArray(0);
 			CheckGLError;
 		}
@@ -124,6 +135,64 @@ namespace renderer {
 		assert(VAO > 0 && VBO > 0 && EBO > 0);
 		meshBuffer.triangles = mesh.indexes.size() / 3;
 		//bufferDict[aliasname] = meshBuffer;
+		return meshBuffer;
+	}
+
+	MeshBufferRef BufferSystem::CreateSkyboxBuffer() {
+		MeshBufferRef meshBuffer;
+		float skyboxVertices[] = {
+			// positions          
+			-1.0f,  1.0f, -1.0f,
+			-1.0f, -1.0f, -1.0f,
+			1.0f, -1.0f, -1.0f,
+			1.0f, -1.0f, -1.0f,
+			1.0f,  1.0f, -1.0f,
+			-1.0f,  1.0f, -1.0f,
+
+			-1.0f, -1.0f,  1.0f,
+			-1.0f, -1.0f, -1.0f,
+			-1.0f,  1.0f, -1.0f,
+			-1.0f,  1.0f, -1.0f,
+			-1.0f,  1.0f,  1.0f,
+			-1.0f, -1.0f,  1.0f,
+
+			1.0f, -1.0f, -1.0f,
+			1.0f, -1.0f,  1.0f,
+			1.0f,  1.0f,  1.0f,
+			1.0f,  1.0f,  1.0f,
+			1.0f,  1.0f, -1.0f,
+			1.0f, -1.0f, -1.0f,
+
+			-1.0f, -1.0f,  1.0f,
+			-1.0f,  1.0f,  1.0f,
+			1.0f,  1.0f,  1.0f,
+			1.0f,  1.0f,  1.0f,
+			1.0f, -1.0f,  1.0f,
+			-1.0f, -1.0f,  1.0f,
+
+			-1.0f,  1.0f, -1.0f,
+			1.0f,  1.0f, -1.0f,
+			1.0f,  1.0f,  1.0f,
+			1.0f,  1.0f,  1.0f,
+			-1.0f,  1.0f,  1.0f,
+			-1.0f,  1.0f, -1.0f,
+
+			-1.0f, -1.0f, -1.0f,
+			-1.0f, -1.0f,  1.0f,
+			1.0f, -1.0f, -1.0f,
+			1.0f, -1.0f, -1.0f,
+			-1.0f, -1.0f,  1.0f,
+			1.0f, -1.0f,  1.0f
+		};
+		glGenVertexArrays(1, &meshBuffer.vao);
+		glGenBuffers(1, &meshBuffer.vbo);
+		glBindVertexArray(meshBuffer.vao);
+		glBindBuffer(GL_ARRAY_BUFFER, meshBuffer.vbo);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+		meshBuffer.noIndices = true;
+		meshBuffer.triangles = 12;
 		return meshBuffer;
 	}
 

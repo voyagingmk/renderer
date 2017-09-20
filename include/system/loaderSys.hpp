@@ -23,13 +23,15 @@ namespace renderer {
 
 		void CreateGlobalQuadObject();
 
+		void CreateGLobalSkyboxObject();
+
 		void loadLights(const json &config);
 
 		void loadSceneObjects(std::string modelsDir, const json &config);
 
 		void loadTextures(std::string texDir, const json &config);
 
-		void loadCubemapTextures(std::string texDir, const json &config);
+		void loadCubemaps(std::string texDir, const json &config);
         
         void loadShaders(std::string shaderDir, const json &config);
         

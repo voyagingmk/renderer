@@ -21,7 +21,9 @@ namespace renderer {
 		void update(ObjectManager &objMgr, EventManager &evtMgr, float dt) override;
 
 		void receive(const CreateMeshBufferEvent &evt);
-		
+
+		void receive(const CreateSkyboxBufferEvent &evt);
+
 		void receive(const DrawMeshBufferEvent& evt);
 
 		void receive(const CreateGBufferEvent& evt);
@@ -41,6 +43,8 @@ namespace renderer {
 		void UnuseFrameBuffer(FrameBufferBase& buf);
 
 		MeshBufferRef CreateMeshBuffer(const OneMesh& mesh);
+
+		MeshBufferRef CreateSkyboxBuffer();
 		
 		ColorBufferRef CreateColorBuffer(size_t width, size_t height, BufType depthType, size_t MSAA);
 		

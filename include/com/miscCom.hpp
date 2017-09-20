@@ -9,6 +9,15 @@ namespace renderer {
 
 	struct GlobalQuadTag: public TagComBase {};
 
+
+	struct SkyboxCom {
+		SkyboxCom(std::string texName):
+			texName(texName)
+		{}
+		std::string texName;
+	};
+
+	struct GlobalSkyboxTag : public TagComBase {};
 }
 
 #endif
