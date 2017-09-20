@@ -29,7 +29,7 @@ namespace renderer {
 
 		void loadTextures(std::string texDir, const json &config);
 
-		void loadCubemapTextures(string texDir, const json &config);
+		void loadCubemapTextures(std::string texDir, const json &config);
         
         void loadShaders(std::string shaderDir, const json &config);
         

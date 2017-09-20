@@ -157,15 +157,18 @@ namespace renderer {
 
 	void LoaderSystem::loadCubemapTextures(string texDir, const json &config)
 	{
-		for (auto texnfo : config["texture"])
+		auto cubemaps = config["cubemaps"];
+		for (auto it = cubemaps.begin(); it != cubemaps.end(); it++)
 		{
+			string aliasname = it.key();
+			json& data = it.value();
 			std::vector<std::string> filenames;
-			for (auto s : texnfo["files"]) {
-				filenames.push_back(s);
+			auto files = data["files"];
+			for (auto it2 = files.begin(); it2 != files.end(); it2++) {
+				filenames.push_back(it2.value());
 			}
-			size_t channels = texnfo["channels"];
-			bool toLinear = texnfo["toLinear"];
-			m_evtMgr->emit<LoadCubemapEvent>(texDir, filenames, channels, toLinear);
+			size_t channels = data["channels"];
+			m_evtMgr->emit<LoadCubemapEvent>(texDir, filenames, aliasname, channels);
 		}
 	}
 	

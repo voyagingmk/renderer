@@ -75,7 +75,7 @@
         }
     ],
     "cubemaps": {
-        "alps": [{
+        "alps": {
             "files": [
                 "alps_bk.tga",
                 "alps_dn.tga",
@@ -84,10 +84,8 @@
                 "alps_rt.tga",
                 "alps_up.tga"
             ],
-            "toLinear": true,
             "channels": 0
-            }
-        ]
+        }
     },
     "texture": [
         {

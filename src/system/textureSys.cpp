@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "system/textureSys.hpp"
+#include "realtime/glutils.hpp"
 #include "SOIL.h"
 
 using namespace std;
@@ -8,6 +9,7 @@ namespace renderer {
 	void TextureSystem::init(ObjectManager &objMgr, EventManager &evtMgr) {
 		printf("TextureSystem init\n");
         evtMgr.on<LoadTextureEvent>(*this);
+		evtMgr.on<LoadCubemapEvent>(*this);
 		evtMgr.on<DestroyTextureEvent>(*this); 
 		evtMgr.on<ActiveTextureByIDEvent>(*this);
 		evtMgr.on<ActiveTextureEvent>(*this);
@@ -22,13 +24,12 @@ namespace renderer {
 		glGenTextures(1, &texRef.texID);
 		glActiveTexture(GL_TEXTURE0);
 
-		int width, height;
-		unsigned char* image;
+		int width, height, channels;
 
 		glBindTexture(GL_TEXTURE_CUBE_MAP, texRef.texID);
 		for (uint32_t i = 0; i < 6; i++)
 		{
-			image = SOIL_load_image((evt.dirpath + evt.filenames[i]).c_str(), &width, &height, 0, SOIL_LOAD_RGB);
+			unsigned char* image = SOIL_load_image((evt.dirpath + evt.filenames[i]).c_str(), &width, &height, &channels, SOIL_LOAD_RGB);
 			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_SRGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
 			SOIL_free_image_data(image);
 		}
@@ -40,6 +41,8 @@ namespace renderer {
 		glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 
 		texDict->insert({ evt.aliasname, texRef });
+		CheckGLError;
+		std::cout << "TextureSystem: cubemap[" << evt.aliasname << "] loaded, w:" << width << ", h:" << height << std::endl;
 	}
 
 	void TextureSystem::receive(const LoadTextureEvent &evt) {
@@ -51,8 +54,6 @@ namespace renderer {
 		if (evt.channels > 0) {
 			channels = evt.channels;
 		}
-		std::cout << "SOIL: image[" << evt.filename << "] loaded, w:" << width << ", h:" << height << std::endl;
-
 		// Load and create a texture
 		TexRef texRef;
 		glGenTextures(1, &texRef.texID);
@@ -80,6 +81,9 @@ namespace renderer {
 		texRef.height = height;
 		texRef.type = TexType::Tex2D;
 		texDict->insert({ evt.aliasname, texRef });
+		CheckGLError;
+		std::cout << "TextureSystem: image[" << evt.filename << "] loaded, w:" << width << ", h:" << height << std::endl;
+
 	}
 
 	void TextureSystem::receive(const DestroyTextureEvent &evt) {
