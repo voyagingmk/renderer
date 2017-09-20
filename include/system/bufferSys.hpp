@@ -34,6 +34,8 @@ namespace renderer {
 
 		void receive(const UnuseGBufferEvent& evt);
 
+		void receive(const CopyGBufferDepthEvent& evt);
+
 	private:
 
 		void DestroyFrameBuffer(FrameBufferBase& buf);

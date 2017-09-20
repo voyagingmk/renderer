@@ -13,8 +13,9 @@ namespace renderer {
 		evtMgr.on<DrawMeshBufferEvent>(*this);
 		evtMgr.on<CreateGBufferEvent>(*this);
 		evtMgr.on<DestroyGBufferEvent>(*this);
-		evtMgr.on<UseGBufferEvent>(*this);
+		evtMgr.on<UseGBufferEvent>(*this); 
 		evtMgr.on<UnuseGBufferEvent>(*this);
+		evtMgr.on<CopyGBufferDepthEvent>(*this);
 	}
 
 	void BufferSystem::update(ObjectManager &objMgr, EventManager &evtMgr, float dt) {
@@ -83,6 +84,15 @@ namespace renderer {
 			return;
 		}
 		UnuseFrameBuffer(it->second);
+	}
+
+	void BufferSystem::receive(const CopyGBufferDepthEvent& evt) {
+		auto com = m_objMgr->getSingletonComponent<GBufferDictCom>();
+		auto it = com->dict.find(evt.aliasName);
+		if (it == com->dict.end()) {
+			return;
+		}
+		CopyFrameBufferDepth(it->second);
 	}
 
 	void BufferSystem::DestroyFrameBuffer(FrameBufferBase& buf) {

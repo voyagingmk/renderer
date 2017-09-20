@@ -45,11 +45,11 @@ namespace renderer {
 			Color(0.0f, 0.0f, 0.0f, 1.0f),
 			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT,
 			&gBufferShader);
-		renderSkybox(objCamera);
 		evtMgr.emit<UnuseGBufferEvent>("main");
-
 		// lighting pass
 		deferredLightingPass(objCamera, "main", context->width, context->height);
+		evtMgr.emit<CopyGBufferDepthEvent>("main");// 需要GBuffer的深度信息，不然天空盒会黑掉
+		renderSkybox(objCamera);
 
 		//setViewport(std::make_tuple(0, 0, context->width, context->height));
 		//clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
