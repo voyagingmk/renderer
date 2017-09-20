@@ -102,7 +102,12 @@ namespace renderer {
     void MotionSystem::BeginAction(Object obj, RotateByAction* ac) { 
 		auto spatial = obj.component<SpatialData>();
 		ac->o = spatial->orientation;
-		ac->to = spatial->orientation * ac->by;
+		if (!ac->inverse) {
+			ac->to = spatial->orientation * ac->by;
+		}
+		else {
+			ac->to = ac->by.Inverse() * spatial->orientation;
+		}
 	}
     
     void MotionSystem::InterpolateAction(Object obj, RotateByAction* ac, float p, float duration, float dt) {
@@ -122,8 +127,7 @@ namespace renderer {
 		}
 		QuaternionF q = (ac->o * sin((1 - p) * theta)) / sintheta + (ac->to * (p * theta)) / sintheta;
 		spatial->orientation = q;
-
-		// spatial->orientation = spatial->orientation.Normalize();
+		spatial->orientation = spatial->orientation.Normalize();
         // spatial->orientation.debug();
         m_evtMgr->emit<UpdateSpatialDataEvent>(obj);
     }

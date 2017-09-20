@@ -69,25 +69,29 @@ namespace renderer {
 			beta:  y counter-clockwise
 			gamma: z counter-clockwise
 		*/
-        RotateByAction(float duration, DegreeF alpha, DegreeF beta, DegreeF gamma):
-        ActionBase(duration, ActionType::RotateBy)
-        {
-            by.FromEulerAngles(alpha, beta, gamma);
-        }
-        
-        RotateByAction(float duration, RadianF alpha, RadianF beta, RadianF gamma):
-			ActionBase(duration, ActionType::RotateBy)
-        {
-            by.FromEulerAngles(alpha, beta, gamma);
-        }
-        
-        RotateByAction(float duration, QuaternionF by):
+        RotateByAction(float duration, DegreeF alpha, DegreeF beta, DegreeF gamma, bool inverse = false):
 			ActionBase(duration, ActionType::RotateBy),
-			by(by)
+			inverse(inverse)
+        {
+            by.FromEulerAngles(alpha, beta, gamma);
+        }
+        
+        RotateByAction(float duration, RadianF alpha, RadianF beta, RadianF gamma, bool inverse = false):
+			ActionBase(duration, ActionType::RotateBy),
+			inverse(inverse)
+        {
+            by.FromEulerAngles(alpha, beta, gamma);
+        }
+        
+        RotateByAction(float duration, QuaternionF by, bool inverse = false):
+			ActionBase(duration, ActionType::RotateBy),
+			by(by),
+			inverse(inverse)
         {}
         QuaternionF o;
         QuaternionF by;
 		QuaternionF to;
+		bool inverse;
     };
     
     class DelayTimeAction: public ActionBase {
