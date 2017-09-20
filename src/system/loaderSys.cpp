@@ -53,6 +53,7 @@ namespace renderer {
 		auto com = objCamera.addComponent<PerspectiveCameraView>(45.0f, (float)winWidth / (float)winHeight);
         com->eye = Vector3dF(0.0f, 0.0f, 10.0f);
         loadTextures(assetsDir + texSubDir, config);
+		loadCubemapTextures(assetsDir + texSubDir, config);
         loadShaders(assetsDir + shaderSubDir, config);
         loadMaterials(config);
 		loadSceneObjects(assetsDir + modelsDir, config); 
@@ -153,6 +154,21 @@ namespace renderer {
 			m_evtMgr->emit<LoadTextureEvent>(texDir, fileName.c_str(), aliasName, channels, toLinear);
 		}
 	}
+
+	void LoaderSystem::loadCubemapTextures(string texDir, const json &config)
+	{
+		for (auto texnfo : config["texture"])
+		{
+			std::vector<std::string> filenames;
+			for (auto s : texnfo["files"]) {
+				filenames.push_back(s);
+			}
+			size_t channels = texnfo["channels"];
+			bool toLinear = texnfo["toLinear"];
+			m_evtMgr->emit<LoadCubemapEvent>(texDir, filenames, channels, toLinear);
+		}
+	}
+	
     
     void LoaderSystem::loadShaders(string shaderDir, const json &config)
     {
