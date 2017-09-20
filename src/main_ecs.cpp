@@ -63,13 +63,13 @@ int ecsMain(int argc, char *argv[])
 {
     QuaternionF p;
     
-    p.FromEulerAngles(RadianF(0.0f), RadianF(0.0f), RadianF(0.0f));
+    p.FromEulerAngles(DegreeF(90.0f), DegreeF(0.0f), DegreeF(0.0f));
     p.debug();
-    p.FromEulerAngles(RadianF(90.0f), RadianF(0.0f), RadianF(0.0f));
+    p.FromEulerAngles(DegreeF(0.0f), DegreeF(90.0f), DegreeF(0.0f));
     p.debug();
-    p.FromEulerAngles(RadianF(0.0f), RadianF(90.0f), RadianF(0.0f));
+    p.FromEulerAngles(DegreeF(0.0f), DegreeF(0.0f), DegreeF(90.0f));
     p.debug();
-    p.FromEulerAngles(RadianF(0.0f), RadianF(0.0f), RadianF(90.0f));
+    p.FromEulerAngles(DegreeF(0.0f), DegreeF(0.0f), DegreeF(0.0f));
     p.debug();
     
 	MainECS ecsObj;

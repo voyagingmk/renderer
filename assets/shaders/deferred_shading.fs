@@ -53,7 +53,6 @@ void main()
     FragColor = vec4(lighting, 1.0);
     // reinhard tone mapping
     vec3 mapped = FragColor.rgb / (FragColor.rgb + vec3(1.0));
-     
     // gamma correction
     FragColor.rgb = pow(mapped, vec3(1.0 / 2.2));
 }

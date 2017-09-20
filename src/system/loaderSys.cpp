@@ -50,8 +50,8 @@ namespace renderer {
 		obj.addComponent<GBufferDictCom>();
 
 		Object objCamera = m_objMgr->create();
-		objCamera.addComponent<PerspectiveCameraView>(45.0f, (float)winWidth / (float)winHeight);
-
+		auto com = objCamera.addComponent<PerspectiveCameraView>(45.0f, (float)winWidth / (float)winHeight);
+        com->eye = Vector3dF(0.0f, 0.0f, 10.0f);
         loadTextures(assetsDir + texSubDir, config);
         loadShaders(assetsDir + shaderSubDir, config);
         loadMaterials(config);
@@ -125,8 +125,8 @@ namespace renderer {
             data.repeat = -1;
             //data.actions.push_back(std::make_shared<MoveByAction>(0.5f, Vector3dF(-1.0f, 0.0f, 0.0f)));
             //data.actions.push_back(std::make_shared<MoveByAction>(0.5f, Vector3dF(1.0f, 0.0f, 0.0f)));
-            data.actions.push_back(std::make_shared<RotateByAction>(1.0f, DegreeF(0.0f), DegreeF(180.0f),  DegreeF(0.0f)));
-            data.actions.push_back(std::make_shared<RotateByAction>(2.0f, DegreeF(0.0f), DegreeF(-180.0f), DegreeF(0.0f)));
+            data.actions.push_back(std::make_shared<RotateByAction>(1.0f, DegreeF(90.0f), DegreeF(0.0f),  DegreeF(0.0f)));
+            data.actions.push_back(std::make_shared<RotateByAction>(2.0f, DegreeF(-90.0f), DegreeF(0.0f), DegreeF(0.0f)));
             m_evtMgr->emit<AddActionEvent>(obj, "test", data);
 		}
 	}
