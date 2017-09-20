@@ -11,8 +11,34 @@ namespace renderer {
 		evtMgr.on<DestroyTextureEvent>(*this); 
 		evtMgr.on<ActiveTextureByIDEvent>(*this);
 		evtMgr.on<ActiveTextureEvent>(*this);
-		evtMgr.on<DeactiveTextureEvent>(*this);
+		evtMgr.on<DeactiveTextureEvent>(*this);	
+	}
+
+	void TextureSystem::receive(const LoadCubemapEvent &evt) {
+		auto texDict = m_objMgr->getSingletonComponent<TextureDict>(); 
 		
+		std::string filename[6];
+		TexRef texRef;
+		glGenTextures(1, &texRef.texID);
+		glActiveTexture(GL_TEXTURE0);
+
+		int width, height;
+		unsigned char* image;
+
+		glBindTexture(GL_TEXTURE_CUBE_MAP, texRef.texID);
+		for (uint32_t i = 0; i < 6; i++)
+		{
+			image = SOIL_load_image((evt.dirpath + evt.filenames[i]).c_str(), &width, &height, 0, SOIL_LOAD_RGB);
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_SRGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+		}
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+
+		texDict->insert({ evt.aliasname, texRef });
 	}
 
 	void TextureSystem::receive(const LoadTextureEvent &evt) {
@@ -96,4 +122,5 @@ namespace renderer {
     void TextureSystem::receive(const DeactiveTextureEvent &evt) {
         glBindTexture(GL_TEXTURE_2D, 0);
     }
+
 };

@@ -74,6 +74,9 @@
             }
         }
     ],
+    "cubemap": {
+
+    },
     "texture": [
         {
             "alias": "spiderman.dff",

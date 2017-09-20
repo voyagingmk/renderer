@@ -7,6 +7,24 @@
 
 namespace renderer {
 
+	
+	class LoadCubemapEvent : public ecs::Event<LoadCubemapEvent> {
+	public:
+		LoadCubemapEvent(std::string &dirpath,
+			std::vector<std::string> filenames,
+			std::string &aliasname,
+			size_t channels) :
+			dirpath(dirpath),
+			filenames(filenames),
+			aliasname(aliasname),
+			channels(channels)
+		{}
+		std::string dirpath;
+		std::vector<std::string> filenames;
+		std::string aliasname;
+		size_t channels;
+	};
+
 	class LoadTextureEvent : public ecs::Event<LoadTextureEvent> {
 	public:
 		LoadTextureEvent(std::string &dirpath,

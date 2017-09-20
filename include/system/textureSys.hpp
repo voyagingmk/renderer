@@ -17,6 +17,8 @@ namespace renderer {
 		
         virtual void update(ObjectManager &objMgr, EventManager &evtMgr, float dt) override {}
         
+		void receive(const LoadCubemapEvent &evt);
+
 		void receive(const LoadTextureEvent &evt);
 
 		void receive(const DestroyTextureEvent &evt);
