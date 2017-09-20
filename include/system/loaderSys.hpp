@@ -31,7 +31,7 @@ namespace renderer {
 
 		void loadTextures(std::string texDir, const json &config);
 
-		void loadCubemaps(std::string texDir, const json &config);
+		void loadSkyboxes(std::string skyboxTexDir, const json &config);
         
         void loadShaders(std::string shaderDir, const json &config);
         

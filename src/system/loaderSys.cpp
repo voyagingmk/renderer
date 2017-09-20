@@ -38,6 +38,7 @@ namespace renderer {
 
 		string assetsDir = config["assetsDir"];
         string texSubDir = config["texSubDir"];
+		string skyboxSubDir = config["skyboxSubDir"];
         string shaderSubDir = config["shaderSubDir"];
 		string modelsDir = config["modelsDir"];
 
@@ -53,7 +54,7 @@ namespace renderer {
 		auto com = objCamera.addComponent<PerspectiveCameraView>(45.0f, (float)winWidth / (float)winHeight);
         com->eye = Vector3dF(0.0f, 0.0f, 10.0f);
         loadTextures(assetsDir + texSubDir, config);
-		loadCubemaps(assetsDir + texSubDir, config);
+		loadSkyboxes(assetsDir + skyboxSubDir, config);
         loadShaders(assetsDir + shaderSubDir, config);
         loadMaterials(config);
 		loadSceneObjects(assetsDir + modelsDir, config); 
@@ -155,9 +156,9 @@ namespace renderer {
 		}
 	}
 
-	void LoaderSystem::loadCubemaps(string texDir, const json &config)
+	void LoaderSystem::loadSkyboxes(string skyboxSubDir, const json &config)
 	{
-		auto cubemaps = config["cubemaps"];
+		auto cubemaps = config["skyboxes"];
 		for (auto it = cubemaps.begin(); it != cubemaps.end(); it++)
 		{
 			Object objSkybox = m_objMgr->create();
@@ -171,7 +172,7 @@ namespace renderer {
 				filenames.push_back(it2.value());
 			}
 			size_t channels = data["channels"];
-			m_evtMgr->emit<LoadCubemapEvent>(texDir, filenames, aliasname, channels);
+			m_evtMgr->emit<LoadCubemapEvent>(skyboxSubDir, filenames, aliasname, channels);
 
 			objSkybox.addComponent<SkyboxCom>(aliasname);
 			objSkybox.addComponent<GlobalSkyboxTag>();

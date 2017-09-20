@@ -6,6 +6,7 @@
     "texSubDir": "images/",
     "shaderSubDir": "shaders/",
     "modelsDir": "models/",
+    "skyboxSubDir": "images/skybox/",
     "shader": [
         {
             "alias": "test",
@@ -79,7 +80,21 @@
             }
         }
     ],
-    "cubemaps": {
+    "skyboxes": {
+        "alps": {
+            "files": [
+                "right.jpg",
+                "left.jpg",
+                "top.jpg",
+                "bottom.jpg",
+                "back.jpg",
+                "front.jpg"
+            ],
+            "channels": 0,
+            "shaderName": "skybox"
+        }
+    },
+    "cubemap": {
         "alps": {
             "files": [
                 "alps_rt.tga",
