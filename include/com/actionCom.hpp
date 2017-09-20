@@ -64,6 +64,11 @@ namespace renderer {
     
     class RotateByAction: public ActionBase {
     public:
+		/* 
+			alpha: x counter-clockwise
+			beta:  y counter-clockwise
+			gamma: z counter-clockwise
+		*/
         RotateByAction(float duration, DegreeF alpha, DegreeF beta, DegreeF gamma):
         ActionBase(duration, ActionType::RotateBy)
         {
