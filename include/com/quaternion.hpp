@@ -206,31 +206,45 @@ namespace renderer {
         }
    
 		// copy from vcglib
-        void ToEulerAngles(T &alpha, T &beta, T &gamma) const
+        
+        void ToEulerAngles(RadianF &alpha, RadianF &beta, RadianF &gamma) const
         {
 #define P(a,b,c,d) (2*((a)*(b)+(c)*(d)))
 #define M(a,b,c,d) (2*((a)*(b)-(c)*(d)))
-            alpha = atan2( P(s,x,y,z) , 1-P(x,x,y,y) );
-            beta  = asin ( M(s,y,z,x) );
-            gamma = atan2( P(s,z,x,y) , 1-P(y,y,z,z) );
+            alpha.radian = atan2( P(s,x,y,z) , 1-P(x,x,y,y) );
+            beta.radian  = asin ( M(s,y,z,x) );
+            gamma.radian = atan2( P(s,z,x,y) , 1-P(y,y,z,z) );
 #undef P
 #undef M
         }
         
-
-        void FromEulerAngles(T alpha, T beta, T gamma)
+        void ToEulerAngles(DegreeF &alpha, DegreeF &beta, DegreeF &gamma) const
         {
-            T cosalpha = cos(alpha / 2.0);
-            T cosbeta = cos(beta / 2.0);
-            T cosgamma = cos(gamma / 2.0);
-            T sinalpha = sin(alpha / 2.0);
-            T sinbeta = sin(beta / 2.0);
-            T singamma = sin(gamma / 2.0);
+            RadianF a, b, c;
+            ToEulerAngles(a, b, c);
+            alpha.degree = a.ToDegree().degree;
+            beta.degree = b.ToDegree().degree;
+            gamma.degree = c.ToDegree().degree;
+        }
+        
+        void FromEulerAngles(RadianF alpha, RadianF beta, RadianF gamma)
+        {
+            T cosalpha = cos(alpha.radian / 2.0);
+            T cosbeta = cos(beta.radian / 2.0);
+            T cosgamma = cos(gamma.radian / 2.0);
+            T sinalpha = sin(alpha.radian / 2.0);
+            T sinbeta = sin(beta.radian / 2.0);
+            T singamma = sin(gamma.radian / 2.0);
             
             s = cosalpha * cosbeta * cosgamma + sinalpha * sinbeta * singamma;
             x = sinalpha * cosbeta * cosgamma - cosalpha * sinbeta * singamma;
             y = cosalpha * sinbeta * cosgamma + sinalpha * cosbeta * singamma;
             z = cosalpha * cosbeta * singamma - sinalpha * sinbeta * cosgamma;
+        }
+        
+        void FromEulerAngles(DegreeF alpha, DegreeF beta, DegreeF gamma)
+        {
+            FromEulerAngles(alpha.ToRadian(), beta.ToRadian(), gamma.ToRadian());
         }
 
 	};

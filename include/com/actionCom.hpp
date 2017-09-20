@@ -40,7 +40,14 @@ namespace renderer {
     
     class RotateToAction: public ActionBase {
     public:
-        RotateToAction(float duration, float phi, float theta, float psi):
+        RotateToAction(float duration, DegreeF phi, DegreeF theta, DegreeF psi):
+        ActionBase(duration, ActionType::RotateTo)
+        {
+            to.FromEulerAngles(phi, theta, psi);
+        }
+        
+        
+        RotateToAction(float duration, RadianF phi, RadianF theta, RadianF psi):
             ActionBase(duration, ActionType::RotateTo)
         {
             to.FromEulerAngles(phi, theta, psi);
@@ -57,10 +64,16 @@ namespace renderer {
     
     class RotateByAction: public ActionBase {
     public:
-        RotateByAction(float duration, float alpha, float beta, float gamma):
+        RotateByAction(float duration, DegreeF alpha, DegreeF beta, DegreeF gamma):
+        ActionBase(duration, ActionType::RotateBy)
+        {
+            by.FromEulerAngles(alpha, beta, gamma);
+        }
+        
+        RotateByAction(float duration, RadianF alpha, RadianF beta, RadianF gamma):
 			ActionBase(duration, ActionType::RotateBy)
         {
-            by.FromEulerAngles(Radians(alpha), Radians(beta), Radians(gamma));
+            by.FromEulerAngles(alpha, beta, gamma);
         }
         
         RotateByAction(float duration, QuaternionF by):

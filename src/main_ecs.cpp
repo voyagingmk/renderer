@@ -61,6 +61,17 @@ public:
 
 int ecsMain(int argc, char *argv[])
 {
+    QuaternionF p;
+    
+    p.FromEulerAngles(RadianF(0.0f), RadianF(0.0f), RadianF(0.0f));
+    p.debug();
+    p.FromEulerAngles(RadianF(90.0f), RadianF(0.0f), RadianF(0.0f));
+    p.debug();
+    p.FromEulerAngles(RadianF(0.0f), RadianF(90.0f), RadianF(0.0f));
+    p.debug();
+    p.FromEulerAngles(RadianF(0.0f), RadianF(0.0f), RadianF(90.0f));
+    p.debug();
+    
 	MainECS ecsObj;
 	ecsObj.setup();
 	int interval = 10;

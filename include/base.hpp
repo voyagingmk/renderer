@@ -210,6 +210,40 @@ namespace renderer {
 	inline float Degrees(float radian) {
 		return (180.f / (float)M_PI) * radian;
 	}
+    template<typename T>
+    class Radian;
+    template<typename T>
+    class Degree;
+    
+    template<typename T>
+    class Radian {
+        public:
+        Radian():
+            radian((T)0.0)
+        {}
+        explicit Radian(T radian):
+            radian(radian)
+        {}
+        Degree<T> ToDegree() { return Degree<T>(((T)180.0 / (T)M_PI ) * radian); }
+        T radian;
+    };
+    
+    template<typename T>
+    class Degree {
+    public:
+        Degree():
+            degree((T)0.0)
+        {}
+        explicit Degree(T degree):
+            degree(degree)
+        {}
+        Radian<T> ToRadian() { return Radian<T>(((T)M_PI / (T)180.0) * degree); }
+        T degree;
+    };
+    
+    typedef Radian<float> RadianF;
+    typedef Degree<float> DegreeF;
+    
 
 #ifdef _SDL_H
 
