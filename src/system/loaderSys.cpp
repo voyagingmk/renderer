@@ -61,6 +61,7 @@ namespace renderer {
 		loadSceneObjects(assetsDir + modelsDir, config); 
 		loadLights(config);
 
+		m_evtMgr->emit<CreateColorBufferEvent>(winWidth, winHeight, GL_RED, BufType::Tex, 0, "ssao");
 		m_evtMgr->emit<CreateGBufferEvent>(winWidth, winHeight, "main");
 
 		CreateGlobalQuadObject();

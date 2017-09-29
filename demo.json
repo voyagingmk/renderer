@@ -70,6 +70,11 @@
             "fs": "g_buffer.fs"
         },
         {
+            "alias": "ssao",
+            "vs": "ssao.vs",
+            "fs": "ssao.fs"
+        },
+        {
             "alias": "deferredShading",
             "vs": "deferred_shading.vs",
             "fs": "deferred_shading.fs",

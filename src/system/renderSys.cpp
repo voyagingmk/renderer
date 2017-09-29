@@ -46,6 +46,11 @@ namespace renderer {
 			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT,
 			&gBufferShader);
 		evtMgr.emit<UnuseGBufferEvent>("main");
+
+		// ssao pass
+		ssaoPass(objCamera, "main", "ssao", context->width, context->height);
+
+
 		// lighting pass
 		deferredLightingPass(objCamera, "main", context->width, context->height);
 		evtMgr.emit<CopyGBufferDepthEvent>("main");// 需要GBuffer的深度信息，不然天空盒会黑掉
@@ -149,6 +154,24 @@ namespace renderer {
 			checkGLError;
 			break;
 		}
+	}
+	
+	
+	void RenderSystem::ssaoPass(Object objCamera, std::string gBufferAliasName, std::string colorBufferAliasName, size_t winWidth, size_t winHeight) {
+		m_evtMgr->emit<UseColorBufferEvent>(colorBufferAliasName);
+		Shader shader = getShader("ssao");
+		shader.use();
+		m_evtMgr->emit<UploadCameraToShaderEvent>(objCamera, shader);
+		auto gBufferCom = m_objMgr->getSingletonComponent<GBufferDictCom>();
+		GBufferRef& buf = gBufferCom->dict[gBufferAliasName];
+		m_evtMgr->emit<ActiveTextureByIDEvent>(0, buf.posTexID);
+		m_evtMgr->emit<ActiveTextureByIDEvent>(1, buf.normalTexID);
+		m_evtMgr->emit<ActiveTextureByIDEvent>(2, buf.albedoSpecTexID);
+		setViewport(std::make_tuple(0, 0, winWidth, winHeight));
+		clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
+			GL_COLOR_BUFFER_BIT);
+		renderQuad();
+		m_evtMgr->emit<UnuseColorBufferEvent>(colorBufferAliasName);
 	}
 
 	void RenderSystem::deferredLightingPass(Object objCamera, std::string gBufferAliasName, size_t winWidth, size_t winHeight) {
