@@ -162,14 +162,14 @@ namespace renderer {
 			return *this;
 		}
 
-		inline Point3d<T>& operator *= (const T f) const {
+		inline Point3d<T>& operator *= (const T f) {
 			x *= f;
 			y *= f;
 			z *= f;
 			return *this;
 		}
 
-		inline Point3d<T>& operator /= (const T f) const {
+		inline Point3d<T>& operator /= (const T f) {
 			x /= f;
 			y /= f;
 			z /= f;

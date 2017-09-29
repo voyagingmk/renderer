@@ -5,7 +5,11 @@ using namespace renderer;
 
 
 UniLoc Shader::getUniformLocation(const char* name) {
-    return (UniLoc)glGetUniformLocation(spHDL, name);
+	return (UniLoc)glGetUniformLocation(spHDL, name);
+}
+
+UniLoc Shader::getUniformLocation(std::string name) {
+	return getUniformLocation(name.c_str());
 }
 
 void Shader::set4f(UniLoc loc, float f1, float f2, float f3, float f4) {
@@ -143,6 +147,24 @@ void Shader::setTransform4f(const char* name, Transform4x4 trans) {
         return;
     }
     setTransform4f(loc, trans);
+}
+
+void Shader::set3fArray(const char *name, std::vector<Vector3dF>& arr, int n) {
+	UniLoc loc = getUniformLocation(name);
+	if (loc == -1) {
+		return;
+	}
+	if (n == 0) {
+		n = arr.size();
+	}
+	if (n <= 0) {
+		return;
+	}
+	for (int i = 0; i < n; i++) {
+		const Vector3dF& v = arr[i];
+		UniLoc loc = getUniformLocation(std::string(name) + "samples[" + std::to_string(i) + "]");
+		set3f(loc, v.x, v.y, v.z);
+	}
 }
 
 void Shader::use() {

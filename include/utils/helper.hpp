@@ -34,5 +34,35 @@ namespace renderer{
         }
     }
 
+	static float lerp(float a, float b, float f)
+	{
+		return a + f * (b - a);
+	}
+
+	template<typename T>
+	static T random0_1() {
+		static std::uniform_real_distribution<T> randomFloats(0.0, 1.0); // generates random floats between 0.0 and 1.0
+		static std::default_random_engine generator;
+		return randomFloats(generator);
+	}
+
+	static void generateSampleKernel(std::vector<Vector3dF>& ssaoKernel) {
+		for (unsigned int i = 0; i < 64; ++i)
+		{
+			Vector3dF sample(
+				random0_1<float>() * 2.0 - 1.0, 
+				random0_1<float>() * 2.0 - 1.0, 
+				random0_1<float>());
+			sample = sample.Normalize();
+			sample *= random0_1<float>();
+			float scale = float(i) / 64.0;
+
+			// scale samples s.t. they're more aligned to center of kernel
+			scale = lerp(0.1f, 1.0f, scale * scale);
+			sample *= scale;
+			ssaoKernel.push_back(sample);
+		}
+	}
+
 }
 #endif
