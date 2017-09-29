@@ -49,6 +49,7 @@ namespace renderer {
         obj.addComponent<ShaderProgramSet>();
         obj.addComponent<MaterialSet>();
 		obj.addComponent<GBufferDictCom>();
+		obj.addComponent<ColorBufferDictCom>();
 
 		Object objCamera = m_objMgr->create();
 		auto com = objCamera.addComponent<PerspectiveCameraView>(45.0f, (float)winWidth / (float)winHeight);

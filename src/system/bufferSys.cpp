@@ -52,6 +52,40 @@ namespace renderer {
 		}
 	}
 
+	void BufferSystem::receive(const CreateColorBufferEvent& evt) {
+		auto com = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
+		ColorBufferRef buf = CreateColorBuffer(evt.width, evt.height, evt.depthType, evt.MSAA);
+		com->dict[evt.aliasName] = buf;
+	}
+
+	void BufferSystem::receive(const DestroyColorBufferEvent& evt) {
+		auto com = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
+		auto it = com->dict.find(evt.aliasName);
+		if (it == com->dict.end()) {
+			return;
+		}
+		DestroyColorBuffer(it->second);
+		com->dict.erase(it);
+	}
+
+	void BufferSystem::receive(const UseColorBufferEvent& evt) {
+		auto com = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
+		auto it = com->dict.find(evt.aliasName);
+		if (it == com->dict.end()) {
+			return;
+		}
+		UseFrameBuffer(it->second);
+	}
+
+	void BufferSystem::receive(const UnuseColorBufferEvent& evt) {
+		auto com = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
+		auto it = com->dict.find(evt.aliasName);
+		if (it == com->dict.end()) {
+			return;
+		}
+		UnuseFrameBuffer(it->second);
+	}
+
 	void BufferSystem::receive(const CreateGBufferEvent& evt) {
 		auto com = m_objMgr->getSingletonComponent<GBufferDictCom>();
 		GBufferRef buf = CreateGBuffer(evt.width, evt.height);
@@ -293,6 +327,15 @@ namespace renderer {
 		}
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		return buf;
+	}
+
+	void BufferSystem::DestroyColorBuffer(ColorBufferRef buf) {
+		glDeleteTextures(1, &buf.tex.texID);
+		DestroyFrameBuffer(buf);
+		if (buf.MSAA) {
+			glDeleteTextures(1, &buf.innerTex.texID);
+			glDeleteFramebuffers(1, &buf.innerFboID);
+		}
 	}
 
 	GBufferRef BufferSystem::CreateGBuffer(size_t width, size_t height) {

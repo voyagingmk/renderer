@@ -31,7 +31,51 @@ namespace renderer {
         ecs::Object obj;
     };
 
+	class CreateColorBufferEvent : public ecs::Event<CreateColorBufferEvent> {
+	public:
+		CreateColorBufferEvent(size_t width, size_t height,
+			BufType depthType,
+			size_t MSAA,
+			std::string aliasName) :
+			width(width),
+			height(height),
+			depthType(depthType),
+			MSAA(MSAA),
+			aliasName(aliasName)
+		{}
+		size_t width;
+		size_t height;
+		BufType depthType;
+		size_t MSAA;
+		std::string aliasName;
+	};
+
+	class DestroyColorBufferEvent : public ecs::Event<DestroyColorBufferEvent> {
+	public:
+		DestroyColorBufferEvent(std::string aliasName) :
+			aliasName(aliasName)
+		{}
+		std::string aliasName;
+	};
+
+	class UseColorBufferEvent : public ecs::Event<UseColorBufferEvent> {
+	public:
+		UseColorBufferEvent(std::string aliasName) :
+			aliasName(aliasName)
+		{}
+		std::string aliasName;
+	};
+
+	class UnuseColorBufferEvent : public ecs::Event<UnuseColorBufferEvent> {
+	public:
+		UnuseColorBufferEvent(std::string aliasName) :
+			aliasName(aliasName)
+		{}
+		std::string aliasName;
+	};
+
     
+
     class CreateGBufferEvent : public ecs::Event<CreateGBufferEvent> {
     public:
         CreateGBufferEvent(size_t width, size_t height, std::string aliasName):

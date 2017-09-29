@@ -26,6 +26,14 @@ namespace renderer {
 
 		void receive(const DrawMeshBufferEvent& evt);
 
+		void receive(const CreateColorBufferEvent& evt);
+
+		void receive(const DestroyColorBufferEvent& evt);
+
+		void receive(const UseColorBufferEvent& evt);
+
+		void receive(const UnuseColorBufferEvent& evt);
+
 		void receive(const CreateGBufferEvent& evt);
 		
 		void receive(const DestroyGBufferEvent& evt);
@@ -50,6 +58,8 @@ namespace renderer {
 		
 		ColorBufferRef CreateColorBuffer(size_t width, size_t height, BufType depthType, size_t MSAA);
 		
+		void DestroyColorBuffer(ColorBufferRef buf);
+
 		GBufferRef CreateGBuffer(size_t width, size_t height);
 
 		void DestroyGBuffer(GBufferRef);

@@ -111,6 +111,13 @@ namespace renderer {
 	struct GBufferDictCom {
 		GBufferDict dict;
 	};
+
+
+	typedef std::map<std::string, ColorBufferRef> ColorBufferDict;
+
+	struct ColorBufferDictCom {
+		ColorBufferDict dict;
+	};
 }
 
 #endif
