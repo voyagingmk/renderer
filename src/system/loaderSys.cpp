@@ -223,8 +223,7 @@ namespace renderer {
 	void LoaderSystem::loadMesh(const std::string &filename, Meshes& meshes)
 	{
 		ImporterAssimp &importer = ImporterAssimp::getInstance();
-		meshes.meshes.push_back(OneMesh());
-		importer.Import<OneMesh>(filename, meshes.meshes[meshes.meshes.size()- 1]);
+		importer.Import(filename, meshes);
 	}
 
 	void LoaderSystem::loadSpatialData(Object obj, const json &spatial) {

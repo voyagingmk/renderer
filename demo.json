@@ -260,7 +260,7 @@
     ],
     "object": [
         {
-            "model": "spiderman.obj",
+            "model": "nanosuit.obj",
             "material": 3,
             "spatial": [
                 [0, 0, 3],

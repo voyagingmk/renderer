@@ -63,7 +63,7 @@ namespace renderer {
 
 		/*----- first-pass end -----*/
         // renderGBufferDebug("main", context->width, context->height);
-        renderColorBufferDebug("ssao", context->width, context->height);
+        // renderColorBufferDebug("ssao", context->width, context->height);
 		
 		CheckGLError;
 		SDL_GL_SwapWindow(context->win);

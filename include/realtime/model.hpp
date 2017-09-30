@@ -42,7 +42,7 @@ class Model : public Shape
     {
         ImporterAssimp &importer = ImporterAssimp::getInstance();
         meshs.push_back(Mesh());
-        importer.Import(filename, meshs[0]);
+        // importer.Import(filename, meshs[0]);
     }
 
     void ReleaseMesh()
