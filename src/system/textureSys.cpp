@@ -2,6 +2,7 @@
 #include "system/textureSys.hpp"
 #include "realtime/glutils.hpp"
 #include "SOIL.h"
+#include "utils/helper.hpp"
 
 using namespace std;
 
@@ -9,7 +10,8 @@ namespace renderer {
 	void TextureSystem::init(ObjectManager &objMgr, EventManager &evtMgr) {
 		printf("TextureSystem init\n");
         evtMgr.on<LoadTextureEvent>(*this);
-		evtMgr.on<LoadCubemapEvent>(*this);
+        evtMgr.on<LoadCubemapEvent>(*this);
+        evtMgr.on<CreateNoiseTextureEvent>(*this);
 		evtMgr.on<DestroyTextureEvent>(*this); 
 		evtMgr.on<ActiveTextureByIDEvent>(*this);
 		evtMgr.on<ActiveTextureEvent>(*this);
@@ -87,6 +89,30 @@ namespace renderer {
 		std::cout << "TextureSystem: image[" << evt.filename << "] loaded, w:" << width << ", h:" << height << std::endl;
 
 	}
+    
+    void TextureSystem::receive(const CreateNoiseTextureEvent &evt) {
+        auto texDict = m_objMgr->getSingletonComponent<TextureDict>();
+        // Noise texture
+        std::vector<Vector3dF> ssaoNoise;
+        for (GLuint i = 0; i < 16; i++)
+        {
+            Vector3dF noise(random0_1<float>() * 2.0 - 1.0, random0_1<float>() * 2.0 - 1.0, 0.0f); // rotate around z-axis (in tangent space)
+            ssaoNoise.push_back(noise);
+        }
+        TexRef texRef;
+        glGenTextures(1, &texRef.texID);
+        glBindTexture(GL_TEXTURE_2D, texRef.texID);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, 4, 4, 0, GL_RGB, GL_FLOAT, &ssaoNoise[0]);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        texRef.width = 4;
+        texRef.height = 4;
+        texRef.type = TexType::Tex2D;
+        texDict->insert({ evt.aliasname, texRef });
+    }
+
 
 	void TextureSystem::receive(const DestroyTextureEvent &evt) {
 		auto texDict = m_objMgr->getSingletonComponent<TextureDict>();
@@ -99,12 +125,9 @@ namespace renderer {
 	}
 	
 	void TextureSystem::receive(const ActiveTextureByIDEvent &evt) {
-		if (evt.texID > 0) {
-			assert(glIsTexture(evt.texID));
-			glActiveTexture(GL_TEXTURE0 + evt.idx);
-			glBindTexture(GL_TEXTURE_2D, evt.texID);
-			return;
-		}
+        assert(glIsTexture(evt.texID) &&  evt.texID > 0);
+        glActiveTexture(GL_TEXTURE0 + evt.idx);
+        glBindTexture(GL_TEXTURE_2D, evt.texID);
 	}
 
 	void TextureSystem::receive(const ActiveTextureEvent &evt) {

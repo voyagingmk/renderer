@@ -34,22 +34,28 @@ namespace renderer {
 	class CreateColorBufferEvent : public ecs::Event<CreateColorBufferEvent> {
 	public:
 		CreateColorBufferEvent(size_t width, size_t height,
-			int internalFormat,
+            int internalFormat,
+            int dataType,
 			BufType depthType,
 			size_t MSAA,
+            int texParam,
 			std::string aliasName) :
 			width(width),
 			height(height),
-			internalFormat(internalFormat),
+            internalFormat(internalFormat),
+            dataType(dataType),
 			depthType(depthType),
 			MSAA(MSAA),
+            texParam(texParam),
 			aliasName(aliasName)
 		{}
 		size_t width;
 		size_t height;
 		int internalFormat;
+        int dataType;
 		BufType depthType;
 		size_t MSAA;
+        int texParam;
 		std::string aliasName;
 	};
 

@@ -56,7 +56,13 @@ namespace renderer {
 
 		MeshBufferRef CreateSkyboxBuffer();
 		
-		ColorBufferRef CreateColorBuffer(size_t width, size_t height, int innerFormat = GL_RGBA16F, BufType depthType = BufType::Tex, size_t MSAA = 0);
+		ColorBufferRef CreateColorBuffer(
+            size_t width, size_t height,
+            int innerFormat = GL_RGBA16F,
+            int dataType = GL_UNSIGNED_BYTE,
+            BufType depthType = BufType::None,
+            size_t MSAA = 0,
+            int texParam = GL_LINEAR);
 		
 		void DestroyColorBuffer(ColorBufferRef buf);
 

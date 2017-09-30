@@ -41,6 +41,8 @@ namespace renderer {
 
 		void deferredLightingPass(Object objCamera, std::string gBufferAliasName, size_t winWidth, size_t winHeight);
         
+        void renderColorBufferDebug(std::string colorBufferAliasName, size_t winWidth, size_t winHeight);
+        
         void renderGBufferDebug(std::string gBufferAliasName, size_t winWidth, size_t winHeight);
 	};
 

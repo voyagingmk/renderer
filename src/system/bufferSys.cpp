@@ -11,6 +11,10 @@ namespace renderer {
 		evtMgr.on<CreateMeshBufferEvent>(*this);
 		evtMgr.on<CreateSkyboxBufferEvent>(*this);
 		evtMgr.on<DrawMeshBufferEvent>(*this);
+        evtMgr.on<CreateColorBufferEvent>(*this);
+        evtMgr.on<DestroyColorBufferEvent>(*this);
+        evtMgr.on<UseColorBufferEvent>(*this);
+        evtMgr.on<UnuseColorBufferEvent>(*this);
 		evtMgr.on<CreateGBufferEvent>(*this);
 		evtMgr.on<DestroyGBufferEvent>(*this);
 		evtMgr.on<UseGBufferEvent>(*this); 
@@ -54,7 +58,9 @@ namespace renderer {
 
 	void BufferSystem::receive(const CreateColorBufferEvent& evt) {
 		auto com = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
-		ColorBufferRef buf = CreateColorBuffer(evt.width, evt.height, evt.internalFormat, evt.depthType, evt.MSAA);
+		ColorBufferRef buf = CreateColorBuffer(
+            evt.width, evt.height, evt.internalFormat, evt.dataType,
+            evt.depthType, evt.MSAA, evt.texParam);
 		com->dict[evt.aliasName] = buf;
 	}
 
@@ -240,7 +246,10 @@ namespace renderer {
 		return meshBuffer;
 	}
 
-	ColorBufferRef BufferSystem::CreateColorBuffer(size_t width, size_t height, int innerFormat, BufType depthType, size_t MSAA) {
+	ColorBufferRef BufferSystem::CreateColorBuffer(
+            size_t width, size_t height,
+            int innerFormat, int dataType,
+            BufType depthType, size_t MSAA, int texParam) {
 		ColorBufferRef buf;
 		buf.width = width;
 		buf.height = height;
@@ -263,10 +272,10 @@ namespace renderer {
 			glTexImage2DMultisample(target, samples, innerFormat, width, height, GL_TRUE);
 		}
 		else {
-			glTexImage2D(GL_TEXTURE_2D, 0, innerFormat, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+			glTexImage2D(GL_TEXTURE_2D, 0, innerFormat, width, height, 0, GL_RGB, dataType, NULL);
 		}
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texParam);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, texParam);
 		glBindTexture(target, 0);
 
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, target, buf.tex.texID, 0);
@@ -285,39 +294,42 @@ namespace renderer {
 			// create a color attachment texture
 			glGenTextures(1, &buf.innerTex.texID);
 			glBindTexture(GL_TEXTURE_2D, buf.innerTex.texID);
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, dataType, NULL);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texParam);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, texParam);
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, buf.innerTex.texID, 0);	// we only need a color buffer
 		}
 		glBindFramebuffer(GL_FRAMEBUFFER, buf.fboID);
+        
 		// depth and stencil buffer
 		buf.depthType = depthType;
-		if (buf.depthType == BufType::Tex) {
-			glGenTextures(1, &buf.depthTex.texID);
-			glBindTexture(GL_TEXTURE_2D, buf.depthTex.texID);
-			if (MSAA) {
-				size_t samples = MSAA;
-				glTexImage2DMultisample(target, samples, GL_DEPTH24_STENCIL8, width, height, GL_TRUE);
-			}
-			else {
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, width, height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, 0);
-			}
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, buf.depthTex.texID, 0);
-		}
-		else {
-			glGenRenderbuffers(1, &buf.depthRboID);
-			glBindRenderbuffer(GL_RENDERBUFFER, buf.depthRboID);
-			if (MSAA) {
-				size_t samples = MSAA;
-				glRenderbufferStorageMultisample(GL_RENDERBUFFER, samples, GL_DEPTH24_STENCIL8, width, height);
-			}
-			else {
-				glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
-			}
-			glBindRenderbuffer(GL_RENDERBUFFER, 0);
-			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, buf.depthRboID);
-		}
+        if (buf.depthType != BufType::None) {
+            if (buf.depthType == BufType::Tex) {
+                glGenTextures(1, &buf.depthTex.texID);
+                glBindTexture(GL_TEXTURE_2D, buf.depthTex.texID);
+                if (MSAA) {
+                    size_t samples = MSAA;
+                    glTexImage2DMultisample(target, samples, GL_DEPTH24_STENCIL8, width, height, GL_TRUE);
+                }
+                else {
+                    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, width, height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, 0);
+                }
+                glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, buf.depthTex.texID, 0);
+            }
+            else {
+                glGenRenderbuffers(1, &buf.depthRboID);
+                glBindRenderbuffer(GL_RENDERBUFFER, buf.depthRboID);
+                if (MSAA) {
+                    size_t samples = MSAA;
+                    glRenderbufferStorageMultisample(GL_RENDERBUFFER, samples, GL_DEPTH24_STENCIL8, width, height);
+                }
+                else {
+                    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
+                }
+                glBindRenderbuffer(GL_RENDERBUFFER, 0);
+                glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, buf.depthRboID);
+            }
+        }
 
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
 			printf("[CreateFrameBuffer failed]");

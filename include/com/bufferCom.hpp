@@ -28,6 +28,7 @@ namespace renderer {
 
 
     enum class BufType {
+        None = 0, // no buf
         Tex = 1, // texture
         RBO = 2  // render buffer
     };

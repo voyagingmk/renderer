@@ -13,6 +13,7 @@
 #include "event/spatialEvent.hpp"
 #include "event/bufferEvent.hpp"
 #include "event/textureEvent.hpp"
+#include "utils/helper.hpp"
 
 
 using namespace std;
@@ -48,12 +49,12 @@ namespace renderer {
 		evtMgr.emit<UnuseGBufferEvent>("main");
 
 		// ssao pass
-		ssaoPass(objCamera, "main", "ssao", context->width, context->height);
+        ssaoPass(objCamera, "main", "ssao", context->width, context->height);
 
 
 		// lighting pass
 		deferredLightingPass(objCamera, "main", context->width, context->height);
-		evtMgr.emit<CopyGBufferDepthEvent>("main");// ��ҪGBuffer�������Ϣ����Ȼ��պл�ڵ�
+		evtMgr.emit<CopyGBufferDepthEvent>("main");// –Ë“™GBufferµƒ…Ó∂»–≈œ¢£¨≤ª»ªÃÏø’∫–ª·∫⁄µÙ
 		renderSkybox(objCamera);
 
 		//setViewport(std::make_tuple(0, 0, context->width, context->height));
@@ -62,6 +63,7 @@ namespace renderer {
 
 		/*----- first-pass end -----*/
         // renderGBufferDebug("main", context->width, context->height);
+        renderColorBufferDebug("ssao", context->width, context->height);
 		
 		CheckGLError;
 		SDL_GL_SwapWindow(context->win);
@@ -166,11 +168,18 @@ namespace renderer {
 		GBufferRef& buf = gBufferCom->dict[gBufferAliasName];
 		m_evtMgr->emit<ActiveTextureByIDEvent>(0, buf.posTexID);
 		m_evtMgr->emit<ActiveTextureByIDEvent>(1, buf.normalTexID);
-		m_evtMgr->emit<ActiveTextureByIDEvent>(2, buf.albedoSpecTexID);
+		m_evtMgr->emit<ActiveTextureEvent>(2, "ssaoNoise");
 		setViewport(std::make_tuple(0, 0, winWidth, winHeight));
 		clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
 			GL_COLOR_BUFFER_BIT);
+        static std::vector<Vector3dF> ssaoKernel;
+        if (ssaoKernel.size() == 0) {
+            generateSampleKernel(ssaoKernel);
+        }
+        shader.set3fArray("samples", ssaoKernel);
+        CheckGLError;
 		renderQuad();
+        CheckGLError;
 		m_evtMgr->emit<UnuseColorBufferEvent>(colorBufferAliasName);
 	}
 
@@ -201,7 +210,19 @@ namespace renderer {
 		shader.set1i("LightNum", i);
 		renderQuad();
 	}
-
+    
+    void RenderSystem::renderColorBufferDebug(std::string colorBufferAliasName, size_t winWidth, size_t winHeight) {
+        Shader shader = getShader("screen");
+        shader.use();
+        auto colorBufferCom = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
+        ColorBufferRef& buf = colorBufferCom->dict[colorBufferAliasName];
+        clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
+                  GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        setViewport(std::make_tuple(0, 0, winWidth, winHeight));
+        m_evtMgr->emit<ActiveTextureByIDEvent>(0, buf.tex.texID);
+        renderQuad();
+    }
+    
     void RenderSystem::renderGBufferDebug(std::string gBufferAliasName, size_t winWidth, size_t winHeight) {
         Shader shader = getShader("screen");
         shader.use();

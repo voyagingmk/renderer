@@ -20,6 +20,8 @@ namespace renderer {
 		void receive(const LoadCubemapEvent &evt);
 
 		void receive(const LoadTextureEvent &evt);
+        
+        void receive(const CreateNoiseTextureEvent &evt);
 
 		void receive(const DestroyTextureEvent &evt);
 		

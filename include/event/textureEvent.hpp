@@ -44,9 +44,19 @@ namespace renderer {
 		bool toLinear;
 	};
 
+    
+    class CreateNoiseTextureEvent : public ecs::Event<CreateNoiseTextureEvent> {
+    public:
+        CreateNoiseTextureEvent(std::string aliasname):
+            aliasname(aliasname)
+        {}
+        std::string aliasname;
+    };
+    
+    
 	class DestroyTextureEvent : public ecs::Event<DestroyTextureEvent> {
 	public:
-		DestroyTextureEvent(std::string& aliasname):
+		DestroyTextureEvent(std::string aliasname):
 			aliasname(aliasname)
 		{}
 		std::string aliasname;
