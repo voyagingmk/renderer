@@ -162,7 +162,7 @@ void Shader::set3fArray(const char *name, std::vector<Vector3dF>& arr, int n) {
 	}
 	for (int i = 0; i < n; i++) {
 		const Vector3dF& v = arr[i];
-		UniLoc loc = getUniformLocation(std::string(name) + "samples[" + std::to_string(i) + "]");
+		UniLoc loc = getUniformLocation(std::string(name) + "[" + std::to_string(i) + "]");
 		set3f(loc, v.x, v.y, v.z);
 	}
 }
