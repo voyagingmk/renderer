@@ -61,7 +61,7 @@ namespace renderer {
 		loadSceneObjects(assetsDir + modelsDir, config); 
 		loadLights(config);
 
-		m_evtMgr->emit<CreateColorBufferEvent>(winWidth, winHeight, GL_RED, GL_FLOAT, BufType::Tex, 0, GL_NEAREST, "ssao");
+		m_evtMgr->emit<CreateColorBufferEvent>(winWidth, winHeight, GL_RED, GL_FLOAT, BufType::None, 0, GL_NEAREST, "ssao");
         m_evtMgr->emit<CreateGBufferEvent>(winWidth, winHeight, "main");
         
         m_evtMgr->emit<CreateNoiseTextureEvent>("ssaoNoise");

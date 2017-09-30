@@ -77,6 +77,7 @@ namespace renderer {
 	void BufferSystem::receive(const UseColorBufferEvent& evt) {
 		auto com = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
 		auto it = com->dict.find(evt.aliasName);
+        assert(it != com->dict.end());
 		if (it == com->dict.end()) {
 			return;
 		}

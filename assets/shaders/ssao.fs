@@ -22,8 +22,6 @@ uniform mat4 proj;
 
 void main()
 {    
-    FragColor = 0.5;
-    return;
     // get input for SSAO algorithm
     vec3 fragPos = texture(gPosition, TexCoord).xyz;
     vec3 normal = normalize(texture(gNormal, TexCoord).rgb);
