@@ -260,7 +260,7 @@
     ],
     "object": [
         {
-            "model": "nanosuit.obj",
+            "model": "capsule.obj",
             "material": 3,
             "spatial": [
                 [0, 0, 3],
@@ -272,7 +272,7 @@
     "material": [
         {
             "id": 1,
-            "type": "Phone",
+            "type": "Phong",
             "ambient": "White",
             "diffuse": "White",
             "specular": "White",
@@ -283,7 +283,7 @@
         },
         {
             "id": 2,
-            "type": "Phone",
+            "type": "Phong",
             "ambient": "White",
             "diffuse": "Blue",
             "specular": "White",
@@ -294,11 +294,11 @@
         },
         {
             "id": 3,
-            "type": "Phone",
-            "shininess": 32,
-            "reflectiveness": 0.5,
-            "shaderName": "test",
-            "textures": ["spiderman.dff"]
+            "type": "PBR",
+            "albedo": [0.5, 0.0, 0.0],
+            "ao": 1.0,
+            "roughness": 0.05,
+            "shaderName": "pbr"
         }
     ]
 }

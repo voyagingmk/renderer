@@ -20,21 +20,21 @@ namespace renderer {
 
 	class ActiveMaterialEvent : public ecs::Event<ActiveMaterialEvent> {
 	public:
-		ActiveMaterialEvent(MaterialSettingCom& setting, Shader shader) :
+		ActiveMaterialEvent(MaterialSettingID settingID, Shader shader) :
 			shader(shader),
-			setting(setting)
+			settingID(settingID)
 		{}
 		Shader shader; 
-		MaterialSettingCom& setting;
+		MaterialSettingID settingID;
 	}; 
 
 	
 	class DeactiveMaterialEvent : public ecs::Event<DeactiveMaterialEvent> {
 	public:
-		DeactiveMaterialEvent(MaterialSettingCom& setting) :
-			setting(setting)
+		DeactiveMaterialEvent(MaterialSettingID settingID) :
+			settingID(settingID)
 		{}
-		MaterialSettingCom& setting;
+        MaterialSettingID settingID;
 	};
 
 

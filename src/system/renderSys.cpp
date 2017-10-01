@@ -33,7 +33,7 @@ namespace renderer {
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
 
-	
+        // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		/*----- first-pass: deferred rendering-----*/
 		
 		Object objCamera = objMgr.getSingletonComponent<PerspectiveCameraView>().object();
@@ -47,13 +47,14 @@ namespace renderer {
 			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT,
 			&gBufferShader);
 		evtMgr.emit<UnuseGBufferEvent>("main");
+        // glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 		// ssao pass
         ssaoPass(objCamera, "main", "ssao", context->width, context->height);
 
 
 		// lighting pass
-		deferredLightingPass(objCamera, "main", context->width, context->height);
+        deferredLightingPass(objCamera, "main", context->width, context->height);
 		evtMgr.emit<CopyGBufferDepthEvent>("main");// –Ë“™GBufferµƒ…Ó∂»–≈œ¢£¨≤ª»ªÃÏø’∫–ª·∫⁄µÙ
 		renderSkybox(objCamera);
 
@@ -109,7 +110,7 @@ namespace renderer {
 				shader = getShader(setting);
 				shader.use();
 			}
-			m_evtMgr->emit<ActiveMaterialEvent>(setting, shader);
+			m_evtMgr->emit<ActiveMaterialEvent>(matCom->settingID, shader);
 			CheckGLError; 
 			m_evtMgr->emit<ActiveSpatialDataEvent>(obj, shader);
 			CheckGLError; 
@@ -119,15 +120,15 @@ namespace renderer {
 			CheckGLError; 
 			m_evtMgr->emit<DrawMeshBufferEvent>(obj);
 			CheckGLError;
-			m_evtMgr->emit<DeactiveMaterialEvent>(setting);
+			m_evtMgr->emit<DeactiveMaterialEvent>(matCom->settingID);
 			CheckGLError;
 		}
 		CheckGLError;
 	}
 
-	Shader RenderSystem::getShader(MaterialSettingCom& com) {
+	Shader RenderSystem::getShader(MaterialSettingComBase* com) {
 		auto spSetCom = m_objMgr->getSingletonComponent<ShaderProgramSet>();
-		return Shader(spSetCom->alias2HDL[com.shaderName]);
+		return Shader(spSetCom->alias2HDL[com->shaderName]);
 	}
 
 	Shader RenderSystem::getShader(std::string shaderName) {

@@ -7,38 +7,76 @@
 
 
 namespace renderer {
-    class MaterialSettingCom {
+    
+    enum class MaterialType {
+        Unknown,
+        PBR,
+        Phong
+    };
+    
+    class MaterialSettingComBase {
     public:
-		MaterialSettingCom():
-			ambient(Color::White),
+        MaterialSettingComBase(std::string shd):
+            shaderName(shd)
+        {}
+        virtual ~MaterialSettingComBase() {}
+        MaterialType type() {
+            return MaterialType::Unknown;
+        }
+        std::string shaderName;
+        std::vector<std::string> texList;
+        
+    };
+    
+    class MaterialPhongSettingCom: public MaterialSettingComBase {
+    public:
+		MaterialPhongSettingCom():
+            MaterialSettingComBase(""),
+            ambient(Color::White),
 			diffuse(Color::White),
 			specular(Color::White),
 			reflectiveness(1.0f),
-			shininess(1.0f),
-			shaderName("")
+			shininess(1.0f)
 		{}
-        MaterialSettingCom(
+        MaterialPhongSettingCom(
+            std::string shd,
 			Color a, Color d, Color s,
-			float r, float sh, 
-			std::string shd):
+			float r, float sh):
+         MaterialSettingComBase(shd),
          ambient(a),
          diffuse(d),
          specular(s),
          reflectiveness(r),
-         shininess(sh),
-		 shaderName(shd)
+         shininess(sh)
         {}
+        MaterialType type() {
+            return MaterialType::Phong;
+        }
         Color ambient;
         Color diffuse;
         Color specular;
         float reflectiveness;
         float shininess;
-		std::string shaderName;
-		std::vector<std::string> texList;
+    };
+    
+    
+    class MaterialPBRSettingCom: public MaterialSettingComBase {
+    public:
+        MaterialPBRSettingCom(std::string shd,
+            Color a, float r):
+            MaterialSettingComBase(shd),
+            albedo(a),
+            roughness(r)
+        {}
+        MaterialType type() {
+            return MaterialType::PBR;
+        }
+        Color albedo;
+        float roughness;
     };
 
     struct MaterialSet {
-        std::map<MaterialSettingID, MaterialSettingCom> settings;
+        std::map<MaterialSettingID, MaterialSettingComBase*> settings;
     };
 
     class MaterialCom {

@@ -31,7 +31,7 @@ namespace renderer {
         
 		void renderQuad();
 
-		Shader getShader(MaterialSettingCom& matCom);
+		Shader getShader(MaterialSettingComBase* matCom);
 
 		Shader getShader(std::string shaderName);
 
