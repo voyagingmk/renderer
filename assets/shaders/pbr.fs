@@ -92,7 +92,9 @@ void main()
         vec3 L = normalize(lights[i].Position - FragPos);
         vec3 H = normalize(V + L);
         float distance = length(lights[i].Position - FragPos);
-        float attenuation = 1.0 / (distance * distance);
+        float attenuation = 1.0 / (1.0 + lights[i].Linear * distance + lights[i].Quadratic * distance * distance);
+        // attenuation = 1.0 / (distance * distance);
+        attenuation = 1.0;
         vec3 radiance = lights[i].Color * attenuation;
 
         // Cook-Torrance BRDF
@@ -125,7 +127,7 @@ void main()
     // ambient lighting (note that the next IBL tutorial will replace 
     // this ambient lighting with environment lighting).
     vec3 ambient = vec3(0.03) * material.albedo * material.ao;
-
+    
     vec3 color = ambient + Lo;
 
     // HDR tonemapping

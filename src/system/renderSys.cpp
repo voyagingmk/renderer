@@ -103,7 +103,10 @@ namespace renderer {
 		}
 
 		// TODO: sort by material
-		for (const Object obj : m_objMgr->entities<Meshes, MaterialCom, SpatialData, MeshBuffersCom>()) {
+		for (const Object obj : m_objMgr->entities<
+             Meshes, MaterialCom, SpatialData,
+             ReceiveLightTag,
+             MeshBuffersCom>()) {
 			auto matCom = obj.component<MaterialCom>();
 			auto setting = matSetCom->settings[matCom->settingID];
 			if (evt.shader == nullptr) {

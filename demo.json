@@ -268,7 +268,7 @@
             "model": "capsule.obj",
             "material": 3,
             "spatial": [
-                [0, 0, 3],
+                [0, 0, 5],
                 [1, 1, 1],
                 [1, 0, 0, 0]
             ]
@@ -302,8 +302,8 @@
             "type": "PBR",
             "albedo": [255, 0, 0],
             "ao": 1.0,
-            "roughness": 0.05,
-            "metallic": 0.17,
+            "roughness": 0.5,
+            "metallic": 0.5,
             "shaderName": "pbr"
         }
     ]

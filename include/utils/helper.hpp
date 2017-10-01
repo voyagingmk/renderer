@@ -4,6 +4,7 @@
 #include "base.hpp"
 #include "ecs/ecs.hpp"
 #include "com/color.hpp"
+#include "com/meshes.hpp"
 
 namespace renderer{
 
@@ -63,6 +64,23 @@ namespace renderer{
 			ssaoKernel.push_back(sample);
 		}
 	}
+    
+    static Meshes generateOuterBoxMeshes() {
+        Meshes m;
+        OneMesh mesh;
+        mesh.vertices = Vertices{
+            Vertex({-0.5, -0.5, 0.5}),
+            Vertex({ 0.5, -0.5, 0.5}),
+            Vertex({-0.5,  0.5, 0.5}),
+            Vertex({ 0.5,  0.5, 0.5}),
+            Vertex({-0.5,  0.5,-0.5}),
+            Vertex({ 0.5,  0.5,-0.5}),
+            Vertex({-0.5, -0.5,-0.5}),
+            Vertex({ 0.5, -0.5,-0.5})
+        };
+        m.meshes.push_back(mesh);
+        return m;
+    }
 
 }
 #endif

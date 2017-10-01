@@ -108,7 +108,10 @@ namespace renderer {
 				parseColor(lightInfo["specular"]),
 				lightInfo["constant"],
 				lightInfo["linear"],
-				lightInfo["quadratic"]);
+                lightInfo["quadratic"]);
+            // loadMesh(modelsDir + filename, meshes);
+            obj.addComponent<Meshes>(generateOuterBoxMeshes());
+            m_evtMgr->emit<CreateMeshBufferEvent>(obj);
 		}
 	}
 
@@ -125,7 +128,7 @@ namespace renderer {
 			obj.addComponent<Meshes>(meshes);
             obj.addComponent<MaterialCom>(materialID);
 			m_evtMgr->emit<CreateMeshBufferEvent>(obj);
-            
+            obj.addComponent<ReceiveLightTag>();
             obj.addComponent<MotionCom>();
 			{
 				ActionData data;
