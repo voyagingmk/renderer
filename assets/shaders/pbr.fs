@@ -4,7 +4,7 @@ out vec4 FragColor;
 in vec2 TexCoord;
 in vec3 FragPos;
 in vec3 Normal;
-in mat3 TBN;
+
 
 struct Material {
     // material parameters

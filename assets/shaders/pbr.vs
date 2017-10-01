@@ -17,7 +17,7 @@ void main()
 {
     TexCoord = texCoord;
     FragPos = vec3(model * vec4(position, 1.0f));
-    Normal = mat3(normalMat) * normal;
+    Normal = mat3(model) * normal;
 
     gl_Position =  PV * vec4(FragPos, 1.0);
 }

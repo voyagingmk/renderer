@@ -206,7 +206,6 @@ namespace renderer {
         for (auto obj : m_objMgr->entities<PointLightCom, SpatialData>()) {
             auto spatialDataCom = obj.component<SpatialData>();
             auto lightCom = obj.component<PointLightCom>();
-            Color c = lightCom->ambient;
             shader.set3f(("lights[" + std::to_string(i) + "].Position").c_str(), spatialDataCom->pos);
             shader.set3f(("lights[" + std::to_string(i) + "].Color").c_str(), lightCom->ambient);
             shader.set1f(("lights[" + std::to_string(i) + "].Linear").c_str(), lightCom->linear);
