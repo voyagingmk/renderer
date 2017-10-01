@@ -30,7 +30,7 @@ namespace renderer
         // TODO
     public:
         Shader() : spHDL(0) {}
-        Shader(ShaderProgramHDL _spHDL) : spHDL(_spHDL) {}
+        Shader(ShaderProgramHDL _spHDL) : spHDL(_spHDL) { assert(spHDL); }
         virtual UniLoc getUniformLocation(const char *name);
 		virtual UniLoc getUniformLocation(std::string name);
         // by loc
@@ -40,7 +40,7 @@ namespace renderer
         virtual void set1f(UniLoc loc, float f1);
         virtual void set1i(UniLoc loc, int i1);
         virtual void set1b(UniLoc loc, bool b);
-        virtual void setMatrix4f(UniLoc loc, Matrix4x4 mat);
+        virtual void setMatrix4f(UniLoc loc, const Matrix4x4&);
         virtual void setTransform4f(UniLoc loc, Transform4x4 trans);
         // virtual void setLight(Light *light);
         // by name
@@ -53,7 +53,7 @@ namespace renderer
         virtual void set1i(const char *name, int i1);
         virtual void set1b(const char *name, bool b);
         virtual void setMatrixes4f(const char *name, std::vector<Matrix4x4> mat);
-        virtual void setMatrix4f(const char *name, Matrix4x4 mat);
+        virtual void setMatrix4f(const char *name, const Matrix4x4&);
         virtual void setTransform4f(const char *name, Transform4x4 trans);
 		virtual void set3fArray(const char *name, std::vector<Vector3dF>& arr, int n = 0);
         virtual void use();

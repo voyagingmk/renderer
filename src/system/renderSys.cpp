@@ -57,7 +57,22 @@ namespace renderer {
         // deferredLightingPass(objCamera, "main", context->width, context->height);
 		// evtMgr.emit<CopyGBufferDepthEvent>("main");// –Ë“™GBufferµƒ…Ó∂»–≈œ¢£¨≤ª»ªÃÏø’∫–ª·∫⁄µÙ
 		renderSkybox(objCamera);
+        
+        Shader lightShader = getShader("light");
+        lightShader.use();
+        // TODO: sort by material
+        for (auto lightObj : m_objMgr->entities<
+            Meshes, PointLightCom, SpatialData,
+            MeshBuffersCom>()) {
+            m_evtMgr->emit<UploadCameraToShaderEvent>(objCamera, lightShader);
+            CheckGLError;
+            m_evtMgr->emit<UploadMatrixToShaderEvent>(lightObj, lightShader);
+            CheckGLError;
+            m_evtMgr->emit<DrawMeshBufferEvent>(lightObj);
+            CheckGLError;
+        }
 
+        
 		//setViewport(std::make_tuple(0, 0, context->width, context->height));
 		//clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
 		//	GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -115,8 +130,6 @@ namespace renderer {
                 uploadLights(shader);
 			}
 			m_evtMgr->emit<ActiveMaterialEvent>(matCom->settingID, shader);
-			CheckGLError; 
-			m_evtMgr->emit<ActiveSpatialDataEvent>(obj, shader);
 			CheckGLError; 
 			m_evtMgr->emit<UploadCameraToShaderEvent>(evt.objCamera, shader);
 			CheckGLError; 

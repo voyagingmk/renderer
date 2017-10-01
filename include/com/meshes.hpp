@@ -15,9 +15,14 @@ namespace renderer {
     class Meshes {
         public:
 			Meshes() {}
-			Meshes(std::vector<OneMesh>& meshes):
-				meshes(meshes)
-			{}
+            ~Meshes() {
+                meshes.clear();
+            }
+			Meshes(std::vector<OneMesh>& m)
+            {
+                std::copy(m.begin(), m.end(),
+                   std::back_inserter(meshes));
+            }
             std::vector<OneMesh> meshes;
     };
 };

@@ -109,8 +109,8 @@ namespace renderer {
 				lightInfo["constant"],
 				lightInfo["linear"],
                 lightInfo["quadratic"]);
-            // loadMesh(modelsDir + filename, meshes);
-            obj.addComponent<Meshes>(generateOuterBoxMeshes());
+            auto com = obj.addComponent<Meshes>();
+            generateOuterBoxMeshes(*com);
             m_evtMgr->emit<CreateMeshBufferEvent>(obj);
 		}
 	}

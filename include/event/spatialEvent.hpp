@@ -15,15 +15,6 @@ namespace renderer {
         ecs::Object obj;
 	};
 
-	class ActiveSpatialDataEvent : public ecs::Event<ActiveSpatialDataEvent> {
-	public:
-		ActiveSpatialDataEvent(ecs::Object obj, Shader shader) :
-			obj(obj),
-			shader(shader)
-		{}
-		ecs::Object obj;
-		Shader shader;
-	};	
 
 }
 

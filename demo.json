@@ -9,6 +9,11 @@
     "skyboxSubDir": "images/skybox/",
     "shader": [
         {
+            "alias": "light",
+            "vs": "light.vs",
+            "fs": "light.fs"
+        },
+        {
             "alias": "pbr",
             "vs": "pbr.vs",
             "fs": "pbr.fs"

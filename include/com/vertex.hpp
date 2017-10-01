@@ -9,7 +9,7 @@ namespace renderer {
     class Vertex {
     public:
         Vertex(Vector3dF p = Vector3dF(0, 0, 0),
-               Normal3dF n = Normal3dF(0, 0, 1),
+               Normal3dF n = Normal3dF(0, 0, 0),
                Vector3dF c = Vector3dF(1, 1, 1),
                Vector2dF t = Vector2dF(0, 0)):
             position(p),

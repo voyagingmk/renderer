@@ -36,12 +36,4 @@ namespace renderer {
 		//R.debug();
         com->o2w = T * R * S;
     }
-
-	void SpatialSystem::receive(const ActiveSpatialDataEvent &evt) {
-		auto com = evt.obj.component<SpatialData>();
-		Shader& shader = const_cast<Shader&>(evt.shader);
-		shader.setMatrix4f("model", com->o2w.m);
-		shader.setMatrix4f("normalMat", com->o2w.mInv.transpose());
-	}
-
 };

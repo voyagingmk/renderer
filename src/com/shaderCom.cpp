@@ -36,8 +36,8 @@ void Shader::set1b(UniLoc loc, bool b) {
     glUniform1i(loc, b);
 }
 
-void Shader::setMatrix4f(UniLoc loc, Matrix4x4 mat) {
-    glUniformMatrix4fv(loc, 1, GL_FALSE, mat.transpose().data->data);
+void Shader::setMatrix4f(UniLoc loc, const Matrix4x4& mat) {
+    glUniformMatrix4fv(loc, 1, GL_TRUE, mat.data->data);
 }
 
 void Shader::setTransform4f(UniLoc loc, Transform4x4 trans) {
@@ -133,7 +133,7 @@ void Shader::setMatrixes4f(const char* name, std::vector<Matrix4x4> mats) {
         setMatrix4f(loc, mats[i]);
     }
 }
-void Shader::setMatrix4f(const char* name, Matrix4x4 mat) {
+void Shader::setMatrix4f(const char* name, const Matrix4x4& mat) {
     UniLoc loc = getUniformLocation(name);
     if (loc == -1) {
         return;
