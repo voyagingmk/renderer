@@ -59,7 +59,7 @@ namespace renderer {
             shader.set1f("material.shininess", com->shininess);
         } else if (setting->type() == MaterialType::PBR) {
             MaterialPBRSettingCom* com = dynamic_cast<MaterialPBRSettingCom*>(setting);
-            shader.set3f("albedo", com->albedo);
+            shader.set3f("material.albedo", com->albedo);
             shader.set1f("material.metallic", com->metallic);
             shader.set1f("material.roughness", com->roughness);
             shader.set1f("material.ao", 1.0f);

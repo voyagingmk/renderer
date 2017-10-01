@@ -18,11 +18,18 @@ uniform Material material;
 
 
 // lights
-uniform vec3 lightPositions[4];
-uniform vec3 lightColors[4];
+struct Light {
+    vec3 Position;
+    vec3 Color;
+    float Linear;
+    float Quadratic;
+    float constant;
+};
+uniform int LightNum;
+const int MAX_LIGHTS = 32;
+uniform Light lights[MAX_LIGHTS];
 
-uniform vec3 camPos;
-uniform float exposure;
+uniform vec3 viewPos;
 
 const float PI = 3.14159265359;
 // ----------------------------------------------------------------------------
@@ -69,7 +76,7 @@ vec3 fresnelSchlick(float cosTheta, vec3 F0)
 void main()
 {		
     vec3 N = normalize(Normal);
-    vec3 V = normalize(camPos - FragPos);
+    vec3 V = normalize(viewPos - FragPos);
     vec3 R = reflect(-V, N); 
 
     // calculate reflectance at normal incidence; if dia-electric (like plastic) use F0 
@@ -79,14 +86,14 @@ void main()
 
     // reflectance equation
     vec3 Lo = vec3(0.0);
-    for(int i = 0; i < 4; ++i) 
+    for(int i = 0; i < LightNum; ++i) 
     {
         // calculate per-light radiance
-        vec3 L = normalize(lightPositions[i] - FragPos);
+        vec3 L = normalize(lights[i].Position - FragPos);
         vec3 H = normalize(V + L);
-        float distance = length(lightPositions[i] - FragPos);
+        float distance = length(lights[i].Position - FragPos);
         float attenuation = 1.0 / (distance * distance);
-        vec3 radiance = lightColors[i] * attenuation;
+        vec3 radiance = lights[i].Color * attenuation;
 
         // Cook-Torrance BRDF
         float NDF = DistributionGGX(N, H, material.roughness);   

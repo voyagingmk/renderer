@@ -20,7 +20,7 @@ namespace renderer {
             shaderName(shd)
         {}
         virtual ~MaterialSettingComBase() {}
-        MaterialType type() {
+        virtual MaterialType type() {
             return MaterialType::Unknown;
         }
         std::string shaderName;
@@ -49,7 +49,7 @@ namespace renderer {
          reflectiveness(r),
          shininess(sh)
         {}
-        MaterialType type() {
+        virtual MaterialType type() {
             return MaterialType::Phong;
         }
         Color ambient;
@@ -69,7 +69,7 @@ namespace renderer {
             roughness(r),
             metallic(m)
         {}
-        MaterialType type() {
+        virtual MaterialType type() {
             return MaterialType::PBR;
         }
         Color albedo;

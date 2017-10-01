@@ -38,24 +38,24 @@ namespace renderer {
 		
 		Object objCamera = objMgr.getSingletonComponent<PerspectiveCameraView>().object();
 		//  geometry pass
-		evtMgr.emit<UseGBufferEvent>("main");
-		Shader gBufferShader = getShader("gBuffer");
+		// evtMgr.emit<UseGBufferEvent>("main");
+		// Shader gBufferShader = getShader("gBuffer");
 		evtMgr.emit<RenderSceneEvent>(
 			objCamera,
 			std::make_tuple(0, 0, context->width, context->height),
 			Color(0.0f, 0.0f, 0.0f, 1.0f),
-			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT,
-			&gBufferShader);
-		evtMgr.emit<UnuseGBufferEvent>("main");
+			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT
+			);
+		// evtMgr.emit<UnuseGBufferEvent>("main");
         // glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 		// ssao pass
-        ssaoPass(objCamera, "main", "ssao", context->width, context->height);
+        // ssaoPass(objCamera, "main", "ssao", context->width, context->height);
 
 
 		// lighting pass
-        deferredLightingPass(objCamera, "main", context->width, context->height);
-		evtMgr.emit<CopyGBufferDepthEvent>("main");// –Ë“™GBufferµƒ…Ó∂»–≈œ¢£¨≤ª»ªÃÏø’∫–ª·∫⁄µÙ
+        // deferredLightingPass(objCamera, "main", context->width, context->height);
+		// evtMgr.emit<CopyGBufferDepthEvent>("main");// –Ë“™GBufferµƒ…Ó∂»–≈œ¢£¨≤ª»ªÃÏø’∫–ª·∫⁄µÙ
 		renderSkybox(objCamera);
 
 		//setViewport(std::make_tuple(0, 0, context->width, context->height));
@@ -109,6 +109,7 @@ namespace renderer {
 			if (evt.shader == nullptr) {
 				shader = getShader(setting);
 				shader.use();
+                uploadLights(shader);
 			}
 			m_evtMgr->emit<ActiveMaterialEvent>(matCom->settingID, shader);
 			CheckGLError; 
@@ -196,21 +197,26 @@ namespace renderer {
 		setViewport(std::make_tuple(0, 0, winWidth, winHeight));
 		clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
 			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-		uint32_t i = 0;
-		for (auto obj : m_objMgr->entities<PointLightCom, SpatialData>()) {
-			auto spatialDataCom = obj.component<SpatialData>();
-			auto lightCom = obj.component<PointLightCom>();
-			Color c = lightCom->ambient;
-			shader.set3f(("lights[" + std::to_string(i) + "].Position").c_str(), spatialDataCom->pos);
-			shader.set3f(("lights[" + std::to_string(i) + "].Color").c_str(), lightCom->ambient);
-			shader.set1f(("lights[" + std::to_string(i) + "].Linear").c_str(), lightCom->linear);
-			shader.set1f(("lights[" + std::to_string(i) + "].Quadratic").c_str(), lightCom->quadratic);
-			shader.set1f(("lights[" + std::to_string(i) + "].constant").c_str(), lightCom->constant);
-			i++;
-		}
-		shader.set1i("LightNum", i);
+        uploadLights(shader);
 		renderQuad();
 	}
+    
+    void RenderSystem::uploadLights(Shader shader) {
+        uint32_t i = 0;
+        for (auto obj : m_objMgr->entities<PointLightCom, SpatialData>()) {
+            auto spatialDataCom = obj.component<SpatialData>();
+            auto lightCom = obj.component<PointLightCom>();
+            Color c = lightCom->ambient;
+            shader.set3f(("lights[" + std::to_string(i) + "].Position").c_str(), spatialDataCom->pos);
+            shader.set3f(("lights[" + std::to_string(i) + "].Color").c_str(), lightCom->ambient);
+            shader.set1f(("lights[" + std::to_string(i) + "].Linear").c_str(), lightCom->linear);
+            shader.set1f(("lights[" + std::to_string(i) + "].Quadratic").c_str(), lightCom->quadratic);
+            shader.set1f(("lights[" + std::to_string(i) + "].constant").c_str(), lightCom->constant);
+            i++;
+        }
+        shader.set1i("LightNum", i);
+    }
+    
     
     void RenderSystem::renderColorBufferDebug(std::string colorBufferAliasName, size_t winWidth, size_t winHeight) {
         Shader shader = getShader("screen");

@@ -300,10 +300,10 @@
         {
             "id": 3,
             "type": "PBR",
-            "albedo": [0.5, 0.0, 0.0],
+            "albedo": [255, 0, 0],
             "ao": 1.0,
             "roughness": 0.05,
-            "metallic": 0.1,
+            "metallic": 0.5,
             "shaderName": "pbr"
         }
     ]
