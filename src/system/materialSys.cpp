@@ -33,7 +33,8 @@ namespace renderer {
             setting = new MaterialPBRSettingCom(evt.matInfo["shaderName"],
                 parseColor(evt.matInfo["albedo"]),
                 // "ao": 1.0,
-                evt.matInfo["roughness"]);
+                evt.matInfo["roughness"],
+                evt.matInfo["metallic"]);
         }
         com->settings.insert({evt.matInfo["id"], setting});
 		for (auto tex : evt.matInfo["textures"]) {

@@ -9,6 +9,11 @@
     "skyboxSubDir": "images/skybox/",
     "shader": [
         {
+            "alias": "pbr",
+            "vs": "pbr.vs",
+            "fs": "pbr.fs"
+        }, 
+        {
             "alias": "test",
             "vs": "test.vs",
             "fs": "test.fs"
@@ -298,6 +303,7 @@
             "albedo": [0.5, 0.0, 0.0],
             "ao": 1.0,
             "roughness": 0.05,
+            "metallic": 0.1,
             "shaderName": "pbr"
         }
     ]

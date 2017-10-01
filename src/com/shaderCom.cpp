@@ -169,6 +169,7 @@ void Shader::set3fArray(const char *name, std::vector<Vector3dF>& arr, int n) {
 }
 
 void Shader::use() {
+    assert(spHDL > 0);
     glUseProgram(spHDL);
 }
 
