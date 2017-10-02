@@ -16,12 +16,8 @@
 #include "realtime/shadermgr.hpp"
 #include "realtime/texturemgr.hpp"
 
-#define TINYOBJLOADER_IMPLEMENTATION // define this in only *one* .cc
-#include "tiny_obj_loader.h"
-
 namespace renderer
 {
-bool parserObj(const std::string &objFilePath, std::vector<tinyobj::shape_t> &shapes, std::vector<tinyobj::material_t> &materials);
 
 SceneDesc SceneParser::parse(nlohmann::json &config)
 {
@@ -161,56 +157,7 @@ ShapeUnion *SceneParser::parseShapes(nlohmann::json &config)
 		int objID = objinfo["Id"];
 		Transform *o2w = parseTransform(objinfo["transform"]);
 		Shape *pShape = nullptr;
-		if (objinfo["type"] == "3dsMax")
-		{
-			const std::string &filepath = objinfo["filepath"];
-			std::vector<tinyobj::shape_t> shapes;
-			std::vector<tinyobj::material_t> materials;
-			parserObj(filepath, shapes, materials);
-			for (size_t i = 0; i < shapes.size(); i++)
-			{
-				auto pool = GetPool<Mesh>();
-				Vertices vertices;
-				UIntArray indexes;
-				// printf("shape[%ld].vertices: %ld\n", i, shapes[i].mesh.positions.size());
-				// assert((shapes[i].mesh.positions.size() % 3) == 0);
-				auto positions = shapes[i].mesh.positions;
-				std::vector<float> &meshNormals = shapes[i].mesh.normals;
-				for (size_t v = 0; v < shapes[i].mesh.positions.size() / 3; v++)
-				{
-					// x->x -y->z z->y
-					// 0->2 1->0 2->1
-					float x = positions[3 * v + 0];
-					float z = -positions[3 * v + 1];
-					float y = positions[3 * v + 2];
-					float nx = meshNormals[3 * v + 0];
-					float nz = -meshNormals[3 * v + 1];
-					float ny = meshNormals[3 * v + 2];
-					vertices.push_back({
-						Vector3dF(x, y, z),
-						Normal3dF(nx, ny, nz),
-					});
-					// printf("v[%d] = %.1f, %.1f, %.1f\n", v, x, y, z);
-				}
-				// assert((shapes[i].mesh.indices.size() % 3) == 0);
-				printf("Size of shape[%ld].triangles: %ld\n", i, shapes[i].mesh.indices.size() / 3);
-				auto indices = shapes[i].mesh.indices;
-				for (size_t f = 0; f < shapes[i].mesh.indices.size() / 3; f++)
-				{
-					indexes.push_back(indices[3 * f + 0]);
-					indexes.push_back(indices[3 * f + 1]);
-					indexes.push_back(indices[3 * f + 2]);
-					// printf("idx[%ld] = %d, %d, %d\n", f, shapes[i].mesh.indices[3 * f + 0] + 1,
-					// shapes[i].mesh.indices[3 * f + 1] + 1, shapes[i].mesh.indices[3 * f + 2] + 1);
-				}
-				Mesh *pMesh = pool->newElement(vertices, indexes);
-				// pMesh->reverse = true;
-				pShape = static_cast<Shape *>(pMesh);
-				addShape(pShape, objID, o2w);
-				pShape = nullptr;
-			}
-		}
-		else if (objinfo["type"] == "Sphere")
+        if (objinfo["type"] == "Sphere")
 		{
 			float radius = objinfo["radius"];
 			auto pool = GetPool<Sphere>();
@@ -358,73 +305,5 @@ Color SceneParser::parseColor(nlohmann::json &c)
 	{
 		return Color((float)c[0] / 255.0f, (float)c[1] / 255.0f, (float)c[2] / 255.0f);
 	}
-}
-
-bool parserObj(const std::string &objFilePath, std::vector<tinyobj::shape_t> &shapes, std::vector<tinyobj::material_t> &materials)
-{
-	std::string err;
-	bool ret = tinyobj::LoadObj(shapes, materials, err, objFilePath.c_str(), "./");
-
-	if (!err.empty())
-	{ // `err` may contain warning message.
-		std::cerr << err << std::endl;
-	}
-
-	if (!ret)
-	{
-		return false;
-	}
-
-	std::cout << "# of shapes    : " << shapes.size() << std::endl;
-	std::cout << "# of materials : " << materials.size() << std::endl;
-
-	for (size_t i = 0; i < shapes.size(); i++)
-	{
-		printf("shape[%ld].name = %s\n", i, shapes[i].name.c_str());
-		printf("Size of shape[%ld].indices: %ld\n", i, shapes[i].mesh.indices.size());
-		printf("Size of shape[%ld].material_ids: %ld\n", i, shapes[i].mesh.material_ids.size());
-		assert((shapes[i].mesh.indices.size() % 3) == 0);
-		for (size_t f = 0; f < shapes[i].mesh.indices.size() / 3; f++)
-		{
-			// printf("  idx[%ld] = %d, %d, %d. mat_id = %d\n", f, shapes[i].mesh.indices[3 * f + 0], shapes[i].mesh.indices[3 * f + 1], shapes[i].mesh.indices[3 * f + 2], shapes[i].mesh.material_ids[f]);
-		}
-
-		printf("shape[%ld].vertices: %ld\n", i, shapes[i].mesh.positions.size());
-		assert((shapes[i].mesh.positions.size() % 3) == 0);
-		for (size_t v = 0; v < shapes[i].mesh.positions.size() / 3; v++)
-		{
-			/*printf("  v[%ld] = (%f, %f, %f)\n", v,
-					shapes[i].mesh.positions[3 * v + 0],
-					shapes[i].mesh.positions[3 * v + 1],
-					shapes[i].mesh.positions[3 * v + 2]);
-					*/
-		}
-	}
-
-	for (size_t i = 0; i < materials.size(); i++)
-	{
-		printf("material[%ld].name = %s\n", i, materials[i].name.c_str());
-		printf("  material.Ka = (%f, %f ,%f)\n", materials[i].ambient[0], materials[i].ambient[1], materials[i].ambient[2]);
-		printf("  material.Kd = (%f, %f ,%f)\n", materials[i].diffuse[0], materials[i].diffuse[1], materials[i].diffuse[2]);
-		printf("  material.Ks = (%f, %f ,%f)\n", materials[i].specular[0], materials[i].specular[1], materials[i].specular[2]);
-		printf("  material.Tr = (%f, %f ,%f)\n", materials[i].transmittance[0], materials[i].transmittance[1], materials[i].transmittance[2]);
-		printf("  material.Ke = (%f, %f ,%f)\n", materials[i].emission[0], materials[i].emission[1], materials[i].emission[2]);
-		printf("  material.Ns = %f\n", materials[i].shininess);
-		printf("  material.Ni = %f\n", materials[i].ior);
-		printf("  material.dissolve = %f\n", materials[i].dissolve);
-		printf("  material.illum = %d\n", materials[i].illum);
-		printf("  material.map_Ka = %s\n", materials[i].ambient_texname.c_str());
-		printf("  material.map_Kd = %s\n", materials[i].diffuse_texname.c_str());
-		printf("  material.map_Ks = %s\n", materials[i].specular_texname.c_str());
-		printf("  material.map_Ns = %s\n", materials[i].specular_highlight_texname.c_str());
-		std::map<std::string, std::string>::const_iterator it(materials[i].unknown_parameter.begin());
-		std::map<std::string, std::string>::const_iterator itEnd(materials[i].unknown_parameter.end());
-		for (; it != itEnd; it++)
-		{
-			printf("  material.%s = %s\n", it->first.c_str(), it->second.c_str());
-		}
-		printf("\n");
-	}
-	return true;
 }
 }
