@@ -13,6 +13,7 @@
 #include "event/spatialEvent.hpp"
 #include "event/bufferEvent.hpp"
 #include "event/textureEvent.hpp"
+#include "event/uiEvent.hpp"
 #include "utils/helper.hpp"
 
 
@@ -26,7 +27,7 @@ namespace renderer {
     
 	// renderpipe loop, could move to another system
 	void RenderSystem::update(ObjectManager &objMgr, EventManager &evtMgr, float dt) {
-		auto context = objMgr.getSingletonComponent<SDLContext>();
+        auto context = objMgr.getSingletonComponent<SDLContext>();
 		if (!context.valid()) {
 			return;
 		}
@@ -80,7 +81,7 @@ namespace renderer {
 		/*----- first-pass end -----*/
         // renderGBufferDebug("main", context->width, context->height);
         // renderColorBufferDebug("ssao", context->width, context->height);
-		
+        m_evtMgr->emit<DrawUIEvent>();
 		CheckGLError;
 		SDL_GL_SwapWindow(context->win);
 	}

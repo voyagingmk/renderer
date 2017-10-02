@@ -106,6 +106,8 @@ namespace renderer {
 		//SDL_SetWindowGrab(sdlContext->win, SDL_TRUE);
 		// SDL_SetHintWithPriority(SDL_HINT_MOUSE_RELATIVE_MODE_WARP, "1", SDL_HINT_OVERRIDE);
 		SDL_SetRelativeMouseMode(SDL_TRUE);
+        
+        m_evtMgr->emit<SetupSDLDoneEvent>(obj);
 	}
 
 	void EnvSystem::receive(const ComponentRemovedEvent<SDLContext> &evt) {

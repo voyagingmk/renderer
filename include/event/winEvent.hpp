@@ -15,6 +15,16 @@ namespace renderer {
 		size_t winWidth;
 		size_t winHeight;
 	};
+    
+    class SetupSDLDoneEvent: public ecs::Event<SetupSDLDoneEvent> {
+    public:
+        SetupSDLDoneEvent(ecs::Object obj):
+        obj(obj)
+        {}
+        ecs::Object obj;
+    };
+
+    
 
 	class CustomSDLEvent: public ecs::Event<CustomSDLEvent> {
 	public:

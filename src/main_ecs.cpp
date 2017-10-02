@@ -12,6 +12,7 @@
 #include "system/cameraSys.hpp"
 #include "system/motionSys.hpp"
 #include "system/configSys.hpp"
+#include "system/uiSys.hpp"
 
 using namespace ecs;
 using namespace renderer;
@@ -32,6 +33,7 @@ MainECS::MainECS() {
 }
 
 void MainECS::setup() {
+	m_systemMgr.add<UISystem>();
     m_systemMgr.add<EnvSystem>();
     m_systemMgr.add<TextureSystem>();
     m_systemMgr.add<ShaderSystem>();
