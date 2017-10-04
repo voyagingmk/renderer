@@ -39,15 +39,15 @@ namespace renderer {
 		
 		Object objCamera = objMgr.getSingletonComponent<PerspectiveCameraView>().object();
 		//  geometry pass
-		// evtMgr.emit<UseGBufferEvent>("main");
-		// Shader gBufferShader = getShader("gBuffer");
+		evtMgr.emit<UseGBufferEvent>("main");
+		Shader gBufferShader = getShader("gBuffer");
 		evtMgr.emit<RenderSceneEvent>(
 			objCamera,
 			std::make_tuple(0, 0, context->width, context->height),
 			Color(0.0f, 0.0f, 0.0f, 1.0f),
-			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT
-			);
-		// evtMgr.emit<UnuseGBufferEvent>("main");
+			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT,
+			&gBufferShader);
+		evtMgr.emit<UnuseGBufferEvent>("main");
         // glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 		// ssao pass
@@ -55,10 +55,13 @@ namespace renderer {
 
 
 		// lighting pass
-        // deferredLightingPass(objCamera, "main", context->width, context->height);
-		// evtMgr.emit<CopyGBufferDepthEvent>("main");// –Ë“™GBufferµƒ…Ó∂»–≈œ¢£¨≤ª»ªÃÏø’∫–ª·∫⁄µÙ
-		renderSkybox(objCamera);
+        deferredLightingPass(objCamera, "main", context->width, context->height);
+		evtMgr.emit<CopyGBufferDepthEvent>("main");// –Ë“™GBufferµƒ…Ó∂»–≈œ¢£¨≤ª»ªÃÏø’∫–ª·∫⁄µÙ
+		
+        // skybox pass
+        renderSkybox(objCamera);
         
+        // draw light object
         Shader lightShader = getShader("light");
         lightShader.use();
         // TODO: sort by material
@@ -76,12 +79,12 @@ namespace renderer {
         
 		//setViewport(std::make_tuple(0, 0, context->width, context->height));
 		//clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
-		//	GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+		//GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 		/*----- first-pass end -----*/
-        // renderGBufferDebug("main", context->width, context->height);
+        renderGBufferDebug("main", context->width, context->height);
         // renderColorBufferDebug("ssao", context->width, context->height);
-        m_evtMgr->emit<DrawUIEvent>();
+        // m_evtMgr->emit<DrawUIEvent>();
 		CheckGLError;
 		SDL_GL_SwapWindow(context->win);
 	}
@@ -210,7 +213,8 @@ namespace renderer {
 		GBufferRef& buf = gBufferCom->dict[gBufferAliasName];
 		m_evtMgr->emit<ActiveTextureByIDEvent>(0, buf.posTexID);
 		m_evtMgr->emit<ActiveTextureByIDEvent>(1, buf.normalTexID);
-		m_evtMgr->emit<ActiveTextureByIDEvent>(2, buf.albedoSpecTexID);
+		m_evtMgr->emit<ActiveTextureByIDEvent>(2, buf.albedoTexID);
+		m_evtMgr->emit<ActiveTextureByIDEvent>(3, buf.pbrTexID);
 		setViewport(std::make_tuple(0, 0, winWidth, winHeight));
 		clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
 			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -267,8 +271,12 @@ namespace renderer {
         
         // left-bottom: albedo
         setViewport(std::make_tuple(0, 0, winWidth / 2, winHeight / 2));
-        m_evtMgr->emit<ActiveTextureByIDEvent>(0, buf.albedoSpecTexID);
+        m_evtMgr->emit<ActiveTextureByIDEvent>(0, buf.albedoTexID);
         renderQuad();
         
+        // right-bottom: pbr
+        setViewport(std::make_tuple(winWidth / 2, 0, winWidth / 2, winHeight / 2));
+        m_evtMgr->emit<ActiveTextureByIDEvent>(0, buf.pbrTexID);
+        renderQuad();
     }
 };

@@ -74,7 +74,8 @@ namespace renderer {
 		RboID depthRboID; // include stencil
 		TexID posTexID;
 		TexID normalTexID; 
-		TexID albedoSpecTexID;
+		TexID albedoTexID;
+		TexID pbrTexID;
 	};
 
 

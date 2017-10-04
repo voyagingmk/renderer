@@ -28,7 +28,6 @@ struct Light {
 uniform int LightNum;
 const int MAX_LIGHTS = 32;
 uniform Light lights[MAX_LIGHTS];
-
 uniform vec3 viewPos;
 
 const float PI = 3.14159265359;
