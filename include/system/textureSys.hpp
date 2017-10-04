@@ -2,8 +2,7 @@
 #define RENDERER_SYSTEM_TEXTURE_HPP
 
 #include "base.hpp"
-#include "../ecs/ecs.hpp"
-#include "../com/glcommon.hpp"
+#include "ecs/ecs.hpp"
 #include "event/textureEvent.hpp"
 
 

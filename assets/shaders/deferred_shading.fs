@@ -143,7 +143,8 @@ void main()
     // gamma correct
     color = pow(color, vec3(1.0/2.2)); 
     
+    FragColor = vec4(color, 1.0);
     // FragColor = vec4(1.0,1.0,1.0, 1.0);
     // FragColor = vec4(material.metallic, material.roughness, material.ao, 1.0); 
-    FragColor = vec4(material.albedo, 1.0);
+    // FragColor = vec4(material.albedo, 1.0);
 }

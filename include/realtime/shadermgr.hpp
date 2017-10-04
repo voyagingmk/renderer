@@ -2,10 +2,10 @@
 #define RENDERER_SHADERMGR_HPP
 
 #include "base.hpp"
-#include "../com/glcommon.hpp"
-#include "../com/matrix.hpp"
-#include "../com/transform.hpp"
-#include "../com/shader.hpp"
+#include "com/glcommon.hpp"
+#include "com/matrix.hpp"
+#include "com/transform.hpp"
+#include "com/shader.hpp"
 #include "material.hpp"
 #include "light.hpp"
 
