@@ -10,27 +10,20 @@ in vec3 FragPos;
 in vec3 Normal;
 
 struct Material {
+    vec3 albedo;
     float metallic;
     float roughness;
     float ao;
 }; 
 
 uniform Material material;
-uniform sampler2D texture1;
-uniform sampler2D texture2;
 
 void main()
 {    
-    // store the fragment position vector in the first gbuffer texture
     gPosition = FragPos;
-    // also store the per-fragment normals into the gbuffer
     gNormal = normalize(Normal);
-    // and the diffuse per-fragment color
-    gAlbedo.rgba = texture(texture1, TexCoord);
+    gAlbedo = vec4(material.albedo, 1.0);
     gPBR.r = material.metallic;
     gPBR.g = material.roughness;
     gPBR.b = material.ao;
-    // gAlbedoSpec.rgb = texture(texture_diffuse1, TexCoords).rgb;
-    // store specular intensity in gAlbedoSpec's alpha component
-    // gAlbedoSpec.a = texture(texture_specular1, TexCoords).r;
 }

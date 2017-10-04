@@ -3,6 +3,7 @@
 
 #include "base.hpp"
 #include "ecs/ecs.hpp"
+#include "com/shader.hpp"
 #include "com/bufferCom.hpp"
 
 namespace renderer {
@@ -64,10 +65,16 @@ namespace renderer {
 
 	class ActiveTextureEvent : public ecs::Event<ActiveTextureEvent> {
 	public:
-		ActiveTextureEvent(uint32_t idx, std::string aliasname) :
+        ActiveTextureEvent(Shader shader,
+                std::string sample2DName,
+                           uint32_t idx, std::string aliasname) :
+            shader(shader),
+            sample2DName(sample2DName),
 			idx(idx),
 			aliasname(aliasname)
-		{}
+        {}
+        Shader shader;
+        std::string sample2DName;
 		uint32_t idx;
 		std::string aliasname;
 	};
@@ -75,10 +82,17 @@ namespace renderer {
 	
 	class ActiveTextureByIDEvent : public ecs::Event<ActiveTextureByIDEvent> {
 	public:
-		ActiveTextureByIDEvent(uint32_t idx, TexID texID) :
-			idx(idx),
+        ActiveTextureByIDEvent(Shader shader,
+                std::string sample2DName,
+                uint32_t idx,
+                TexID texID) :
+			shader(shader),
+            sample2DName(sample2DName),
+            idx(idx),
 			texID(texID)
 		{}
+        Shader shader;
+        std::string sample2DName;
 		uint32_t idx;
 		TexID texID;
 	};

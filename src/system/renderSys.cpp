@@ -82,7 +82,7 @@ namespace renderer {
 		//GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 		/*----- first-pass end -----*/
-        renderGBufferDebug("main", context->width, context->height);
+        // renderGBufferDebug("main", context->width, context->height);
         // renderColorBufferDebug("ssao", context->width, context->height);
         // m_evtMgr->emit<DrawUIEvent>();
 		CheckGLError;
@@ -171,7 +171,7 @@ namespace renderer {
 			Shader skyboxShader = getShader("skybox");
 			skyboxShader.use();
 			m_evtMgr->emit<UploadCameraToShaderEvent>(objCamera, skyboxShader);
-			m_evtMgr->emit<ActiveTextureEvent>(0, "alps");
+			m_evtMgr->emit<ActiveTextureEvent>(skyboxShader, "skybox", 0, "alps");
 			m_evtMgr->emit<DrawMeshBufferEvent>(obj);
 			glDepthFunc(GL_LESS); // set depth function back to default
 								  // glEnable(GL_CULL_FACE);
@@ -188,9 +188,9 @@ namespace renderer {
 		m_evtMgr->emit<UploadCameraToShaderEvent>(objCamera, shader);
 		auto gBufferCom = m_objMgr->getSingletonComponent<GBufferDictCom>();
 		GBufferRef& buf = gBufferCom->dict[gBufferAliasName];
-		m_evtMgr->emit<ActiveTextureByIDEvent>(0, buf.posTexID);
-		m_evtMgr->emit<ActiveTextureByIDEvent>(1, buf.normalTexID);
-		m_evtMgr->emit<ActiveTextureEvent>(2, "ssaoNoise");
+		m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "gPosition", 0, buf.posTexID);
+		m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "gNormal", 1, buf.normalTexID);
+		m_evtMgr->emit<ActiveTextureEvent>(shader, "texNoise", 2, "ssaoNoise");
 		setViewport(std::make_tuple(0, 0, winWidth, winHeight));
 		clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
 			GL_COLOR_BUFFER_BIT);
@@ -211,10 +211,10 @@ namespace renderer {
 		m_evtMgr->emit<UploadCameraToShaderEvent>(objCamera, shader);
 		auto gBufferCom = m_objMgr->getSingletonComponent<GBufferDictCom>();
 		GBufferRef& buf = gBufferCom->dict[gBufferAliasName];
-		m_evtMgr->emit<ActiveTextureByIDEvent>(0, buf.posTexID);
-		m_evtMgr->emit<ActiveTextureByIDEvent>(1, buf.normalTexID);
-		m_evtMgr->emit<ActiveTextureByIDEvent>(2, buf.albedoTexID);
-		m_evtMgr->emit<ActiveTextureByIDEvent>(3, buf.pbrTexID);
+		m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "gPosition", 0, buf.posTexID);
+		m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "gNormal", 1, buf.normalTexID);
+		m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "gAlbedo", 2, buf.albedoTexID);
+		m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "gPBR", 3, buf.pbrTexID);
 		setViewport(std::make_tuple(0, 0, winWidth, winHeight));
 		clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
 			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -246,7 +246,7 @@ namespace renderer {
         clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
                   GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         setViewport(std::make_tuple(0, 0, winWidth, winHeight));
-        m_evtMgr->emit<ActiveTextureByIDEvent>(0, buf.tex.texID);
+        m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "texture1", 0, buf.tex.texID);
         renderQuad();
     }
     
@@ -261,22 +261,22 @@ namespace renderer {
         
         // left-top: position
         setViewport(std::make_tuple(0, winHeight / 2, winWidth / 2, winHeight / 2));
-        m_evtMgr->emit<ActiveTextureByIDEvent>(0, buf.posTexID);
+        m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "texture1", 0, buf.posTexID);
         renderQuad();
         
         // right-top: normal
         setViewport(std::make_tuple(winWidth / 2, winHeight / 2, winWidth / 2, winHeight / 2));
-        m_evtMgr->emit<ActiveTextureByIDEvent>(0, buf.normalTexID);
+        m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "texture1", 0, buf.normalTexID);
         renderQuad();
         
         // left-bottom: albedo
         setViewport(std::make_tuple(0, 0, winWidth / 2, winHeight / 2));
-        m_evtMgr->emit<ActiveTextureByIDEvent>(0, buf.albedoTexID);
+        m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "texture1", 0, buf.albedoTexID);
         renderQuad();
         
         // right-bottom: pbr
         setViewport(std::make_tuple(winWidth / 2, 0, winWidth / 2, winHeight / 2));
-        m_evtMgr->emit<ActiveTextureByIDEvent>(0, buf.pbrTexID);
+        m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "texture1", 0, buf.pbrTexID);
         renderQuad();
     }
 };

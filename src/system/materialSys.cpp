@@ -66,7 +66,8 @@ namespace renderer {
         }
         uint32_t idx = 0;
         for (auto texName: setting->texList) {
-            m_evtMgr->emit<ActiveTextureEvent>(idx++, texName);
+            m_evtMgr->emit<ActiveTextureEvent>(shader, "texture" + std::to_string(idx+1), idx, texName);
+            idx++;
         }
 	}
 

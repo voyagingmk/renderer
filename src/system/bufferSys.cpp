@@ -393,7 +393,7 @@ namespace renderer {
 			GL_COLOR_ATTACHMENT1, 
 			GL_COLOR_ATTACHMENT2,
 			GL_COLOR_ATTACHMENT3 };
-		glDrawBuffers(sizeof(attachments) / sizeof(unsigned int), attachments);
+		glDrawBuffers(4, attachments);
 		// create and attach depth buffer (renderbuffer)
 		glGenRenderbuffers(1, &buf.depthRboID);
 		glBindRenderbuffer(GL_RENDERBUFFER, buf.depthRboID);
@@ -412,7 +412,7 @@ namespace renderer {
 			buf.normalTexID,
 			buf.albedoTexID,
 			buf.pbrTexID };
-		glDeleteTextures(3, ids);
+		glDeleteTextures(4, ids);
 		DestroyFrameBuffer(buf);
 	}
 

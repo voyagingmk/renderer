@@ -3,6 +3,7 @@
 #include "realtime/glutils.hpp"
 #include "SOIL.h"
 #include "utils/helper.hpp"
+#include "com/shader.hpp"
 
 using namespace std;
 
@@ -127,6 +128,7 @@ namespace renderer {
 	void TextureSystem::receive(const ActiveTextureByIDEvent &evt) {
         assert(glIsTexture(evt.texID) &&  evt.texID > 0);
         glActiveTexture(GL_TEXTURE0 + evt.idx);
+        evt.shader.set1i(evt.sample2DName.c_str(), (int)(evt.idx));
         glBindTexture(GL_TEXTURE_2D, evt.texID);
 	}
 
@@ -138,7 +140,8 @@ namespace renderer {
 		auto it = texDict->find(evt.aliasname);
 		if (it == texDict->end()) {
 			return;
-		}
+        }
+        evt.shader.set1i(evt.sample2DName.c_str(), (int)(evt.idx));
 		TexRef texRef = it->second;
 		glActiveTexture(GL_TEXTURE0 + evt.idx);
 		if (texRef.type == TexType::Tex2D) {
