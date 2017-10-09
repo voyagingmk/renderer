@@ -52,6 +52,8 @@ namespace renderer {
 
 		void UnuseFrameBuffer(FrameBufferBase& buf);
 
+		void CreateInstanceBuffer(MeshBufferRef& buf, size_t insNum, void* data);
+
 		MeshBufferRef CreateMeshBuffer(const OneMesh& mesh);
 
 		MeshBufferRef CreateSkyboxBuffer();

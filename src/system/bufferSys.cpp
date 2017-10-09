@@ -147,6 +147,29 @@ namespace renderer {
 	void BufferSystem::UnuseFrameBuffer(FrameBufferBase& buf) {
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
+	
+
+	void BufferSystem::CreateInstanceBuffer(MeshBufferRef& buf, size_t insNum, void* data) {
+		glGenBuffers(1, &buf.vboIns);
+		glBindBuffer(GL_ARRAY_BUFFER, buf.vboIns);
+		// TODO  instance offset info struct
+		glBufferData(GL_ARRAY_BUFFER, sizeof(Vector3dF) * insNum, data, GL_STATIC_DRAW);
+		
+		// position list
+		glEnableVertexAttribArray(4);
+		glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vector3dF), (void*)0);
+		glVertexAttribDivisor(4, 1);
+		// TODO
+		// scale list
+		// glEnableVertexAttribArray(5);
+		// glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE, sizeof(Vector3dF), (GLvoid*)(3 * sizeof(GLfloat)));
+		// glVertexAttribDivisor(5, 1);
+		// orienation list
+		// glEnableVertexAttribArray(6);
+		// glVertexAttribPointer(6, 3, GL_FLOAT, GL_FALSE, sizeof(Vector3dF), (GLvoid*)(6 * sizeof(GLfloat)));
+		// glVertexAttribDivisor(6, 1);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	}
 
 	MeshBufferRef BufferSystem::CreateMeshBuffer(const OneMesh& mesh) {
 		GLuint VBO, VAO, EBO;
