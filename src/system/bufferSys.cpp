@@ -150,6 +150,7 @@ namespace renderer {
 	
 
 	void BufferSystem::CreateInstanceBuffer(MeshBufferRef& buf, size_t insNum, void* data) {
+		glBindVertexArray(buf.vao);
 		glGenBuffers(1, &buf.vboIns);
 		glBindBuffer(GL_ARRAY_BUFFER, buf.vboIns);
 		// TODO  instance offset info struct
@@ -169,6 +170,8 @@ namespace renderer {
 		// glVertexAttribPointer(6, 3, GL_FLOAT, GL_FALSE, sizeof(Vector3dF), (GLvoid*)(6 * sizeof(GLfloat)));
 		// glVertexAttribDivisor(6, 1);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+		CheckGLError;
 	}
 
 	MeshBufferRef BufferSystem::CreateMeshBuffer(const OneMesh& mesh) {
