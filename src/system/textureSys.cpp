@@ -112,6 +112,7 @@ namespace renderer {
         texRef.height = 4;
         texRef.type = TexType::Tex2D;
         texDict->insert({ evt.aliasname, texRef });
+		CheckGLError;
     }
 
 

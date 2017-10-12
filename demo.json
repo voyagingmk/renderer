@@ -129,11 +129,6 @@
             "file": "spiderman.dff.png",
             "toLinear": true,
             "channels": 3
-        },{
-            "alias": "dog",
-            "file": "dog.png",
-            "toLinear": true,
-            "channels": 3
         },
         {
             "alias": "terrian",
@@ -270,10 +265,10 @@
     ],
     "object": [
         {
-            "model": "capsule.obj",
+            "model": "scene.obj",
             "material": 3,
             "spatial": [
-                [0, 0, 5],
+                [0, -3, 0],
                 [1, 1, 1],
                 [1, 0, 0, 0]
             ]
