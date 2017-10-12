@@ -299,7 +299,7 @@ namespace renderer {
 			glTexImage2DMultisample(target, samples, innerFormat, width, height, GL_TRUE);
 		}
 		else {
-			glTexImage2D(GL_TEXTURE_2D, 0, innerFormat, width, height, 0, GL_RGB, dataType, NULL);
+			glTexImage2D(target, 0, innerFormat, width, height, 0, GL_RGB, dataType, NULL);
 		}
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texParam);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, texParam);
