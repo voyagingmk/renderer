@@ -50,7 +50,67 @@ namespace renderer {
 		evtMgr.emit<UnuseGBufferEvent>("main");
         // glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-		  m_evtMgr->emit<UseColorBufferEvent>("ssao");
+
+		static    unsigned int noiseTexture;
+		static unsigned int ssaoColorBuffer;
+		static unsigned int ssaoFBO;
+		static bool init = false;
+		if (!init) {
+
+			init = true;
+			// also create framebuffer to hold SSAO processing stage 
+			// -----------------------------------------------------
+
+			glGenFramebuffers(1, &ssaoFBO);
+			glBindFramebuffer(GL_FRAMEBUFFER, ssaoFBO);
+			// SSAO color buffer
+			glGenTextures(1, &ssaoColorBuffer);
+			glBindTexture(GL_TEXTURE_2D, ssaoColorBuffer);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, 800, 600, 0, GL_RGB, GL_FLOAT, NULL);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ssaoColorBuffer, 0);
+			if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+				std::cout << "SSAO Framebuffer not complete!" << std::endl;
+			// generate sample kernel
+			// ----------------------
+			std::uniform_real_distribution<GLfloat> randomFloats(0.0, 1.0); // generates random floats between 0.0 and 1.0
+			std::default_random_engine generator;
+			std::vector<Vector3dF> ssaoKernel;
+			for (unsigned int i = 0; i < 64; ++i)
+			{
+				Vector3dF sample(randomFloats(generator) * 2.0 - 1.0, randomFloats(generator) * 2.0 - 1.0, randomFloats(generator));
+				sample = sample.Normalize();
+				sample *= randomFloats(generator);
+				float scale = float(i) / 64.0;
+
+				// scale samples s.t. they're more aligned to center of kernel
+				scale = lerp(0.1f, 1.0f, scale * scale);
+				sample *= scale;
+				ssaoKernel.push_back(sample);
+			}
+
+			// generate noise texture
+			// ----------------------
+			std::vector<Vector3dF> ssaoNoise;
+			for (unsigned int i = 0; i < 16; i++)
+			{
+				Vector3dF noise(randomFloats(generator) * 2.0 - 1.0, randomFloats(generator) * 2.0 - 1.0, 0.0f); // rotate around z-axis (in tangent space)
+				ssaoNoise.push_back(noise);
+			}
+			glGenTextures(1, &noiseTexture);
+			glBindTexture(GL_TEXTURE_2D, noiseTexture);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, 4, 4, 0, GL_RGB, GL_FLOAT, &ssaoNoise[0]);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		}
+
+
+
+		    glBindFramebuffer(GL_FRAMEBUFFER, ssaoFBO);
+		 // m_evtMgr->emit<UseColorBufferEvent>("ssao");
 			setViewport(std::make_tuple(0, 0, 800, 600));
 			clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
 				GL_COLOR_BUFFER_BIT);
@@ -70,10 +130,11 @@ namespace renderer {
 			shader.set3fArray("samples", ssaoKernel);
 			CheckGLError;
 			renderQuad();
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		   // m_evtMgr->emit<UnuseColorBufferEvent>("ssao");
 	
 		// ssao pass
-       //  ssaoPass(objCamera, "main", "ssao", context->width, context->height);
+       // ssaoPass(objCamera, "main", "ssao", context->width, context->height);
 
 
 		// lighting pass
@@ -105,8 +166,17 @@ namespace renderer {
 
 		/*----- first-pass end -----*/
         // renderGBufferDebug("main", context->width, context->height);
-        renderColorBufferDebug("ssao", context->width, context->height);
-		
+        // renderColorBufferDebug("ssao", context->width, context->height);
+
+		shader = getShader("screen");
+		shader.use();
+		clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
+			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+		setViewport(std::make_tuple(0, 0, 800, 600));
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, ssaoColorBuffer);
+		renderQuad();
+
         // m_evtMgr->emit<DrawUIEvent>();
 		CheckGLError;
 		SDL_GL_SwapWindow(context->win);
@@ -206,6 +276,9 @@ namespace renderer {
 	
 	void RenderSystem::ssaoPass(Object objCamera, std::string gBufferAliasName, std::string colorBufferAliasName, size_t winWidth, size_t winHeight) {
 		m_evtMgr->emit<UseColorBufferEvent>(colorBufferAliasName);
+		setViewport(std::make_tuple(0, 0, winWidth, winHeight));
+		clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
+			GL_COLOR_BUFFER_BIT);
 		Shader shader = getShader("ssao");
 		shader.use();
 		m_evtMgr->emit<UploadCameraToShaderEvent>(objCamera, shader);
@@ -215,9 +288,7 @@ namespace renderer {
 		m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "gNormal", 1, buf.normalTexID);
 		m_evtMgr->emit<ActiveTextureEvent>(shader, "texNoise", 2, "ssaoNoise");
 		shader.set2f("screenSize", float(winWidth), float(winHeight));
-		setViewport(std::make_tuple(0, 0, winWidth, winHeight));
-		clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
-			GL_COLOR_BUFFER_BIT);
+		
         static std::vector<Vector3dF> ssaoKernel;
         if (ssaoKernel.size() == 0) {
             generateSampleKernel(ssaoKernel);
