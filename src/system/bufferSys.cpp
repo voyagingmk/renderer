@@ -13,6 +13,7 @@ namespace renderer {
 		evtMgr.on<DrawMeshBufferEvent>(*this);
         evtMgr.on<CreateColorBufferEvent>(*this);
         evtMgr.on<DestroyColorBufferEvent>(*this);
+		evtMgr.on<AddColorBufferEvent>(*this);
         evtMgr.on<UseColorBufferEvent>(*this);
         evtMgr.on<UnuseColorBufferEvent>(*this);
 		evtMgr.on<CreateGBufferEvent>(*this);
@@ -64,6 +65,11 @@ namespace renderer {
 		com->dict[evt.aliasName] = buf;
 	}
 
+	void BufferSystem::receive(const AddColorBufferEvent& evt) {
+		auto com = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
+		com->dict[evt.aliasName] = evt.buf;
+	}
+
 	void BufferSystem::receive(const DestroyColorBufferEvent& evt) {
 		auto com = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
 		auto it = com->dict.find(evt.aliasName);
@@ -103,6 +109,7 @@ namespace renderer {
 		auto com = m_objMgr->getSingletonComponent<GBufferDictCom>();
 		auto it = com->dict.find(evt.aliasName);
 		if (it == com->dict.end()) {
+			assert(false);
 			return;
 		}
 		DestroyGBuffer(it->second);
@@ -113,6 +120,7 @@ namespace renderer {
 		auto com = m_objMgr->getSingletonComponent<GBufferDictCom>();
 		auto it = com->dict.find(evt.aliasName);
 		if (it == com->dict.end()) {
+			assert(false);
 			return;
 		}
 		UseFrameBuffer(it->second);
@@ -122,6 +130,7 @@ namespace renderer {
 		auto com = m_objMgr->getSingletonComponent<GBufferDictCom>();
 		auto it = com->dict.find(evt.aliasName);
 		if (it == com->dict.end()) {
+			assert(false);
 			return;
 		}
 		UnuseFrameBuffer(it->second);
@@ -131,6 +140,7 @@ namespace renderer {
 		auto com = m_objMgr->getSingletonComponent<GBufferDictCom>();
 		auto it = com->dict.find(evt.aliasName);
 		if (it == com->dict.end()) {
+			assert(false);
 			return;
 		}
 		CopyFrameBufferDepth(it->second);

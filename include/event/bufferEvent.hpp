@@ -31,6 +31,16 @@ namespace renderer {
         ecs::Object obj;
     };
 
+	class AddColorBufferEvent : public ecs::Event<AddColorBufferEvent> {
+	public:
+		AddColorBufferEvent(std::string aliasName, ColorBufferRef buf) :
+			aliasName(aliasName),
+			buf(buf)
+		{}
+		std::string aliasName;
+		ColorBufferRef buf;
+	};
+
 	class CreateColorBufferEvent : public ecs::Event<CreateColorBufferEvent> {
 	public:
 		CreateColorBufferEvent(size_t width, size_t height,

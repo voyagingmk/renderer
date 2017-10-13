@@ -17,8 +17,8 @@ namespace renderer {
 	public:
 		void init(ObjectManager &objMgr, EventManager &evtMgr) override;
 
-		virtual void update(ObjectManager &objMgr, EventManager &evtMgr, float dt) override {}
-
+		virtual void update(ObjectManager &objMgr, EventManager &evtMgr, float dt) override;
+		
 		void receive(const LoadConfigEvent &evt);
 
 		void CreateGlobalQuadObject();

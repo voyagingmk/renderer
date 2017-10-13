@@ -29,7 +29,9 @@ namespace renderer {
 		printf("LoaderSystem init\n");
 		evtMgr.on<LoadConfigEvent>(*this);
 	}
+	void LoaderSystem::update(ObjectManager &objMgr, EventManager &evtMgr, float dt) {
 
+	}
 	void LoaderSystem::receive(const LoadConfigEvent &evt) {
 		const json& config = evt.config;
 		size_t winWidth = config["width"];
@@ -62,19 +64,21 @@ namespace renderer {
 		loadLights(config);
 
 		m_evtMgr->emit<CreateColorBufferEvent>(
-			winWidth, 
-			winHeight, 
-			GL_RED, 
+			winWidth,
+			winHeight,
+			GL_RED,
 			GL_FLOAT,
-			BufType::None, 
-			0, 
-			GL_NEAREST, 
+			BufType::None,
+			0,
+			GL_NEAREST,
 			"ssao");
+
         m_evtMgr->emit<CreateGBufferEvent>(winWidth, winHeight, "main");
         
         m_evtMgr->emit<CreateNoiseTextureEvent>("ssaoNoise");
 
 		CreateGlobalQuadObject();
+
 	}
 
 	void LoaderSystem::CreateGlobalQuadObject() {
