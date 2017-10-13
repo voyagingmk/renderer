@@ -61,7 +61,15 @@ namespace renderer {
 		loadSceneObjects(assetsDir + modelsDir, config); 
 		loadLights(config);
 
-		m_evtMgr->emit<CreateColorBufferEvent>(winWidth, winHeight, GL_RED, GL_FLOAT, BufType::None, 0, GL_NEAREST, "ssao");
+		m_evtMgr->emit<CreateColorBufferEvent>(
+			winWidth, 
+			winHeight, 
+			GL_RED, 
+			GL_FLOAT,
+			BufType::None, 
+			0, 
+			GL_NEAREST, 
+			"ssao");
         m_evtMgr->emit<CreateGBufferEvent>(winWidth, winHeight, "main");
         
         m_evtMgr->emit<CreateNoiseTextureEvent>("ssaoNoise");
@@ -137,7 +145,7 @@ namespace renderer {
 				//data.actions.push_back(std::make_shared<MoveByAction>(0.5f, Vector3dF(1.0f, 0.0f, 0.0f)));
 				data.actions.push_back(std::make_shared<RotateByAction>(1.0f, DegreeF(0.0f), DegreeF(90.0f), DegreeF(90.0f)));
 				data.actions.push_back(std::make_shared<RotateByAction>(1.0f, DegreeF(0.0f), DegreeF(90.0f), DegreeF(90.0f), true));
-				m_evtMgr->emit<AddActionEvent>(obj, "rotate", data);
+				// m_evtMgr->emit<AddActionEvent>(obj, "rotate", data);
 			}
 			{
 				ActionData data;

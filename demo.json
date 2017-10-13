@@ -265,7 +265,7 @@
     ],
     "object": [
         {
-            "model": "scene.obj",
+            "model": "scene2.obj",
             "material": 3,
             "spatial": [
                 [0, -3, 0],
