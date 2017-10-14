@@ -37,7 +37,7 @@ public:
     }
     
     
-    bool Import(const std::string& pFile, Meshes& com) {
+    bool Import(const std::string& pFile, Meshes& com, bool normalInverse = false) {
         // Create an instance of the Importer class
         Assimp::Importer importer;
         
@@ -74,6 +74,9 @@ public:
                     p.x = aimesh->mNormals[i].x;
                     p.y = aimesh->mNormals[i].y;
                     p.z = aimesh->mNormals[i].z;
+					if (normalInverse) {
+						p = -p;
+					}
                 } else {
                     p.x = p.y = p.z = 0.0;
                 }

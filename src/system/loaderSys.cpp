@@ -134,9 +134,10 @@ namespace renderer {
 			std::string filename = objInfo["model"];
 			auto spatial = objInfo["spatial"];
 			int materialID = objInfo["material"];
+			bool normalInverse = objInfo["normalInverse"];
 			loadSpatialData(obj, spatial);
 			Meshes meshes;
-			loadMesh(modelsDir + filename, meshes);
+			loadMesh(modelsDir + filename, meshes, normalInverse);
 			obj.addComponent<Meshes>(meshes);
             obj.addComponent<MaterialCom>(materialID);
 			m_evtMgr->emit<CreateMeshBufferEvent>(obj);
@@ -235,10 +236,10 @@ namespace renderer {
         }
     }
 
-	void LoaderSystem::loadMesh(const std::string &filename, Meshes& meshes)
+	void LoaderSystem::loadMesh(const std::string &filename, Meshes& meshes, bool normalInverse)
 	{
 		ImporterAssimp &importer = ImporterAssimp::getInstance();
-		importer.Import(filename, meshes);
+		importer.Import(filename, meshes, normalInverse);
 	}
 
 	void LoaderSystem::loadSpatialData(Object obj, const json &spatial) {

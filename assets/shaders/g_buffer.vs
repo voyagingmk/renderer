@@ -24,7 +24,7 @@ void main()
 	FragPos = (view * WorldPos).xyz;
 	gl_Position = PV * WorldPos;
 	mat3 normalMatrix = transpose(inverse(mat3(view * model)));
-	Normal = mat3(normalMatrix) * normal;
+	Normal = normalMatrix * normal;
 	// Normal = mat3(transpose(inverse(model))) * normal;
 	// We swap the y-axis by substracing our coordinates from 1.
 	TexCoord = vec2(texCoord.x, 1.0 - texCoord.y);
