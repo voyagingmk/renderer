@@ -19,6 +19,79 @@
 
 using namespace std;
 
+// renderCube() renders a 1x1 3D cube in NDC.
+// -------------------------------------------------
+unsigned int cubeVAO = 0;
+unsigned int cubeVBO = 0;
+void renderCube()
+{
+	// initialize (if necessary)
+	if (cubeVAO == 0)
+	{
+		float vertices[] = {
+			// back face
+			-1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f,  // bottom-left
+			1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f,  // top-right
+			1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f,  // bottom-right         
+			1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f,  // top-right
+			-1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, // bottom-left
+			-1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f,  // top-left
+			// front face
+			-1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f,  // bottom-left
+			1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, // bottom-right
+			1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, // top-right
+			1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f,// top-right
+			-1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f,  // top-left
+			-1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f,  // bottom-left
+			// left face
+			-1.0f,  1.0f,  1.0f, -1.0f,  0.0f,  0.0f, // top-right
+			-1.0f,  1.0f, -1.0f, -1.0f,  0.0f,  0.0f,// top-left
+			-1.0f, -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, // bottom-left
+			-1.0f, -1.0f, -1.0f, -1.0f,  0.0f,  0.0f,  // bottom-left
+			-1.0f, -1.0f,  1.0f, -1.0f,  0.0f,  0.0f, // bottom-right
+			-1.0f,  1.0f,  1.0f, -1.0f,  0.0f,  0.0f, // top-right
+			// right face
+			1.0f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f, // top-left
+			1.0f, -1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  // bottom-right
+			1.0f,  1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  // top-right         
+			1.0f, -1.0f, -1.0f,  1.0f,  0.0f,  0.0f, // bottom-right
+			1.0f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f, // top-left
+			1.0f, -1.0f,  1.0f,  1.0f,  0.0f,  0.0f, // bottom-left     
+			// bottom face
+			-1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f,  // top-right
+			1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f,  // top-left
+			1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f,  // bottom-left
+			1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f, // bottom-left
+			-1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f,// bottom-right
+			-1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f, // top-right
+			// top face
+			-1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f,  // top-left
+			1.0f,  1.0f , 1.0f,  0.0f,  1.0f,  0.0f,// bottom-right
+			1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, // top-right     
+			1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f, // bottom-right
+			-1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, // top-left
+			-1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f,  // bottom-left        
+		};
+		glGenVertexArrays(1, &cubeVAO);
+		glGenBuffers(1, &cubeVBO);
+		// fill buffer
+		glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+		// link vertex attributes
+		glBindVertexArray(cubeVAO);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+	}
+	// render Cube
+	glBindVertexArray(cubeVAO);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+	glBindVertexArray(0);
+}
+
 namespace renderer {
     void RenderSystem::init(ObjectManager &objMgr, EventManager &evtMgr) {
         printf("RenderSystem init\n");
@@ -31,8 +104,8 @@ namespace renderer {
 		if (!context.valid()) {
 			return;
 		}
-		glEnable(GL_CULL_FACE);
-		glCullFace(GL_BACK);
+		//glEnable(GL_CULL_FACE);
+		//glCullFace(GL_BACK);
 
         // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		/*----- first-pass: deferred rendering-----*/
@@ -45,7 +118,7 @@ namespace renderer {
 			objCamera,
 			std::make_tuple(0, 0, context->width, context->height),
 			Color(0.0f, 0.0f, 0.0f, 1.0f),
-			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT,
+			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT,
 			&gBufferShader);
 		evtMgr.emit<UnuseGBufferEvent>("main");
         // glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -53,7 +126,7 @@ namespace renderer {
 		
 		// ssao pass
         ssaoPass(objCamera, "main", "ssao", context->width, context->height);
-
+		/*
 
 		// lighting pass
         deferredLightingPass(objCamera, "main", context->width, context->height);
@@ -77,10 +150,10 @@ namespace renderer {
             CheckGLError;
         }
 
-        
-		//setViewport(std::make_tuple(0, 0, context->width, context->height));
-		//clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
-		//GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        */
+		 //setViewport(std::make_tuple(0, 0, context->width, context->height));
+		// clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
+		// GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 		/*----- first-pass end -----*/
         // renderGBufferDebug("main", context->width, context->height);
@@ -140,7 +213,8 @@ namespace renderer {
 			CheckGLError; 
 			m_evtMgr->emit<UploadMatrixToShaderEvent>(obj, shader);
 			CheckGLError; 
-			m_evtMgr->emit<DrawMeshBufferEvent>(obj);
+		//	m_evtMgr->emit<DrawMeshBufferEvent>(obj);
+			renderCube();
 			CheckGLError;
 			m_evtMgr->emit<DeactiveMaterialEvent>(matCom->settingID);
 			CheckGLError;

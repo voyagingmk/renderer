@@ -14,8 +14,10 @@ vec4 EdgeDetection();
 
 void main()
 { 
-    vec3 c = vec3(texture(texture1, TexCoord).rgb);
+    vec3 c = vec3(texture(texture1, TexCoord).r);
     color = vec4(c, 1.0);
+    // vec3 c = vec3(texture(texture1, TexCoord).rgb);
+    // color = vec4(c, 1.0);
      // reinhard tone mapping
     //vec3 mapped = color.rgb / (color.rgb + vec3(1.0));
      

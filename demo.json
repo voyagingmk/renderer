@@ -265,11 +265,11 @@
     ],
     "object": [
         {
-            "model": "scene2.obj",
+            "model": "scene.obj",
             "material": 3,
             "spatial": [
                 [0, -3, 0],
-                [1, 1, 1],
+                [30, 30, 30],
                 [1, 0, 0, 0]
             ]
         }

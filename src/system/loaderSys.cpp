@@ -66,7 +66,7 @@ namespace renderer {
 		m_evtMgr->emit<CreateColorBufferEvent>(
 			winWidth,
 			winHeight,
-			GL_RED,
+			GL_RGB16F,
 			GL_FLOAT,
 			BufType::None,
 			0,

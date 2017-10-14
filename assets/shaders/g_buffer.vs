@@ -21,9 +21,10 @@ uniform mat4 normalMat;
 void main()
 {
 	vec4 WorldPos = model * vec4(position, 1.0f);
-	FragPos = WorldPos.xyz;
+	FragPos = (view * WorldPos).xyz;
 	gl_Position = PV * WorldPos;
-	Normal = mat3(normalMat) * normal;
+	mat3 normalMatrix = transpose(inverse(mat3(view * model)));
+	Normal = mat3(normalMatrix) * -normal;
 	// Normal = mat3(transpose(inverse(model))) * normal;
 	// We swap the y-axis by substracing our coordinates from 1.
 	TexCoord = vec2(texCoord.x, 1.0 - texCoord.y);
