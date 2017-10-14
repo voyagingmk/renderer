@@ -20,13 +20,20 @@ float bias = 0.025;
 uniform mat4 view;
 uniform mat4 proj;
 
+vec3 sampleGBufferPos(vec2 coord) {
+    // vec3 p = texture(gPosition, coord).xyz;
+    vec4 p = view * vec4(texture(gPosition, coord).xyz, 1.0);
+    return p.xyz;
+}
+
 void main()
 {    
     // tile noise texture over screen based on screen dimensions divided by noise size  
     vec2 noiseScale = vec2(screenSize.x/4.0, screenSize.y/4.0); 
 
     // get input for SSAO algorithm
-    vec3 fragPos = texture(gPosition, TexCoord).xyz;
+    vec3 fragPos = sampleGBufferPos(TexCoord);
+    // vec3 fragPos = texture(gPosition, TexCoord).xyz;
     vec3 normal = texture(gNormal, TexCoord).xyz;
     vec3 randomVec = normalize(texture(texNoise, TexCoord * noiseScale).xyz);
     // create TBN change-of-basis matrix: from tangent-space to view-space
@@ -48,7 +55,8 @@ void main()
         offset.xyz = offset.xyz * 0.5 + 0.5; // transform to range 0.0 - 1.0
         
         // get samplePos depth
-        float sampleDepth = texture(gPosition, offset.xy).z; // get depth value of kernel samplePos
+        float sampleDepth = sampleGBufferPos(offset.xy).z;
+        // float sampleDepth = texture(gPosition, offset.xy).z; // get depth value of kernel samplePos
 
         // range check & accumulate
         float rangeCheck = smoothstep(0.0, 1.0, radius / abs(fragPos.z - sampleDepth));

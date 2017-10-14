@@ -28,6 +28,7 @@ uniform int LightNum;
 const int MAX_LIGHTS = 32;
 uniform Light lights[MAX_LIGHTS];
 uniform vec3 viewPos;
+uniform mat4 view;
 
 
 const float PI = 3.14159265359;
@@ -76,7 +77,7 @@ void main()
 {		
      // retrieve data from gbuffer
     vec3 FragPos = texture(gPosition, TexCoord).rgb;
-    vec3 Normal = normalize(texture(gNormal, TexCoord).rgb);
+    vec3 Normal = (inverse(view) * vec4(normalize(texture(gNormal, TexCoord).rgb), 0.0)).xyz;
     float AmbientOcclusion = texture(ssao, TexCoord).r;
     Material material;
     material.albedo = texture(gAlbedo, TexCoord).rgb;
