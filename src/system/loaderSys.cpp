@@ -245,10 +245,12 @@ namespace renderer {
 		auto pos = spatial[0];
 		auto scale = spatial[1];
 		auto o = spatial[2];
+		QuaternionF q;
+		q.FromEulerAngles(DegreeF((float)o[0]), DegreeF((float)o[1]), DegreeF((float)o[2]));
 		obj.addComponent<SpatialData>(
 			Vector3dF{ (float)pos[0], (float)pos[1], (float)pos[2] },
 			Vector3dF{ (float)scale[0], (float)scale[1], (float)scale[2] },
-			QuaternionF{ (float)o[0], (float)o[1], (float)o[2], (float)o[3] }
+			q
 		);
 	}
 };

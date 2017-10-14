@@ -265,12 +265,21 @@
     ],
     "object": [
         {
-            "model": "scene.obj",
+            "model": "room.obj",
             "material": 3,
             "spatial": [
-                [0, -3, 0],
+                [0, 0, 0],
                 [30, 30, 30],
-                [1, 0, 0, 0]
+                [0, 0, 0]
+            ]
+        },
+        {
+            "model": "nanosuit.obj",
+            "material": 3,
+            "spatial": [
+                [0, 0, 0],
+                [1, 1, 1],
+                [-90, 0, 0]
             ]
         }
     ],

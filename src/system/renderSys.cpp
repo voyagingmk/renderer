@@ -19,6 +19,7 @@
 
 using namespace std;
 
+
 namespace renderer {
     void RenderSystem::init(ObjectManager &objMgr, EventManager &evtMgr) {
         printf("RenderSystem init\n");
