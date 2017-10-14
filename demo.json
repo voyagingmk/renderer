@@ -85,6 +85,11 @@
             "fs": "ssao.fs"
         },
         {
+            "alias": "ssaoBlur",
+            "vs": "ssao.vs",
+            "fs": "ssaoBlur.fs"
+        },
+        {
             "alias": "deferredShading",
             "vs": "deferred_shading.vs",
             "fs": "deferred_shading.fs",

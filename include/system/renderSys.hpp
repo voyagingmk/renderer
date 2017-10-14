@@ -37,7 +37,9 @@ namespace renderer {
 
 		void renderSkybox(Object objCamera);
 
-		void ssaoPass(Object objCamera, std::string gBufferAliasName, std::string colorBufferAliasName, size_t winWidth, size_t winHeight);
+		void ssaoPass(Object objCamera, std::string gBufferAliasName, std::string ssaoBuffer, size_t winWidth, size_t winHeight);
+
+		void ssaoBlurPass(Object objCamera, std::string ssaoBuffer, std::string ssaoBlurBuffer, size_t winWidth, size_t winHeight);
 
 		void deferredLightingPass(Object objCamera, std::string gBufferAliasName, size_t winWidth, size_t winHeight);
         

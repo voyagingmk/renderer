@@ -54,6 +54,7 @@ namespace renderer {
 		
 		// ssao pass
         ssaoPass(objCamera, "main", "ssao", context->width, context->height);
+		ssaoBlurPass(objCamera, "ssao", "ssaoBlur", context->width, context->height);
 		/*
 
 		// lighting pass
@@ -85,7 +86,7 @@ namespace renderer {
 
 		/*----- first-pass end -----*/
         // renderGBufferDebug("main", context->width, context->height);
-        renderColorBufferDebug("ssao", context->width, context->height);
+        renderColorBufferDebug("ssaoBlur", context->width, context->height);
         // m_evtMgr->emit<DrawUIEvent>();
 		CheckGLError;
 		SDL_GL_SwapWindow(context->win);
@@ -183,8 +184,8 @@ namespace renderer {
 	}
 	
 	
-	void RenderSystem::ssaoPass(Object objCamera, std::string gBufferAliasName, std::string colorBufferAliasName, size_t winWidth, size_t winHeight) {
-		m_evtMgr->emit<UseColorBufferEvent>(colorBufferAliasName);
+	void RenderSystem::ssaoPass(Object objCamera, std::string gBufferAliasName, std::string ssaoBuffer, size_t winWidth, size_t winHeight) {
+		m_evtMgr->emit<UseColorBufferEvent>(ssaoBuffer);
 		setViewport(std::make_tuple(0, 0, winWidth, winHeight));
 		clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
 			GL_COLOR_BUFFER_BIT);
@@ -206,7 +207,22 @@ namespace renderer {
         CheckGLError;
 		renderQuad();
         CheckGLError;
-		m_evtMgr->emit<UnuseColorBufferEvent>(colorBufferAliasName);
+		m_evtMgr->emit<UnuseColorBufferEvent>(ssaoBuffer);
+	}
+
+	void RenderSystem::ssaoBlurPass(Object objCamera, std::string ssaoBuffer, std::string ssaoBlurBuffer, size_t winWidth, size_t winHeight) {
+		m_evtMgr->emit<UseColorBufferEvent>(ssaoBlurBuffer);
+		auto colorBufferCom = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
+		ColorBufferRef& buf = colorBufferCom->dict[ssaoBuffer];
+		setViewport(std::make_tuple(0, 0, winWidth, winHeight));
+		clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
+			GL_COLOR_BUFFER_BIT);
+		Shader shader = getShader("ssaoBlur");
+		shader.use();
+		m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "ssaoInput", 0, buf.tex.texID);
+		CheckGLError;
+		renderQuad();
+		m_evtMgr->emit<UnuseColorBufferEvent>(ssaoBlurBuffer);
 	}
 
 	void RenderSystem::deferredLightingPass(Object objCamera, std::string gBufferAliasName, size_t winWidth, size_t winHeight) {

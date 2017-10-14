@@ -73,6 +73,16 @@ namespace renderer {
 			GL_NEAREST,
 			"ssao");
 
+		m_evtMgr->emit<CreateColorBufferEvent>(
+			winWidth,
+			winHeight,
+			GL_RGB,
+			GL_FLOAT,
+			BufType::None,
+			0,
+			GL_NEAREST,
+			"ssaoBlur");
+
         m_evtMgr->emit<CreateGBufferEvent>(winWidth, winHeight, "main");
         
         m_evtMgr->emit<CreateNoiseTextureEvent>("ssaoNoise");
