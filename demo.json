@@ -158,69 +158,13 @@
         {
             "type": "PointLight",
             "spatial": [
-                [-10.0,  10.0, 10.0],
-                [1, 1, 1],
-                [1, 0, 0, 0]
-            ],
-            "ambient": [
-                255,
-                0,
-                0
-            ],
-            "diffuse": [
-                255,
-                255,
-                255
-            ],
-            "specular": [
-                255,
-                255,
-                255
-            ],
-            "radius": 10,
-            "constant": 1.0,
-            "linear": 0.7,
-            "quadratic": 1.8,
-            "shadow": true
-        },
-        {
-            "type": "PointLight",
-            "spatial": [
-                [10.0,  10.0, 10.0],
+                [-15.0,  10.0, 15.0],
                 [1, 1, 1],
                 [1, 0, 0, 0]
             ],
             "ambient": [
                 255,
                 255,
-                0
-            ],
-            "diffuse": [
-                255,
-                255,
-                255
-            ],
-            "specular": [
-                255,
-                255,
-                255
-            ],
-            "radius": 10,
-            "constant": 1.0,
-            "linear": 0.7,
-            "quadratic": 1.8,
-            "shadow": true
-        },
-        {
-            "type": "PointLight",
-            "spatial": [
-                [-10.0, 10.0, -10.0],
-                [1, 1, 1],
-                [1, 0, 0, 0]
-            ],
-            "ambient": [
-                0,
-                0,
                 255
             ],
             "diffuse": [
@@ -242,13 +186,69 @@
         {
             "type": "PointLight",
             "spatial": [
-                [10.0, 10.0, -10.0],
+                [15.0,  10.0, 15.0],
                 [1, 1, 1],
                 [1, 0, 0, 0]
             ],
             "ambient": [
                 255,
-                0,
+                255,
+                255
+            ],
+            "diffuse": [
+                255,
+                255,
+                255
+            ],
+            "specular": [
+                255,
+                255,
+                255
+            ],
+            "radius": 10,
+            "constant": 1.0,
+            "linear": 0.7,
+            "quadratic": 1.8,
+            "shadow": true
+        },
+        {
+            "type": "PointLight",
+            "spatial": [
+                [-15.0, 10.0, -15.0],
+                [1, 1, 1],
+                [1, 0, 0, 0]
+            ],
+            "ambient": [
+                255,
+                255,
+                255
+            ],
+            "diffuse": [
+                255,
+                255,
+                255
+            ],
+            "specular": [
+                255,
+                255,
+                255
+            ],
+            "radius": 10,
+            "constant": 1.0,
+            "linear": 0.7,
+            "quadratic": 1.8,
+            "shadow": true
+        },
+        {
+            "type": "PointLight",
+            "spatial": [
+                [15.0, 10.0, -15.0],
+                [1, 1, 1],
+                [1, 0, 0, 0]
+            ],
+            "ambient": [
+                255,
+                255,
                 255
             ],
             "diffuse": [
@@ -268,32 +268,60 @@
             "shadow": true
         }
     ],
-    "object1": [
+    "object": [      
         {
             "model": "room.obj",
             "material": 3,
             "normalInverse": true,
             "spatial": [
-                [0, 0, 0],
-                [30, 30, 30],
+                [0, 15, 0],
+                [60, 30, 60],
                 [0, 0, 0]
             ]
         },
         {
-            "model": "nanosuit.obj",
-            "material": 3,
+            "model": "teapot.obj",
+            "material": 4,
             "normalInverse": false,
             "spatial": [
-                [0, 0, 0],
+                [-8, 0, -8],
                 [1, 1, 1],
-                [-90, 0, 0]
+                [0, 0, 0]
             ]
-        }
-    ],
-    "object": [      
+        },
         {
-            "model": "scene.obj",
-            "material": 3,
+            "model": "teapot.obj",
+            "material": 5,
+            "normalInverse": false,
+            "spatial": [
+                [8, 0, -8],
+                [1, 1, 1],
+                [0, 0, 0]
+            ]
+        },
+        {
+            "model": "teapot.obj",
+            "material": 6,
+            "normalInverse": false,
+            "spatial": [
+                [-8, 0, 8],
+                [1, 1, 1],
+                [0, 0, 0]
+            ]
+        },
+        {
+            "model": "teapot.obj",
+            "material": 7,
+            "normalInverse": false,
+            "spatial": [
+                [8, 0, 8],
+                [1, 1, 1],
+                [0, 0, 0]
+            ]
+        },
+        {
+            "model": "teapot.obj",
+            "material": 8,
             "normalInverse": false,
             "spatial": [
                 [0, 0, 0],
@@ -328,7 +356,52 @@
         {
             "id": 3,
             "type": "PBR",
-            "albedo": [255, 0, 0],
+            "albedo": [255, 255, 255],
+            "ao": 1.0,
+            "roughness": 0.7,
+            "metallic": 0.99,
+            "shaderName": "pbr"
+        },
+        {
+            "id": 4,
+            "type": "PBR",
+            "albedo": [255, 255, 0],
+            "ao": 1.0,
+            "roughness": 0.1,
+            "metallic": 0.1,
+            "shaderName": "pbr"
+        },
+        {
+            "id": 5,
+            "type": "PBR",
+            "albedo": [255, 0, 255],
+            "ao": 1.0,
+            "roughness": 0.8,
+            "metallic": 0.1,
+            "shaderName": "pbr"
+        },
+        {
+            "id": 6,
+            "type": "PBR",
+            "albedo": [255, 255, 255],
+            "ao": 1.0,
+            "roughness": 0.1,
+            "metallic": 0.8,
+            "shaderName": "pbr"
+        },
+        {
+            "id": 7,
+            "type": "PBR",
+            "albedo": [221, 155, 225],
+            "ao": 1.0,
+            "roughness": 0.8,
+            "metallic": 0.8,
+            "shaderName": "pbr"
+        },
+        {
+            "id": 8,
+            "type": "PBR",
+            "albedo": [29, 243, 144],
             "ao": 1.0,
             "roughness": 0.5,
             "metallic": 0.5,
