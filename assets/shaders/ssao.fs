@@ -1,6 +1,6 @@
 #version 410 core
 
-out vec3 FragColor;
+out float FragColor;
 
 in vec2 TexCoord;
 
@@ -60,8 +60,6 @@ void main()
         occlusion += (sampleDepth >= samplePos.z + bias ? 1.0 : 0.0) * rangeCheck;           
     }
 
-    occlusion = 1.0 - (occlusion / kernelSize);
-     
-   // FragColor = occlusion;
-    FragColor = vec3(occlusion);
+    occlusion = 1.0 - (occlusion / kernelSize);  
+    FragColor = occlusion;
 }
