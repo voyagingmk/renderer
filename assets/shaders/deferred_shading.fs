@@ -15,6 +15,7 @@ uniform sampler2D gPosition; // FragPos
 uniform sampler2D gNormal;
 uniform sampler2D gAlbedo;
 uniform sampler2D gPBR;
+uniform sampler2D ssao;
 
 struct Light {
     vec3 Position;
@@ -76,6 +77,7 @@ void main()
      // retrieve data from gbuffer
     vec3 FragPos = texture(gPosition, TexCoord).rgb;
     vec3 Normal = normalize(texture(gNormal, TexCoord).rgb);
+    float AmbientOcclusion = texture(ssao, TexCoord).r;
     Material material;
     material.albedo = texture(gAlbedo, TexCoord).rgb;
     vec3 pbrData = texture(gPBR, TexCoord).rgb;
@@ -143,7 +145,7 @@ void main()
     // gamma correct
     color = pow(color, vec3(1.0/2.2)); 
     
-    FragColor = vec4(color, 1.0);
+    FragColor = vec4(color, 1.0) * AmbientOcclusion;
     // FragColor = vec4(1.0,1.0,1.0, 1.0);
     // FragColor = vec4(material.metallic, material.roughness, material.ao, 1.0); 
     // FragColor = vec4(material.albedo, 1.0);

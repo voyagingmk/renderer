@@ -51,16 +51,14 @@ namespace renderer {
 		evtMgr.emit<UnuseGBufferEvent>("main");
         // glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-		
 		// ssao pass
         ssaoPass(objCamera, "main", "ssao", context->width, context->height);
 		ssaoBlurPass(objCamera, "ssao", "ssaoBlur", context->width, context->height);
-		/*
 
 		// lighting pass
         deferredLightingPass(objCamera, "main", context->width, context->height);
-		evtMgr.emit<CopyGBufferDepthEvent>("main");// –Ë“™GBufferµƒ…Ó∂»–≈œ¢£¨≤ª»ªÃÏø’∫–ª·∫⁄µÙ
-		
+
+		evtMgr.emit<CopyGBufferDepthEvent>("main");// skybox 需要深度信息
         // skybox pass
         renderSkybox(objCamera);
         
@@ -78,15 +76,13 @@ namespace renderer {
             m_evtMgr->emit<DrawMeshBufferEvent>(lightObj);
             CheckGLError;
         }
-
-        */
 		 //setViewport(std::make_tuple(0, 0, context->width, context->height));
 		// clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
 		// GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 		/*----- first-pass end -----*/
         // renderGBufferDebug("main", context->width, context->height);
-        renderColorBufferDebug("ssaoBlur", context->width, context->height);
+        // renderColorBufferDebug("ssaoBlur", context->width, context->height);
         // m_evtMgr->emit<DrawUIEvent>();
 		CheckGLError;
 		SDL_GL_SwapWindow(context->win);
@@ -235,6 +231,10 @@ namespace renderer {
 		m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "gNormal", 1, buf.normalTexID);
 		m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "gAlbedo", 2, buf.albedoTexID);
 		m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "gPBR", 3, buf.pbrTexID);
+		auto colorBufferCom = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
+		ColorBufferRef& ssaoBuf = colorBufferCom->dict["ssaoBlur"];
+		m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "ssao", 4, ssaoBuf.tex.texID);
+
 		setViewport(std::make_tuple(0, 0, winWidth, winHeight));
 		clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
 			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
