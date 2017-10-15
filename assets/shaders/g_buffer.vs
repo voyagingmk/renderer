@@ -24,6 +24,7 @@ void main()
 	FragPos = (view * WorldPos).xyz;
 	gl_Position = PV * WorldPos;
 	// mat3 normalMatrix = mat3(view * transpose(inverse(model))); // Wrong!
+	// mat3 normalMatrix = mat3(transpose(inverse(view * mat4(mat3(model)))));
 	mat3 normalMatrix = mat3(view * mat4(transpose(inverse(mat3(model)))));
 	Normal = normalMatrix * normal;
 	// Normal = mat3(transpose(inverse(model))) * normal;
