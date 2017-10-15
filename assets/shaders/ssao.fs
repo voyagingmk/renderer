@@ -21,8 +21,8 @@ uniform mat4 view;
 uniform mat4 proj;
 
 vec3 sampleGBufferPos(vec2 coord) {
-    // vec3 p = texture(gPosition, coord).xyz;
-    vec4 p = view * vec4(texture(gPosition, coord).xyz, 1.0);
+    vec3 p = texture(gPosition, coord).xyz;
+    // vec4 p = view * vec4(texture(gPosition, coord).xyz, 1.0);
     return p.xyz;
 }
 

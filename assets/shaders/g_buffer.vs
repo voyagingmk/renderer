@@ -21,10 +21,9 @@ uniform mat4 normalMat;
 void main()
 {
 	vec4 WorldPos = model * vec4(position, 1.0f);
-	// FragPos = (view * WorldPos).xyz;
-	FragPos = WorldPos.xyz;
+	FragPos = (view * WorldPos).xyz;
 	gl_Position = PV * WorldPos;
-	// ((V M)^-1)^T = (V^-1 M^-1)^T = (M^-1)^T (V^-1)^T
+	// mat3 normalMatrix = mat3(view * transpose(inverse(model))); // Wrong!
 	mat3 normalMatrix = mat3(view * mat4(transpose(inverse(mat3(model)))));
 	Normal = normalMatrix * normal;
 	// Normal = mat3(transpose(inverse(model))) * normal;

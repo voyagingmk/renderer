@@ -70,6 +70,7 @@ namespace renderer {
 		shader.setMatrix4f("PV", cameraMat);
 		shader.setMatrix4f("proj", projMat);
 		shader.setMatrix4f("view", viewMat);
+		shader.setMatrix4f("viewInv", viewMat.inverse());
 	}
     
     ShaderProgramHDL ShaderSystem::createShaderProgram(SPHDLList& spHDLs, ShaderHDLSet shaderHDLSet) {

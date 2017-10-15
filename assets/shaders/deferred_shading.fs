@@ -29,6 +29,7 @@ const int MAX_LIGHTS = 32;
 uniform Light lights[MAX_LIGHTS];
 uniform vec3 viewPos;
 uniform mat4 view;
+uniform mat4 viewInv;
 
 
 const float PI = 3.14159265359;
@@ -76,8 +77,8 @@ vec3 fresnelSchlick(float cosTheta, vec3 F0)
 void main()
 {		
      // retrieve data from gbuffer
-    vec3 FragPos = texture(gPosition, TexCoord).rgb;
-    vec3 Normal = (inverse(view) * vec4(normalize(texture(gNormal, TexCoord).rgb), 0.0)).xyz;
+    vec3 FragPos = (viewInv * vec4(texture(gPosition, TexCoord).rgb, 1.0)).xyz;
+    vec3 Normal = (viewInv * vec4(normalize(texture(gNormal, TexCoord).rgb), 0.0)).xyz;
     float AmbientOcclusion = texture(ssao, TexCoord).r;
     Material material;
     material.albedo = texture(gAlbedo, TexCoord).rgb;
