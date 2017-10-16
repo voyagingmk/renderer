@@ -13,6 +13,7 @@ namespace renderer {
 		evtMgr.on<CreateMeshBufferEvent>(*this);
 		evtMgr.on<CreateSkyboxBufferEvent>(*this);
 		evtMgr.on<DrawMeshBufferEvent>(*this);
+        evtMgr.on<CreateDpethBufferEvent>(*this);
         evtMgr.on<CreateColorBufferEvent>(*this);
         evtMgr.on<DestroyColorBufferEvent>(*this);
 		evtMgr.on<AddColorBufferEvent>(*this);
@@ -61,7 +62,7 @@ namespace renderer {
 
     void BufferSystem::receive(const CreateDpethBufferEvent& evt) {
         auto com = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
-        ColorBufferRef buf = CreateDepthFrameBuffer(evt.dtType, evt.aliasName, evt.width, evt.height);
+        ColorBufferRef buf = CreateDepthFrameBuffer(evt.dtType, evt.texAliasname, evt.width, evt.height);
         com->dict[evt.aliasName] = buf;
     }
     
@@ -291,11 +292,11 @@ namespace renderer {
 		return meshBuffer;
 	}
     
-    ColorBufferRef BufferSystem::CreateDepthFrameBuffer(DepthTexType dtType, std::string bufAliasname, size_t width, size_t height) {
-        m_evtMgr->emit<CreateDepthTextureEvent>(bufAliasname + "_tex", dtType, width, height);
+    ColorBufferRef BufferSystem::CreateDepthFrameBuffer(DepthTexType dtType, std::string texAliasname, size_t width, size_t height) {
+        m_evtMgr->emit<CreateDepthTextureEvent>(texAliasname, dtType, width, height);
         ComponentHandle<TextureDict> texDict = m_objMgr->getSingletonComponent<TextureDict>();
         ColorBufferRef buf;
-        auto it = texDict->find(bufAliasname + "_tex");
+        auto it = texDict->find(texAliasname);
         TexRef texRef = it->second;
         buf.width = texRef.width;
         buf.height = texRef.height;

@@ -44,17 +44,20 @@ namespace renderer {
     class CreateDpethBufferEvent : public ecs::Event<CreateDpethBufferEvent> {
     public:
         CreateDpethBufferEvent(std::string aliasName,
+                               std::string texAliasname,
                                DepthTexType dtType,
                                size_t width, size_t height):
             width(width),
             height(height),
             dtType(dtType),
-            aliasName(aliasName)
+            aliasName(aliasName),
+            texAliasname(texAliasname)
         {}
         size_t width;
         size_t height;
         DepthTexType dtType;
         std::string aliasName;
+        std::string texAliasname;
     };
     
 

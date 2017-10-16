@@ -39,10 +39,10 @@
             "fs": "depthMap.fs"
         },
         {
-            "alias": "depthMap",
-            "gs": "point_shadows_depth.gs",
-            "vs": "point_shadows_depth.vs",
-            "fs": "point_shadows_depth.fs"
+            "alias": "pointShadowDepth",
+            "gs": "pointShadowDepth.gs",
+            "vs": "pointShadowDepth.vs",
+            "fs": "pointShadowDepth.fs"
         },
         {
             "alias": "depthMapDebug",

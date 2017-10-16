@@ -321,7 +321,7 @@ class MyContext : public RendererContextSDL
         Matrix4x4 lightPV = lightProj * LookAt(light->pos, Vector3dF(0.0, 0.0, 0.0), {0.0f, 1.0f, 0.0f});
 
         CheckGLError;
-        Shader &depthMapShader = shaderMgr.getShader("depthMap");
+        Shader &depthMapShader = shaderMgr.getShader("pointShadowDepth");
         depthMapShader.use();
         CheckGLError;
         depthMapShader.setMatrixes4f("lightPVs", lightPVs);
@@ -333,7 +333,7 @@ class MyContext : public RendererContextSDL
         drawScene(Color(0.1f, 0.1f, 0.1f, 1.0f),
                   GL_DEPTH_BUFFER_BIT,
                   depthFrameBuf,
-                  "depthMap");
+                  "pointShadowDepth");
         glCullFace(GL_BACK);
         buffMgr.UnuseFrameBuffer(depthFrameBuf);
 
