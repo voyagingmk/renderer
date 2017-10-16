@@ -91,6 +91,8 @@ namespace renderer {
         m_evtMgr->emit<CreateDpethBufferEvent>("shadow", "pointDepth", DepthTexType::CubeMap, winWidth, winHeight);
 
 		CreateGlobalQuadObject();
+        
+        PointLightTransform c;
 
 	}
 
