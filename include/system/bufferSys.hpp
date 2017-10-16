@@ -27,6 +27,8 @@ namespace renderer {
 		void receive(const DrawMeshBufferEvent& evt);
 
 		void receive(const AddColorBufferEvent& evt);
+        
+        void receive(const CreateDpethBufferEvent& evt);
 
 		void receive(const CreateColorBufferEvent& evt);
 
@@ -54,6 +56,8 @@ namespace renderer {
 
 		void UnuseFrameBuffer(FrameBufferBase& buf);
 
+        ColorBufferRef CreateDepthFrameBuffer(DepthTexType dtType, std::string texAliasname, size_t width, size_t height);
+            
 		void CreateInstanceBuffer(MeshBufferRef& buf, size_t insNum, void* data);
 
 		MeshBufferRef CreateMeshBuffer(const OneMesh& mesh);

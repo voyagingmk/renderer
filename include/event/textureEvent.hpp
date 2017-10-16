@@ -25,6 +25,23 @@ namespace renderer {
 		std::string aliasname;
 		size_t channels;
 	};
+    
+    class CreateDepthTextureEvent : public ecs::Event<CreateDepthTextureEvent> {
+    public:
+        CreateDepthTextureEvent(std::string aliasname,
+                                DepthTexType dtType,
+                                size_t width,
+                                size_t height) :
+            aliasname(aliasname),
+            dtType(dtType),
+            width(width),
+            height(height)
+        {}
+        std::string aliasname;
+        DepthTexType dtType;
+        size_t width;
+        size_t height;
+    };
 
 	class LoadTextureEvent : public ecs::Event<LoadTextureEvent> {
 	public:

@@ -49,6 +49,55 @@ namespace renderer {
 		CheckGLError;
 		std::cout << "TextureSystem: cubemap[" << evt.aliasname << "] loaded, w:" << width << ", h:" << height << std::endl;
 	}
+    
+    void TextureSystem::receive(const CreateDepthTextureEvent &evt) {
+        auto texDict = m_objMgr->getSingletonComponent<TextureDict>();
+        TexRef texRef = CreateDepthTexture(evt.dtType, evt.width, evt.height);
+        texDict->insert({ evt.aliasname, texRef });
+    }
+    
+    TexRef TextureSystem::CreateDepthTexture(DepthTexType dtType, size_t width, size_t height) {
+        TexRef texRef;
+        texRef.width = width;
+        texRef.height = height;
+        glGenTextures(1, &texRef.texID);
+        if(dtType == DepthTexType::DepthOnly ||
+           dtType == DepthTexType::DepthStencil) {
+            texRef.type = TexType::Tex2D;
+            glBindTexture(GL_TEXTURE_2D, texRef.texID);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+            GLfloat borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
+            glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+            if(dtType == DepthTexType::DepthStencil)
+                glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,width, height, 0, GL_DEPTH_COMPONENT,  GL_FLOAT, 0);
+            if(dtType == DepthTexType::DepthStencil)
+                glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, width, height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, 0);
+            glBindTexture(GL_TEXTURE_2D, 0);
+        } else {
+            texRef.type = TexType::CubeMap;
+            glBindTexture(GL_TEXTURE_CUBE_MAP, texRef.texID);
+            for (unsigned int i = 0; i < 6; ++i) {
+                glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_DEPTH_COMPONENT,
+                             width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+            }
+            glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            //glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            //glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            //glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+            
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_BORDER);
+            GLfloat borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
+            glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+            glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+        }
+        return texRef;
+    }
 
 	void TextureSystem::receive(const LoadTextureEvent &evt) {
 		auto texDict = m_objMgr->getSingletonComponent<TextureDict>();

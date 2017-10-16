@@ -39,7 +39,24 @@ namespace renderer {
 		{}
 		std::string aliasName;
 		ColorBufferRef buf;
-	};
+    };
+    
+    class CreateDpethBufferEvent : public ecs::Event<CreateDpethBufferEvent> {
+    public:
+        CreateDpethBufferEvent(std::string aliasName,
+                               DepthTexType dtType,
+                               size_t width, size_t height):
+            width(width),
+            height(height),
+            dtType(dtType),
+            aliasName(aliasName)
+        {}
+        size_t width;
+        size_t height;
+        DepthTexType dtType;
+        std::string aliasName;
+    };
+    
 
 	class CreateColorBufferEvent : public ecs::Event<CreateColorBufferEvent> {
 	public:

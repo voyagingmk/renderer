@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "system/bufferSys.hpp"
 #include "realtime/glutils.hpp"
+#include "com/glcommon.hpp"
+#include "event/textureEvent.hpp"
 
 using namespace std;
 
@@ -57,6 +59,12 @@ namespace renderer {
 		}
 	}
 
+    void BufferSystem::receive(const CreateDpethBufferEvent& evt) {
+        auto com = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
+        ColorBufferRef buf = CreateDepthFrameBuffer(evt.dtType, evt.aliasName, evt.width, evt.height);
+        com->dict[evt.aliasName] = buf;
+    }
+    
 	void BufferSystem::receive(const CreateColorBufferEvent& evt) {
 		auto com = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
 		ColorBufferRef buf = CreateColorBuffer(
@@ -282,7 +290,39 @@ namespace renderer {
 		meshBuffer.triangles = 12;
 		return meshBuffer;
 	}
+    
+    ColorBufferRef BufferSystem::CreateDepthFrameBuffer(DepthTexType dtType, std::string bufAliasname, size_t width, size_t height) {
+        m_evtMgr->emit<CreateDepthTextureEvent>(bufAliasname + "_tex", dtType, width, height);
+        ComponentHandle<TextureDict> texDict = m_objMgr->getSingletonComponent<TextureDict>();
+        ColorBufferRef buf;
+        auto it = texDict->find(bufAliasname + "_tex");
+        TexRef texRef = it->second;
+        buf.width = texRef.width;
+        buf.height = texRef.height;
+        buf.depthTex = texRef;
+        glGenFramebuffers(1, &buf.fboID);
+        glBindFramebuffer(GL_FRAMEBUFFER, buf.fboID);
+        if (dtType == DepthTexType::DepthOnly) {
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, buf.depthTex.texID, 0);
+        } else if (dtType == DepthTexType::DepthStencil) {
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, buf.depthTex.texID, 0);
+        } else if (dtType == DepthTexType::CubeMap) {
+            glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, buf.depthTex.texID, 0);
+        }
+        glDrawBuffer(GL_NONE);
+        glReadBuffer(GL_NONE);
+        if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+            printf("CreateDepthFrameBuffer failed\n");
+            DestroyFrameBuffer(buf);
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+            return buf;
+        }
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        return buf;
+    }
 
+    
+    
 	ColorBufferRef BufferSystem::CreateColorBuffer(
             size_t width, size_t height,
             int innerFormat, int dataType,

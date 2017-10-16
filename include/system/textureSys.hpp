@@ -29,6 +29,10 @@ namespace renderer {
 		void receive(const ActiveTextureEvent &evt);
         
         void receive(const DeactiveTextureEvent &evt);
+        
+        void receive(const CreateDepthTextureEvent &evt);
+        
+        TexRef CreateDepthTexture(DepthTexType dtType, size_t width, size_t height);
 	};
 
 
