@@ -62,7 +62,7 @@ namespace renderer {
 
     void BufferSystem::receive(const CreateDpethBufferEvent& evt) {
         auto com = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
-        ColorBufferRef buf = CreateDepthFrameBuffer(evt.dtType, evt.texAliasname, evt.width, evt.height);
+        ColorBufferRef buf = CreateDepthFrameBuffer(evt.dtType, evt.texAliasname, evt.width);
         com->dict[evt.aliasName] = buf;
     }
     
@@ -294,8 +294,8 @@ namespace renderer {
 		return meshBuffer;
 	}
     
-    ColorBufferRef BufferSystem::CreateDepthFrameBuffer(DepthTexType dtType, std::string texAliasname, size_t width, size_t height) {
-        m_evtMgr->emit<CreateDepthTextureEvent>(texAliasname, dtType, width, height);
+    ColorBufferRef BufferSystem::CreateDepthFrameBuffer(DepthTexType dtType, std::string texAliasname, size_t width) {
+        m_evtMgr->emit<CreateDepthTextureEvent>(texAliasname, dtType, width, width);
         ComponentHandle<TextureDict> texDict = m_objMgr->getSingletonComponent<TextureDict>();
         ColorBufferRef buf;
         auto it = texDict->find(texAliasname);
@@ -315,8 +315,9 @@ namespace renderer {
         }
         glDrawBuffer(GL_NONE);
         glReadBuffer(GL_NONE);
-        if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-            printf("CreateDepthFrameBuffer failed\n");
+		auto status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+        if(status != GL_FRAMEBUFFER_COMPLETE) {
+            printf("CreateDepthFrameBuffer failed, status:%04x\n", status);
             DestroyFrameBuffer(buf);
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
             return buf;

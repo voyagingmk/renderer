@@ -46,15 +46,13 @@ namespace renderer {
         CreateDpethBufferEvent(std::string aliasName,
                                std::string texAliasname,
                                DepthTexType dtType,
-                               size_t width, size_t height):
+                               size_t width):
             width(width),
-            height(height),
             dtType(dtType),
             aliasName(aliasName),
             texAliasname(texAliasname)
         {}
         size_t width;
-        size_t height;
         DepthTexType dtType;
         std::string aliasName;
         std::string texAliasname;
