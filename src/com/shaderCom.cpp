@@ -125,7 +125,7 @@ void Shader::set1b(const char* name, bool b) {
 }
 
 void Shader::setMatrixes4f(const char* name, std::vector<Matrix4x4> mats) {
-    for (GLuint i = 0; i < 6; ++i){
+    for (GLuint i = 0; i < mats.size(); ++i){
         UniLoc loc = getUniformLocation((std::string(name) + "[" + std::to_string(i) + "]").c_str());
         if (loc == -1) {
             return;

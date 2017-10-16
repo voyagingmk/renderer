@@ -36,6 +36,7 @@ MainECS::MainECS() {
 void MainECS::setup() {
 	m_systemMgr.add<UISystem>();
     m_systemMgr.add<EnvSystem>();
+	m_systemMgr.add<LightSystem>();
     m_systemMgr.add<TextureSystem>();
     m_systemMgr.add<ShaderSystem>();
 	m_systemMgr.add<RenderSystem>();
@@ -46,7 +47,6 @@ void MainECS::setup() {
     m_systemMgr.add<MotionSystem>();
 	m_systemMgr.add<LoaderSystem>();
 	m_systemMgr.add<ConfigSystem>();
-	m_systemMgr.add<LightSystem>();
 	m_systemMgr.init();
 }
 

@@ -59,6 +59,11 @@ namespace renderer {
 		evtMgr.emit<UseColorBufferEvent>("shadow");
 		CheckGLError; 
 		Shader pointShadowDepthShader = getShader("pointShadowDepth");
+		pointShadowDepthShader.use();
+		auto pointLightTrans = m_objMgr->getSingletonComponent<PointLightTransform>();
+		pointShadowDepthShader.setMatrixes4f("lightPVs", pointLightTrans->lightPVs);
+		pointShadowDepthShader.set1f("far_plane", pointLightTrans->f);
+		pointShadowDepthShader.set3f("lightPos", pointLightTrans.object().component<SpatialData>()->pos);
 		evtMgr.emit<RenderSceneEvent>(
 			objCamera,
 			std::make_tuple(0, 0, context->width, context->height),
