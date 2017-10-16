@@ -55,6 +55,18 @@ namespace renderer {
         ssaoPass(objCamera, "main", "ssao", context->width, context->height);
 		ssaoBlurPass(objCamera, "ssao", "ssaoBlur", context->width, context->height);
 
+		// shadow cubemap pass
+		evtMgr.emit<UseColorBufferEvent>("shadow");
+		CheckGLError; 
+		Shader pointShadowDepthShader = getShader("pointShadowDepth");
+		evtMgr.emit<RenderSceneEvent>(
+			objCamera,
+			std::make_tuple(0, 0, context->width, context->height),
+			Color(0.0f, 0.0f, 0.0f, 1.0f),
+			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT,
+			&pointShadowDepthShader);
+		evtMgr.emit<UnuseColorBufferEvent>("shadow");
+
 		// lighting pass
         deferredLightingPass(objCamera, "main", context->width, context->height);
 

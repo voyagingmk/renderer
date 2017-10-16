@@ -3,6 +3,7 @@
 
 #include "base.hpp"
 #include "color.hpp"
+#include "com/matrix.hpp"
 
 namespace renderer {
 
@@ -38,6 +39,15 @@ namespace renderer {
 		float linear;
 		float quadratic;
 	};
+
+	 
+    struct PointLightTransform {
+        float fovy;
+        float aspect;
+        float n;
+        float f;
+        std::vector<Matrix4x4> lightPVs;
+    };
 };
 
 #endif

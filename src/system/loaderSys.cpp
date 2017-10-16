@@ -19,6 +19,7 @@
 #include "event/materialEvent.hpp"
 #include "event/bufferEvent.hpp"
 #include "event/actionEvent.hpp"
+#include "event/lightEvent.hpp"
 #include "importer.hpp"
 #include "utils/helper.hpp"
 
@@ -128,7 +129,11 @@ namespace renderer {
 			Object obj = m_objMgr->create();
 			auto spatial = lightInfo["spatial"];
 			loadSpatialData(obj, spatial);
-
+			auto transCom = obj.addComponent<PointLightTransform>();
+			transCom->aspect = 1.0f;
+			transCom->fovy = 90.0f;
+			transCom->n = 1.0f;
+			transCom->f = 25.0f;
 			obj.addComponent<PointLightCom>(
 				parseColor(lightInfo["ambient"]),
 				parseColor(lightInfo["diffuse"]),
@@ -138,7 +143,8 @@ namespace renderer {
                 lightInfo["quadratic"]);
             auto com = obj.addComponent<Meshes>();
             generateOuterBoxMeshes(*com);
-            m_evtMgr->emit<CreateMeshBufferEvent>(obj);
+            m_evtMgr->emit<AddPointLightEvent>(obj);
+			m_evtMgr->emit<CreateMeshBufferEvent>(obj);
 		}
 	}
 

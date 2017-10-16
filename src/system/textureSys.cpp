@@ -12,6 +12,7 @@ namespace renderer {
 		printf("TextureSystem init\n");
         evtMgr.on<LoadTextureEvent>(*this);
         evtMgr.on<LoadCubemapEvent>(*this);
+		evtMgr.on<CreateDepthTextureEvent>(*this);
         evtMgr.on<CreateNoiseTextureEvent>(*this);
 		evtMgr.on<DestroyTextureEvent>(*this); 
 		evtMgr.on<ActiveTextureByIDEvent>(*this);

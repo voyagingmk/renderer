@@ -96,7 +96,9 @@ namespace renderer {
 		if (it == com->dict.end()) {
 			return;
 		}
+		CheckGLError;
 		UseFrameBuffer(it->second);
+		CheckGLError;
 	}
 
 	void BufferSystem::receive(const UnuseColorBufferEvent& evt) {
@@ -297,6 +299,7 @@ namespace renderer {
         ComponentHandle<TextureDict> texDict = m_objMgr->getSingletonComponent<TextureDict>();
         ColorBufferRef buf;
         auto it = texDict->find(texAliasname);
+		assert(it != texDict->end());
         TexRef texRef = it->second;
         buf.width = texRef.width;
         buf.height = texRef.height;

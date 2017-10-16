@@ -13,6 +13,7 @@
 #include "system/motionSys.hpp"
 #include "system/configSys.hpp"
 #include "system/uiSys.hpp"
+#include "system/lightSys.hpp"
 
 using namespace ecs;
 using namespace renderer;
@@ -45,6 +46,7 @@ void MainECS::setup() {
     m_systemMgr.add<MotionSystem>();
 	m_systemMgr.add<LoaderSystem>();
 	m_systemMgr.add<ConfigSystem>();
+	m_systemMgr.add<LightSystem>();
 	m_systemMgr.init();
 }
 
