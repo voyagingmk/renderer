@@ -64,6 +64,7 @@ namespace renderer {
 		pointShadowDepthShader.setMatrixes4f("lightPVs", pointLightTrans->lightPVs);
 		pointShadowDepthShader.set1f("far_plane", pointLightTrans->f);
 		pointShadowDepthShader.set3f("lightPos", pointLightTrans.object().component<SpatialData>()->pos);
+        CheckGLError;
 		evtMgr.emit<RenderSceneEvent>(
 			objCamera,
 			std::make_tuple(0, 0, context->width, context->height),
@@ -71,10 +72,12 @@ namespace renderer {
 			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT,
 			&pointShadowDepthShader);
 		evtMgr.emit<UnuseColorBufferEvent>("shadow");
-
+        CheckGLError;
+        
 		// lighting pass
         deferredLightingPass(objCamera, "main", context->width, context->height);
-
+        CheckGLError;
+        
 		evtMgr.emit<CopyGBufferDepthEvent>("main");// skybox 需要深度信息
         // skybox pass
         renderSkybox(objCamera);
@@ -96,7 +99,7 @@ namespace renderer {
 		 //setViewport(std::make_tuple(0, 0, context->width, context->height));
 		// clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
 		// GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
+        
 		/*----- first-pass end -----*/
         // renderGBufferDebug("main", context->width, context->height);
         // renderColorBufferDebug("ssaoBlur", context->width, context->height);
@@ -251,7 +254,8 @@ namespace renderer {
 		auto colorBufferCom = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
 		ColorBufferRef& ssaoBuf = colorBufferCom->dict["ssaoBlur"];
 		m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "ssao", 4, ssaoBuf.tex.texID);
-
+        ColorBufferRef& shadowBuf = colorBufferCom->dict["shadow"];
+        m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "depthMap", 5, shadowBuf.depthTex);
 		setViewport(std::make_tuple(0, 0, winWidth, winHeight));
 		clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
 			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -263,9 +267,11 @@ namespace renderer {
         uint32_t i = 0;
         for (auto obj : m_objMgr->entities<PointLightCom, SpatialData>()) {
             auto spatialDataCom = obj.component<SpatialData>();
+            auto transCom = obj.component<PointLightTransform>();
             auto lightCom = obj.component<PointLightCom>();
             shader.set3f(("lights[" + std::to_string(i) + "].Position").c_str(), spatialDataCom->pos);
             shader.set3f(("lights[" + std::to_string(i) + "].Color").c_str(), lightCom->ambient);
+            shader.set1f(("lights[" + std::to_string(i) + "].far_plane").c_str(), transCom->f);
             shader.set1f(("lights[" + std::to_string(i) + "].Linear").c_str(), lightCom->linear);
             shader.set1f(("lights[" + std::to_string(i) + "].Quadratic").c_str(), lightCom->quadratic);
             shader.set1f(("lights[" + std::to_string(i) + "].constant").c_str(), lightCom->constant);

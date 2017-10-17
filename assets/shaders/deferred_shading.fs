@@ -16,11 +16,12 @@ uniform sampler2D gNormal;
 uniform sampler2D gAlbedo;
 uniform sampler2D gPBR;
 uniform sampler2D ssao;
+uniform samplerCube depthMap;
 
 struct Light {
     vec3 Position;
     vec3 Color;
-    
+    float far_plane;
     float Linear;
     float Quadratic;
 };
@@ -74,6 +75,51 @@ vec3 fresnelSchlick(float cosTheta, vec3 F0)
     return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);
 }
 // ----------------------------------------------------------------------------
+
+// array of offset direction for sampling
+vec3 gridSamplingDisk[20] = vec3[]
+(
+   vec3(1, 1, 1), vec3(1, -1, 1), vec3(-1, -1, 1), vec3(-1, 1, 1), 
+   vec3(1, 1, -1), vec3(1, -1, -1), vec3(-1, -1, -1), vec3(-1, 1, -1),
+   vec3(1, 1, 0), vec3(1, -1, 0), vec3(-1, -1, 0), vec3(-1, 1, 0),
+   vec3(1, 0, 1), vec3(-1, 0, 1), vec3(1, 0, -1), vec3(-1, 0, -1),
+   vec3(0, 1, 1), vec3(0, -1, 1), vec3(0, -1, -1), vec3(0, 1, -1)
+);
+
+
+float ShadowCalculation(vec3 fragPos, Light light)
+{
+    // Get vector between fragment position and light position
+    vec3 fragToLight = fragPos - light.Position;
+    // Use the fragment to light vector to sample from the depth map    
+    // float closestDepth = texture(depthMap, fragToLight).r;
+    // It is currently in linear range between [0,1]. Let's re-transform it back to original depth value
+    // closestDepth *= light.far_plane;
+    // Now get current linear depth as the length between the fragment and light position
+    float currentDepth = length(fragToLight);
+    float shadow = 0.0;
+    float bias = 0.15;
+    int samples = 1;
+    float viewDistance = length(viewPos - fragPos);
+    float diskRadius = (1.0 + (viewDistance / light.far_plane)) / 25.0;
+    float closestDepth;
+    for(int i = 0; i < samples; ++i)
+    {
+        closestDepth = texture(depthMap, fragToLight + gridSamplingDisk[i] * diskRadius).r;
+        closestDepth *= light.far_plane;   // Undo mapping [0;1]
+        if(currentDepth - bias > closestDepth)
+            shadow += 1.0;
+    }
+    shadow /= float(samples);
+        
+    // Display closestDepth as debug (to visualize depth cubemap)
+    FragColor = vec4(vec3(closestDepth / light.far_plane), 1.0);    
+        
+    // return shadow;
+    return shadow;
+}
+
+
 void main()
 {		
      // retrieve data from gbuffer
@@ -136,6 +182,8 @@ void main()
         Lo += (kD * material.albedo / PI + brdf) * radiance * NdotL;  // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
     }   
     
+    float shadow = ShadowCalculation(FragPos, lights[0]);
+    return;
     // ambient lighting (note that the next IBL tutorial will replace 
     // this ambient lighting with environment lighting).
     vec3 ambient = vec3(0.03) * material.albedo * material.ao;

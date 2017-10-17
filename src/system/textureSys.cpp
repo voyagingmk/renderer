@@ -179,11 +179,20 @@ namespace renderer {
 	}
 	
 	void TextureSystem::receive(const ActiveTextureByIDEvent &evt) {
-        assert(glIsTexture(evt.texID) &&  evt.texID > 0);
         glActiveTexture(GL_TEXTURE0 + evt.idx);
         Shader shader = evt.shader;
         shader.set1i(evt.sample2DName.c_str(), (int)(evt.idx));
-        glBindTexture(GL_TEXTURE_2D, evt.texID);
+        if (evt.texID > 0) {
+            assert(evt.texID > 0 && glIsTexture(evt.texID));
+            glBindTexture(GL_TEXTURE_2D, evt.texID);
+        } else {
+            assert(evt.texRef.texID > 0 && glIsTexture(evt.texRef.texID));
+            if (evt.texRef.type == TexType::Tex2D) {
+                glBindTexture(GL_TEXTURE_2D, evt.texRef.texID);
+            } else if (evt.texRef.type == TexType::CubeMap) {
+                glBindTexture(GL_TEXTURE_CUBE_MAP, evt.texRef.texID);
+            }
+        }
 	}
 
 	void TextureSystem::receive(const ActiveTextureEvent &evt) {

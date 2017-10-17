@@ -108,9 +108,20 @@ namespace renderer {
             idx(idx),
 			texID(texID)
 		{}
+        ActiveTextureByIDEvent(Shader shader,
+                               std::string sample2DName,
+                               uint32_t idx,
+                               TexRef texRef) :
+        shader(shader),
+        sample2DName(sample2DName),
+        idx(idx),
+        texRef(texRef),
+        texID(0)
+        {}
         Shader shader;
         std::string sample2DName;
 		uint32_t idx;
+        TexRef texRef;
 		TexID texID;
 	};
 
