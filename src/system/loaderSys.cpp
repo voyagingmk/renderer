@@ -133,7 +133,7 @@ namespace renderer {
 			transCom->aspect = 1.0f;
 			transCom->fovy = 90.0f;
 			transCom->n = 1.0f;
-			transCom->f = 25.0f;
+			transCom->f = 100.0f;
 			obj.addComponent<PointLightCom>(
 				parseColor(lightInfo["ambient"]),
 				parseColor(lightInfo["diffuse"]),
