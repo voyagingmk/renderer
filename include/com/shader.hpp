@@ -52,7 +52,7 @@ namespace renderer
         void set1f(const char *name, float f1);
         void set1i(const char *name, int i1);
         void set1b(const char *name, bool b);
-        void setMatrixes4f(const char *name, std::vector<Matrix4x4> mat);
+        void setMatrixes4f(const char *name, std::vector<Matrix4x4>& mat);
         void setMatrix4f(const char *name, const Matrix4x4&);
         void setTransform4f(const char *name, Transform4x4 trans);
 		void set3fArray(const char *name, std::vector<Vector3dF>& arr, int n = 0);
