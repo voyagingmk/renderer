@@ -99,7 +99,7 @@ float ShadowCalculation(vec3 fragPos, Light light)
     float currentDepth = length(fragToLight);
     float shadow = 0.0;
     float bias = 0.15;
-    int samples = 1;
+    int samples = 20;
     float viewDistance = length(viewPos - fragPos);
     float diskRadius = (1.0 + (viewDistance / light.far_plane)) / 25.0;
     float closestDepth;
@@ -113,9 +113,7 @@ float ShadowCalculation(vec3 fragPos, Light light)
     shadow /= float(samples);
         
     // Display closestDepth as debug (to visualize depth cubemap)
-    FragColor = vec4(vec3(closestDepth / light.far_plane), 1.0);    
-        
-    // return shadow;
+    // FragColor = vec4(vec3(closestDepth / light.far_plane), 1.0);    
     return shadow;
 }
 
@@ -183,12 +181,13 @@ void main()
     }   
     
     float shadow = ShadowCalculation(FragPos, lights[0]);
-    return;
+
     // ambient lighting (note that the next IBL tutorial will replace 
     // this ambient lighting with environment lighting).
     vec3 ambient = vec3(0.03) * material.albedo * material.ao;
     
-    vec3 color = ambient + Lo;
+    vec3 color = ambient+ Lo * (1.0 - shadow) ;
+
 
     // HDR tonemapping
     color = color / (color + vec3(1.0));
