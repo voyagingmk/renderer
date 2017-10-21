@@ -64,10 +64,11 @@ namespace renderer {
 		pointShadowDepthShader.setMatrixes4f("lightPVs", pointLightTrans->lightPVs);
 		pointShadowDepthShader.set1f("far_plane", pointLightTrans->f);
         pointShadowDepthShader.set3f("lightPos", pointLightTrans.object().component<SpatialData>()->pos);
-        CheckGLError;
+        CheckGLError; auto colorBufferCom = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
+		ColorBufferRef& buf = colorBufferCom->dict["shadow"];
 		evtMgr.emit<RenderSceneEvent>(
 			objCamera,
-			std::make_tuple(0, 0, 1024, 1024),
+			std::make_tuple(0, 0, buf.width, buf.height),
 			Color(0.0f, 0.0f, 0.0f, 1.0f),
 			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT,
 			&pointShadowDepthShader);

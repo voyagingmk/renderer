@@ -111,9 +111,6 @@ float ShadowCalculation(vec3 fragPos, Light light)
             shadow += 1.0;
     }
     shadow /= float(samples);
-        
-    // Display closestDepth as debug (to visualize depth cubemap)
-    // FragColor = vec4(vec3(closestDepth / light.far_plane), 1.0);    
     return shadow;
 }
 
@@ -186,15 +183,15 @@ void main()
     // this ambient lighting with environment lighting).
     vec3 ambient = vec3(0.03) * material.albedo * material.ao;
     
-    vec3 color = ambient+ Lo * (1.0 - shadow) ;
+    vec3 color = ambient + Lo * (1.0 - shadow);
 
+    color *= AmbientOcclusion;
 
     // HDR tonemapping
-    color = color / (color + vec3(1.0));
+    // color = color / (color + vec3(1.0));
     // gamma correct
     color = pow(color, vec3(1.0/2.2)); 
-    
-    FragColor = vec4(color, 1.0) * AmbientOcclusion;
+    FragColor = vec4(color, 1.0);
     // FragColor = vec4(1.0,1.0,1.0, 1.0);
     // FragColor = vec4(material.metallic, material.roughness, material.ao, 1.0); 
     // FragColor = vec4(material.albedo, 1.0);

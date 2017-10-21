@@ -158,91 +158,7 @@
         {
             "type": "PointLight",
             "spatial": [
-                [-15.0,  10.0, 15.0],
-                [1, 1, 1],
-                [1, 0, 0, 0]
-            ],
-            "ambient": [
-                255,
-                255,
-                255
-            ],
-            "diffuse": [
-                255,
-                255,
-                255
-            ],
-            "specular": [
-                255,
-                255,
-                255
-            ],
-            "radius": 10,
-            "constant": 1.0,
-            "linear": 0.7,
-            "quadratic": 1.8,
-            "shadow": true
-        },
-        {
-            "type": "PointLight",
-            "spatial": [
-                [15.0,  10.0, 15.0],
-                [1, 1, 1],
-                [1, 0, 0, 0]
-            ],
-            "ambient": [
-                255,
-                255,
-                255
-            ],
-            "diffuse": [
-                255,
-                255,
-                255
-            ],
-            "specular": [
-                255,
-                255,
-                255
-            ],
-            "radius": 10,
-            "constant": 1.0,
-            "linear": 0.7,
-            "quadratic": 1.8,
-            "shadow": true
-        },
-        {
-            "type": "PointLight",
-            "spatial": [
-                [-15.0, 10.0, -15.0],
-                [1, 1, 1],
-                [1, 0, 0, 0]
-            ],
-            "ambient": [
-                255,
-                255,
-                255
-            ],
-            "diffuse": [
-                255,
-                255,
-                255
-            ],
-            "specular": [
-                255,
-                255,
-                255
-            ],
-            "radius": 10,
-            "constant": 1.0,
-            "linear": 0.7,
-            "quadratic": 1.8,
-            "shadow": true
-        },
-        {
-            "type": "PointLight",
-            "spatial": [
-                [15.0, 10.0, -15.0],
+                [0.0,  18.0, 0.0],
                 [1, 1, 1],
                 [1, 0, 0, 0]
             ],
@@ -275,7 +191,7 @@
             "normalInverse": true,
             "spatial": [
                 [0, 15, 0],
-                [60, 30, 60],
+                [30, 30, 30],
                 [0, 0, 0]
             ]
         },

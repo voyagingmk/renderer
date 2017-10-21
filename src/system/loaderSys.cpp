@@ -89,7 +89,7 @@ namespace renderer {
         
         m_evtMgr->emit<CreateNoiseTextureEvent>("ssaoNoise");
       
-        m_evtMgr->emit<CreateDpethBufferEvent>("shadow", "pointDepth", DepthTexType::CubeMap, 1024);
+        m_evtMgr->emit<CreateDpethBufferEvent>("shadow", "pointDepth", DepthTexType::CubeMap, 2048);
 
 		CreateGlobalQuadObject();
         
@@ -133,7 +133,7 @@ namespace renderer {
 			transCom->aspect = 1.0f;
 			transCom->fovy = 90.0f;
 			transCom->n = 1.0f;
-			transCom->f = 100.0f;
+			transCom->f = 30.0f;
 			obj.addComponent<PointLightCom>(
 				parseColor(lightInfo["ambient"]),
 				parseColor(lightInfo["diffuse"]),
