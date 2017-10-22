@@ -190,6 +190,9 @@ void main()
     // HDR tonemapping
     // color = color / (color + vec3(1.0));
     // gamma correct
+    // 0.5 gamma-corrected, 就是线性空间的值
+    // 0.5**(1/2.2) = 0.729（变亮)，就是所谓sRGB，not gamma-corrected，是为了直接输出到显示器做的encoding
+    // 所以shader里需要手动做一次 pow(1/2.2)
     color = pow(color, vec3(1.0/2.2)); 
     FragColor = vec4(color, 1.0);
     // FragColor = vec4(1.0,1.0,1.0, 1.0);
