@@ -9,9 +9,9 @@
     "skyboxSubDir": "images/skybox/",
     "shader": [
         {
-            "alias": "edegeDetect",
-            "vs": "edegeDetect.vs",
-            "fs": "edegeDetect.fs"
+            "alias": "edgeDetect",
+            "vs": "edgeDetect.vs",
+            "fs": "edgeDetect.fs"
         },
         {
             "alias": "light",

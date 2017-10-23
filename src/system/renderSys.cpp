@@ -106,14 +106,15 @@ namespace renderer {
         // renderColorBufferDebug("ssaoBlur", context->width, context->height);
 
 		// debug edge detect
-		Shader edegeDetect = getShader("edegeDetect");
-		edegeDetect.use();
+		Shader edgeDetect = getShader("edgeDetect");
+		edgeDetect.use();
+        edgeDetect.set2f("imgSize", context->width, context->height);
 		auto gBufferCom = m_objMgr->getSingletonComponent<GBufferDictCom>();
 		GBufferRef& gBuf = gBufferCom->dict["main"];
 		clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
 			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		setViewport(std::make_tuple(0, 0, context->width, context->height));
-		m_evtMgr->emit<ActiveTextureByIDEvent>(edegeDetect, "colorTex", 0, gBuf.albedoTexID);
+		m_evtMgr->emit<ActiveTextureByIDEvent>(edgeDetect, "colorTex", 0, gBuf.albedoTexID);
 		renderQuad();
 
         // m_evtMgr->emit<DrawUIEvent>();
