@@ -15,7 +15,7 @@
 #endif
 
 
-#define SMAA_PRESET_LOW 1
+#define SMAA_PRESET_ULTRA 1
 
 #if defined(SMAA_PRESET_LOW)
 #define SMAA_THRESHOLD 0.15

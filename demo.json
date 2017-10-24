@@ -14,6 +14,11 @@
             "fs": "edgeDetect.fs"
         },
         {
+            "alias": "weightblending",
+            "vs": "weightblending.vs",
+            "fs": "weightblending.fs"
+        },
+        {
             "alias": "light",
             "vs": "light.vs",
             "fs": "light.fs"
