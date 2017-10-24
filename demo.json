@@ -9,14 +9,19 @@
     "skyboxSubDir": "images/skybox/",
     "shader": [
         {
-            "alias": "edgeDetect",
-            "vs": "edgeDetect.vs",
-            "fs": "edgeDetect.fs"
+            "alias": "smaaEdgeDetect",
+            "vs": "smaaEdgeDetect.vs",
+            "fs": "smaaEdgeDetect.fs"
         },
         {
-            "alias": "weightblending",
-            "vs": "weightblending.vs",
-            "fs": "weightblending.fs"
+            "alias": "smaaWeightblending",
+            "vs": "smaaWeightblending.vs",
+            "fs": "smaaWeightblending.fs"
+        },
+        {
+            "alias": "smaaBlending",
+            "vs": "smaaBlending.vs",
+            "fs": "smaaBlending.fs"
         },
         {
             "alias": "light",

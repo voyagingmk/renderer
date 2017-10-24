@@ -67,7 +67,6 @@ namespace renderer {
 		pointShadowDepthShader.set1f("far_plane", pointLightTrans->f);
         pointShadowDepthShader.set3f("lightPos", pointLightTrans.object().component<SpatialData>()->pos);
         CheckGLError;
-        
         auto colorBufferCom = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
 		ColorBufferRef& buf = colorBufferCom->dict["shadow"];
 		evtMgr.emit<RenderSceneEvent>(
@@ -80,27 +79,14 @@ namespace renderer {
         CheckGLError;
         
 		// lighting pass
-        deferredLightingPass(objCamera, "main", context->width, context->height);
+        deferredLightingPass("core", objCamera, "main", context->width, context->height);
         CheckGLError;
         
-		evtMgr.emit<CopyGBufferDepthEvent>("main");// skybox 需要深度信息
+		evtMgr.emit<CopyGBufferDepthEvent>("main",  "core");// skybox 需要深度信息
         // skybox pass
-        renderSkybox(objCamera);
-        
-        // draw light object
-        Shader lightShader = getShader("light");
-        lightShader.use();
-        // TODO: sort by material
-        for (auto lightObj : m_objMgr->entities<
-            Meshes, PointLightCom, SpatialData,
-            MeshBuffersCom>()) {
-            m_evtMgr->emit<UploadCameraToShaderEvent>(objCamera, lightShader);
-            CheckGLError;
-            m_evtMgr->emit<UploadMatrixToShaderEvent>(lightObj, lightShader);
-            CheckGLError;
-            m_evtMgr->emit<DrawMeshBufferEvent>(lightObj);
-            CheckGLError;
-        }
+        renderSkybox("core", objCamera);
+		renderLightObjects("core", objCamera);
+
 		 //setViewport(std::make_tuple(0, 0, context->width, context->height));
 		// clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
 		// GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -111,15 +97,14 @@ namespace renderer {
 
 		// debug edge detect
         evtMgr.emit<UseColorBufferEvent>("edge");
-		Shader edgeDetect = getShader("edgeDetect");
+		Shader edgeDetect = getShader("smaaEdgeDetect");
 		edgeDetect.use();
         edgeDetect.set2f("imgSize", context->width, context->height);
-		auto gBufferCom = m_objMgr->getSingletonComponent<GBufferDictCom>();
-		GBufferRef& gBuf = gBufferCom->dict["main"];
+		ColorBufferRef& coreBuf = colorBufferCom->dict["core"];
 		clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
 			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		setViewport(std::make_tuple(0, 0, context->width, context->height));
-		m_evtMgr->emit<ActiveTextureByIDEvent>(edgeDetect, "colorTex", 0, gBuf.albedoTexID);
+		m_evtMgr->emit<ActiveTextureByIDEvent>(edgeDetect, "colorTex", 0, coreBuf.tex);
 		renderQuad();
         evtMgr.emit<UnuseColorBufferEvent>("edge");
         
@@ -145,7 +130,7 @@ namespace renderer {
        }
         
         evtMgr.emit<UseColorBufferEvent>("weight");
-        Shader weightblending = getShader("weightblending");
+        Shader weightblending = getShader("smaaWeightblending");
         weightblending.use();
         weightblending.set2f("imgSize", context->width, context->height);
         ColorBufferRef& edgeBuf = colorBufferCom->dict["edge"];
@@ -158,9 +143,21 @@ namespace renderer {
         renderQuad();
         evtMgr.emit<UnuseColorBufferEvent>("weight");
       
-        renderColorBufferDebug("edge", context->width, context->height);
-        renderColorBufferDebug("weight", context->width, context->height);
-        
+       // renderColorBufferDebug("edge", context->width, context->height);
+       // renderColorBufferDebug("weight", context->width, context->height);
+
+
+		Shader smaa = getShader("smaaBlending");
+		smaa.use();
+		smaa.set2f("imgSize", context->width, context->height);
+		ColorBufferRef& weightBuf = colorBufferCom->dict["weight"];
+		m_evtMgr->emit<ActiveTextureByIDEvent>(edgeDetect, "colorTex", 0, coreBuf.tex);
+		m_evtMgr->emit<ActiveTextureByIDEvent>(edgeDetect, "blendTex", 1, weightBuf.tex);
+		clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
+			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+		setViewport(std::make_tuple(0, 0, context->width, context->height));
+		renderQuad();
+		// renderColorBufferDebug("core", context->width, context->height);
         // m_evtMgr->emit<DrawUIEvent>();
 		CheckGLError;
 		SDL_GL_SwapWindow(context->win);
@@ -240,7 +237,8 @@ namespace renderer {
 		}
 	}
     
-	void RenderSystem::renderSkybox(Object objCamera) {
+	void RenderSystem::renderSkybox(std::string colorBufferAliasName, Object objCamera) {
+		m_evtMgr->emit<UseColorBufferEvent>(colorBufferAliasName);
 		for (const Object obj : m_objMgr->entities<GlobalSkyboxTag>()) {
 			// glDisable(GL_CULL_FACE);
 			// draw skybox as last
@@ -255,6 +253,7 @@ namespace renderer {
 			checkGLError;
 			break;
 		}
+		m_evtMgr->emit<UnuseColorBufferEvent>(colorBufferAliasName);
 	}
 	
 	
@@ -299,7 +298,8 @@ namespace renderer {
 		m_evtMgr->emit<UnuseColorBufferEvent>(ssaoBlurBuffer);
 	}
 
-	void RenderSystem::deferredLightingPass(Object objCamera, std::string gBufferAliasName, size_t winWidth, size_t winHeight) {
+	void RenderSystem::deferredLightingPass(std::string colorBufferAliasName, Object objCamera, std::string gBufferAliasName, size_t winWidth, size_t winHeight) {
+		m_evtMgr->emit<UseColorBufferEvent>(colorBufferAliasName); 
 		Shader shader = getShader("deferredShading");
 		shader.use();
 		m_evtMgr->emit<UploadCameraToShaderEvent>(objCamera, shader);
@@ -319,6 +319,7 @@ namespace renderer {
 			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         uploadLights(shader);
 		renderQuad();
+		m_evtMgr->emit<UnuseColorBufferEvent>(colorBufferAliasName);
 	}
     
     void RenderSystem::uploadLights(Shader shader) {
@@ -337,6 +338,25 @@ namespace renderer {
         }
         shader.set1i("LightNum", i);
     }
+
+	void RenderSystem::renderLightObjects(std::string colorBufferAliasName, Object objCamera) {
+		m_evtMgr->emit<UseColorBufferEvent>(colorBufferAliasName); 
+		// draw light object
+		Shader lightShader = getShader("light");
+		lightShader.use();
+		// TODO: sort by material
+		for (auto lightObj : m_objMgr->entities<
+			Meshes, PointLightCom, SpatialData,
+			MeshBuffersCom>()) {
+			m_evtMgr->emit<UploadCameraToShaderEvent>(objCamera, lightShader);
+			CheckGLError;
+			m_evtMgr->emit<UploadMatrixToShaderEvent>(lightObj, lightShader);
+			CheckGLError;
+			m_evtMgr->emit<DrawMeshBufferEvent>(lightObj);
+			CheckGLError;
+		}
+		m_evtMgr->emit<UnuseColorBufferEvent>(colorBufferAliasName);
+	}
     
     
     void RenderSystem::renderColorBufferDebug(std::string colorBufferAliasName, size_t winWidth, size_t winHeight) {

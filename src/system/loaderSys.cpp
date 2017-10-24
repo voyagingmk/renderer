@@ -66,48 +66,29 @@ namespace renderer {
 		loadLights(config);
 
 		m_evtMgr->emit<CreateColorBufferEvent>(
-			winWidth,
-			winHeight,
-			GL_RED,
-            GL_RED,
-			GL_FLOAT,
-			BufType::None,
-			0,
-			GL_NEAREST,
-			"ssao");
+			winWidth, winHeight,
+			GL_RED, GL_RED, GL_FLOAT,
+			BufType::None, 0, GL_NEAREST, "ssao");
 
 		m_evtMgr->emit<CreateColorBufferEvent>(
-			winWidth,
-			winHeight,
-            GL_RED,
-            GL_RED,
-			GL_FLOAT,
-			BufType::None,
-			0,
-			GL_NEAREST,
-			"ssaoBlur");
+			winWidth, winHeight,
+            GL_RED, GL_RED, GL_FLOAT,
+			BufType::None, 0, GL_NEAREST, "ssaoBlur");
        
         m_evtMgr->emit<CreateColorBufferEvent>(
-           winWidth,
-           winHeight,
-           GL_RGBA8,
-           GL_RGBA,
-           GL_FLOAT,
-           BufType::None,
-           0,
-           GL_LINEAR,
-           "edge");
+           winWidth, winHeight,
+           GL_RGBA8, GL_RGBA, GL_FLOAT,
+           BufType::None, 0, GL_LINEAR, "edge");
         
         m_evtMgr->emit<CreateColorBufferEvent>(
-           winWidth,
-           winHeight,
-           GL_RGBA8,
-           GL_RGBA,
-           GL_FLOAT,
-           BufType::None,
-           0,
-           GL_LINEAR,
-           "weight");
+           winWidth, winHeight,
+           GL_RGBA8, GL_RGBA, GL_FLOAT,
+           BufType::None, 0, GL_LINEAR, "weight");
+
+		m_evtMgr->emit<CreateColorBufferEvent>(
+			winWidth, winHeight,
+			GL_RGBA8, GL_RGBA, GL_FLOAT,
+			BufType::RBO, 0, GL_LINEAR, "core");
 
         m_evtMgr->emit<CreateGBufferEvent>(winWidth, winHeight, "main");
         

@@ -155,10 +155,12 @@ namespace renderer {
 	
 	class CopyGBufferDepthEvent : public ecs::Event<CopyGBufferDepthEvent> {
 	public:
-		CopyGBufferDepthEvent(std::string aliasName) :
-			aliasName(aliasName)
+		CopyGBufferDepthEvent(std::string aliasName, std::string aliasName2) :
+			aliasName(aliasName),
+			aliasName2(aliasName2)
 		{}
 		std::string aliasName;
+		std::string aliasName2;
 	};
 };
 

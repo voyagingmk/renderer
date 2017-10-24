@@ -154,7 +154,12 @@ namespace renderer {
 			assert(false);
 			return;
 		}
-		CopyFrameBufferDepth(it->second);
+		auto it2 = com->dict.find(evt.aliasName);
+		FrameBufferBase buf2;
+		if (it2 != com->dict.end()) {
+			buf2 = it2->second;
+		}
+		CopyFrameBufferDepth(it->second, buf2);
 	}
 
 	void BufferSystem::DestroyFrameBuffer(FrameBufferBase& buf) {
@@ -498,9 +503,9 @@ namespace renderer {
 		DestroyFrameBuffer(buf);
 	}
 
-	void BufferSystem::CopyFrameBufferDepth(FrameBufferBase& buf) {
+	void BufferSystem::CopyFrameBufferDepth(FrameBufferBase& buf, FrameBufferBase& buf2) {
 		glBindFramebuffer(GL_READ_FRAMEBUFFER, buf.fboID);
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); 
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, buf2.fboID || 0);
 		// write to default framebuffer
 		// blit to default framebuffer.
 		// Note that this may or may not work as the internal formats of both the FBO and default framebuffer have to match.

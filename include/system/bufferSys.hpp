@@ -79,7 +79,7 @@ namespace renderer {
 
 		void DestroyGBuffer(GBufferRef);
 
-		void CopyFrameBufferDepth(FrameBufferBase& buf);
+		void CopyFrameBufferDepth(FrameBufferBase& buf, FrameBufferBase& buf2);
 	};
 };
 
