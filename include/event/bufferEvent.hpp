@@ -63,6 +63,7 @@ namespace renderer {
 	public:
 		CreateColorBufferEvent(size_t width, size_t height,
             int internalFormat,
+            int format,
             int dataType,
 			BufType depthType,
 			size_t MSAA,
@@ -71,6 +72,7 @@ namespace renderer {
 			width(width),
 			height(height),
             internalFormat(internalFormat),
+            format(format),
             dataType(dataType),
 			depthType(depthType),
 			MSAA(MSAA),
@@ -80,6 +82,7 @@ namespace renderer {
 		size_t width;
 		size_t height;
 		int internalFormat;
+        int format;
         int dataType;
 		BufType depthType;
 		size_t MSAA;

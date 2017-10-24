@@ -69,6 +69,7 @@ namespace renderer {
 			winWidth,
 			winHeight,
 			GL_RED,
+            GL_RED,
 			GL_FLOAT,
 			BufType::None,
 			0,
@@ -78,12 +79,35 @@ namespace renderer {
 		m_evtMgr->emit<CreateColorBufferEvent>(
 			winWidth,
 			winHeight,
-			GL_RGB,
+            GL_RED,
+            GL_RED,
 			GL_FLOAT,
 			BufType::None,
 			0,
 			GL_NEAREST,
 			"ssaoBlur");
+       
+        m_evtMgr->emit<CreateColorBufferEvent>(
+           winWidth,
+           winHeight,
+           GL_RGBA8,
+           GL_RGBA,
+           GL_FLOAT,
+           BufType::None,
+           0,
+           GL_LINEAR,
+           "edge");
+        
+        m_evtMgr->emit<CreateColorBufferEvent>(
+           winWidth,
+           winHeight,
+           GL_RGBA8,
+           GL_RGBA,
+           GL_FLOAT,
+           BufType::None,
+           0,
+           GL_LINEAR,
+           "weight");
 
         m_evtMgr->emit<CreateGBufferEvent>(winWidth, winHeight, "main");
         

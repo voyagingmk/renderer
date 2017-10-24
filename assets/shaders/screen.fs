@@ -14,7 +14,7 @@ vec4 EdgeDetection();
 
 void main()
 { 
-    vec3 c = vec3(texture(texture1, TexCoord).r);
+    vec3 c = vec3(texture(texture1, TexCoord).rgb);
     color = vec4(c, 1.0);
     // vec3 c = vec3(texture(texture1, TexCoord).rgb);
     // color = vec4(c, 1.0);

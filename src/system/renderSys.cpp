@@ -66,7 +66,9 @@ namespace renderer {
 		pointShadowDepthShader.setMatrixes4f("lightPVs", pointLightTrans->lightPVs);
 		pointShadowDepthShader.set1f("far_plane", pointLightTrans->f);
         pointShadowDepthShader.set3f("lightPos", pointLightTrans.object().component<SpatialData>()->pos);
-        CheckGLError; auto colorBufferCom = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
+        CheckGLError;
+        
+        auto colorBufferCom = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
 		ColorBufferRef& buf = colorBufferCom->dict["shadow"];
 		evtMgr.emit<RenderSceneEvent>(
 			objCamera,
@@ -108,6 +110,7 @@ namespace renderer {
         // renderColorBufferDebug("ssaoBlur", context->width, context->height);
 
 		// debug edge detect
+        evtMgr.emit<UseColorBufferEvent>("edge");
 		Shader edgeDetect = getShader("edgeDetect");
 		edgeDetect.use();
         edgeDetect.set2f("imgSize", context->width, context->height);
@@ -118,6 +121,8 @@ namespace renderer {
 		setViewport(std::make_tuple(0, 0, context->width, context->height));
 		m_evtMgr->emit<ActiveTextureByIDEvent>(edgeDetect, "colorTex", 0, gBuf.albedoTexID);
 		renderQuad();
+        evtMgr.emit<UnuseColorBufferEvent>("edge");
+        
         static unsigned int area_tex = 0;
         static unsigned int search_tex = 0;
         if (area_tex == 0) {
@@ -138,7 +143,24 @@ namespace renderer {
             glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
             glTexImage2D( GL_TEXTURE_2D, 0, GL_R8, ( GLsizei )SEARCHTEX_WIDTH, ( GLsizei )SEARCHTEX_HEIGHT, 0, GL_RED, GL_UNSIGNED_BYTE, searchTexBytes );
        }
-
+        
+        evtMgr.emit<UseColorBufferEvent>("weight");
+        Shader weightblending = getShader("weightblending");
+        weightblending.use();
+        weightblending.set2f("imgSize", context->width, context->height);
+        ColorBufferRef& edgeBuf = colorBufferCom->dict["edge"];
+        clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
+                  GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        setViewport(std::make_tuple(0, 0, context->width, context->height));
+        m_evtMgr->emit<ActiveTextureByIDEvent>(weightblending, "edgesTex", 0, edgeBuf.tex);
+        m_evtMgr->emit<ActiveTextureByIDEvent>(weightblending, "areaTex", 1, area_tex);
+        m_evtMgr->emit<ActiveTextureByIDEvent>(weightblending, "searchTex", 2, search_tex);
+        renderQuad();
+        evtMgr.emit<UnuseColorBufferEvent>("weight");
+      
+        renderColorBufferDebug("edge", context->width, context->height);
+        renderColorBufferDebug("weight", context->width, context->height);
+        
         // m_evtMgr->emit<DrawUIEvent>();
 		CheckGLError;
 		SDL_GL_SwapWindow(context->win);

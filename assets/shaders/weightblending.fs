@@ -38,6 +38,9 @@ uniform vec4 subsampleIndices;
 
 out vec4 FragColor;
 
+vec4 SMAA_RT_METRICS;
+uniform vec2 imgSize;
+
 #define float2 vec2
 #define float3 vec3
 #define float4 vec4
@@ -111,8 +114,6 @@ out vec4 FragColor;
 #define SMAA_CORNER_ROUNDING_NORM (float(SMAA_CORNER_ROUNDING) / 100.0)
 
 
-vec4 SMAA_RT_METRICS;
-uniform vec2 imgSize;
 
 
 //-----------------------------------------------------------------------------
@@ -584,6 +585,8 @@ float4 SMAABlendingWeightCalculationPS(float2 texcoord,
 
 
 void main() {
+    //FragColor = SMAABlendingWeightCalculationPS(TexCoord, Pixcoord, Offsets,
+    //                edgesTex, areaTex, searchTex, subsampleIndices);
     FragColor = SMAABlendingWeightCalculationPS(TexCoord, Pixcoord, Offsets,
-                    edgesTex, areaTex, searchTex, subsampleIndices);
+                    edgesTex, areaTex, searchTex, vec4(0, 0, 0, 0));
 }

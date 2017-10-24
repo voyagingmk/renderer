@@ -69,7 +69,7 @@ namespace renderer {
 	void BufferSystem::receive(const CreateColorBufferEvent& evt) {
 		auto com = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
 		ColorBufferRef buf = CreateColorBuffer(
-            evt.width, evt.height, evt.internalFormat, evt.dataType,
+            evt.width, evt.height, evt.internalFormat, evt.format, evt.dataType,
             evt.depthType, evt.MSAA, evt.texParam);
 		com->dict[evt.aliasName] = buf;
 	}
@@ -330,7 +330,7 @@ namespace renderer {
     
 	ColorBufferRef BufferSystem::CreateColorBuffer(
             size_t width, size_t height,
-            int innerFormat, int dataType,
+            int innerFormat, int format, int dataType,
             BufType depthType, size_t MSAA, int texParam) {
 		ColorBufferRef buf;
 		buf.width = width;
@@ -354,7 +354,7 @@ namespace renderer {
 			glTexImage2DMultisample(target, samples, innerFormat, width, height, GL_TRUE);
 		}
 		else {
-			glTexImage2D(target, 0, innerFormat, width, height, 0, GL_RGB, dataType, NULL);
+			glTexImage2D(target, 0, innerFormat, width, height, 0, format, dataType, NULL);
 		}
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texParam);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, texParam);

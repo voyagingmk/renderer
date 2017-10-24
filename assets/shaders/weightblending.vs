@@ -37,6 +37,8 @@ out vec2 TexCoord;
 out vec2 Pixcoord;
 out vec4 Offsets[3];
 
+uniform vec2 imgSize;
+
 
 #define float2 vec2
 #define float3 vec3
@@ -74,7 +76,6 @@ out vec4 Offsets[3];
 #define SMAA_CORNER_ROUNDING 25
 #endif
 
-uniform vec2 imgSize;
 
 /**
  * Blend Weight Calculation Vertex Shader
@@ -97,5 +98,7 @@ void SMAABlendingWeightCalculationVS(float2 texcoord,
 }
 
 void main() {
+    gl_Position = vec4(position, 1.0); 
+    TexCoord = texCoord;
     SMAABlendingWeightCalculationVS(TexCoord, Pixcoord, Offsets);
 }
