@@ -4,8 +4,6 @@
 #include "SOIL.h"
 #include "utils/helper.hpp"
 #include "com/glcommon.hpp"
-#include "AreaTex.h"
-#include "SearchTex.h"
 
 using namespace std;
 

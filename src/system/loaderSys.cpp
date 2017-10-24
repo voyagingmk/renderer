@@ -93,6 +93,7 @@ namespace renderer {
 
 		CreateGlobalQuadObject();
         
+        
         PointLightTransform c;
 
 	}

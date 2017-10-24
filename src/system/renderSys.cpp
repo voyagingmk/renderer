@@ -15,6 +15,8 @@
 #include "event/textureEvent.hpp"
 #include "event/uiEvent.hpp"
 #include "utils/helper.hpp"
+#include "AreaTex.h"
+#include "SearchTex.h"
 
 
 using namespace std;
@@ -116,6 +118,26 @@ namespace renderer {
 		setViewport(std::make_tuple(0, 0, context->width, context->height));
 		m_evtMgr->emit<ActiveTextureByIDEvent>(edgeDetect, "colorTex", 0, gBuf.albedoTexID);
 		renderQuad();
+        static unsigned int area_tex = 0;
+        static unsigned int search_tex = 0;
+        if (area_tex == 0) {
+            glGenTextures(1, &area_tex);
+            glBindTexture( GL_TEXTURE_2D, area_tex );
+            glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
+            glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
+            glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+            glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+            glTexImage2D( GL_TEXTURE_2D, 0, GL_RG8, ( GLsizei )AREATEX_WIDTH, ( GLsizei )AREATEX_HEIGHT, 0, GL_RG, GL_UNSIGNED_BYTE, areaTexBytes );
+        }
+        if (search_tex == 0) {
+            glGenTextures( 1, &search_tex );
+            glBindTexture( GL_TEXTURE_2D, search_tex );
+            glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
+            glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
+            glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+            glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+            glTexImage2D( GL_TEXTURE_2D, 0, GL_R8, ( GLsizei )SEARCHTEX_WIDTH, ( GLsizei )SEARCHTEX_HEIGHT, 0, GL_RED, GL_UNSIGNED_BYTE, searchTexBytes );
+       }
 
         // m_evtMgr->emit<DrawUIEvent>();
 		CheckGLError;
