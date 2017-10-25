@@ -99,7 +99,7 @@ namespace renderer {
         
         m_evtMgr->emit<CreateNoiseTextureEvent>("ssaoNoise");
       
-        m_evtMgr->emit<CreateDpethBufferEvent>("shadow", "pointDepth", DepthTexType::CubeMap, 2048);
+        m_evtMgr->emit<CreateDpethBufferEvent>("shadow", "pointDepth", DepthTexType::CubeMap, 1024);
 
 		CreateGlobalQuadObject();
         
