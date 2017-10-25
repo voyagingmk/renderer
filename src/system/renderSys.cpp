@@ -133,16 +133,16 @@ namespace renderer {
         }
         {
             evtMgr.emit<UseColorBufferEvent>("weight");
-            Shader weightblending = getShader("smaaWeightblending");
-            weightblending.use();
-            weightblending.set2f("imgSize", context->width, context->height);
+            Shader smaaWeight = getShader("smaaWeight");
+            smaaWeight.use();
+            smaaWeight.set2f("imgSize", context->width, context->height);
             ColorBufferRef& edgeBuf = colorBufferCom->dict["edge"];
             clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
                       GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
             setViewport(std::make_tuple(0, 0, context->width, context->height));
-            m_evtMgr->emit<ActiveTextureByIDEvent>(weightblending, "edgesTex", 0, edgeBuf.tex);
-            m_evtMgr->emit<ActiveTextureByIDEvent>(weightblending, "areaTex", 1, area_tex);
-            m_evtMgr->emit<ActiveTextureByIDEvent>(weightblending, "searchTex", 2, search_tex);
+            m_evtMgr->emit<ActiveTextureByIDEvent>(smaaWeight, "edgesTex", 0, edgeBuf.tex);
+            m_evtMgr->emit<ActiveTextureByIDEvent>(smaaWeight, "areaTex", 1, area_tex);
+            m_evtMgr->emit<ActiveTextureByIDEvent>(smaaWeight, "searchTex", 2, search_tex);
             renderQuad();
             evtMgr.emit<UnuseColorBufferEvent>("weight");
         }

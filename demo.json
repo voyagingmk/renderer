@@ -14,9 +14,9 @@
             "fs": "smaaEdgeDetect.fs"
         },
         {
-            "alias": "smaaWeightblending",
-            "vs": "smaaWeightblending.vs",
-            "fs": "smaaWeightblending.fs"
+            "alias": "smaaWeight",
+            "vs": "smaaWeight.vs",
+            "fs": "smaaWeight.fs"
         },
         {
             "alias": "smaaBlending",
