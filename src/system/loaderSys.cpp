@@ -56,7 +56,7 @@ namespace renderer {
 
 		Object objCamera = m_objMgr->create();
 		auto com = objCamera.addComponent<PerspectiveCameraView>(45.0f, (float)winWidth / (float)winHeight);
-        com->eye = Vector3dF(-30.0f, 10.0f, 30.0f);
+        com->eye = Vector3dF(-10.0f, 10.0f, 10.0f);
         com->SetFrontVector({30.0f, 0.0f, -30.0f});
         loadTextures(assetsDir + texSubDir, config);
 		loadSkyboxes(assetsDir + skyboxSubDir, config);
@@ -76,20 +76,25 @@ namespace renderer {
 			BufType::None, 0, GL_NEAREST, "ssaoBlur");
        
         m_evtMgr->emit<CreateColorBufferEvent>(
-           winWidth, winHeight,
-           GL_RGBA8, GL_RGBA, GL_FLOAT,
-           BufType::None, 0, GL_LINEAR, "edge");
+            winWidth, winHeight,
+            GL_RGBA8, GL_RGBA, GL_FLOAT,
+            BufType::None, 0, GL_LINEAR, "edge");
         
         m_evtMgr->emit<CreateColorBufferEvent>(
-           winWidth, winHeight,
-           GL_RGBA8, GL_RGBA, GL_FLOAT,
-           BufType::None, 0, GL_LINEAR, "weight");
+            winWidth, winHeight,
+            GL_RGBA8, GL_RGBA, GL_FLOAT,
+            BufType::None, 0, GL_LINEAR, "weight");
 
 		m_evtMgr->emit<CreateColorBufferEvent>(
-			winWidth, winHeight,
-			GL_RGBA8, GL_RGBA, GL_FLOAT,
-			BufType::RBO, 0, GL_LINEAR, "core");
-
+            winWidth, winHeight,
+            GL_RGBA8, GL_RGBA, GL_FLOAT,
+            BufType::RBO, 0, GL_LINEAR, "core");
+        /*
+        m_evtMgr->emit<CreateColorBufferEvent>(
+            winWidth, winHeight,
+            GL_RGBA8, GL_RGBA, GL_FLOAT,
+            BufType::None, 0, GL_LINEAR, "final");
+        */
         m_evtMgr->emit<CreateGBufferEvent>(winWidth, winHeight, "main");
         
         m_evtMgr->emit<CreateNoiseTextureEvent>("ssaoNoise");

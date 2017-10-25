@@ -43,6 +43,6 @@ uniform vec2 imgSize;
 void main() {
     gl_Position = vec4(position, 1.0); 
     vec4 SMAA_RT_METRICS = vec4(1.0 / imgSize.x, 1.0 / imgSize.y, imgSize.x, imgSize.y);
-    Offset = fma(SMAA_RT_METRICS.xyxy, vec4(1.0, 0.0, 0.0,  1.0), texCoord.xyxy);
+    Offset = fma(SMAA_RT_METRICS.xyxy, vec4(1.0, 0.0, 0.0, 1.0), texCoord.xyxy);
     TexCoord = texCoord;
 }
