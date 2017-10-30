@@ -81,13 +81,19 @@ public:
                     p.x = p.y = p.z = 0.0;
                 }
                 v.normal = p;
-                if(aimesh->HasVertexColors(0)){
-                    v.color.x = aimesh->mColors[0][i].r;
-                    v.color.y = aimesh->mColors[0][i].g;
-                    v.color.z = aimesh->mColors[0][i].b;
-                } else {
-                    v.color = Vector3dF(0.0, 0.0, 0.0);
-                }
+				
+				Vector3dF tangent;
+				Vector3dF bitangent;
+				if (aimesh->HasTangentsAndBitangents()) {
+					v.tangent.x = aimesh->mTangents[i].x;
+					v.tangent.y = aimesh->mTangents[i].y;
+					v.tangent.z = aimesh->mTangents[i].z;
+					v.bitangent.x = aimesh->mTangents[i].x;
+					v.bitangent.y = aimesh->mTangents[i].y;
+					v.bitangent.z = aimesh->mTangents[i].z;
+				}
+
+
                 // Texture Coordinates
                 if(aimesh->HasTextureCoords(0)) // Does the mesh contain texture coordinates?
                 {
@@ -100,6 +106,8 @@ public:
                 }
                 else
                     v.texCoords = Vector2dF(0.0f, 0.0f);
+
+
                 mesh.vertices.push_back(v);
             }
             // Now wak through each of the mesh's faces (a face is a mesh its triangle) and retrieve the corresponding vertex indices.

@@ -129,45 +129,14 @@
             "shaderName": "skybox"
         }
     },
-    "cubemap": {
-        "alps": {
-            "files": [
-                "alps_rt.tga",
-                "alps_lf.tga",
-                "alps_up.tga",
-                "alps_dn.tga",
-                "alps_bk.tga",
-                "alps_ft.tga"
-            ],
-            "channels": 0,
-            "shaderName": "skybox"
-        }
-    },
     "texture": [
         {
-            "alias": "spiderman.dff",
-            "file": "spiderman.dff.png",
-            "toLinear": true,
-            "channels": 3
-        },
-        {
-            "alias": "terrian",
-            "file": "brickwall.jpg",
-            "toLinear": true,
-            "channels": 3
-        },
-        {
-            "alias": "terrianNorm",
-            "file": "brickwall_normal.jpg",
-            "toLinear": true,
-            "channels": 3
-        },
-        {
-            "alias": "msdf",
-            "file": "msdf.png",
+            "alias": "GA_CW_N_1",
+            "file": "GA_CW_N_1.png",
             "toLinear": true,
             "channels": 3
         }
+        
     ],
     "light": [
         {
@@ -211,52 +180,12 @@
             ]
         },
         {
-            "model": "teapot.obj",
+            "model": "ARROW.obj",
             "material": 4,
             "normalInverse": false,
             "spatial": [
-                [-8, 0, -8],
-                [1, 1, 1],
-                [0, 0, 0]
-            ]
-        },
-        {
-            "model": "teapot.obj",
-            "material": 5,
-            "normalInverse": false,
-            "spatial": [
-                [8, 0, -8],
-                [1, 1, 1],
-                [0, 0, 0]
-            ]
-        },
-        {
-            "model": "teapot.obj",
-            "material": 6,
-            "normalInverse": false,
-            "spatial": [
-                [-8, 0, 8],
-                [1, 1, 1],
-                [0, 0, 0]
-            ]
-        },
-        {
-            "model": "teapot.obj",
-            "material": 7,
-            "normalInverse": false,
-            "spatial": [
-                [8, 0, 8],
-                [1, 1, 1],
-                [0, 0, 0]
-            ]
-        },
-        {
-            "model": "teapot.obj",
-            "material": 8,
-            "normalInverse": false,
-            "spatial": [
                 [0, 0, 0],
-                [1, 1, 1],
+                [4, 4, 4],
                 [0, 0, 0]
             ]
         }

@@ -2,14 +2,12 @@
 
 layout (location = 0) in vec3 position;
 layout (location = 1) in vec3 normal;
-layout (location = 2) in vec3 vcolor;
-layout (location = 3) in vec2 texCoord;
+layout (location = 2) in vec2 texCoord;
 
 // out vec3 ourColor;
 out vec3 FragPos;
 out vec2 TexCoord;
 out vec3 Normal;
-out vec3 VColor;
 out vec4 FragPosLightSpace;
 
 uniform mat4 view;
@@ -31,5 +29,4 @@ void main()
 	// Normal = mat3(transpose(inverse(model))) * normal;
 	// We swap the y-axis by substracing our coordinates from 1.
 	TexCoord = vec2(texCoord.x, 1.0 - texCoord.y);
-	VColor = vcolor;
 }
