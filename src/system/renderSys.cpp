@@ -202,12 +202,13 @@ namespace renderer {
              ReceiveLightTag,
              MeshBuffersCom>()) {
 			auto matCom = obj.component<MaterialCom>();
-			auto setting = matSetCom->settings[matCom->settingID];
+			auto setting = matSetCom->settings[matSetCom->id2alias[matCom->settingID]];
 			if (evt.shader == nullptr) {
 				shader = getShader(setting);
 				shader.use();
                 uploadLights(shader);
 			}
+			m_evtMgr->emit<ActiveTextureEvent>(shader, "normalMap", 0, "GA_CW_N_1");
 			m_evtMgr->emit<ActiveMaterialEvent>(matCom->settingID, shader);
 			CheckGLError; 
 			m_evtMgr->emit<UploadCameraToShaderEvent>(evt.objCamera, shader);

@@ -82,7 +82,6 @@ namespace renderer {
         Checker = 3
     };
     
-    // one Model one Material
     // use bindSetting to allow use setting commonly
 	class Material {
     public:

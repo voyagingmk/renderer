@@ -20,7 +20,6 @@
 #include "event/bufferEvent.hpp"
 #include "event/actionEvent.hpp"
 #include "event/lightEvent.hpp"
-#include "importer.hpp"
 #include "utils/helper.hpp"
 
 using namespace std;
@@ -165,13 +164,9 @@ namespace renderer {
 			Object obj = m_objMgr->create();
 			std::string filename = objInfo["model"];
 			auto spatial = objInfo["spatial"];
-			int materialID = objInfo["material"];
 			bool normalInverse = objInfo["normalInverse"];
 			loadSpatialData(obj, spatial);
-			Meshes meshes;
-			loadMesh(modelsDir + filename, meshes, normalInverse);
-			obj.addComponent<Meshes>(meshes);
-            obj.addComponent<MaterialCom>(materialID);
+			loadMesh(modelsDir + filename, obj, normalInverse);
 			m_evtMgr->emit<CreateMeshBufferEvent>(obj);
             obj.addComponent<ReceiveLightTag>();
             obj.addComponent<MotionCom>();
@@ -268,10 +263,82 @@ namespace renderer {
         }
     }
 
-	void LoaderSystem::loadMesh(const std::string &filename, Meshes& meshes, bool normalInverse)
+	void LoaderSystem::loadMesh(const std::string &filename, Object obj, bool normalInverse)
 	{
-		ImporterAssimp &importer = ImporterAssimp::getInstance();
-		importer.Import(filename, meshes, normalInverse);
+		ComponentHandle<Meshes> comMeshes = obj.addComponent<Meshes>();
+		Assimp::Importer importer;
+		const aiScene* scene = importer.ReadFile(filename,
+			aiProcess_CalcTangentSpace |
+			aiProcess_Triangulate |
+			aiProcess_JoinIdenticalVertices |
+			aiProcess_SortByPType);
+		// If the import failed, report it
+		if (!scene)
+		{
+			cout << importer.GetErrorString() << endl;
+			return;
+		}
+		comMeshes->meshes.resize(scene->mNumMeshes);
+		for (int i = 0; i < scene->mNumMeshes; i++)
+		{
+			aiMesh* aimesh = scene->mMeshes[i];
+			OneMesh& mesh = comMeshes->meshes[comMeshes->meshes.size() - 1];
+			mesh.matIdx = aimesh->mMaterialIndex;
+			for (uint32_t i = 0; i < aimesh->mNumVertices; i++)
+			{
+				Vertex v;
+				Vector3dF p, n;
+				p.x = aimesh->mVertices[i].x;
+				p.y = aimesh->mVertices[i].y;
+				p.z = aimesh->mVertices[i].z;
+				v.position = p;
+				if (aimesh->HasNormals()) {
+					// Normals
+					n.x = aimesh->mNormals[i].x;
+					n.y = aimesh->mNormals[i].y;
+					n.z = aimesh->mNormals[i].z;
+					if (normalInverse) {
+						n = -n;
+					}
+				}
+				v.normal = n;
+				if (aimesh->HasTangentsAndBitangents()) {
+					v.tangent.x = aimesh->mTangents[i].x;
+					v.tangent.y = aimesh->mTangents[i].y;
+					v.tangent.z = aimesh->mTangents[i].z;
+					v.bitangent.x = aimesh->mTangents[i].x;
+					v.bitangent.y = aimesh->mTangents[i].y;
+					v.bitangent.z = aimesh->mTangents[i].z;
+				}
+				if (aimesh->HasTextureCoords(0)) {
+					Vector2dF uv;
+					// A vertex can contain up to 8 different texture coordinates. We thus make the assumption that we won't
+					// use models where a vertex can have multiple texture coordinates so we always take the first set (0).
+					uv.x = aimesh->mTextureCoords[0][i].x;
+					uv.y = aimesh->mTextureCoords[0][i].y;
+					v.texCoords = uv;
+				} else {
+					v.texCoords = Vector2dF(0.0f, 0.0f);
+				}
+				mesh.vertices.push_back(v);
+			}
+			for (GLuint i = 0; i < aimesh->mNumFaces; i++)
+			{
+				aiFace face = aimesh->mFaces[i];
+				for (GLuint j = 0; j < face.mNumIndices; j++)
+					mesh.indexes.push_back(face.mIndices[j]);
+			}
+		}
+		for (unsigned int i = 0; i < scene->mNumMaterials; i++) {
+			const aiMaterial* pMaterial = scene->mMaterials[i];
+			if (pMaterial->GetTextureCount(aiTextureType_DIFFUSE) > 0) {
+				aiString Path;
+				if (pMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS) {
+					std::string FullPath = Path.data;
+				}
+			}
+		}
+		obj.addComponent<MaterialCom>(1);
 	}
 
 	void LoaderSystem::loadSpatialData(Object obj, const json &spatial) {

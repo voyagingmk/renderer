@@ -2,7 +2,6 @@
 #define RENDERER_RENDERQUEUE_HPP
 
 #include "base.hpp"
-#include "realtime/model.hpp"
 #include "material.hpp"
 
 namespace renderer {
@@ -22,7 +21,6 @@ namespace renderer {
     
     class RenderItem {
     public:
-        Model *model; // Not sure
         Material* mat;
         MaterialSetting* matSetting;
        float depth; // Distance from model to the camera

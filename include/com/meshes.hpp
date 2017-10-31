@@ -8,8 +8,12 @@
 namespace renderer {
     class OneMesh {
         public:
+			OneMesh():
+				matIdx(0)
+			{}
             Vertices vertices;
 		    UIntArray indexes;
+			unsigned int matIdx;
     };
 
     class Meshes {

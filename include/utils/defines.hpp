@@ -28,6 +28,7 @@ static int logDebug(char const* const _Format, ...) {
     return 0;
 }
 
+typedef std::string MaterialSettingAlias;
 typedef size_t MaterialSettingID;
 typedef size_t MaterialID;
 

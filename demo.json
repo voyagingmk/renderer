@@ -171,7 +171,7 @@
     "object": [      
         {
             "model": "room.obj",
-            "material": 3,
+            "material": "room",
             "normalInverse": true,
             "spatial": [
                 [0, 15, 0],
@@ -181,7 +181,6 @@
         },
         {
             "model": "ARROW.obj",
-            "material": 4,
             "normalInverse": false,
             "spatial": [
                 [0, 0, 0],
@@ -192,79 +191,12 @@
     ],
     "material": [
         {
-            "id": 1,
-            "type": "Phong",
-            "ambient": "White",
-            "diffuse": "White",
-            "specular": "White",
-            "shininess": 32,
-            "reflectiveness": 0.5,
-            "shaderName": "test",
-            "textures": ["dog"]
-        },
-        {
-            "id": 2,
-            "type": "Phong",
-            "ambient": "White",
-            "diffuse": "Blue",
-            "specular": "White",
-            "shininess": 16,
-            "reflectiveness": 0.25,
-            "shaderName": "test",
-            "textures": ["terrian"]
-        },
-        {
-            "id": 3,
+            "alias": "room",
             "type": "PBR",
             "albedo": [255, 255, 255],
             "ao": 1.0,
             "roughness": 0.7,
             "metallic": 0.99,
-            "shaderName": "pbr"
-        },
-        {
-            "id": 4,
-            "type": "PBR",
-            "albedo": [255, 255, 0],
-            "ao": 1.0,
-            "roughness": 0.1,
-            "metallic": 0.1,
-            "shaderName": "pbr"
-        },
-        {
-            "id": 5,
-            "type": "PBR",
-            "albedo": [255, 0, 255],
-            "ao": 1.0,
-            "roughness": 0.8,
-            "metallic": 0.1,
-            "shaderName": "pbr"
-        },
-        {
-            "id": 6,
-            "type": "PBR",
-            "albedo": [255, 255, 255],
-            "ao": 1.0,
-            "roughness": 0.1,
-            "metallic": 0.8,
-            "shaderName": "pbr"
-        },
-        {
-            "id": 7,
-            "type": "PBR",
-            "albedo": [221, 155, 225],
-            "ao": 1.0,
-            "roughness": 0.8,
-            "metallic": 0.8,
-            "shaderName": "pbr"
-        },
-        {
-            "id": 8,
-            "type": "PBR",
-            "albedo": [29, 243, 144],
-            "ao": 1.0,
-            "roughness": 0.5,
-            "metallic": 0.5,
             "shaderName": "pbr"
         }
     ]

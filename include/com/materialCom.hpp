@@ -77,8 +77,13 @@ namespace renderer {
         float metallic;
     };
 
-    struct MaterialSet {
-        std::map<MaterialSettingID, MaterialSettingComBase*> settings;
+	class MaterialSet {
+	public:
+		MaterialSet():
+			idCount(0) {}
+        std::map<MaterialSettingAlias, MaterialSettingComBase*> settings;
+		std::map<MaterialSettingID, MaterialSettingAlias> id2alias;
+		MaterialSettingID idCount;
     };
 
     class MaterialCom {

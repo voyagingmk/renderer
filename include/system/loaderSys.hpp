@@ -37,7 +37,7 @@ namespace renderer {
         
         void loadMaterials(const json &config);
 
-		void loadMesh(const std::string &filename, Meshes& meshes, bool normalInverse);
+		void loadMesh(const std::string &filename, Object obj, bool normalInverse);
 
 	private:
 		void loadSpatialData(Object obj, const json &config);
