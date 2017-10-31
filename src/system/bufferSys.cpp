@@ -13,6 +13,7 @@ namespace renderer {
 		evtMgr.on<CreateMeshBufferEvent>(*this);
 		evtMgr.on<CreateSkyboxBufferEvent>(*this);
 		evtMgr.on<DrawMeshBufferEvent>(*this);
+		evtMgr.on<DrawOneMeshBufferEvent>(*this);
         evtMgr.on<CreateDpethBufferEvent>(*this);
         evtMgr.on<CreateColorBufferEvent>(*this);
         evtMgr.on<DestroyColorBufferEvent>(*this);
@@ -43,7 +44,7 @@ namespace renderer {
 		auto com = obj.addComponent<MeshBuffersCom>();
 		com->buffers.push_back(CreateSkyboxBuffer());
 	}
-
+	
 	void BufferSystem::receive(const DrawMeshBufferEvent& evt) {
 		Object obj = evt.obj;
 		auto com = obj.component<MeshBuffersCom>();
@@ -58,6 +59,19 @@ namespace renderer {
 			glBindVertexArray(0);
 			CheckGLError;
 		}
+	}
+
+	void BufferSystem::receive(const DrawOneMeshBufferEvent& evt) {
+		const MeshBufferRef& meshBuffer = evt.buf;
+		glBindVertexArray(meshBuffer.vao);
+		if (meshBuffer.noIndices) {
+			glDrawArrays(GL_TRIANGLES, 0, meshBuffer.triangles * 3);
+		}
+		else {
+			glDrawElements(GL_TRIANGLES, meshBuffer.triangles * 3, GL_UNSIGNED_INT, 0);
+		}
+		glBindVertexArray(0);
+		CheckGLError;
 	}
 
     void BufferSystem::receive(const CreateDpethBufferEvent& evt) {
@@ -203,6 +217,7 @@ namespace renderer {
 	MeshBufferRef BufferSystem::CreateMeshBuffer(const OneMesh& mesh) {
 		GLuint VBO, VAO, EBO;
 		MeshBufferRef meshBuffer;
+		meshBuffer.matIdx = mesh.matIdx;
 		glGenVertexArrays(1, &VAO);
 		glGenBuffers(1, &VBO);
 		glGenBuffers(1, &EBO);

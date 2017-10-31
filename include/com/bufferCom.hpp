@@ -86,7 +86,8 @@ namespace renderer {
 			vao(0),
 			vbo(0),
 			ebo(0),
-			vboIns(0),
+			vboIns(0), 
+			matIdx(0),
 			noIndices(false)
 		{}
 		size_t triangles;
@@ -94,6 +95,7 @@ namespace renderer {
 		BufferID vbo;
 		BufferID ebo;
 		BufferID vboIns;
+		unsigned int matIdx;
 		bool noIndices;
 
 	};

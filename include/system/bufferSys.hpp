@@ -26,6 +26,8 @@ namespace renderer {
 
 		void receive(const DrawMeshBufferEvent& evt);
 
+		void receive(const DrawOneMeshBufferEvent& evt);
+
 		void receive(const AddColorBufferEvent& evt);
         
         void receive(const CreateDpethBufferEvent& evt);

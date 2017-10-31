@@ -9,6 +9,7 @@ namespace renderer {
 
 
 	void MaterialSystem::init(ObjectManager &objMgr, EventManager &evtMgr) {
+		evtMgr.on<LoadAiMaterialEvent>(*this);
         evtMgr.on<LoadMaterialEvent>(*this);
 		evtMgr.on<ActiveMaterialEvent>(*this);
 		evtMgr.on<DeactiveMaterialEvent>(*this);
@@ -26,12 +27,20 @@ namespace renderer {
 		MaterialSettingComBase* setting = new MaterialPBRSettingCom("",
 			0.5,
 			0.5);
-
+		if (pMaterial->GetTextureCount(aiTextureType_AMBIENT) > 0) {
+			aiString Path;
+			if (pMaterial->GetTexture(aiTextureType_AMBIENT, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS) {
+				std::string fileName = Path.data;
+				m_evtMgr->emit<LoadTextureEvent>(evt.texDir, fileName, fileName, 4, true);
+				setting->texList.push_back(fileName);
+			}
+		}
 		if (pMaterial->GetTextureCount(aiTextureType_NORMALS) > 0) {
 			aiString Path;
 			if (pMaterial->GetTexture(aiTextureType_NORMALS, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS) {
 				std::string fileName = Path.data;
 				m_evtMgr->emit<LoadTextureEvent>(evt.texDir, fileName, fileName, 4, true);
+				setting->texList.push_back(fileName);
 			}
 		}
 	}

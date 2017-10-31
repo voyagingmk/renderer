@@ -23,12 +23,21 @@ namespace renderer {
 		ecs::Object obj;
 	};
 
-    class DrawMeshBufferEvent: public ecs::Event<DrawMeshBufferEvent> {
+	class DrawMeshBufferEvent : public ecs::Event<DrawMeshBufferEvent> {
+	public:
+		DrawMeshBufferEvent(ecs::Object obj) :
+			obj(obj)
+		{}
+		ecs::Object obj;
+	};
+
+
+    class DrawOneMeshBufferEvent : public ecs::Event<DrawOneMeshBufferEvent> {
     public:
-        DrawMeshBufferEvent(ecs::Object obj):
-            obj(obj)
+		DrawOneMeshBufferEvent(MeshBufferRef& buf):
+			buf(buf)
         {}
-        ecs::Object obj;
+		MeshBufferRef buf;
     };
 
 	class AddColorBufferEvent : public ecs::Event<AddColorBufferEvent> {
