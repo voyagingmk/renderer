@@ -19,6 +19,8 @@ namespace renderer {
 
 		void update(ObjectManager &objMgr, EventManager &evtMgr, float dt) override;
 
+		void receive(const LoadAiMaterialEvent &evt);
+
 		void receive(const LoadMaterialEvent &evt);
 
 		void receive(const ActiveMaterialEvent &evt);

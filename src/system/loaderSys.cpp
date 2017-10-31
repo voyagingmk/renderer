@@ -42,7 +42,6 @@ namespace renderer {
         string texSubDir = config["texSubDir"];
 		string skyboxSubDir = config["skyboxSubDir"];
         string shaderSubDir = config["shaderSubDir"];
-		string modelsDir = config["modelsDir"];
 
 		Object obj = m_objMgr->create(); // singleTon, manage kinds of resources
 		obj.addComponent<RenderMode>();
@@ -61,7 +60,7 @@ namespace renderer {
 		loadSkyboxes(assetsDir + skyboxSubDir, config);
         loadShaders(assetsDir + shaderSubDir, config);
         loadMaterials(config);
-		loadSceneObjects(assetsDir + modelsDir, config); 
+		loadSceneObjects(config); 
 		loadLights(config);
 
 		m_evtMgr->emit<CreateColorBufferEvent>(
@@ -158,7 +157,7 @@ namespace renderer {
 		}
 	}
 
-	void LoaderSystem::loadSceneObjects(std::string modelsDir, const json &config) {
+	void LoaderSystem::loadSceneObjects(const json &config) {
 		for (auto objInfo : config["object"])
 		{
 			Object obj = m_objMgr->create();
@@ -166,7 +165,7 @@ namespace renderer {
 			auto spatial = objInfo["spatial"];
 			bool normalInverse = objInfo["normalInverse"];
 			loadSpatialData(obj, spatial);
-			loadMesh(modelsDir + filename, obj, normalInverse);
+			loadMesh(config, obj, filename, normalInverse);
 			m_evtMgr->emit<CreateMeshBufferEvent>(obj);
             obj.addComponent<ReceiveLightTag>();
             obj.addComponent<MotionCom>();
@@ -199,7 +198,7 @@ namespace renderer {
 			string aliasName = texnfo["alias"];
 			size_t channels = texnfo["channels"];
 			bool toLinear = texnfo["toLinear"];
-			m_evtMgr->emit<LoadTextureEvent>(texDir, fileName.c_str(), aliasName, channels, toLinear);
+			m_evtMgr->emit<LoadTextureEvent>(texDir, fileName, aliasName, channels, toLinear);
 		}
 	}
 
@@ -263,11 +262,13 @@ namespace renderer {
         }
     }
 
-	void LoaderSystem::loadMesh(const std::string &filename, Object obj, bool normalInverse)
+	void LoaderSystem::loadMesh(const json &config, Object obj, const std::string &filename,  bool normalInverse)
 	{
 		ComponentHandle<Meshes> comMeshes = obj.addComponent<Meshes>();
 		Assimp::Importer importer;
-		const aiScene* scene = importer.ReadFile(filename,
+		string assetsDir = config["assetsDir"];
+		string modelsDir = config["modelsDir"];
+		const aiScene* scene = importer.ReadFile(assetsDir + modelsDir + filename,
 			aiProcess_CalcTangentSpace |
 			aiProcess_Triangulate |
 			aiProcess_JoinIdenticalVertices |
@@ -329,14 +330,10 @@ namespace renderer {
 					mesh.indexes.push_back(face.mIndices[j]);
 			}
 		}
+		string texSubDir = config["texSubDir"];
 		for (unsigned int i = 0; i < scene->mNumMaterials; i++) {
 			const aiMaterial* pMaterial = scene->mMaterials[i];
-			if (pMaterial->GetTextureCount(aiTextureType_DIFFUSE) > 0) {
-				aiString Path;
-				if (pMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS) {
-					std::string FullPath = Path.data;
-				}
-			}
+			m_evtMgr->emit<LoadAiMaterialEvent>(pMaterial, assetsDir + texSubDir);
 		}
 		obj.addComponent<MaterialCom>(1);
 	}

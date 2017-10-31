@@ -27,7 +27,7 @@ namespace renderer {
 
 		void loadLights(const json &config);
 
-		void loadSceneObjects(std::string modelsDir, const json &config);
+		void loadSceneObjects(const json &config);
 
 		void loadTextures(std::string texDir, const json &config);
 
@@ -37,7 +37,7 @@ namespace renderer {
         
         void loadMaterials(const json &config);
 
-		void loadMesh(const std::string &filename, Object obj, bool normalInverse);
+		void loadMesh(const json &config, Object obj, const std::string &filename, bool normalInverse);
 
 	private:
 		void loadSpatialData(Object obj, const json &config);

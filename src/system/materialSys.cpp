@@ -19,6 +19,23 @@ namespace renderer {
 
 	}
 
+	void MaterialSystem::receive(const LoadAiMaterialEvent &evt) {
+		const aiMaterial* pMaterial = evt.mat;
+		auto com = m_objMgr->getSingletonComponent<MaterialSet>();
+		MaterialSettingID id = ++com->idCount;
+		MaterialSettingComBase* setting = new MaterialPBRSettingCom("",
+			0.5,
+			0.5);
+
+		if (pMaterial->GetTextureCount(aiTextureType_NORMALS) > 0) {
+			aiString Path;
+			if (pMaterial->GetTexture(aiTextureType_NORMALS, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS) {
+				std::string fileName = Path.data;
+				m_evtMgr->emit<LoadTextureEvent>(evt.texDir, fileName, fileName, 4, true);
+			}
+		}
+	}
+
 	void MaterialSystem::receive(const LoadMaterialEvent &evt) {
         auto com = m_objMgr->getSingletonComponent<MaterialSet>();
 		MaterialSettingID id = ++com->idCount;
@@ -32,8 +49,6 @@ namespace renderer {
                 evt.matInfo["reflectiveness"]);
         } else if (evt.matInfo["type"] == "PBR") {
             setting = new MaterialPBRSettingCom(evt.matInfo["shaderName"],
-                parseColor(evt.matInfo["albedo"]),
-                // "ao": 1.0,
                 evt.matInfo["roughness"],
                 evt.matInfo["metallic"]);
         }
@@ -59,7 +74,7 @@ namespace renderer {
             shader.set1f("material.shininess", com->shininess);
         } else if (setting->type() == MaterialType::PBR) {
             MaterialPBRSettingCom* com = dynamic_cast<MaterialPBRSettingCom*>(setting);
-            shader.set3f("material.albedo", com->albedo);
+            // shader.set3f("material.albedo", com->albedo);
             shader.set1f("material.metallic", com->metallic);
             shader.set1f("material.roughness", com->roughness);
             shader.set1f("material.ao", 1.0f);

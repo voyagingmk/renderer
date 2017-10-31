@@ -45,9 +45,9 @@ namespace renderer {
 
 	class LoadTextureEvent : public ecs::Event<LoadTextureEvent> {
 	public:
-		LoadTextureEvent(std::string &dirpath,
-			const char *filename,
-			std::string &aliasname,
+		LoadTextureEvent(std::string dirpath,
+			std::string filename,
+			std::string aliasname,
 			size_t channels, bool toLinear = true) :
 			dirpath(dirpath),
 			filename(filename),
@@ -56,7 +56,7 @@ namespace renderer {
 			toLinear(toLinear)
 		{}
 		std::string dirpath;
-		const char *filename;
+		std::string filename;
 		std::string aliasname;
 		size_t channels;
 		bool toLinear;

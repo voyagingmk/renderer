@@ -62,17 +62,14 @@ namespace renderer {
     
     class MaterialPBRSettingCom: public MaterialSettingComBase {
     public:
-        MaterialPBRSettingCom(std::string shd,
-            Color a, float r, float m):
+        MaterialPBRSettingCom(std::string shd, float r, float m):
             MaterialSettingComBase(shd),
-            albedo(a),
             roughness(r),
             metallic(m)
         {}
         virtual MaterialType type() {
             return MaterialType::PBR;
         }
-        Color albedo;
         float roughness;
         float metallic;
     };

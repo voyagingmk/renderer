@@ -10,6 +10,17 @@
 namespace renderer {
     using json = nlohmann::json;
 
+	
+	class LoadAiMaterialEvent : public ecs::Event<LoadAiMaterialEvent> {
+	public:
+		LoadAiMaterialEvent(const aiMaterial* mat, std::string texDir) :
+			mat(mat),
+			texDir(texDir)
+		{}
+		const aiMaterial* mat;
+		std::string texDir;
+	};
+
 	class LoadMaterialEvent : public ecs::Event<LoadMaterialEvent> {
 	public:
         LoadMaterialEvent(json& matInfo):
