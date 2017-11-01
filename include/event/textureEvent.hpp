@@ -11,24 +11,24 @@ namespace renderer {
 	
 	class LoadCubemapEvent : public ecs::Event<LoadCubemapEvent> {
 	public:
-		LoadCubemapEvent(std::string &dirpath,
+		LoadCubemapEvent(const std::string &dirpath,
 			std::vector<std::string> filenames,
-			std::string &aliasname,
+			const std::string &aliasname,
 			size_t channels) :
 			dirpath(dirpath),
 			filenames(filenames),
 			aliasname(aliasname),
 			channels(channels)
 		{}
-		std::string dirpath;
+		const std::string& dirpath;
 		std::vector<std::string> filenames;
-		std::string aliasname;
+		const std::string& aliasname;
 		size_t channels;
 	};
     
     class CreateDepthTextureEvent : public ecs::Event<CreateDepthTextureEvent> {
     public:
-        CreateDepthTextureEvent(std::string aliasname,
+        CreateDepthTextureEvent(const std::string& aliasname,
                                 DepthTexType dtType,
                                 size_t width,
                                 size_t height) :
@@ -37,7 +37,7 @@ namespace renderer {
             width(width),
             height(height)
         {}
-        std::string aliasname;
+		const std::string& aliasname;
         DepthTexType dtType;
         size_t width;
         size_t height;
@@ -45,9 +45,9 @@ namespace renderer {
 
 	class LoadTextureEvent : public ecs::Event<LoadTextureEvent> {
 	public:
-		LoadTextureEvent(std::string dirpath,
-			std::string filename,
-			std::string aliasname,
+		LoadTextureEvent(const std::string& dirpath,
+			const std::string& filename,
+			const std::string& aliasname,
 			size_t channels, bool toLinear = true) :
 			dirpath(dirpath),
 			filename(filename),
@@ -55,9 +55,9 @@ namespace renderer {
 			channels(channels),
 			toLinear(toLinear)
 		{}
-		std::string dirpath;
-		std::string filename;
-		std::string aliasname;
+		const std::string& dirpath;
+		const std::string& filename;
+		const std::string& aliasname;
 		size_t channels;
 		bool toLinear;
 	};
@@ -65,19 +65,19 @@ namespace renderer {
     
     class CreateNoiseTextureEvent : public ecs::Event<CreateNoiseTextureEvent> {
     public:
-        CreateNoiseTextureEvent(std::string aliasname):
+        CreateNoiseTextureEvent(const std::string& aliasname):
             aliasname(aliasname)
         {}
-        std::string aliasname;
+		const std::string& aliasname;
     };
     
     
 	class DestroyTextureEvent : public ecs::Event<DestroyTextureEvent> {
 	public:
-		DestroyTextureEvent(std::string aliasname):
+		DestroyTextureEvent(const std::string& aliasname):
 			aliasname(aliasname)
 		{}
-		std::string aliasname;
+		const std::string& aliasname;
 	};
 
 	class ActiveTextureEvent : public ecs::Event<ActiveTextureEvent> {

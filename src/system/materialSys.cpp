@@ -54,6 +54,16 @@ namespace renderer {
 					std::cout << "MaterialSystem: normalMap [" << fileName << "] loaded" << std::endl;
 				}
 			}
+
+			if (pMaterial->GetTextureCount(aiTextureType_SPECULAR) > 0) {
+				aiString Path;
+				if (pMaterial->GetTexture(aiTextureType_SPECULAR, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS) {
+					std::string fileName = Path.data;
+					m_evtMgr->emit<LoadTextureEvent>(evt.texDir, fileName, fileName, 0, true);
+					setting->texList.insert({ "specularMap", fileName });
+					std::cout << "MaterialSystem: specularMap [" << fileName << "] loaded" << std::endl;
+				}
+			}
 			com->settings.insert({ id, setting });
 			matCom->settingIDs.push_back(id);
 		}
