@@ -279,10 +279,13 @@ namespace renderer {
 			cout << importer.GetErrorString() << endl;
 			return;
 		}
-		comMeshes->meshes.resize(scene->mNumMeshes);
 		for (int i = 0; i < scene->mNumMeshes; i++)
 		{
 			aiMesh* aimesh = scene->mMeshes[i];
+			if (aimesh->mNumVertices <= 0) {
+				continue;
+			}
+			comMeshes->meshes.push_back(OneMesh());
 			OneMesh& mesh = comMeshes->meshes[comMeshes->meshes.size() - 1];
 			mesh.matIdx = aimesh->mMaterialIndex;
 			std::cout << "[LoaderSystem] matIdx:" << mesh.matIdx << std::endl;

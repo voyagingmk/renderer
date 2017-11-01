@@ -170,21 +170,11 @@
     ],
     "object": [      
         {
-            "model": "room.obj",
-            "material": "room",
-            "inverseNormal": true,
-            "spatial": [
-                [0, 15, 0],
-                [30, 30, 30],
-                [0, 0, 0]
-            ]
-        },
-        {
-            "model": "ARROW.obj",
+            "model": "sponza.obj",
             "inverseNormal": false,
             "spatial": [
                 [0, 0, 0],
-                [4, 4, 4],
+                [1, 1, 1],
                 [0, 0, 0]
             ]
         }
