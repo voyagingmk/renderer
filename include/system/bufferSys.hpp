@@ -51,6 +51,7 @@ namespace renderer {
 		void receive(const CopyGBufferDepthEvent& evt);
 
 	private:
+		void drawMeshBuffer(const MeshBufferRef& meshBuffer);
 
 		void DestroyFrameBuffer(FrameBufferBase& buf);
 

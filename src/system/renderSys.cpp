@@ -217,8 +217,8 @@ namespace renderer {
 			CheckGLError; 
 			auto meshBufferCom = obj.component<MeshBuffersCom>();
 			for (auto meshBuffer: meshBufferCom->buffers) {
-				m_evtMgr->emit<DrawOneMeshBufferEvent>(meshBuffer);
 				// m_evtMgr->emit<ActiveMaterialEvent>(matCom->settingIDs[meshBuffer.matIdx], shader);
+				m_evtMgr->emit<DrawOneMeshBufferEvent>(meshBuffer);
 			}
 			CheckGLError;
 			m_evtMgr->emit<DeactiveMaterialEvent>(matCom->settingID);

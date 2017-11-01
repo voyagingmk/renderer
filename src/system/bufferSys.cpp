@@ -49,20 +49,15 @@ namespace renderer {
 		Object obj = evt.obj;
 		auto com = obj.component<MeshBuffersCom>();
 		for (auto meshBuffer : com->buffers) {
-			glBindVertexArray(meshBuffer.vao);
-			if (meshBuffer.noIndices) {
-				glDrawArrays(GL_TRIANGLES, 0, meshBuffer.triangles * 3);
-			}
-			else {
-				glDrawElements(GL_TRIANGLES, meshBuffer.triangles * 3, GL_UNSIGNED_INT, 0);
-			}
-			glBindVertexArray(0);
-			CheckGLError;
+			drawMeshBuffer(meshBuffer);
 		}
 	}
 
 	void BufferSystem::receive(const DrawOneMeshBufferEvent& evt) {
-		const MeshBufferRef& meshBuffer = evt.buf;
+		drawMeshBuffer(evt.buf);
+	}
+
+	void BufferSystem::drawMeshBuffer(const MeshBufferRef& meshBuffer) {
 		glBindVertexArray(meshBuffer.vao);
 		if (meshBuffer.noIndices) {
 			glDrawArrays(GL_TRIANGLES, 0, meshBuffer.triangles * 3);
