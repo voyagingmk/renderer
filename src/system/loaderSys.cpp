@@ -269,7 +269,7 @@ namespace renderer {
 		string assetsDir = config["assetsDir"];
 		string modelsDir = config["modelsDir"];
 		const aiScene* scene = importer.ReadFile(assetsDir + modelsDir + filename,
-			aiProcess_CalcTangentSpace |
+			// aiProcess_CalcTangentSpace |
 			aiProcess_Triangulate |
 			aiProcess_JoinIdenticalVertices |
 			aiProcess_SortByPType);
@@ -321,8 +321,30 @@ namespace renderer {
 			for (GLuint i = 0; i < aimesh->mNumFaces; i++)
 			{
 				aiFace face = aimesh->mFaces[i];
-				for (GLuint j = 0; j < face.mNumIndices; j++)
-					mesh.indexes.push_back(face.mIndices[j]);
+				// mNumIndices must be 3 because of aiProcess_Triangulate
+				uint32_t idx0 = face.mIndices[0];
+				uint32_t idx1 = face.mIndices[1];
+				uint32_t idx2 = face.mIndices[2]; 
+				
+				mesh.indexes.push_back(idx0);
+				mesh.indexes.push_back(idx1);
+				mesh.indexes.push_back(idx2);
+			
+				Vertex& v1 = mesh.vertices[idx0];
+				Vertex& v2 = mesh.vertices[idx1];
+				Vertex& v3 = mesh.vertices[idx2];
+
+				Vector3dF edge1 = v2.position - v1.position;
+				Vector3dF edge2 = v3.position - v1.position;
+				Vector2dF deltaUV1 = v2.texCoords - v1.texCoords;
+				Vector2dF deltaUV2 = v3.texCoords - v1.texCoords;
+				float f = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
+				Vector3dF tangent;
+				tangent.x = f * (deltaUV2.y * edge1.x - deltaUV1.y * edge2.x);
+				tangent.y = f * (deltaUV2.y * edge1.y - deltaUV1.y * edge2.y);
+				tangent.z = f * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z);
+				tangent = tangent.Normalize();
+				v1.tangent = v2.tangent = v3.tangent = tangent;
 			}
 		}
 		std::cout << "[LoaderSystem] loadMesh:" << filename  << ", numMaterials:" << scene->mNumMaterials << std::endl;
