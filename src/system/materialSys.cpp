@@ -41,7 +41,7 @@ namespace renderer {
 				aiString Path;
 				if (pMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS) {
 					std::string fileName = Path.data;
-					m_evtMgr->emit<LoadTextureEvent>(evt.texDir, fileName, fileName, 4, true);
+					m_evtMgr->emit<LoadTextureEvent>(evt.texDir, fileName, fileName, 0, true);
 					setting->texList.insert({ "albedoMap", fileName });
 					std::cout << "MaterialSystem: albedoMap [" << fileName << "] loaded" << std::endl;
 				}
@@ -50,7 +50,7 @@ namespace renderer {
 				aiString Path;
 				if (pMaterial->GetTexture(aiTextureType_NORMALS, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS) {
 					std::string fileName = Path.data;
-					m_evtMgr->emit<LoadTextureEvent>(evt.texDir, fileName, fileName, 4, true);
+					m_evtMgr->emit<LoadTextureEvent>(evt.texDir, fileName, fileName, 0, true);
 					setting->texList.insert({ "normalMap", fileName });
 					std::cout << "MaterialSystem: normalMap [" << fileName << "] loaded" << std::endl;
 				}
@@ -99,7 +99,7 @@ namespace renderer {
         } else if (setting->type() == MaterialType::PBR) {
             MaterialPBRSettingCom* com = dynamic_cast<MaterialPBRSettingCom*>(setting);
 			bool hasNormalMap = setting->texList.find(std::string("normalMap")) != setting->texList.end();
-            shader.set1i("hasNormalMap", hasNormalMap);
+            shader.set1i("hasNormalMap", true);
             shader.set1f("material.metallic", com->metallic);
             shader.set1f("material.roughness", com->roughness);
             shader.set1f("material.ao", 1.0f);

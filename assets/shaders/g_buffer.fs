@@ -25,15 +25,16 @@ uniform bool hasNormalMap;
 void main()
 {    
     gPosition = FragPos;
-    vec3 albedo = texture(albedoMap, TexCoord).rgb;
-    vec3 normal = texture(normalMap, TexCoord).rgb;
+    vec2 texcoord = vec2(TexCoord.x, TexCoord.y);
+    vec3 albedo = texture(albedoMap, texcoord).rgb;
     if(!hasNormalMap) {
         gNormal = Normal;
     } else {
+        vec3 normal = texture(normalMap, texcoord).rgb;
         normal = normalize(normal * 2.0 - 1.0);   
         gNormal = normalize(TBN * normal); 
     }
-    gAlbedo = vec4(1.0, 1.0, 1.0, 1.0);
+    gAlbedo = vec4(albedo, 1.0);
     gPBR.r = material.metallic;
     gPBR.g = material.roughness;
     gPBR.b = material.ao;
