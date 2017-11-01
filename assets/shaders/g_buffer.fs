@@ -19,6 +19,7 @@ struct Material {
 uniform Material material;
 uniform sampler2D albedoMap;
 uniform sampler2D normalMap;
+uniform sampler2D specularMap;
 
 uniform bool hasNormalMap;
 

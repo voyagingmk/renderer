@@ -45,9 +45,9 @@ namespace renderer {
 					std::cout << "MaterialSystem: albedoMap [" << fileName << "] loaded" << std::endl;
 				}
 			}
-			if (pMaterial->GetTextureCount(aiTextureType_NORMALS) > 0) {
+			if (pMaterial->GetTextureCount(aiTextureType_HEIGHT) > 0) {
 				aiString Path;
-				if (pMaterial->GetTexture(aiTextureType_NORMALS, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS) {
+				if (pMaterial->GetTexture(aiTextureType_HEIGHT, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS) {
 					std::string fileName = Path.data;
 					m_evtMgr->emit<LoadTextureEvent>(evt.texDir, fileName, fileName, 0, true);
 					setting->texList.insert({ "normalMap", fileName });
