@@ -21,27 +21,33 @@ namespace renderer {
 	}
 
 	void MaterialSystem::receive(const LoadAiMaterialEvent &evt) {
-		const aiMaterial* pMaterial = evt.mat;
 		auto com = m_objMgr->getSingletonComponent<MaterialSet>();
-		MaterialSettingID id = ++com->idCount;
-		MaterialSettingComBase* setting = new MaterialPBRSettingCom("",
-			0.5,
-			0.5);
-		if (pMaterial->GetTextureCount(aiTextureType_AMBIENT) > 0) {
-			aiString Path;
-			if (pMaterial->GetTexture(aiTextureType_AMBIENT, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS) {
-				std::string fileName = Path.data;
-				m_evtMgr->emit<LoadTextureEvent>(evt.texDir, fileName, fileName, 4, true);
-				setting->texList.push_back(fileName);
+		Object obj = evt.obj;
+		ComponentHandle<MaterialCom> matCom = obj.addComponent<MaterialCom>();
+		for (unsigned int i = 0; i < evt.matNum; i++) {
+			const aiMaterial* pMaterial = evt.mMaterials[i];
+			MaterialSettingID id = ++com->idCount;
+			MaterialSettingComBase* setting = new MaterialPBRSettingCom("",
+				0.5,
+				0.5);
+			if (pMaterial->GetTextureCount(aiTextureType_AMBIENT) > 0) {
+				aiString Path;
+				if (pMaterial->GetTexture(aiTextureType_AMBIENT, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS) {
+					std::string fileName = Path.data;
+					m_evtMgr->emit<LoadTextureEvent>(evt.texDir, fileName, fileName, 4, true);
+					setting->texList.push_back(std::make_tuple("albedoMap", fileName));
+				}
 			}
-		}
-		if (pMaterial->GetTextureCount(aiTextureType_NORMALS) > 0) {
-			aiString Path;
-			if (pMaterial->GetTexture(aiTextureType_NORMALS, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS) {
-				std::string fileName = Path.data;
-				m_evtMgr->emit<LoadTextureEvent>(evt.texDir, fileName, fileName, 4, true);
-				setting->texList.push_back(fileName);
+			if (pMaterial->GetTextureCount(aiTextureType_NORMALS) > 0) {
+				aiString Path;
+				if (pMaterial->GetTexture(aiTextureType_NORMALS, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS) {
+					std::string fileName = Path.data;
+					m_evtMgr->emit<LoadTextureEvent>(evt.texDir, fileName, fileName, 4, true);
+					setting->texList.push_back(std::make_tuple("normalMap", fileName));
+				}
 			}
+			com->settings.insert({ id, setting });
+			matCom->settingIDs.push_back(id);
 		}
 	}
 
@@ -61,16 +67,16 @@ namespace renderer {
                 evt.matInfo["roughness"],
                 evt.matInfo["metallic"]);
         }
-        com->settings.insert({ evt.matInfo["alias"], setting });
-		com->id2alias.insert({ id, evt.matInfo["alias"] });
-		for (auto tex : evt.matInfo["textures"]) {
-			setting->texList.push_back(tex);
+        com->settings.insert({ id, setting });
+		com->alias2id.insert({ evt.matInfo["alias"], id });
+		for (std::string tex : evt.matInfo["textures"]) {
+			setting->texList.push_back(std::make_tuple(std::string("default"), tex));
 		}
     }
 
 	void MaterialSystem::receive(const ActiveMaterialEvent &evt) {
         auto com = m_objMgr->getSingletonComponent<MaterialSet>();
-        MaterialSettingComBase* setting = com->settings[com->id2alias[evt.settingID]];
+        MaterialSettingComBase* setting = com->settings[evt.settingID];
 		activeMaterial(const_cast<Shader&>(evt.shader), setting);
 	}
 
@@ -89,17 +95,18 @@ namespace renderer {
             shader.set1f("material.ao", 1.0f);
         }
         uint32_t idx = 0;
-        for (auto texName: setting->texList) {
-            m_evtMgr->emit<ActiveTextureEvent>(shader, "texture" + std::to_string(idx+1), idx, texName);
+        for (auto texInfo: setting->texList) {
+			std::get<0>(texInfo);
+            m_evtMgr->emit<ActiveTextureEvent>(shader, std::get<0>(texInfo), idx, std::get<1>(texInfo));
             idx++;
         }
 	}
 
 	void MaterialSystem::receive(const DeactiveMaterialEvent &evt) {
         auto com = m_objMgr->getSingletonComponent<MaterialSet>();
-        MaterialSettingComBase* setting = com->settings[com->id2alias[evt.settingID]];
+        MaterialSettingComBase* setting = com->settings[evt.settingID];
         uint32_t idx = 0;
-		for (auto texName: setting->texList) {
+		for (auto texInfo: setting->texList) {
 			m_evtMgr->emit<DeactiveTextureEvent>(idx++);
 		}	
 	}

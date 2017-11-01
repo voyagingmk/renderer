@@ -2,7 +2,7 @@
 #define RENDERER_SYSTEM_LOADER_HPP
 
 #include "base.hpp"
-#include "../ecs/ecs.hpp"
+#include "ecs/ecs.hpp"
 #include "com/meshes.hpp"
 #include "event/winEvent.hpp"
 #include "event/miscEvent.hpp"

@@ -24,7 +24,7 @@ namespace renderer {
             return MaterialType::Unknown;
         }
         std::string shaderName;
-        std::vector<std::string> texList;
+        std::vector<std::tuple<std::string, std::string>> texList;
         
     };
     
@@ -78,17 +78,14 @@ namespace renderer {
 	public:
 		MaterialSet():
 			idCount(0) {}
-        std::map<MaterialSettingAlias, MaterialSettingComBase*> settings;
-		std::map<MaterialSettingID, MaterialSettingAlias> id2alias;
+        std::map<MaterialSettingID, MaterialSettingComBase*> settings;
+		std::map< MaterialSettingAlias, MaterialSettingID> alias2id;
 		MaterialSettingID idCount;
     };
 
     class MaterialCom {
-    public:
-        MaterialCom(MaterialSettingID id):
-            settingID(id)
-        {}
-        MaterialSettingID settingID;
+	public:
+		std::vector<MaterialSettingID> settingIDs;
     };
         
 };

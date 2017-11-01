@@ -202,14 +202,7 @@ namespace renderer {
              ReceiveLightTag,
              MeshBuffersCom>()) {
 			auto matCom = obj.component<MaterialCom>();
-			auto setting = matSetCom->settings[matSetCom->id2alias[matCom->settingID]];
-			if (evt.shader == nullptr) {
-				shader = getShader(setting);
-				shader.use();
-                uploadLights(shader);
-			}
 			m_evtMgr->emit<ActiveTextureEvent>(shader, "normalMap", 0, "GA_CW_N_1");
-			m_evtMgr->emit<ActiveMaterialEvent>(matCom->settingID, shader);
 			CheckGLError; 
 			m_evtMgr->emit<UploadCameraToShaderEvent>(evt.objCamera, shader);
 			CheckGLError; 
@@ -217,11 +210,18 @@ namespace renderer {
 			CheckGLError; 
 			auto meshBufferCom = obj.component<MeshBuffersCom>();
 			for (auto meshBuffer: meshBufferCom->buffers) {
-				// m_evtMgr->emit<ActiveMaterialEvent>(matCom->settingIDs[meshBuffer.matIdx], shader);
+				auto settingID = matCom->settingIDs[meshBuffer.matIdx];	
+				auto setting = matSetCom->settings[settingID];
+				if (evt.shader == nullptr) {
+					shader = getShader(setting);
+					shader.use();
+					uploadLights(shader);
+				}
+				m_evtMgr->emit<ActiveMaterialEvent>(settingID, shader);
 				m_evtMgr->emit<DrawOneMeshBufferEvent>(meshBuffer);
+				m_evtMgr->emit<DeactiveMaterialEvent>(settingID);
 			}
 			CheckGLError;
-			m_evtMgr->emit<DeactiveMaterialEvent>(matCom->settingID);
 			CheckGLError;
 		}
 		CheckGLError;

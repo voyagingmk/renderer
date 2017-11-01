@@ -330,12 +330,9 @@ namespace renderer {
 					mesh.indexes.push_back(face.mIndices[j]);
 			}
 		}
+		
 		string texSubDir = config["texSubDir"];
-		for (unsigned int i = 0; i < scene->mNumMaterials; i++) {
-			const aiMaterial* pMaterial = scene->mMaterials[i];
-			m_evtMgr->emit<LoadAiMaterialEvent>(pMaterial, assetsDir + texSubDir);
-		}
-		obj.addComponent<MaterialCom>(1);
+		m_evtMgr->emit<LoadAiMaterialEvent>(obj, scene->mNumMaterials, scene->mMaterials, assetsDir + texSubDir);
 	}
 
 	void LoaderSystem::loadSpatialData(Object obj, const json &spatial) {

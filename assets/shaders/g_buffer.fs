@@ -11,13 +11,13 @@ in vec3 Normal;
 in mat3 TBN;
 
 struct Material {
-    vec3 albedo;
     float metallic;
     float roughness;
     float ao;
 }; 
 
 uniform Material material;
+uniform sampler2D albedoMap;
 uniform sampler2D normalMap;
 
 uniform bool hasNormalMap;
@@ -25,7 +25,7 @@ uniform bool hasNormalMap;
 void main()
 {    
     gPosition = FragPos;
-
+    vec3 albedo = texture(albedoMap, TexCoord).rgb;
     vec3 normal = texture(normalMap, TexCoord).rgb;
     if(!hasNormalMap) {
         gNormal = Normal;
@@ -33,8 +33,7 @@ void main()
         normal = normalize(normal * 2.0 - 1.0);   
         gNormal = normalize(TBN * normal); 
     }
-    gAlbedo = vec4(material.albedo, 1.0);
-
+    gAlbedo = vec4(albedo, 1.0);
     gPBR.r = material.metallic;
     gPBR.g = material.roughness;
     gPBR.b = material.ao;
