@@ -16,15 +16,13 @@ namespace renderer {
             position(p),
             normal(n),
             texCoords(t),
-			tangent(ta),
-			bitangent(bta)
+			tangent(ta)
         {}
         
         Vector3dF position;
         Normal3dF normal;
         Vector2dF texCoords;
 		Vector3dF tangent;
-		Vector3dF bitangent;
 		// Vector3dF color;
     };
     

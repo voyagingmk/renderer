@@ -305,9 +305,6 @@ namespace renderer {
 					v.tangent.x = aimesh->mTangents[i].x;
 					v.tangent.y = aimesh->mTangents[i].y;
 					v.tangent.z = aimesh->mTangents[i].z;
-					v.bitangent.x = aimesh->mTangents[i].x;
-					v.bitangent.y = aimesh->mTangents[i].y;
-					v.bitangent.z = aimesh->mTangents[i].z;
 				}
 				if (aimesh->HasTextureCoords(0)) {
 					Vector2dF uv;

@@ -4,7 +4,6 @@ layout (location = 0) in vec3 position;
 layout (location = 1) in vec3 normal;
 layout (location = 2) in vec2 texCoord;
 layout (location = 3) in vec3 tangent;
-layout (location = 4) in vec3 bitangent;
 
 // out vec3 ourColor;
 out vec3 FragPos;
@@ -36,16 +35,11 @@ void main()
     }
 	Normal = normalMatrix * n;
 	if (hasNormalMap) {
-		TBN = mat3(tangent, bitangent, n);
-		TBN = normalMatrix * TBN; 
-
-		vec3 T = normalize(vec3(model * vec4(tangent, 0.0)));
-		vec3 N = normalize(vec3(model * vec4(n, 0.0)));
-		// re-orthogonalize T with respect to N
+		vec3 T = normalize(normalMatrix * tangent);
+		vec3 N = normalize(normalMatrix * n);
 		T = normalize(T - dot(T, N) * N);
-		// then retrieve perpendicular vector B with the cross product of T and N
-		vec3 B = cross(N, T);
-		TBN = normalMatrix * mat3(T, B, N);
+		vec3 B = cross(T, N);
+		TBN = mat3(T, B, N);
 	}
 	// Normal = mat3(transpose(inverse(model))) * n;
 	// We swap the y-axis by substracing our coordinates from 1.
