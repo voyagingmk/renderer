@@ -131,8 +131,8 @@
     },
     "texture": [
         {
-            "alias": "GA_CW_N_1",
-            "file": "GA_CW_N_1.png",
+            "alias": "msdf",
+            "file": "msdf.png",
             "toLinear": true,
             "channels": 3
         }

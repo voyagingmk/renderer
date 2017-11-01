@@ -26,13 +26,20 @@ namespace renderer {
 		ComponentHandle<MaterialCom> matCom = obj.addComponent<MaterialCom>();
 		for (unsigned int i = 0; i < evt.matNum; i++) {
 			const aiMaterial* pMaterial = evt.mMaterials[i];
+			/*
+			for (int t = aiTextureType_DIFFUSE; t <= aiTextureType_REFLECTION; t++) {
+				aiString name;
+				pMaterial->Get(AI_MATKEY_NAME, name);
+				std::cout << "mat count: " << pMaterial->GetTextureCount(aiTextureType(t)) <<
+					", type: " << t << ", name: "<< name.data <<std::endl;
+			}*/
 			MaterialSettingID id = ++com->idCount;
 			MaterialSettingComBase* setting = new MaterialPBRSettingCom("",
 				0.5,
 				0.5);
-			if (pMaterial->GetTextureCount(aiTextureType_AMBIENT) > 0) {
+			if (pMaterial->GetTextureCount(aiTextureType_DIFFUSE) > 0) {
 				aiString Path;
-				if (pMaterial->GetTexture(aiTextureType_AMBIENT, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS) {
+				if (pMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS) {
 					std::string fileName = Path.data;
 					m_evtMgr->emit<LoadTextureEvent>(evt.texDir, fileName, fileName, 4, true);
 					setting->texList.push_back(std::make_tuple("albedoMap", fileName));

@@ -330,7 +330,7 @@ namespace renderer {
 					mesh.indexes.push_back(face.mIndices[j]);
 			}
 		}
-		
+		std::cout << "[LoaderSystem] loadMesh:" << filename  << ", numMaterials:" << scene->mNumMaterials << std::endl;
 		string texSubDir = config["texSubDir"];
 		m_evtMgr->emit<LoadAiMaterialEvent>(obj, scene->mNumMaterials, scene->mMaterials, assetsDir + texSubDir);
 	}

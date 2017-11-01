@@ -110,6 +110,10 @@ namespace renderer {
 		int width, height, channels;
 		unsigned char* image = SOIL_load_image((evt.dirpath + std::string(evt.filename)).c_str(),
 			&width, &height, &channels, evt.channels);
+		if (!image) {
+			std::cout << "LoadTextureEvent failed: " << evt.filename << std::endl;
+			return;
+		}
 		if (evt.channels > 0) {
 			channels = evt.channels;
 		}
