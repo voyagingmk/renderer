@@ -42,7 +42,8 @@ namespace renderer {
 				if (pMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS) {
 					std::string fileName = Path.data;
 					m_evtMgr->emit<LoadTextureEvent>(evt.texDir, fileName, fileName, 4, true);
-					setting->texList.push_back(std::make_tuple("albedoMap", fileName));
+					setting->texList.insert({ "albedoMap", fileName });
+					std::cout << "MaterialSystem: albedoMap [" << fileName << "] loaded" << std::endl;
 				}
 			}
 			if (pMaterial->GetTextureCount(aiTextureType_NORMALS) > 0) {
@@ -50,7 +51,8 @@ namespace renderer {
 				if (pMaterial->GetTexture(aiTextureType_NORMALS, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS) {
 					std::string fileName = Path.data;
 					m_evtMgr->emit<LoadTextureEvent>(evt.texDir, fileName, fileName, 4, true);
-					setting->texList.push_back(std::make_tuple("normalMap", fileName));
+					setting->texList.insert({ "normalMap", fileName });
+					std::cout << "MaterialSystem: normalMap [" << fileName << "] loaded" << std::endl;
 				}
 			}
 			com->settings.insert({ id, setting });
@@ -77,7 +79,7 @@ namespace renderer {
         com->settings.insert({ id, setting });
 		com->alias2id.insert({ evt.matInfo["alias"], id });
 		for (std::string tex : evt.matInfo["textures"]) {
-			setting->texList.push_back(std::make_tuple(std::string("default"), tex));
+			setting->texList.insert({ std::string("default"), tex });
 		}
     }
 
@@ -96,15 +98,15 @@ namespace renderer {
             shader.set1f("material.shininess", com->shininess);
         } else if (setting->type() == MaterialType::PBR) {
             MaterialPBRSettingCom* com = dynamic_cast<MaterialPBRSettingCom*>(setting);
-            // shader.set3f("material.albedo", com->albedo);
+			bool hasNormalMap = setting->texList.find(std::string("normalMap")) != setting->texList.end();
+            shader.set1i("hasNormalMap", hasNormalMap);
             shader.set1f("material.metallic", com->metallic);
             shader.set1f("material.roughness", com->roughness);
             shader.set1f("material.ao", 1.0f);
         }
         uint32_t idx = 0;
         for (auto texInfo: setting->texList) {
-			std::get<0>(texInfo);
-            m_evtMgr->emit<ActiveTextureEvent>(shader, std::get<0>(texInfo), idx, std::get<1>(texInfo));
+            m_evtMgr->emit<ActiveTextureEvent>(shader, texInfo.first, idx, texInfo.second);
             idx++;
         }
 	}

@@ -146,7 +146,6 @@ namespace renderer {
 		texDict->insert({ evt.aliasname, texRef });
 		CheckGLError;
 		std::cout << "TextureSystem: image[" << evt.filename << "] loaded, w:" << width << ", h:" << height << std::endl;
-
 	}
     
     void TextureSystem::receive(const CreateNoiseTextureEvent &evt) {

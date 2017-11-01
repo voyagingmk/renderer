@@ -285,6 +285,7 @@ namespace renderer {
 			aiMesh* aimesh = scene->mMeshes[i];
 			OneMesh& mesh = comMeshes->meshes[comMeshes->meshes.size() - 1];
 			mesh.matIdx = aimesh->mMaterialIndex;
+			std::cout << "[LoaderSystem] matIdx:" << mesh.matIdx << std::endl;
 			for (uint32_t i = 0; i < aimesh->mNumVertices; i++)
 			{
 				Vertex v;

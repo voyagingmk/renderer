@@ -33,7 +33,7 @@ void main()
         normal = normalize(normal * 2.0 - 1.0);   
         gNormal = normalize(TBN * normal); 
     }
-    gAlbedo = vec4(albedo, 1.0);
+    gAlbedo = vec4(1.0, 1.0, 1.0, 1.0);
     gPBR.r = material.metallic;
     gPBR.g = material.roughness;
     gPBR.b = material.ao;

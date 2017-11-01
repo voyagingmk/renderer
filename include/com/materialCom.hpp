@@ -24,7 +24,7 @@ namespace renderer {
             return MaterialType::Unknown;
         }
         std::string shaderName;
-        std::vector<std::tuple<std::string, std::string>> texList;
+        std::map<std::string, std::string> texList;
         
     };
     

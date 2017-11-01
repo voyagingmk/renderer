@@ -169,16 +169,7 @@
         }
     ],
     "object": [      
-        {
-            "model": "room.obj",
-            "material": "room",
-            "normalInverse": true,
-            "spatial": [
-                [0, 15, 0],
-                [30, 30, 30],
-                [0, 0, 0]
-            ]
-        },
+
         {
             "model": "ARROW.obj",
             "normalInverse": false,
