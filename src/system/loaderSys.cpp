@@ -163,9 +163,9 @@ namespace renderer {
 			Object obj = m_objMgr->create();
 			std::string filename = objInfo["model"];
 			auto spatial = objInfo["spatial"];
-			bool normalInverse = objInfo["normalInverse"];
+			bool inverseNormal = objInfo["inverseNormal"];
 			loadSpatialData(obj, spatial);
-			loadMesh(config, obj, filename, normalInverse);
+			loadMesh(config, obj, filename, inverseNormal);
 			m_evtMgr->emit<CreateMeshBufferEvent>(obj);
             obj.addComponent<ReceiveLightTag>();
             obj.addComponent<MotionCom>();
@@ -262,7 +262,7 @@ namespace renderer {
         }
     }
 
-	void LoaderSystem::loadMesh(const json &config, Object obj, const std::string &filename,  bool normalInverse)
+	void LoaderSystem::loadMesh(const json &config, Object obj, const std::string &filename,  bool inverseNormal)
 	{
 		ComponentHandle<Meshes> comMeshes = obj.addComponent<Meshes>();
 		Assimp::Importer importer;
@@ -299,9 +299,6 @@ namespace renderer {
 					n.x = aimesh->mNormals[i].x;
 					n.y = aimesh->mNormals[i].y;
 					n.z = aimesh->mNormals[i].z;
-					if (normalInverse) {
-						n = -n;
-					}
 				}
 				v.normal = n;
 				if (aimesh->HasTangentsAndBitangents()) {
@@ -333,7 +330,7 @@ namespace renderer {
 		}
 		std::cout << "[LoaderSystem] loadMesh:" << filename  << ", numMaterials:" << scene->mNumMaterials << std::endl;
 		string texSubDir = config["texSubDir"];
-		m_evtMgr->emit<LoadAiMaterialEvent>(obj, scene->mNumMaterials, scene->mMaterials, assetsDir + texSubDir);
+		m_evtMgr->emit<LoadAiMaterialEvent>(obj, scene->mNumMaterials, scene->mMaterials, assetsDir + texSubDir, inverseNormal);
 	}
 
 	void LoaderSystem::loadSpatialData(Object obj, const json &spatial) {

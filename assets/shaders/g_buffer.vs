@@ -19,6 +19,7 @@ uniform mat4 PV;
 uniform mat4 model;
 uniform mat4 normalMat;
 uniform bool hasNormalMap;
+uniform bool inverseNormal;
 
 void main()
 {
@@ -28,12 +29,25 @@ void main()
 	// mat3 normalMatrix = mat3(view * transpose(inverse(model))); // Wrong!
 	// mat3 normalMatrix = mat3(transpose(inverse(view * mat4(mat3(model)))));
 	mat3 normalMatrix = mat3(view * mat4(transpose(inverse(mat3(model)))));   
-	Normal = normalMatrix * normal;
+	
+	vec3 n = normal;
+    if (inverseNormal) {
+    	n = -n;
+    }
+	Normal = normalMatrix * n;
 	if (hasNormalMap) {
-		TBN = mat3(tangent, bitangent, normal);
+		TBN = mat3(tangent, bitangent, n);
 		TBN = normalMatrix * TBN; 
+
+		vec3 T = normalize(vec3(model * vec4(tangent, 0.0)));
+		vec3 N = normalize(vec3(model * vec4(n, 0.0)));
+		// re-orthogonalize T with respect to N
+		T = normalize(T - dot(T, N) * N);
+		// then retrieve perpendicular vector B with the cross product of T and N
+		vec3 B = cross(N, T);
+		TBN = normalMatrix * mat3(T, B, N);
 	}
-	// Normal = mat3(transpose(inverse(model))) * normal;
+	// Normal = mat3(transpose(inverse(model))) * n;
 	// We swap the y-axis by substracing our coordinates from 1.
 	TexCoord = vec2(texCoord.x, 1.0 - texCoord.y);
 }

@@ -142,9 +142,9 @@
         {
             "type": "PointLight",
             "spatial": [
-                [0.0,  18.0, 0.0],
+                [0.0,  18.0, 3.0],
                 [1, 1, 1],
-                [1, 0, 0, 0]
+                [0, 0, 0]
             ],
             "ambient": [
                 255,
@@ -172,7 +172,7 @@
         {
             "model": "room.obj",
             "material": "room",
-            "normalInverse": true,
+            "inverseNormal": true,
             "spatial": [
                 [0, 15, 0],
                 [30, 30, 30],
@@ -181,7 +181,7 @@
         },
         {
             "model": "ARROW.obj",
-            "normalInverse": false,
+            "inverseNormal": false,
             "spatial": [
                 [0, 0, 0],
                 [4, 4, 4],

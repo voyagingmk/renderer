@@ -34,9 +34,8 @@ namespace renderer {
 					", type: " << t << ", name: "<< name.data <<std::endl;
 			}*/
 			MaterialSettingID id = ++com->idCount;
-			MaterialSettingComBase* setting = new MaterialPBRSettingCom("",
-				0.5,
-				0.5);
+			MaterialSettingComBase* setting = new MaterialPBRSettingCom("", 0.5, 0.5);
+			setting->inverseNormal = evt.inverseNormal;
 			if (pMaterial->GetTextureCount(aiTextureType_DIFFUSE) > 0) {
 				aiString Path;
 				if (pMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS) {
@@ -104,6 +103,7 @@ namespace renderer {
             shader.set1f("material.roughness", com->roughness);
             shader.set1f("material.ao", 1.0f);
         }
+		shader.set1i("inverseNormal", setting->inverseNormal);
         uint32_t idx = 0;
         for (auto texInfo: setting->texList) {
             m_evtMgr->emit<ActiveTextureEvent>(shader, texInfo.first, idx, texInfo.second);
