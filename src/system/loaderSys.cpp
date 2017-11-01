@@ -53,7 +53,7 @@ namespace renderer {
 		obj.addComponent<ColorBufferDictCom>();
 
 		Object objCamera = m_objMgr->create();
-		auto com = objCamera.addComponent<PerspectiveCameraView>(45.0f, (float)winWidth / (float)winHeight);
+		auto com = objCamera.addComponent<PerspectiveCameraView>(45.0f, (float)winWidth / (float)winHeight, 0.1f, 10000.0f);
         com->eye = Vector3dF(-10.0f, 10.0f, 10.0f);
         com->SetFrontVector({30.0f, 0.0f, -30.0f});
         loadTextures(assetsDir + texSubDir, config);
