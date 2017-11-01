@@ -72,7 +72,7 @@ namespace renderer {
     void BufferSystem::receive(const CreateDpethBufferEvent& evt) {
         auto com = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
         ColorBufferRef buf = CreateDepthFrameBuffer(evt.dtType, evt.texAliasname, evt.width);
-        com->dict[evt.aliasName] = buf;
+        com->dict[std::string(evt.aliasName)] = buf;
     }
     
 	void BufferSystem::receive(const CreateColorBufferEvent& evt) {
@@ -80,7 +80,7 @@ namespace renderer {
 		ColorBufferRef buf = CreateColorBuffer(
             evt.width, evt.height, evt.internalFormat, evt.format, evt.dataType,
             evt.depthType, evt.MSAA, evt.texParam);
-		com->dict[evt.aliasName] = buf;
+		com->dict[std::string(evt.aliasName)] = buf;
 	}
 
 	void BufferSystem::receive(const AddColorBufferEvent& evt) {
@@ -122,7 +122,7 @@ namespace renderer {
 	void BufferSystem::receive(const CreateGBufferEvent& evt) {
 		auto com = m_objMgr->getSingletonComponent<GBufferDictCom>();
 		GBufferRef buf = CreateGBuffer(evt.width, evt.height);
-		com->dict[evt.aliasName] = buf;
+		com->dict[std::string(evt.aliasName)] = buf;
 	}
 
 	void BufferSystem::receive(const DestroyGBufferEvent& evt) {

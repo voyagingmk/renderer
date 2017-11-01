@@ -116,7 +116,7 @@ namespace renderer {
 		shader.set1i("inverseNormal", setting->inverseNormal);
         uint32_t idx = 0;
         for (auto texInfo: setting->texList) {
-            m_evtMgr->emit<ActiveTextureEvent>(shader, texInfo.first, idx, texInfo.second);
+            m_evtMgr->emit<ActiveTextureEvent>(shader, texInfo.first.c_str(), idx, texInfo.second.c_str());
             idx++;
         }
 	}

@@ -83,24 +83,24 @@ namespace renderer {
 	class ActiveTextureEvent : public ecs::Event<ActiveTextureEvent> {
 	public:
         ActiveTextureEvent(Shader shader,
-                const std::string& sample2DName,
-                           uint32_t idx, const std::string& aliasname) :
+						   const char* sample2DName,
+                           uint32_t idx, const char* aliasname) :
             shader(shader),
             sample2DName(sample2DName),
 			idx(idx),
 			aliasname(aliasname)
         {}
         Shader shader;
-		const std::string& sample2DName;
+		const char* sample2DName;
 		uint32_t idx;
-		const std::string& aliasname;
+		const char* aliasname;
 	};
 
 	
 	class ActiveTextureByIDEvent : public ecs::Event<ActiveTextureByIDEvent> {
 	public:
         ActiveTextureByIDEvent(Shader shader,
-				const std::string& sample2DName,
+				const char* sample2DName,
                 uint32_t idx,
                 TexID texID) :
 			shader(shader),
@@ -109,7 +109,7 @@ namespace renderer {
 			texID(texID)
 		{}
         ActiveTextureByIDEvent(Shader shader,
-							   const std::string& sample2DName,
+							   const char* sample2DName,
                                uint32_t idx,
                                TexRef texRef) :
         shader(shader),
@@ -119,7 +119,7 @@ namespace renderer {
         texID(0)
         {}
         Shader shader;
-		const std::string& sample2DName;
+		const char* sample2DName;
 		uint32_t idx;
         TexRef texRef;
 		TexID texID;

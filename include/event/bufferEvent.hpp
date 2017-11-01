@@ -42,18 +42,18 @@ namespace renderer {
 
 	class AddColorBufferEvent : public ecs::Event<AddColorBufferEvent> {
 	public:
-		AddColorBufferEvent(std::string aliasName, ColorBufferRef buf) :
+		AddColorBufferEvent(const char * aliasName, ColorBufferRef buf) :
 			aliasName(aliasName),
 			buf(buf)
 		{}
-		std::string aliasName;
+		const char * aliasName;
 		ColorBufferRef buf;
     };
     
     class CreateDpethBufferEvent : public ecs::Event<CreateDpethBufferEvent> {
     public:
-        CreateDpethBufferEvent(std::string aliasName,
-                               std::string texAliasname,
+        CreateDpethBufferEvent(const char* aliasName,
+							   const char* texAliasname,
                                DepthTexType dtType,
                                size_t width):
             width(width),
@@ -63,8 +63,8 @@ namespace renderer {
         {}
         size_t width;
         DepthTexType dtType;
-        std::string aliasName;
-        std::string texAliasname;
+		const char* aliasName;
+		const char* texAliasname;
     };
     
 
@@ -77,7 +77,7 @@ namespace renderer {
 			BufType depthType,
 			size_t MSAA,
             int texParam,
-			std::string aliasName) :
+			const char* aliasName) :
 			width(width),
 			height(height),
             internalFormat(internalFormat),
@@ -96,80 +96,86 @@ namespace renderer {
 		BufType depthType;
 		size_t MSAA;
         int texParam;
-		std::string aliasName;
+		const char* aliasName;
 	};
 
 	class DestroyColorBufferEvent : public ecs::Event<DestroyColorBufferEvent> {
 	public:
-		DestroyColorBufferEvent(std::string aliasName) :
+		DestroyColorBufferEvent(const char * aliasName) :
 			aliasName(aliasName)
 		{}
-		std::string aliasName;
+		const char * aliasName;
 	};
 
 	class UseColorBufferEvent : public ecs::Event<UseColorBufferEvent> {
 	public:
-		UseColorBufferEvent(std::string aliasName) :
+		UseColorBufferEvent(const char * aliasName) :
 			aliasName(aliasName)
 		{}
-		std::string aliasName;
+		UseColorBufferEvent(const std::string& aliasName) :
+		aliasName(aliasName.c_str())
+		{}
+		const char * aliasName;
 	};
 
 	class UnuseColorBufferEvent : public ecs::Event<UnuseColorBufferEvent> {
 	public:
-		UnuseColorBufferEvent(std::string aliasName) :
+		UnuseColorBufferEvent(const char * aliasName) :
 			aliasName(aliasName)
 		{}
-		std::string aliasName;
+		UnuseColorBufferEvent(const std::string& aliasName) :
+			aliasName(aliasName.c_str())
+		{}
+		const char * aliasName;
 	};
 
     
 
     class CreateGBufferEvent : public ecs::Event<CreateGBufferEvent> {
     public:
-        CreateGBufferEvent(size_t width, size_t height, std::string aliasName):
+        CreateGBufferEvent(size_t width, size_t height, const char* aliasName):
 			width(width),
 			height(height),
 			aliasName(aliasName)
         {}
 		size_t width;
 		size_t height;
-		std::string aliasName;
+		const char* aliasName;
     };
 
 	class DestroyGBufferEvent: public ecs::Event<DestroyGBufferEvent>{
 	public:
-		DestroyGBufferEvent(std::string aliasName) :
+		DestroyGBufferEvent(const char * aliasName) :
 			aliasName(aliasName)
 		{}
-		std::string aliasName;
+		const char * aliasName;
 	};
     
     class UseGBufferEvent : public ecs::Event<UseGBufferEvent> {
     public:
-        UseGBufferEvent(std::string aliasName):
+        UseGBufferEvent(const char * aliasName):
 			aliasName(aliasName)
         {}
-		std::string aliasName;
+		const char * aliasName;
     };   
     
     class UnuseGBufferEvent : public ecs::Event<UnuseGBufferEvent> {
     public:
-        UnuseGBufferEvent(std::string aliasName):
+        UnuseGBufferEvent(const char * aliasName):
 			aliasName(aliasName)
         {}
-		std::string aliasName;
+		const char * aliasName;
     };
 
 	
 	class CopyGBufferDepthEvent : public ecs::Event<CopyGBufferDepthEvent> {
 	public:
-		CopyGBufferDepthEvent(std::string aliasName, std::string aliasName2) :
+		CopyGBufferDepthEvent(const char * aliasName, const char * aliasName2) :
 			aliasName(aliasName),
 			aliasName2(aliasName2)
 		{}
-		std::string aliasName;
-		std::string aliasName2;
+		const char * aliasName;
+		const char * aliasName2;
 	};
 };
 

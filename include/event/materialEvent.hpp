@@ -14,7 +14,7 @@ namespace renderer {
 	
 	class LoadAiMaterialEvent : public ecs::Event<LoadAiMaterialEvent> {
 	public:
-		LoadAiMaterialEvent(Object obj, int matNum, aiMaterial** mMaterials, std::string texDir, bool inverseNormal) :
+		LoadAiMaterialEvent(Object obj, int matNum, aiMaterial** mMaterials, const std::string& texDir, bool inverseNormal) :
 			obj(obj),
 			matNum(matNum),
 			mMaterials(mMaterials),
@@ -24,7 +24,7 @@ namespace renderer {
 		Object obj;
 		int matNum;
 		aiMaterial** mMaterials;
-		std::string texDir;
+		const std::string& texDir;
 		bool inverseNormal;
 	};
 

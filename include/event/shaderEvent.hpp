@@ -10,18 +10,18 @@ namespace renderer {
 	class LoadShaderEvent : public ecs::Event<LoadShaderEvent> {
 	public:
 		typedef std::vector<std::pair<std::string, uint32_t>> TextureInfo;
-		LoadShaderEvent(std::string &dirpath,
+		LoadShaderEvent(const std::string& dirpath,
 			ShaderFileNames names,
-			std::string &aliasname, 
+			const std::string& aliasname, 
 			TextureInfo& textures):
 			dirpath(dirpath),
 			names(names),
 			aliasname(aliasname),
 			textures(textures)
 		{}
-		std::string dirpath;
+		const std::string& dirpath;
 		ShaderFileNames names;
-		std::string aliasname;
+		const std::string& aliasname;
 		TextureInfo textures;
         ShaderType type;
     };

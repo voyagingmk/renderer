@@ -187,7 +187,7 @@ namespace renderer {
 	void TextureSystem::receive(const ActiveTextureByIDEvent &evt) {
         glActiveTexture(GL_TEXTURE0 + evt.idx);
         Shader shader = evt.shader;
-        shader.set1i(evt.sample2DName.c_str(), (int)(evt.idx));
+        shader.set1i(evt.sample2DName, (int)(evt.idx));
         if (evt.texID > 0) {
             assert(evt.texID > 0 && glIsTexture(evt.texID));
             glBindTexture(GL_TEXTURE_2D, evt.texID);
@@ -211,7 +211,7 @@ namespace renderer {
 			return;
         }
         Shader shader = evt.shader;
-        shader.set1i(evt.sample2DName.c_str(), (int)(evt.idx));
+        shader.set1i(evt.sample2DName, (int)(evt.idx));
 		TexRef texRef = it->second;
 		glActiveTexture(GL_TEXTURE0 + evt.idx);
 		if (texRef.type == TexType::Tex2D) {
