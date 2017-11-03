@@ -20,13 +20,23 @@ uniform Material material;
 uniform sampler2D albedoMap;
 uniform sampler2D normalMap;
 uniform sampler2D specularMap;
+uniform sampler2D maskMap;
+
 
 uniform bool hasNormalMap;
+uniform bool hasMaskMap;
 
 void main()
 {    
     gPosition = FragPos;
     vec2 texcoord = vec2(TexCoord.x, TexCoord.y);
+    if (hasMaskMap) {
+        float alpha = texture(maskMap, texcoord).r;
+        if(alpha <= 0.01) {
+            discard;
+            return;
+        }
+    }
     vec3 albedo = texture(albedoMap, texcoord).rgb;
     if(!hasNormalMap) {
         gNormal = Normal;

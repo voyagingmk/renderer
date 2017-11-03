@@ -64,6 +64,15 @@ namespace renderer {
 					std::cout << "MaterialSystem: specularMap [" << fileName << "] loaded" << std::endl;
 				}
 			}
+            if (pMaterial->GetTextureCount(aiTextureType_OPACITY) > 0) {
+                aiString Path;
+                if (pMaterial->GetTexture(aiTextureType_OPACITY, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS) {
+                    std::string fileName = Path.data;
+                    m_evtMgr->emit<LoadTextureEvent>(evt.texDir, fileName, fileName, 0, true);
+                    setting->texList.insert({ "maskMap", fileName });
+                    std::cout << "MaterialSystem: maskMap [" << fileName << "] loaded" << std::endl;
+                }
+            }
 			com->settings.insert({ id, setting });
 			matCom->settingIDs.push_back(id);
 		}
@@ -108,7 +117,9 @@ namespace renderer {
         } else if (setting->type() == MaterialType::PBR) {
             MaterialPBRSettingCom* com = dynamic_cast<MaterialPBRSettingCom*>(setting);
 			bool hasNormalMap = setting->texList.find(std::string("normalMap")) != setting->texList.end();
-            shader.set1i("hasNormalMap", hasNormalMap);
+			shader.set1i("hasNormalMap", hasNormalMap);
+			bool hasMaskMap = setting->texList.find(std::string("maskMap")) != setting->texList.end();
+            shader.set1i("hasMaskMap", hasMaskMap);
             shader.set1f("material.metallic", com->metallic);
             shader.set1f("material.roughness", com->roughness);
             shader.set1f("material.ao", 1.0f);
