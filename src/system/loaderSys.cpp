@@ -100,9 +100,6 @@ namespace renderer {
         m_evtMgr->emit<CreateDpethBufferEvent>("shadow", "pointDepth", DepthTexType::CubeMap, 1024);
 
 		CreateGlobalQuadObject();
-        
-        
-        PointLightTransform c;
 
 	}
 
@@ -137,12 +134,13 @@ namespace renderer {
 		{
 			Object obj = m_objMgr->create();
 			auto spatial = lightInfo["spatial"];
+            float far_plane = lightInfo["far_plane"];
 			loadSpatialData(obj, spatial);
 			auto transCom = obj.addComponent<PointLightTransform>();
 			transCom->aspect = 1.0f;
 			transCom->fovy = 90.0f;
 			transCom->n = 1.0f;
-			transCom->f = 30.0f;
+			transCom->f = far_plane;
 			obj.addComponent<PointLightCom>(
 				parseColor(lightInfo["ambient"]),
 				parseColor(lightInfo["diffuse"]),

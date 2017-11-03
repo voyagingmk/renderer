@@ -161,7 +161,7 @@
                 255,
                 255
             ],
-            "radius": 10,
+            "far_plane": 10000,
             "constant": 1.0,
             "linear": 0.7,
             "quadratic": 1.8,

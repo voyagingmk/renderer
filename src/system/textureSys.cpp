@@ -106,9 +106,14 @@ namespace renderer {
 
 	void TextureSystem::receive(const LoadTextureEvent &evt) {
 		auto texDict = m_objMgr->getSingletonComponent<TextureDict>();
+        
+        string fileName = evt.filename;
+#if defined(__MACOSX__) || defined(__APPLE__)
+        fileName = ReplaceString(fileName, "\\", "/");
+#endif
 		// Load, create texture and generate mipmaps
 		int width, height, channels;
-		unsigned char* image = SOIL_load_image((evt.dirpath + std::string(evt.filename)).c_str(),
+		unsigned char* image = SOIL_load_image((evt.dirpath + std::string(fileName)).c_str(),
 			&width, &height, &channels, evt.channels);
 		if (!image) {
 			std::cout << "LoadTextureEvent failed: " << evt.filename << std::endl;
