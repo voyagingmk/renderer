@@ -9,5 +9,4 @@ void main()
 {    
     color = texture(skybox, TexCoord);
     color.rgb = pow(color.rgb, vec3(1.0 / 2.2));
-   // color = vec4(1.0, 0.0, 0.0, 0.0);
 }

@@ -52,6 +52,11 @@ namespace renderer {
 
 	class FrameBufferBase {
 	public:
+		FrameBufferBase() :
+			fboID(0),
+			width(0),
+			height(0)
+		{}
 		FboID fboID;
 		size_t width;
 		size_t height;

@@ -24,7 +24,7 @@ namespace renderer {
 		evtMgr.on<DestroyGBufferEvent>(*this);
 		evtMgr.on<UseGBufferEvent>(*this); 
 		evtMgr.on<UnuseGBufferEvent>(*this);
-		evtMgr.on<CopyGBufferDepthEvent>(*this);
+		evtMgr.on<CopyGBufferDepth2ColorBufferEvent>(*this);
 	}
 
 	void BufferSystem::update(ObjectManager &objMgr, EventManager &evtMgr, float dt) {
@@ -85,7 +85,7 @@ namespace renderer {
 
 	void BufferSystem::receive(const AddColorBufferEvent& evt) {
 		auto com = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
-		com->dict[evt.aliasName] = evt.buf;
+		com->dict[std::string(evt.aliasName)] = evt.buf;
 	}
 
 	void BufferSystem::receive(const DestroyColorBufferEvent& evt) {
@@ -101,8 +101,7 @@ namespace renderer {
 	void BufferSystem::receive(const UseColorBufferEvent& evt) {
 		auto com = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
 		auto it = com->dict.find(evt.aliasName);
-        assert(it != com->dict.end());
-		if (it == com->dict.end()) {
+        if (it == com->dict.end()) {
 			return;
 		}
 		CheckGLError;
@@ -156,19 +155,22 @@ namespace renderer {
 		UnuseFrameBuffer(it->second);
 	}
 
-	void BufferSystem::receive(const CopyGBufferDepthEvent& evt) {
+	void BufferSystem::receive(const CopyGBufferDepth2ColorBufferEvent& evt) {
 		auto com = m_objMgr->getSingletonComponent<GBufferDictCom>();
-		auto it = com->dict.find(evt.aliasName);
+		auto it = com->dict.find(std::string(evt.aliasName));
 		if (it == com->dict.end()) {
 			assert(false);
 			return;
 		}
-		auto it2 = com->dict.find(evt.aliasName);
+		FrameBufferBase buf1 = it->second;
+
+		auto com2 = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
+		auto it2 = com2->dict.find(std::string(evt.aliasName2));
 		FrameBufferBase buf2;
-		if (it2 != com->dict.end()) {
+		if (it2 != com2->dict.end()) {
 			buf2 = it2->second;
 		}
-		CopyFrameBufferDepth(it->second, buf2);
+		CopyFrameBufferDepth(buf1, buf2);
 	}
 
 	void BufferSystem::DestroyFrameBuffer(FrameBufferBase& buf) {
@@ -493,7 +495,7 @@ namespace renderer {
 		glDrawBuffers(4, attachments);
 		// create and attach depth buffer (renderbuffer)
 		glGenRenderbuffers(1, &buf.depthRboID);
-		glBindRenderbuffer(GL_RENDERBUFFER, buf.depthRboID);
+		glBindRenderbuffer(GL_RENDERBUFFER, buf.depthRboID);        
 		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, buf.depthRboID);
 		// finally check if framebuffer is complete
@@ -523,7 +525,10 @@ namespace renderer {
 		// This works on all of my systems, but if it doesn't on yours you'll likely have to write to the 		
 		// depth buffer in another shader stage
 		// (or somehow see to match the default framebuffer's internal format with the FBO's internal format).
-		glBlitFramebuffer(0, 0, buf.width, buf.height, 0, 0, buf.width, buf.height, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+		glBlitFramebuffer(0, 0, buf.width, buf.height, 0, 0, buf.width, buf.height, GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT, GL_NEAREST);
+		checkGLError;
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 	}
 };

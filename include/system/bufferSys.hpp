@@ -48,7 +48,7 @@ namespace renderer {
 
 		void receive(const UnuseGBufferEvent& evt);
 
-		void receive(const CopyGBufferDepthEvent& evt);
+		void receive(const CopyGBufferDepth2ColorBufferEvent& evt);
 
 	private:
 		void drawMeshBuffer(const MeshBufferRef& meshBuffer);

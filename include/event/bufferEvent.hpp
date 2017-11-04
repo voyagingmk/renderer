@@ -168,9 +168,9 @@ namespace renderer {
     };
 
 	
-	class CopyGBufferDepthEvent : public ecs::Event<CopyGBufferDepthEvent> {
+	class CopyGBufferDepth2ColorBufferEvent : public ecs::Event<CopyGBufferDepth2ColorBufferEvent> {
 	public:
-		CopyGBufferDepthEvent(const char * aliasName, const char * aliasName2) :
+		CopyGBufferDepth2ColorBufferEvent(const char * aliasName, const char * aliasName2) :
 			aliasName(aliasName),
 			aliasName2(aliasName2)
 		{}

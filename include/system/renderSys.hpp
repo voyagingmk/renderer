@@ -41,9 +41,9 @@ namespace renderer {
 
 		void deferredLightingPass(std::string colorBufferAliasName, Object objCamera, std::string gBufferAliasName, size_t winWidth, size_t winHeight);
 
-		void renderSkybox(std::string colorBufferAliasName, Object objCamera);
+		void renderSkybox(std::string colorBufferAliasName, Object objCamera, Viewport viewport);
 
-		void renderLightObjects(std::string colorBufferAliasName, Object objCamera);
+		void renderLightObjects(std::string colorBufferAliasName, Object objCamera, Viewport viewport);
 
         void uploadLights(Shader shader);
        

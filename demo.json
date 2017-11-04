@@ -168,7 +168,7 @@
             "shadow": true
         }
     ],
-    "object": [      
+    "object1": [      
         {
             "model": "sponza.obj",
             "inverseNormal": false,
@@ -179,13 +179,14 @@
             ]
         }
     ],
-    "object1": [      
+    "object33": [],
+    "object": [      
         {
             "model": "room.obj",
             "inverseNormal": true,
             "spatial": [
                 [0, 0, 0],
-                [1000, 1000, 1000],
+                [100, 100, 100],
                 [0, 0, 0]
             ]
         },

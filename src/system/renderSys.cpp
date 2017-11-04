@@ -31,24 +31,29 @@ namespace renderer {
 	// renderpipe loop, could move to another system
 	void RenderSystem::update(ObjectManager &objMgr, EventManager &evtMgr, float dt) {
 		auto context = objMgr.getSingletonComponent<SDLContext>();
+		Object objCamera = objMgr.getSingletonComponent<PerspectiveCameraView>().object();
 		if (!context.valid()) {
 			return;
 		}
+		auto screenViewport = std::make_tuple(0, 0, context->width, context->height);
+		setViewport(screenViewport);
+		clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
+			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
 		//glEnable(GL_CULL_FACE);
 		//glCullFace(GL_BACK);
 
         // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		/*----- first-pass: deferred rendering-----*/
 		
-		Object objCamera = objMgr.getSingletonComponent<PerspectiveCameraView>().object();
 		//  geometry pass
 		evtMgr.emit<UseGBufferEvent>("main");
 		Shader gBufferShader = getShader("gBuffer");
 		evtMgr.emit<RenderSceneEvent>(
 			objCamera,
-			std::make_tuple(0, 0, context->width, context->height),
+			screenViewport,
 			Color(0.0f, 0.0f, 0.0f, 1.0f),
-			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT,
+			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT,
 			&gBufferShader);
 		evtMgr.emit<UnuseGBufferEvent>("main");
         // glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -82,11 +87,6 @@ namespace renderer {
 		// lighting pass
         deferredLightingPass("core", objCamera, "main", context->width, context->height);
         CheckGLError;
-        
-		evtMgr.emit<CopyGBufferDepthEvent>("main",  "core");// skybox 需要深度信息
-        // skybox pass
-        renderSkybox("core", objCamera);
-		renderLightObjects("core", objCamera);
 
 		 //setViewport(std::make_tuple(0, 0, context->width, context->height));
 		// clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
@@ -106,7 +106,7 @@ namespace renderer {
             edgeDetect.set2f("imgSize", context->width, context->height);
             clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
                 GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-            setViewport(std::make_tuple(0, 0, context->width, context->height));
+            setViewport(screenViewport);
             m_evtMgr->emit<ActiveTextureByIDEvent>(edgeDetect, "colorTex", 0, coreBuf.tex);
             renderQuad();
             evtMgr.emit<UnuseColorBufferEvent>("edge");
@@ -140,7 +140,7 @@ namespace renderer {
             ColorBufferRef& edgeBuf = colorBufferCom->dict["edge"];
             clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
                       GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-            setViewport(std::make_tuple(0, 0, context->width, context->height));
+            setViewport(screenViewport);
             m_evtMgr->emit<ActiveTextureByIDEvent>(smaaWeight, "edgesTex", 0, edgeBuf.tex);
             m_evtMgr->emit<ActiveTextureByIDEvent>(smaaWeight, "areaTex", 1, area_tex);
             m_evtMgr->emit<ActiveTextureByIDEvent>(smaaWeight, "searchTex", 2, search_tex);
@@ -156,9 +156,16 @@ namespace renderer {
             m_evtMgr->emit<ActiveTextureByIDEvent>(smaa, "blendTex", 1, weightBuf.tex);
             clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
                 GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-            setViewport(std::make_tuple(0, 0, context->width, context->height));
+            setViewport(screenViewport);
             renderQuad();
         }
+		
+		// skybox pass
+		evtMgr.emit<CopyGBufferDepth2ColorBufferEvent>("main", "");// 画skybox需要GBuffer的深度信息
+		CheckGLError;
+		renderSkybox("", objCamera, screenViewport);
+		renderLightObjects("", objCamera, screenViewport);
+
 		// renderColorBufferDebug("core", context->width, context->height);
         // m_evtMgr->emit<DrawUIEvent>();
 		CheckGLError;
@@ -189,7 +196,6 @@ namespace renderer {
 		glEnable(GL_DEPTH_TEST);
         setViewport(evt.viewport);
         clearView(evt.clearColor, evt.clearBits);
-		
 		Shader shader;
 
 		if (evt.shader != nullptr) {
@@ -244,8 +250,9 @@ namespace renderer {
 		}
 	}
     
-	void RenderSystem::renderSkybox(std::string colorBufferAliasName, Object objCamera) {
+	void RenderSystem::renderSkybox(std::string colorBufferAliasName, Object objCamera, Viewport viewport) {
 		m_evtMgr->emit<UseColorBufferEvent>(colorBufferAliasName);
+		setViewport(viewport);
 		for (const Object obj : m_objMgr->entities<GlobalSkyboxTag>()) {
 			// glDisable(GL_CULL_FACE);
 			// draw skybox as last
@@ -262,7 +269,6 @@ namespace renderer {
 		}
 		m_evtMgr->emit<UnuseColorBufferEvent>(colorBufferAliasName);
 	}
-	
 	
 	void RenderSystem::ssaoPass(Object objCamera, std::string gBufferAliasName, std::string ssaoBuffer, size_t winWidth, size_t winHeight) {
 		m_evtMgr->emit<UseColorBufferEvent>(ssaoBuffer);
@@ -346,8 +352,9 @@ namespace renderer {
         shader.set1i("LightNum", i);
     }
 
-	void RenderSystem::renderLightObjects(std::string colorBufferAliasName, Object objCamera) {
+	void RenderSystem::renderLightObjects(std::string colorBufferAliasName, Object objCamera, Viewport viewport) {
 		m_evtMgr->emit<UseColorBufferEvent>(colorBufferAliasName); 
+		setViewport(viewport);
 		// draw light object
 		Shader lightShader = getShader("light");
 		lightShader.use();
