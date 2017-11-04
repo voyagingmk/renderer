@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "system/textureSys.hpp"
 #include "realtime/glutils.hpp"
-#include "SOIL.h"
 #include "utils/helper.hpp"
 #include "com/glcommon.hpp"
 
