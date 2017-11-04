@@ -3,8 +3,6 @@ obj/
 src/sphere.cpp.save-failed
 *.o
 *.exe
-renderer.vcxproj.user
-renderer.vcxproj.filters
 .vs/renderer/v14/
 *.tlog
 *.idb
@@ -27,5 +25,8 @@ assets/images/
 assets/models/
 *.db-wal
 *.db-shm
-vs_build/
 external/glm/
+assimp-vc140-mt.dll
+SDL2.dll
+*.cap
+vs_build/CMakeFiles/

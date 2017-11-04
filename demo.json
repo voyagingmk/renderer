@@ -170,6 +170,17 @@
     ],
     "object": [      
         {
+            "model": "sponza.obj",
+            "inverseNormal": false,
+            "spatial": [
+                [0, 0, 0],
+                [1, 1, 1],
+                [0, 0, 0]
+            ]
+        }
+    ],
+    "object1": [      
+        {
             "model": "room.obj",
             "inverseNormal": true,
             "spatial": [
