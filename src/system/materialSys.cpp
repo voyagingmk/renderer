@@ -119,7 +119,9 @@ namespace renderer {
 			bool hasNormalMap = setting->texList.find(std::string("normalMap")) != setting->texList.end();
 			shader.set1i("hasNormalMap", hasNormalMap);
 			bool hasMaskMap = setting->texList.find(std::string("maskMap")) != setting->texList.end();
-            shader.set1i("hasMaskMap", hasMaskMap);
+			shader.set1i("hasMaskMap", hasMaskMap);
+			bool hasSpecularMap = setting->texList.find(std::string("specularMap")) != setting->texList.end();
+			shader.set1i("hasSpecularMap", hasSpecularMap);
             shader.set1f("material.metallic", com->metallic);
             shader.set1f("material.roughness", com->roughness);
             shader.set1f("material.ao", 1.0f);

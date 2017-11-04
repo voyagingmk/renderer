@@ -8,6 +8,7 @@ struct Material {
     vec3 albedo;
     float metallic;
     float roughness;
+    float specular;
     float ao;
 }; 
 
@@ -126,7 +127,8 @@ void main()
     vec3 pbrData = texture(gPBR, TexCoord).rgb;
     material.metallic = pbrData.r;
     material.roughness = pbrData.g;
-    material.ao = pbrData.b;
+    material.specular = pbrData.b;
+    material.ao = pbrData.a;
 
     vec3 N = normalize(Normal);
     vec3 V = normalize(viewPos - FragPos);

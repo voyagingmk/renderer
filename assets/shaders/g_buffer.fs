@@ -3,7 +3,7 @@
 layout (location = 0) out vec3 gPosition;
 layout (location = 1) out vec3 gNormal;
 layout (location = 2) out vec4 gAlbedo;
-layout (location = 3) out vec3 gPBR;
+layout (location = 3) out vec4 gPBR;
 
 in vec2 TexCoord;
 in vec3 FragPos;
@@ -13,6 +13,7 @@ in mat3 TBN;
 struct Material {
     float metallic;
     float roughness;
+    float specular;
     float ao;
 }; 
 
@@ -25,6 +26,8 @@ uniform sampler2D maskMap;
 
 uniform bool hasNormalMap;
 uniform bool hasMaskMap;
+uniform bool hasSpecularMap;
+
 
 void main()
 {    
@@ -45,8 +48,15 @@ void main()
         normal = normalize(normal * 2.0 - 1.0);   
         gNormal = normalize(TBN * normal); 
     }
+    if(!hasSpecularMap) {
+        material.specular = 1;
+    } else {
+        float specular = texture(specularMap, texcoord).r;
+        material.specular = specular;
+    }  
     gAlbedo = vec4(albedo, 1.0);
     gPBR.r = material.metallic;
     gPBR.g = material.roughness;
-    gPBR.b = material.ao;
+    gPBR.b = material.specular;
+    gPBR.a = material.ao;
 }
