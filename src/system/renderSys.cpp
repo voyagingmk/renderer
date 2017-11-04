@@ -75,6 +75,8 @@ namespace renderer {
         CheckGLError;
         auto colorBufferCom = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
 		ColorBufferRef& buf = colorBufferCom->dict["shadow"];
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_FRONT);
 		evtMgr.emit<RenderSceneEvent>(
 			objCamera,
 			std::make_tuple(0, 0, buf.width, buf.height),
@@ -82,6 +84,7 @@ namespace renderer {
 			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT,
 			&pointShadowDepthShader);
 		evtMgr.emit<UnuseColorBufferEvent>("shadow");
+		glCullFace(GL_BACK);
         CheckGLError;
         
 		// lighting pass
