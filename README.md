@@ -31,6 +31,8 @@ assimp.lib
 
 freetype.lib
 
+SDL2.lib and SDL2main.lib (SDL2-2.0.4)
+
 
 
 
