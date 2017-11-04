@@ -93,8 +93,6 @@ namespace renderer {
 		// GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         
 		/*----- first-pass end -----*/
-        // renderGBufferDebug("main", context->width, context->height);
-        // renderColorBufferDebug("ssaoBlur", context->width, context->height);
 
         ColorBufferRef& coreBuf = colorBufferCom->dict["core"];
         
@@ -167,8 +165,10 @@ namespace renderer {
 		renderLightObjects("", objCamera, screenViewport);
 
 		// renderColorBufferDebug("core", context->width, context->height);
-        // m_evtMgr->emit<DrawUIEvent>();
+		// renderGBufferDebug("main", context->width, context->height);
+		// renderColorBufferDebug("ssaoBlur", context->width, context->height);
 		CheckGLError;
+		m_evtMgr->emit<DrawUIEvent>();
 		SDL_GL_SwapWindow(context->win);
 	}
     

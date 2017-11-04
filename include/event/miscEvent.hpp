@@ -14,6 +14,15 @@ namespace renderer {
         {}
 		const json& config;
     };
+
+	class CameraMoveEvent : public ecs::Event<CameraMoveEvent> {
+	public:
+		CameraMoveEvent(const ecs::Object obj) :
+			obj(obj)
+		{}
+		const ecs::Object obj;
+	};
+	
     
 };
 

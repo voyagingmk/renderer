@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "system/uiSys.hpp"
 #include "com/sdlContext.hpp"
+#include "com/cameraCom.hpp"
 #include "imgui_impl_sdl_gl3.h"
 
 using namespace std;
@@ -17,6 +18,7 @@ namespace renderer {
     }
     void UISystem::receive(const DrawUIEvent &evt) {
         auto com = m_objMgr->getSingletonComponent<SDLContext>();
+		auto cameraView = m_objMgr->getSingletonComponent<PerspectiveCameraView>();
         ImGui_ImplSdlGL3_NewFrame(com->win);
         // 1. Show a simple window
         // Tip: if we don't call ImGui::Begin()/ImGui::End() the widgets appears in a window automatically called "Debug"
@@ -25,13 +27,16 @@ namespace renderer {
             ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_FirstUseEver);
             ImGui::Text("Hello, world!");
             ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
-            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+			auto pos = cameraView->GetCameraPosition();
+			ImGui::Text("Camera: %.2f %.2f %.2f", pos.x, pos.y, pos.z);
+			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
         }
         // Rendering
         glViewport(0, 0, (int)ImGui::GetIO().DisplaySize.x, (int)ImGui::GetIO().DisplaySize.y);
         ImGui::Render();
     }
-    
+
+
     void UISystem::receive(const SetupSDLDoneEvent &evt) {
         auto com = evt.obj.component<SDLContext>();
         ImGui_ImplSdlGL3_Init(com->win);

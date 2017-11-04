@@ -2,6 +2,7 @@
 #include "system/cameraSys.hpp"
 #include "com/keyState.hpp"
 #include "com/geometry.hpp"
+#include "event/miscEvent.hpp"
 
 using namespace std;
 
@@ -45,6 +46,7 @@ namespace renderer {
 		}
 
 		cameraView->SetCameraPosition(cameraView->GetCameraPosition() + p * 1.0f);
+		m_evtMgr->emit<CameraMoveEvent>(cameraView.object());
 		//camera.SetTargetVector(p + Vector3dF(0.0, 0.0, -1.0));
 		// cameraView->eye.debug();
 
