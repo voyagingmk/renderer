@@ -13,7 +13,7 @@
 #include "event/spatialEvent.hpp"
 #include "event/bufferEvent.hpp"
 #include "event/textureEvent.hpp"
-#include "event/uiEvent.hpp"
+#include "event/lightEvent.hpp"
 #include "utils/helper.hpp"
 #include "AreaTex.h"
 #include "SearchTex.h"
@@ -25,7 +25,8 @@ using namespace std;
 namespace renderer {
     void RenderSystem::init(ObjectManager &objMgr, EventManager &evtMgr) {
         printf("RenderSystem init\n");
-		evtMgr.on<RenderSceneEvent>(*this);	
+		evtMgr.on<RenderSceneEvent>(*this);
+		evtMgr.on<CameraMoveEvent>(*this);
     }
     
 	// renderpipe loop, could move to another system
@@ -173,6 +174,10 @@ namespace renderer {
 		CheckGLError;
 		m_evtMgr->emit<DrawUIEvent>();
 		SDL_GL_SwapWindow(context->win);
+	}
+
+	void RenderSystem::receive(const CameraMoveEvent &evt) {
+
 	}
     
     void RenderSystem::setViewport(const Viewport& viewport) {

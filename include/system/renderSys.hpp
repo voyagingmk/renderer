@@ -4,6 +4,8 @@
 #include "base.hpp"
 #include "ecs/ecs.hpp"
 #include "event/renderEvent.hpp"
+#include "event/uiEvent.hpp"
+#include "event/miscEvent.hpp"
 #include "com/materialCom.hpp"
 #include "com/shader.hpp"
 
@@ -20,6 +22,8 @@ namespace renderer {
 		void update(ObjectManager &objMgr, EventManager &evtMgr, float dt) override;
 
 		void receive(const RenderSceneEvent &evt);
+
+		void receive(const CameraMoveEvent &evt);
         
     private:
 
