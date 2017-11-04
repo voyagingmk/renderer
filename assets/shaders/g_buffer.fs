@@ -48,15 +48,16 @@ void main()
         normal = normalize(normal * 2.0 - 1.0);   
         gNormal = normalize(TBN * normal); 
     }
+    float specular;
     if(!hasSpecularMap) {
-        material.specular = 1;
+        specular = 1;
     } else {
         float specular = texture(specularMap, texcoord).r;
-        material.specular = specular;
+        specular = specular;
     }  
     gAlbedo = vec4(albedo, 1.0);
     gPBR.r = material.metallic;
     gPBR.g = material.roughness;
-    gPBR.b = material.specular;
+    gPBR.b = specular;
     gPBR.a = material.ao;
 }

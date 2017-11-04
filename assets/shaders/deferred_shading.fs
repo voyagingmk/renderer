@@ -124,7 +124,7 @@ void main()
     float AmbientOcclusion = texture(ssao, TexCoord).r;
     Material material;
     material.albedo = texture(gAlbedo, TexCoord).rgb;
-    vec3 pbrData = texture(gPBR, TexCoord).rgb;
+    vec4 pbrData = texture(gPBR, TexCoord).rgba;
     material.metallic = pbrData.r;
     material.roughness = pbrData.g;
     material.specular = pbrData.b;
@@ -163,6 +163,7 @@ void main()
         
         // kS is equal to Fresnel
         vec3 kS = F;
+        kS = kS * material.specular;
         // for energy conservation, the diffuse and specular light can't
         // be above 1.0 (unless the surface emits light); to preserve this
         // relationship the diffuse component (kD) should equal 1.0 - kS.
