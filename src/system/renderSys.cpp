@@ -74,7 +74,7 @@ namespace renderer {
         float far_plane = pointLightTrans->f;
 		pointShadowDepthShader.set1f("far_plane", far_plane);
         pointShadowDepthShader.set3f("lightPos", pointLightTrans.object().component<SpatialData>()->pos);
-		pointShadowDepthShader.set1f("normalOffset", gSettingCom->getValue("normalOffset"));
+		pointShadowDepthShader.set1f("normalOffset", gSettingCom->getValue("normalOffset", -1.3f));
         CheckGLError;
         auto colorBufferCom = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
 		ColorBufferRef& buf = colorBufferCom->dict["shadow"];
@@ -338,8 +338,9 @@ namespace renderer {
 		m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "ssao", 4, ssaoBuf.tex.texID);
         ColorBufferRef& shadowBuf = colorBufferCom->dict["shadow"];
         m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "depthMap", 5, shadowBuf.depthTex);
-		shader.set1f("depthBias", gSettingCom->getValue("depthBias"));
-		shader.set1f("diskFactor", gSettingCom->getValue("diskFactor"));
+		shader.set1f("depthBias", gSettingCom->getValue("depthBias", 1.0f));
+		shader.set1i("enableSSAO", gSettingCom->getValue("enableSSAO", true));
+		shader.set1f("diskFactor", gSettingCom->getValue("diskFactor", 3.0f));
 		setViewport(std::make_tuple(0, 0, winWidth, winHeight));
 		clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
 			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);

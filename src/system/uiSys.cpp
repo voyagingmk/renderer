@@ -41,6 +41,10 @@ namespace renderer {
 			ImGui::SliderFloat("diskFactor", &diskFactor, 0.0f, 30.0f);
 			gSettingCom->setValue("diskFactor", diskFactor);
 
+			bool enableSSAO = gSettingCom->getValue("enableSSAO");
+			ImGui::Checkbox("diskFactor", &enableSSAO);
+			gSettingCom->setValue("enableSSAO", enableSSAO);
+
 			auto pos = cameraView->GetCameraPosition();
 			ImGui::Text("Camera: %.2f %.2f %.2f", pos.x, pos.y, pos.z);
 			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);

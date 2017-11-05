@@ -52,9 +52,10 @@ namespace renderer {
 		obj.addComponent<GBufferDictCom>();
 		obj.addComponent<ColorBufferDictCom>();
 		auto gSettingCom = obj.addComponent<GlobalSettingCom>();
-		gSettingCom->params["normalOffset"] = -1.3f;
-		gSettingCom->params["depthBias"] = 1.0f;
-		gSettingCom->params["diskFactor"] = 3.0f;
+		gSettingCom->setValue("normalOffset", -1.3f);
+		gSettingCom->setValue("depthBias", 1.0f);
+		gSettingCom->setValue("diskFactor", 3.0f);
+		gSettingCom->setValue("enableSSAO", true);
 		
 
 

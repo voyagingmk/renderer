@@ -20,6 +20,7 @@ uniform sampler2D ssao;
 uniform samplerCube depthMap;
 uniform float depthBias;
 uniform float diskFactor;
+uniform bool enableSSAO;
 
 
 struct Light {
@@ -190,7 +191,9 @@ void main()
     
     vec3 color = ambient + Lo * (1.0 - shadow);
 
-    color *= AmbientOcclusion;
+    if (enableSSAO) {
+        color *= AmbientOcclusion;
+    }
 
     // HDR tonemapping
     // color = color / (color + vec3(1.0));

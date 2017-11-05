@@ -26,12 +26,20 @@ namespace renderer {
 		bool hasKey(std::string k) {
 			return params.find(k) != params.end();
 		}
-		nlohmann::json& getValue(std::string k) {
+
+		nlohmann::json getValue(std::string k) {
 			return params[k];
 		}
-		template<class T>
-		void setValue(std::string k, T v) {
-			params[k] = v;
+
+		nlohmann::json getValue(std::string k, nlohmann::json defaultVal) {
+			if (!hasKey(k)) {
+				params[k] = defaultVal;
+			}
+			return params[k];
+		}
+
+		void setValue(std::string k, nlohmann::json val) {
+			params[k] = val;
 		}
 	};
 
