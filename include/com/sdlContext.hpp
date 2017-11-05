@@ -9,12 +9,14 @@ namespace renderer {
 			width(w),
 			height(h),
 			shouldExit(false),
+			showCursor(false),
 			win(nullptr),
 			rendererSDL(nullptr)
 		{}
 		size_t width;
 		size_t height;
 		bool shouldExit;
+		bool showCursor;
 		SDL_Window * win;
 		SDL_Renderer * rendererSDL;
 		SDL_GLContext glContext;

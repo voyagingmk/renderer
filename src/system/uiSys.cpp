@@ -2,6 +2,7 @@
 #include "system/uiSys.hpp"
 #include "com/sdlContext.hpp"
 #include "com/cameraCom.hpp"
+#include "com/miscCom.hpp"
 #include "imgui_impl_sdl_gl3.h"
 
 using namespace std;
@@ -23,10 +24,23 @@ namespace renderer {
         // 1. Show a simple window
         // Tip: if we don't call ImGui::Begin()/ImGui::End() the widgets appears in a window automatically called "Debug"
         {
-            static float f = 0.0f;
             ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_FirstUseEver);
-            ImGui::Text("Hello, world!");
-            ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
+            ImGui::Text("ShadowMap:");
+
+			auto gSettingCom = m_objMgr->getSingletonComponent<GlobalSettingCom>();
+
+			float depthBias = gSettingCom->getValue("depthBias");
+            ImGui::SliderFloat("depthBias", &depthBias, -6.0f, 6.0f);
+			gSettingCom->setValue("depthBias", depthBias);
+
+			float normalOffset = gSettingCom->getValue("normalOffset");
+			ImGui::SliderFloat("normalOffset", &normalOffset, -3.0f, 3.0f);
+			gSettingCom->setValue("normalOffset", normalOffset);
+
+			float diskFactor = gSettingCom->getValue("diskFactor");
+			ImGui::SliderFloat("diskFactor", &diskFactor, 0.0f, 30.0f);
+			gSettingCom->setValue("diskFactor", diskFactor);
+
 			auto pos = cameraView->GetCameraPosition();
 			ImGui::Text("Camera: %.2f %.2f %.2f", pos.x, pos.y, pos.z);
 			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);

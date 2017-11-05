@@ -21,7 +21,9 @@ namespace renderer {
 				evtMgr.emit<CustomSDLKeyboardEvent>(e.key);
 			}
 			else if (e.type == SDL_MOUSEMOTION) {
-				evtMgr.emit<CustomSDLMouseMotionEvent>(e.motion);
+				if (!com->showCursor) {
+					evtMgr.emit<CustomSDLMouseMotionEvent>(e.motion);
+				}
 			}
 			else if (e.type == SDL_MOUSEBUTTONDOWN ||
 				e.type == SDL_MOUSEBUTTONUP ||
@@ -131,7 +133,7 @@ namespace renderer {
 
 		auto k = evt.e.keysym.sym;
 		keyState->state[k] = evt.e.state;
-		// printf("key event: %d\n", k, evt.e.state);
+		// printf("key event: %d, %d\n", k, evt.e.state);
 
 		if (evt.e.state == SDL_PRESSED)
 		{
@@ -140,6 +142,14 @@ namespace renderer {
 			case SDLK_ESCAPE:
 			{
 				context->shouldExit = true;
+				break;
+			}
+			case SDLK_TAB:
+			{
+				context->showCursor = !context->showCursor;
+				SDL_ShowCursor(context->showCursor? SDL_ENABLE : SDL_DISABLE);
+				SDL_SetRelativeMouseMode(context->showCursor ? SDL_FALSE : SDL_TRUE);
+				printf("ShowCursor: %d\n", int(context->showCursor));
 				break;
 			}
 			case SDLK_1:

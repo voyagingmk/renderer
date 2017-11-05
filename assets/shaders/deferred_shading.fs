@@ -18,6 +18,9 @@ uniform sampler2D gAlbedo;
 uniform sampler2D gPBR;
 uniform sampler2D ssao;
 uniform samplerCube depthMap;
+uniform float depthBias;
+uniform float diskFactor;
+
 
 struct Light {
     vec3 Position;
@@ -99,16 +102,15 @@ float ShadowCalculation(vec3 fragPos, Light light)
     // Now get current linear depth as the length between the fragment and light position
     float currentDepth = length(fragToLight);
     float shadow = 0.0;
-    float bias = 0.15;
     int samples = 20;
     float viewDistance = length(viewPos - fragPos);
-    float diskRadius = (1.0 + (viewDistance / light.far_plane)) / 25.0;
+    float diskRadius = (1.0 + (viewDistance / light.far_plane)) / diskFactor;
     float closestDepth;
     for(int i = 0; i < samples; ++i)
     {
         closestDepth = texture(depthMap, fragToLight + gridSamplingDisk[i] * diskRadius).r;
         closestDepth *= light.far_plane;   // Undo mapping [0;1]
-        if(currentDepth - bias > closestDepth)
+        if(currentDepth - depthBias > closestDepth)
             shadow += 1.0;
     }
     shadow /= float(samples);

@@ -6,7 +6,11 @@ layout (location = 2) in vec2 texCoord;
 
 uniform mat4 model;
 
+uniform float normalOffset;
+
 void main()
 {
-    gl_Position = model * vec4(position, 1.0f);
+    mat3 normalMatrix = transpose(inverse(mat3(model)));   
+    vec3 N = normalMatrix * normalize(normal);
+    gl_Position = model * vec4(position, 1.0f) + vec4(N * normalOffset, 0.0f);
 }  

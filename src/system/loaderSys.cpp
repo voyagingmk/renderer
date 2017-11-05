@@ -51,6 +51,12 @@ namespace renderer {
         obj.addComponent<MaterialSet>();
 		obj.addComponent<GBufferDictCom>();
 		obj.addComponent<ColorBufferDictCom>();
+		auto gSettingCom = obj.addComponent<GlobalSettingCom>();
+		gSettingCom->params["normalOffset"] = -1.3f;
+		gSettingCom->params["depthBias"] = 1.0f;
+		gSettingCom->params["diskFactor"] = 3.0f;
+		
+
 
 		Object objCamera = m_objMgr->create();
 		auto com = objCamera.addComponent<PerspectiveCameraView>(45.0f, (float)winWidth / (float)winHeight, 0.1f, 10000.0f);
@@ -97,7 +103,7 @@ namespace renderer {
         
         m_evtMgr->emit<CreateNoiseTextureEvent>("ssaoNoise");
       
-        m_evtMgr->emit<CreateDpethBufferEvent>("shadow", "pointDepth", DepthTexType::CubeMap, 1024);
+        m_evtMgr->emit<CreateDpethBufferEvent>("shadow", "pointDepth", DepthTexType::CubeMap, 2048);
 
 		CreateGlobalQuadObject();
 

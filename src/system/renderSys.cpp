@@ -32,6 +32,7 @@ namespace renderer {
 	// renderpipe loop, could move to another system
 	void RenderSystem::update(ObjectManager &objMgr, EventManager &evtMgr, float dt) {
 		auto context = objMgr.getSingletonComponent<SDLContext>();
+		auto gSettingCom = objMgr.getSingletonComponent<GlobalSettingCom>();
 		Object objCamera = objMgr.getSingletonComponent<PerspectiveCameraView>().object();
 		if (!context.valid()) {
 			return;
@@ -73,6 +74,7 @@ namespace renderer {
         float far_plane = pointLightTrans->f;
 		pointShadowDepthShader.set1f("far_plane", far_plane);
         pointShadowDepthShader.set3f("lightPos", pointLightTrans.object().component<SpatialData>()->pos);
+		pointShadowDepthShader.set1f("normalOffset", gSettingCom->getValue("normalOffset"));
         CheckGLError;
         auto colorBufferCom = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
 		ColorBufferRef& buf = colorBufferCom->dict["shadow"];
@@ -320,7 +322,8 @@ namespace renderer {
 	}
 
 	void RenderSystem::deferredLightingPass(std::string colorBufferAliasName, Object objCamera, std::string gBufferAliasName, size_t winWidth, size_t winHeight) {
-		m_evtMgr->emit<UseColorBufferEvent>(colorBufferAliasName); 
+		m_evtMgr->emit<UseColorBufferEvent>(colorBufferAliasName);
+		auto gSettingCom = m_objMgr->getSingletonComponent<GlobalSettingCom>();
 		Shader shader = getShader("deferredShading");
 		shader.use();
 		m_evtMgr->emit<UploadCameraToShaderEvent>(objCamera, shader);
@@ -335,6 +338,8 @@ namespace renderer {
 		m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "ssao", 4, ssaoBuf.tex.texID);
         ColorBufferRef& shadowBuf = colorBufferCom->dict["shadow"];
         m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "depthMap", 5, shadowBuf.depthTex);
+		shader.set1f("depthBias", gSettingCom->getValue("depthBias"));
+		shader.set1f("diskFactor", gSettingCom->getValue("diskFactor"));
 		setViewport(std::make_tuple(0, 0, winWidth, winHeight));
 		clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
 			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
