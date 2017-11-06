@@ -168,7 +168,7 @@ namespace renderer {
 			Object obj = m_objMgr->create();
 			std::string filename = objInfo["model"];
 			auto spatial = objInfo["spatial"];
-			bool inverseNormal = objInfo["inverseNormal"];
+            bool inverseNormal = objInfo["inverseNormal"].is_boolean() ? bool(objInfo["inverseNormal"]) : false;
 			loadSpatialData(obj, spatial);
 			loadMesh(config, obj, filename, inverseNormal);
 			m_evtMgr->emit<CreateMeshBufferEvent>(obj);

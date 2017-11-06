@@ -141,10 +141,11 @@
     "light": [
         {
             "type": "PointLight",
+            "far_plane": 10000,
             "spatial": [
-                [508.0, 500.0, -43.0],
+                [-15.0,  10.0, 15.0],
                 [1, 1, 1],
-                [0, 0, 0]
+                [1, 0, 0, 0]
             ],
             "ambient": [
                 255,
@@ -161,7 +162,6 @@
                 255,
                 255
             ],
-            "far_plane": 10000,
             "constant": 1.0,
             "linear": 0.7,
             "quadratic": 1.8,
@@ -169,6 +169,62 @@
         }
     ],
     "object": [      
+        {
+            "model": "room.obj",
+            "inverseNormal": true,
+            "spatial": [
+                [0, 0, 0],
+                [1000, 1000, 1000],
+                [0, 0, 0]
+            ]
+        },
+        {
+            "model": "teapot.obj",
+            "inverseNormal": false,
+            "spatial": [
+                [-8, 0, -8],
+                [1, 1, 1],
+                [0, 0, 0]
+            ]
+        },
+        {
+            "model": "teapot.obj",
+            "inverseNormal": false,
+            "spatial": [
+                [8, 0, -8],
+                [1, 1, 1],
+                [0, 0, 0]
+            ]
+        },
+        {
+            "model": "teapot.obj",
+            "inverseNormal": false,
+            "spatial": [
+                [-8, 0, 8],
+                [1, 1, 1],
+                [0, 0, 0]
+            ]
+        },
+        {
+            "model": "teapot.obj",
+            "inverseNormal": false,
+            "spatial": [
+                [8, 0, 8],
+                [1, 1, 1],
+                [0, 0, 0]
+            ]
+        },
+        {
+            "model": "teapot.obj",
+            "inverseNormal": false,
+            "spatial": [
+                [0, 0, 0],
+                [1, 1, 1],
+                [0, 0, 0]
+            ]
+        }
+    ],
+    "object4": [      
         {
             "model": "sponza.obj",
             "inverseNormal": false,
@@ -208,6 +264,15 @@
             "ao": 1.0,
             "roughness": 0.7,
             "metallic": 0.99,
+            "shaderName": "pbr"
+        },
+        {
+            "alias": "teapot",
+            "type": "PBR",
+            "albedo": [255, 255, 255],
+            "ao": 1.0,
+            "roughness": 0.5,
+            "metallic": 0.5,
             "shaderName": "pbr"
         }
     ]
