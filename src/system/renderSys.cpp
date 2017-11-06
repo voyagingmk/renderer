@@ -339,7 +339,7 @@ namespace renderer {
         ColorBufferRef& shadowBuf = colorBufferCom->dict["shadow"];
         m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "depthMap", 5, shadowBuf.depthTex);
 		shader.set1f("depthBias", gSettingCom->getValue("depthBias", 1.0f));
-		shader.set1i("enableSSAO", gSettingCom->getValue("enableSSAO", true));
+        shader.set1i("enableSSAO", true); // gSettingCom->getValue("enableSSAO", true));
 		shader.set1f("diskFactor", gSettingCom->getValue("diskFactor", 3.0f));
 		setViewport(std::make_tuple(0, 0, winWidth, winHeight));
 		clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
