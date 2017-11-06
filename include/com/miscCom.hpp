@@ -36,15 +36,15 @@ namespace renderer {
 			return (T)(getValue(k, defaultVal));
 		}
 
-		inline double get1d(std::string k, nlohmann::json defaultVal) {
+		inline double get1d(std::string k, nlohmann::json defaultVal = nullptr) {
 			return (double)(_getValue(k, defaultVal));
 		}
 
-		inline float get1f(std::string k, nlohmann::json defaultVal) {
+		inline float get1f(std::string k, nlohmann::json defaultVal = nullptr) {
 			return (float)(_getValue(k, defaultVal));
 		}
 
-		inline bool get1b(std::string k, nlohmann::json defaultVal) {
+		inline bool get1b(std::string k, nlohmann::json defaultVal = nullptr) {
 			return (bool)(_getValue(k, defaultVal));
 		}
 

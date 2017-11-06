@@ -41,6 +41,19 @@ namespace renderer {
 			ImGui::SliderFloat("diskFactor", &diskFactor, 0.0f, 30.0f);
 			gSettingCom->setValue("diskFactor", diskFactor);
 
+
+			float pointLightConstant = gSettingCom->getValue("pointLightConstant");
+			ImGui::SliderFloat("PointLightConstant", &pointLightConstant, 0.0001f, 1.0f);
+			gSettingCom->setValue("pointLightConstant", pointLightConstant);
+
+			float pointLightLinear = gSettingCom->getValue("pointLightLinear");
+			ImGui::SliderFloat("PointLightLinear", &pointLightLinear, 0.0f, 1.0f);
+			gSettingCom->setValue("pointLightLinear", pointLightLinear);
+
+			float pointLightQuad = gSettingCom->getValue("pointLightQuad");
+			ImGui::SliderFloat("PointLightQuad", &pointLightQuad, 0.0f, 1.0f);
+			gSettingCom->setValue("pointLightQuad", pointLightQuad);
+
 			bool enableSSAO = gSettingCom->getValue("enableSSAO");
 			ImGui::Checkbox("enableSSAO", &enableSSAO);
 			gSettingCom->setValue("enableSSAO", enableSSAO);

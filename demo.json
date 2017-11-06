@@ -29,11 +29,6 @@
             "fs": "light.fs"
         },
         {
-            "alias": "pbr",
-            "vs": "pbr.vs",
-            "fs": "pbr.fs"
-        }, 
-        {
             "alias": "test",
             "vs": "test.vs",
             "fs": "test.fs"

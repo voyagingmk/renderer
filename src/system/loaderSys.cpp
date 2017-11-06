@@ -55,6 +55,9 @@ namespace renderer {
         gSettingCom->setValue("depthBias", 2.0f);
 		gSettingCom->setValue("normalOffset", -1.3f);
 		gSettingCom->setValue("diskFactor", 3.0f);
+		gSettingCom->setValue("pointLightConstant", 1.0f);
+		gSettingCom->setValue("pointLightLinear", 0.0014f);
+		gSettingCom->setValue("pointLightQuad", 0.000007f);
 		gSettingCom->setValue("enableSSAO", json(true));
 		
 

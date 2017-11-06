@@ -357,9 +357,16 @@ namespace renderer {
             shader.set3f(("lights[" + std::to_string(i) + "].Position").c_str(), spatialDataCom->pos);
             shader.set3f(("lights[" + std::to_string(i) + "].Color").c_str(), lightCom->ambient);
             shader.set1f(("lights[" + std::to_string(i) + "].far_plane").c_str(), transCom->f);
-            shader.set1f(("lights[" + std::to_string(i) + "].Linear").c_str(), lightCom->linear);
-            shader.set1f(("lights[" + std::to_string(i) + "].Quadratic").c_str(), lightCom->quadratic);
-            shader.set1f(("lights[" + std::to_string(i) + "].constant").c_str(), lightCom->constant);
+			auto gSettingCom = m_objMgr->getSingletonComponent<GlobalSettingCom>();
+			float constant = gSettingCom->get1f("pointLightConstant");
+			float linear = gSettingCom->get1f("pointLightLinear");
+			float quadratic = gSettingCom->get1f("pointLightQuad");
+			shader.set1f(("lights[" + std::to_string(i) + "].constant").c_str(), constant);
+			shader.set1f(("lights[" + std::to_string(i) + "].Linear").c_str(), linear);
+			shader.set1f(("lights[" + std::to_string(i) + "].Quadratic").c_str(), quadratic);
+			//shader.set1f(("lights[" + std::to_string(i) + "].constant").c_str(), lightCom->constant);
+			//shader.set1f(("lights[" + std::to_string(i) + "].Linear").c_str(), lightCom->linear);
+            //shader.set1f(("lights[" + std::to_string(i) + "].Quadratic").c_str(), lightCom->quadratic);
             i++;
         }
         shader.set1i("LightNum", i);

@@ -27,6 +27,7 @@ struct Light {
     vec3 Position;
     vec3 Color;
     float far_plane;
+    float constant;
     float Linear;
     float Quadratic;
 };
@@ -150,9 +151,7 @@ void main()
         vec3 L = normalize(lights[i].Position - FragPos);
         vec3 H = normalize(V + L);
         float distance = length(lights[i].Position - FragPos);
-        float attenuation = 1.0 / (1.0 + lights[i].Linear * distance + lights[i].Quadratic * distance * distance);
-        // attenuation = 1.0 / (distance * distance);
-        attenuation = 1.0;
+        float attenuation = 1.0 / ( 1.0 + lights[i].Linear * distance + lights[i].Quadratic * distance * distance);
         vec3 radiance = lights[i].Color * attenuation;
 
         // Cook-Torrance BRDF
