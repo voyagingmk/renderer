@@ -31,15 +31,33 @@ namespace renderer {
 			return params[k];
 		}
 
-		nlohmann::json getValue(std::string k, nlohmann::json defaultVal) {
-			if (!hasKey(k)) {
-				params[k] = defaultVal;
-			}
-			return params[k];
+		template<class T>
+		T getValue(std::string k, nlohmann::json defaultVal) {
+			return (T)(getValue(k, defaultVal));
+		}
+
+		inline double get1d(std::string k, nlohmann::json defaultVal) {
+			return (double)(_getValue(k, defaultVal));
+		}
+
+		inline float get1f(std::string k, nlohmann::json defaultVal) {
+			return (float)(_getValue(k, defaultVal));
+		}
+
+		inline bool get1b(std::string k, nlohmann::json defaultVal) {
+			return (bool)(_getValue(k, defaultVal));
 		}
 
 		void setValue(std::string k, nlohmann::json val) {
 			params[k] = val;
+		}
+
+	private:
+		nlohmann::json _getValue(const std::string& k, const nlohmann::json& defaultVal) {
+			if (!hasKey(k)) {
+				params[k] = defaultVal;
+			}
+			return params[k];
 		}
 	};
 

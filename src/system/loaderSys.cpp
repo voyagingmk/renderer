@@ -55,13 +55,13 @@ namespace renderer {
         gSettingCom->setValue("depthBias", 2.0f);
 		gSettingCom->setValue("normalOffset", -1.3f);
 		gSettingCom->setValue("diskFactor", 3.0f);
-		gSettingCom->setValue("enableSSAO", true);
+		gSettingCom->setValue("enableSSAO", json(true));
 		
 
 
 		Object objCamera = m_objMgr->create();
 		auto com = objCamera.addComponent<PerspectiveCameraView>(45.0f, (float)winWidth / (float)winHeight, 0.1f, 10000.0f);
-        com->eye = Vector3dF(1008.0f, 150.0f, -43.0f);
+        com->eye = Vector3dF(-19.0, 4.0f, 12.0f);
         com->SetFrontVector({30.0f, 0.0f, -30.0f});
         loadTextures(assetsDir + texSubDir, config);
 		loadSkyboxes(assetsDir + skyboxSubDir, config);
@@ -168,9 +168,8 @@ namespace renderer {
 			Object obj = m_objMgr->create();
 			std::string filename = objInfo["model"];
 			auto spatial = objInfo["spatial"];
-            bool inverseNormal = objInfo["inverseNormal"].is_boolean() ? bool(objInfo["inverseNormal"]) : false;
 			loadSpatialData(obj, spatial);
-			loadMesh(config, obj, filename, inverseNormal);
+			loadMesh(config, obj, filename);
 			m_evtMgr->emit<CreateMeshBufferEvent>(obj);
             obj.addComponent<ReceiveLightTag>();
             obj.addComponent<MotionCom>();
@@ -267,7 +266,7 @@ namespace renderer {
         }
     }
 
-	void LoaderSystem::loadMesh(const json &config, Object obj, const std::string &filename,  bool inverseNormal)
+	void LoaderSystem::loadMesh(const json &config, Object obj, const std::string &filename)
 	{
 		ComponentHandle<Meshes> comMeshes = obj.addComponent<Meshes>();
 		Assimp::Importer importer;
@@ -309,11 +308,13 @@ namespace renderer {
 					n.z = aimesh->mNormals[i].z;
 				}
 				v.normal = n;
+				/*
 				if (aimesh->HasTangentsAndBitangents()) {
 					v.tangent.x = aimesh->mTangents[i].x;
 					v.tangent.y = aimesh->mTangents[i].y;
 					v.tangent.z = aimesh->mTangents[i].z;
 				}
+				*/
 				if (aimesh->HasTextureCoords(0)) {
 					Vector2dF uv;
 					// A vertex can contain up to 8 different texture coordinates. We thus make the assumption that we won't
@@ -337,7 +338,7 @@ namespace renderer {
 				mesh.indexes.push_back(idx0);
 				mesh.indexes.push_back(idx1);
 				mesh.indexes.push_back(idx2);
-			
+
 				Vertex& v1 = mesh.vertices[idx0];
 				Vertex& v2 = mesh.vertices[idx1];
 				Vertex& v3 = mesh.vertices[idx2];
@@ -357,7 +358,7 @@ namespace renderer {
 		}
 		std::cout << "[LoaderSystem] loadMesh:" << filename  << ", numMaterials:" << scene->mNumMaterials << std::endl;
 		string texSubDir = config["texSubDir"];
-		m_evtMgr->emit<LoadAiMaterialEvent>(obj, scene->mNumMaterials, scene->mMaterials, assetsDir + texSubDir, inverseNormal);
+		m_evtMgr->emit<LoadAiMaterialEvent>(obj, scene->mNumMaterials, scene->mMaterials, assetsDir + texSubDir);
 	}
 
 	void LoaderSystem::loadSpatialData(Object obj, const json &spatial) {

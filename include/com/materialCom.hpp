@@ -17,8 +17,7 @@ namespace renderer {
     class MaterialSettingComBase {
     public:
         MaterialSettingComBase(std::string shd):
-            shaderName(shd),
-			inverseNormal(false)
+            shaderName(shd)
         {}
         virtual ~MaterialSettingComBase() {}
         virtual MaterialType type() {
@@ -26,7 +25,6 @@ namespace renderer {
         }
         std::string shaderName;
         std::map<std::string, std::string> texList;
-		bool inverseNormal;
         
     };
     

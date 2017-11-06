@@ -170,53 +170,15 @@
     ],
     "object": [      
         {
-            "model": "room.obj",
-            "inverseNormal": true,
+            "model": "plane.obj",
             "spatial": [
                 [0, 0, 0],
-                [1000, 1000, 1000],
+                [100, 100, 100],
                 [0, 0, 0]
             ]
         },
         {
             "model": "teapot.obj",
-            "inverseNormal": false,
-            "spatial": [
-                [-8, 0, -8],
-                [1, 1, 1],
-                [0, 0, 0]
-            ]
-        },
-        {
-            "model": "teapot.obj",
-            "inverseNormal": false,
-            "spatial": [
-                [8, 0, -8],
-                [1, 1, 1],
-                [0, 0, 0]
-            ]
-        },
-        {
-            "model": "teapot.obj",
-            "inverseNormal": false,
-            "spatial": [
-                [-8, 0, 8],
-                [1, 1, 1],
-                [0, 0, 0]
-            ]
-        },
-        {
-            "model": "teapot.obj",
-            "inverseNormal": false,
-            "spatial": [
-                [8, 0, 8],
-                [1, 1, 1],
-                [0, 0, 0]
-            ]
-        },
-        {
-            "model": "teapot.obj",
-            "inverseNormal": false,
             "spatial": [
                 [0, 0, 0],
                 [1, 1, 1],
@@ -227,7 +189,6 @@
     "object4": [      
         {
             "model": "sponza.obj",
-            "inverseNormal": false,
             "spatial": [
                 [0, 0, 0],
                 [1, 1, 1],
@@ -239,7 +200,6 @@
     "object33": [      
         {
             "model": "room.obj",
-            "inverseNormal": true,
             "spatial": [
                 [0, 0, 0],
                 [100, 100, 100],
@@ -248,7 +208,6 @@
         },
         {
             "model": "ARROW.obj",
-            "inverseNormal": false,
             "spatial": [
                 [0, 0, 0],
                 [10, 10, 10],

@@ -18,7 +18,6 @@ uniform mat4 PV;
 uniform mat4 model;
 uniform mat4 normalMat;
 uniform bool hasNormalMap;
-uniform bool inverseNormal;
 
 void main()
 {
@@ -29,19 +28,15 @@ void main()
 	// mat3 normalMatrix = mat3(transpose(inverse(view * mat4(mat3(model)))));
 	mat3 normalMatrix = mat3(view * mat4(transpose(inverse(mat3(model)))));   
 	
-	vec3 n = normal;
-    if (inverseNormal) {
-    	n = -n;
-    }
-	Normal = normalMatrix * n;
+	Normal = normalMatrix * normal;
 	if (hasNormalMap) {
 		vec3 T = normalize(normalMatrix * tangent);
-		vec3 N = normalize(normalMatrix * n);
+		vec3 N = normalize(normalMatrix * normal);
 		T = normalize(T - dot(T, N) * N);
 		vec3 B = cross(T, N);
 		TBN = mat3(T, B, N);
 	}
-	// Normal = mat3(transpose(inverse(model))) * n;
+	// Normal = mat3(transpose(inverse(model))) * normal;
 	// We swap the y-axis by substracing our coordinates from 1.
 	TexCoord = vec2(texCoord.x, 1.0 - texCoord.y);
 }

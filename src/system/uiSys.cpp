@@ -42,7 +42,7 @@ namespace renderer {
 			gSettingCom->setValue("diskFactor", diskFactor);
 
 			bool enableSSAO = gSettingCom->getValue("enableSSAO");
-			ImGui::Checkbox("diskFactor", &enableSSAO);
+			ImGui::Checkbox("enableSSAO", &enableSSAO);
 			gSettingCom->setValue("enableSSAO", enableSSAO);
 
 			auto pos = cameraView->GetCameraPosition();
