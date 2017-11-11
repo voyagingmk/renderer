@@ -60,6 +60,8 @@ namespace renderer {
 		gSettingCom->setValue("pointLightQuad", 0.000007f);
 		gSettingCom->setValue("enableSSAO", json(true));
 		gSettingCom->setValue("enableSMAA", json(true));
+		gSettingCom->setValue("enableToneMapping", json(true));
+		gSettingCom->setValue("enableGamma", json(true));
 
 
 		Object objCamera = m_objMgr->create();

@@ -117,5 +117,4 @@ float4 SMAANeighborhoodBlendingPS(float2 texcoord,
 
 void main() {
     FragColor = SMAANeighborhoodBlendingPS(TexCoord, Offset, colorTex, blendTex);
-    FragColor.rgb = pow(FragColor.rgb, vec3(1.0 / 2.2));
 }

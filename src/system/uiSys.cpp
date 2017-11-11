@@ -55,13 +55,20 @@ namespace renderer {
 			gSettingCom->setValue("pointLightQuad", pointLightQuad);
 
 			bool enableSSAO = gSettingCom->getValue("enableSSAO");
-			ImGui::Checkbox("enableSSAO", &enableSSAO);
+			ImGui::Checkbox("SSAO", &enableSSAO);
 			gSettingCom->setValue("enableSSAO", enableSSAO);
 		
 			bool enableSMAA = gSettingCom->getValue("enableSMAA");
-			ImGui::Checkbox("enableSMAA", &enableSMAA);
+			ImGui::Checkbox("SMAA", &enableSMAA);
 			gSettingCom->setValue("enableSMAA", enableSMAA);
 
+			bool enableToneMapping = gSettingCom->getValue("enableToneMapping");
+			ImGui::Checkbox("ToneMapping", &enableToneMapping);
+			gSettingCom->setValue("enableToneMapping", enableToneMapping);
+
+			bool enableGamma = gSettingCom->getValue("enableGamma");
+			ImGui::Checkbox("GammaCorrect", &enableGamma);
+			gSettingCom->setValue("enableGamma", enableGamma);
 
 			auto pos = cameraView->GetCameraPosition();
 			ImGui::Text("Camera: %.2f %.2f %.2f", pos.x, pos.y, pos.z);

@@ -6,24 +6,27 @@ in vec2 TexCoord;
 
 uniform sampler2D texture1;
 uniform bool noGamma;
+uniform bool noToneMapping;
 
 vec4 Inversion();
 vec4 Grayscale();
 vec4 Sharpen();
 vec4 Blur();
 vec4 EdgeDetection();
+vec3 ACESToneMapping(vec3 color, float adapted_lum);
 
 void main()
 { 
     vec3 c = vec3(texture(texture1, TexCoord).rgb);
     color = vec4(c, 1.0);
-    // vec3 c = vec3(texture(texture1, TexCoord).rgb);
-    // color = vec4(c, 1.0);
-     // reinhard tone mapping
+
+    // reinhard tone mapping
     //vec3 mapped = color.rgb / (color.rgb + vec3(1.0));
-     
-    // gamma correction
-    //color.rgb = pow(mapped, vec3(1.0 / 2.2));
+
+    if (!noToneMapping) {
+        color.rgb = ACESToneMapping(color.rgb, 1.0);
+    }
+
     if (!noGamma) {
         color.rgb = pow(color.rgb, vec3(1.0 / 2.2));
     }
@@ -32,6 +35,18 @@ void main()
     // color = Sharpen();
     // color = Blur();
     // color = EdgeDetection();
+}
+
+
+vec3 ACESToneMapping(vec3 color, float adapted_lum) {
+	const float A = 2.51f;
+	const float B = 0.03f;
+	const float C = 2.43f;
+	const float D = 0.59f;
+	const float E = 0.14f;
+
+	color *= adapted_lum;
+	return (color * (A * color + B)) / (color * (C * color + D) + E);
 }
 
 

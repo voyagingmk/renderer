@@ -108,13 +108,16 @@ namespace renderer {
 		clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
 			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		setViewport(screenViewport);
-		renderColorBuffer("core", context->width, context->height, true);
+		renderColorBuffer("core", context->width, context->height, true, true);
 		evtMgr.emit<CopyGBufferDepth2ColorBufferEvent>("main", "final");// 画skybox需要GBuffer的深度信息
 		// skybox pass
 		CheckGLError;
 		renderSkybox("", objCamera, screenViewport);
 		renderLightObjects("", objCamera, screenViewport);
 		evtMgr.emit<UnuseColorBufferEvent>("final");
+
+		bool noToneMapping = !gSettingCom->get1b("enableToneMapping");
+		bool noGamma = !gSettingCom->get1b("enableGamma");
 
 		if (gSettingCom->get1b("enableSMAA") == true) {
 			// debug edge detect
@@ -167,6 +170,7 @@ namespace renderer {
 				evtMgr.emit<UnuseColorBufferEvent>("weight");
 			}
 			{
+				evtMgr.emit<UseColorBufferEvent>("core");
 				Shader smaaBlending = getShader("smaaBlending");
 				smaaBlending.use();
 				smaaBlending.set2f("imgSize", context->width, context->height);
@@ -177,9 +181,11 @@ namespace renderer {
 					GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 				setViewport(screenViewport);
 				renderQuad();
+				evtMgr.emit<UnuseColorBufferEvent>("core");
+				renderColorBuffer("core", context->width, context->height, noGamma, noToneMapping);
 			}
 		} else {
-			renderColorBuffer("final", context->width, context->height);
+			renderColorBuffer("final", context->width, context->height, noGamma, noToneMapping);
 		}
 		// renderColorBuffer("core", context->width, context->height);
 		// renderGBufferDebug("main", context->width, context->height);
@@ -405,10 +411,11 @@ namespace renderer {
 	}
     
     
-    void RenderSystem::renderColorBuffer(std::string colorBufferAliasName, size_t winWidth, size_t winHeight, bool noGamma) {
+    void RenderSystem::renderColorBuffer(std::string colorBufferAliasName, size_t winWidth, size_t winHeight, bool noGamma, bool noToneMapping) {
         Shader shader = getShader("screen");
         shader.use();
 		shader.set1b("noGamma", noGamma);
+		shader.set1b("noToneMapping", noToneMapping);
         auto colorBufferCom = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
         ColorBufferRef& buf = colorBufferCom->dict[colorBufferAliasName];
         clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
