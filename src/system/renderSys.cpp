@@ -73,7 +73,6 @@ namespace renderer {
 		pointShadowDepthShader.setMatrixes4f("lightPVs", pointLightTrans->lightPVs);
         float far_plane = pointLightTrans->f;
 		auto lightPos = pointLightTrans.object().component<SpatialData>()->pos;
-		lightPos.debug();
 		pointShadowDepthShader.set1f("far_plane", far_plane);
         pointShadowDepthShader.set3f("lightPos", lightPos);
 
