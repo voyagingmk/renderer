@@ -6,7 +6,8 @@ layout (location = 2) out vec4 gAlbedo;
 layout (location = 3) out vec4 gPBR;
 
 in vec2 TexCoord;
-in vec3 FragPos;
+in vec3 WorldPos;
+//in vec3 FragPos;
 in vec3 Normal;
 in mat3 TBN;
 
@@ -31,7 +32,8 @@ uniform bool hasSpecularMap;
 
 void main()
 {    
-    gPosition = FragPos;
+    //gPosition = FragPos;
+    gPosition = WorldPos;
     vec2 texcoord = vec2(TexCoord.x, TexCoord.y);
     if (hasMaskMap) {
         float alpha = texture(maskMap, texcoord).r;

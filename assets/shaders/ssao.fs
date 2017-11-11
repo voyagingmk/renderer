@@ -21,10 +21,17 @@ uniform mat4 view;
 uniform mat4 proj;
 
 vec3 sampleGBufferPos(vec2 coord) {
-    vec3 p = texture(gPosition, coord).xyz;
-    // vec4 p = view * vec4(texture(gPosition, coord).xyz, 1.0);
+    // vec3 p = texture(gPosition, coord).xyz;
+    vec4 p = view * vec4(texture(gPosition, coord).xyz, 1.0);
     return p.xyz;
 }
+
+vec3 sampleGBufferNormal(vec2 coord) {
+    // vec3 p = texture(gNormal, coord).xyz;
+    vec3 p = mat3(view) * texture(gNormal, coord).xyz;
+    return p;
+}
+
 
 void main()
 {    
@@ -34,7 +41,7 @@ void main()
     // get input for SSAO algorithm
     vec3 fragPos = sampleGBufferPos(TexCoord);
     // vec3 fragPos = texture(gPosition, TexCoord).xyz;
-    vec3 normal = texture(gNormal, TexCoord).xyz;
+    vec3 normal = sampleGBufferNormal(TexCoord);
     vec3 randomVec = normalize(texture(texNoise, TexCoord * noiseScale).xyz);
     // create TBN change-of-basis matrix: from tangent-space to view-space
     vec3 tangent = normalize(randomVec - normal * dot(randomVec, normal));
@@ -56,7 +63,6 @@ void main()
         
         // get samplePos depth
         float sampleDepth = sampleGBufferPos(offset.xy).z;
-        // float sampleDepth = texture(gPosition, offset.xy).z; // get depth value of kernel samplePos
 
         // range check & accumulate
         float rangeCheck = smoothstep(0.0, 1.0, radius / abs(fragPos.z - sampleDepth));

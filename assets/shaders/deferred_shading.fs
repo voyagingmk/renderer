@@ -59,7 +59,6 @@ float GeometrySchlickGGX(float NdotV, float roughness)
 {
     float r = (roughness + 1.0);
     float k = (r*r) / 8.0;
-
     float nom   = NdotV;
     float denom = NdotV * (1.0 - k) + k;
 
@@ -70,8 +69,8 @@ float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness)
 {
     float NdotV = max(dot(N, V), 0.0);
     float NdotL = max(dot(N, L), 0.0);
-    float ggx2 = GeometrySchlickGGX(NdotV, roughness);
-    float ggx1 = GeometrySchlickGGX(NdotL, roughness);
+    float ggx1 = GeometrySchlickGGX(NdotV, roughness);
+    float ggx2 = GeometrySchlickGGX(NdotL, roughness);
 
     return ggx1 * ggx2;
 }
@@ -93,10 +92,10 @@ vec3 gridSamplingDisk[20] = vec3[]
 );
 
 
-float ShadowCalculation(vec3 fragPos, Light light)
+float ShadowCalculation(vec3 worldPos, Light light)
 {
     // Get vector between fragment position and light position
-    vec3 fragToLight = fragPos - light.Position;
+    vec3 fragToLight = worldPos - light.Position;
     // Use the fragment to light vector to sample from the depth map    
     // float closestDepth = texture(depthMap, fragToLight).r;
     // It is currently in linear range between [0,1]. Let's re-transform it back to original depth value
@@ -105,7 +104,7 @@ float ShadowCalculation(vec3 fragPos, Light light)
     float currentDepth = length(fragToLight);
     float shadow = 0.0;
     int samples = 20;
-    float viewDistance = length(viewPos - fragPos);
+    float viewDistance = length(viewPos - worldPos);
     float diskRadius = (1.0 + (viewDistance / light.far_plane)) / diskFactor;
     float closestDepth;
     for(int i = 0; i < samples; ++i)
@@ -120,11 +119,41 @@ float ShadowCalculation(vec3 fragPos, Light light)
 }
 
 
+vec4 BlinnPhong(vec3 albedo, vec3 worldPos, vec3 lightPos, vec3 normal, bool blinn) {
+    vec3 color = albedo;
+    // ambient
+    vec3 ambient = 0.05 * color;
+    // diffuse
+    vec3 lightDir = normalize(lightPos - worldPos);
+    normal = normalize(normal);
+    float diff = max(dot(lightDir, normal), 0.0);
+    vec3 diffuse = diff * color;
+    // specular
+    vec3 viewDir = normalize(viewPos - worldPos);
+    vec3 reflectDir = reflect(-lightDir, normal);
+    float spec = 0.0;
+    if(blinn)
+    {
+        vec3 halfwayDir = normalize(lightDir + viewDir);  
+        spec = pow(max(dot(normal, halfwayDir), 0.0), 32.0);
+    }
+    else
+    {
+        vec3 reflectDir = reflect(-lightDir, normal);
+        spec = pow(max(dot(viewDir, reflectDir), 0.0), 8.0);
+    }
+    vec3 specular = vec3(0.3) * spec; // assuming bright white light color
+    vec4 fragColor = vec4(ambient + diffuse + specular, 1.0);
+    return fragColor;
+}
+
 void main()
 {		
      // retrieve data from gbuffer
-    vec3 FragPos = (viewInv * vec4(texture(gPosition, TexCoord).rgb, 1.0)).xyz;
-    vec3 Normal = (viewInv * vec4(normalize(texture(gNormal, TexCoord).rgb), 0.0)).xyz;
+   // vec3 FragPos = (viewInv * vec4(texture(gPosition, TexCoord).rgb, 1.0)).xyz;
+   // vec3 Normal = mat3(viewInv) * normalize(texture(gNormal, TexCoord).rgb);
+    vec3 WorldPos = texture(gPosition, TexCoord).rgb;
+    vec3 Normal = texture(gNormal, TexCoord).rgb;
     float AmbientOcclusion = texture(ssao, TexCoord).r;
     Material material;
     material.albedo = texture(gAlbedo, TexCoord).rgb;
@@ -134,9 +163,8 @@ void main()
     material.specular = pbrData.b;
     material.ao = pbrData.a;
 
-    vec3 N = normalize(Normal);
-    vec3 V = normalize(viewPos - FragPos);
-    vec3 R = reflect(-V, N); 
+   vec3 N = normalize(Normal);
+    vec3 V = normalize(viewPos - WorldPos);
 
     // calculate reflectance at normal incidence; if dia-electric (like plastic) use F0 
     // of 0.04 and if it's a metal, use their albedo color as F0 (metallic workflow)    
@@ -148,9 +176,9 @@ void main()
     for(int i = 0; i < LightNum; ++i) 
     {
         // calculate per-light radiance
-        vec3 L = normalize(lights[i].Position - FragPos);
+        vec3 L = normalize(lights[i].Position - WorldPos);
         vec3 H = normalize(V + L);
-        float distance = length(lights[i].Position - FragPos);
+        float distance = length(lights[i].Position - WorldPos);
         float attenuation = 1.0 / ( 1.0 + lights[i].Linear * distance + lights[i].Quadratic * distance * distance);
         vec3 radiance = lights[i].Color * attenuation;
 
@@ -164,8 +192,7 @@ void main()
         vec3 brdf = nominator / denominator;
         
         // kS is equal to Fresnel
-        vec3 kS = F;
-        kS = kS * material.specular;
+        vec3 kS = F * material.specular;
         // for energy conservation, the diffuse and specular light can't
         // be above 1.0 (unless the surface emits light); to preserve this
         // relationship the diffuse component (kD) should equal 1.0 - kS.
@@ -182,8 +209,7 @@ void main()
         Lo += (kD * material.albedo / PI + brdf) * radiance * NdotL;  // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
     }   
     
-    float shadow = ShadowCalculation(FragPos, lights[0]);
-
+    float shadow = ShadowCalculation(WorldPos, lights[0]);
     // ambient lighting (note that the next IBL tutorial will replace 
     // this ambient lighting with environment lighting).
     vec3 ambient = vec3(0.03) * material.albedo * material.ao;
@@ -201,5 +227,8 @@ void main()
     // 0.5**(1/2.2) = 0.729（变亮)，就是所谓sRGB，not gamma-corrected，是为了直接输出到显示器做的encoding
     // 所以shader里需要手动做一次 pow(1/2.2)
     FragColor = vec4(color, 1.0);
+    // FragColor = BlinnPhong(material.albedo, WorldPos, lights[0].Position, vec3(0, 1, 0), true);
+    // FragColor = vec4(normalize(Normal), 1.0);
+    // FragColor = vec4(0.5 * (normalize(Normal) + 1.0), 1.0);
     // FragColor.rgb = pow(FragColor.rgb, vec3(1.0 / 2.2));
 }
