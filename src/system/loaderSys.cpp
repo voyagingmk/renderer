@@ -59,7 +59,7 @@ namespace renderer {
 		gSettingCom->setValue("pointLightLinear", 0.0014f);
 		gSettingCom->setValue("pointLightQuad", 0.000007f);
 		gSettingCom->setValue("enableSSAO", json(true));
-		
+		gSettingCom->setValue("enableSMAA", json(true));
 
 
 		Object objCamera = m_objMgr->create();
@@ -97,17 +97,17 @@ namespace renderer {
             winWidth, winHeight,
 			GL_RGBA16F, GL_RGBA, GL_FLOAT,
             BufType::RBO, 0, GL_LINEAR, "core");
-        /*
+        
         m_evtMgr->emit<CreateColorBufferEvent>(
             winWidth, winHeight,
             GL_RGBA8, GL_RGBA, GL_FLOAT,
             BufType::None, 0, GL_LINEAR, "final");
-        */
+        
         m_evtMgr->emit<CreateGBufferEvent>(winWidth, winHeight, "main");
         
         m_evtMgr->emit<CreateNoiseTextureEvent>("ssaoNoise");
       
-        m_evtMgr->emit<CreateDpethBufferEvent>("shadow", "pointDepth", DepthTexType::CubeMap, 2048);
+        m_evtMgr->emit<CreateDpethBufferEvent>("shadow", "pointDepth", DepthTexType::CubeMap, 1024);
 
 		CreateGlobalQuadObject();
 

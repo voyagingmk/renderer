@@ -23,12 +23,12 @@ using namespace std;
 
 
 namespace renderer {
-    void RenderSystem::init(ObjectManager &objMgr, EventManager &evtMgr) {
-        printf("RenderSystem init\n");
+	void RenderSystem::init(ObjectManager &objMgr, EventManager &evtMgr) {
+		printf("RenderSystem init\n");
 		evtMgr.on<RenderSceneEvent>(*this);
 		evtMgr.on<CameraMoveEvent>(*this);
-    }
-    
+	}
+
 	// renderpipe loop, could move to another system
 	void RenderSystem::update(ObjectManager &objMgr, EventManager &evtMgr, float dt) {
 		auto context = objMgr.getSingletonComponent<SDLContext>();
@@ -45,9 +45,9 @@ namespace renderer {
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
 
-        // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		/*----- first-pass: deferred rendering-----*/
-		
+
 		//  geometry pass
 		evtMgr.emit<UseGBufferEvent>("main");
 		Shader gBufferShader = getShader("gBuffer");
@@ -58,27 +58,27 @@ namespace renderer {
 			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT,
 			&gBufferShader);
 		evtMgr.emit<UnuseGBufferEvent>("main");
-        // glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		// glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 		// ssao pass
-        ssaoPass(objCamera, "main", "ssao", context->width, context->height);
+		ssaoPass(objCamera, "main", "ssao", context->width, context->height);
 		ssaoBlurPass(objCamera, "ssao", "ssaoBlur", context->width, context->height);
 
 		// shadow cubemap pass
 		evtMgr.emit<UseColorBufferEvent>("shadow");
-		CheckGLError; 
+		CheckGLError;
 		Shader pointShadowDepthShader = getShader("pointShadowDepth");
 		pointShadowDepthShader.use();
 		auto pointLightTrans = m_objMgr->getSingletonComponent<PointLightTransform>();
 		pointShadowDepthShader.setMatrixes4f("lightPVs", pointLightTrans->lightPVs);
-        float far_plane = pointLightTrans->f;
+		float far_plane = pointLightTrans->f;
 		auto lightPos = pointLightTrans.object().component<SpatialData>()->pos;
 		pointShadowDepthShader.set1f("far_plane", far_plane);
-        pointShadowDepthShader.set3f("lightPos", lightPos);
+		pointShadowDepthShader.set3f("lightPos", lightPos);
 
 		pointShadowDepthShader.set1f("normalOffset", gSettingCom->get1f("normalOffset", -1.3f));
-        CheckGLError;
-        auto colorBufferCom = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
+		CheckGLError;
+		auto colorBufferCom = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
 		ColorBufferRef& buf = colorBufferCom->dict["shadow"];
 		glCullFace(GL_FRONT);
 		evtMgr.emit<RenderSceneEvent>(
@@ -89,81 +89,84 @@ namespace renderer {
 			&pointShadowDepthShader);
 		evtMgr.emit<UnuseColorBufferEvent>("shadow");
 		glCullFace(GL_BACK);
-        CheckGLError;
-        
+		CheckGLError;
+
 		// lighting pass
-        deferredLightingPass("core", objCamera, "main", context->width, context->height);
-        CheckGLError;
+		deferredLightingPass("core", objCamera, "main", context->width, context->height);
+		CheckGLError;
 
-		 //setViewport(std::make_tuple(0, 0, context->width, context->height));
-		// clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
-		// GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-        
-		/*----- first-pass end -----*/
+		//setViewport(std::make_tuple(0, 0, context->width, context->height));
+	   // clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
+	   // GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-        ColorBufferRef& coreBuf = colorBufferCom->dict["core"];
-        
-		// debug edge detect
-        {
-            evtMgr.emit<UseColorBufferEvent>("edge");
-            Shader edgeDetect = getShader("smaaEdgeDetect");
-            edgeDetect.use();
-            edgeDetect.set2f("imgSize", context->width, context->height);
-            clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
-                GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-            setViewport(screenViewport);
-            m_evtMgr->emit<ActiveTextureByIDEvent>(edgeDetect, "colorTex", 0, coreBuf.tex);
-            renderQuad();
-            evtMgr.emit<UnuseColorBufferEvent>("edge");
-        }
-        
-        static unsigned int area_tex = 0;
-        static unsigned int search_tex = 0;
-        if (area_tex == 0) {
-            glGenTextures(1, &area_tex);
-            glBindTexture( GL_TEXTURE_2D, area_tex );
-            glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
-            glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
-            glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-            glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-            glTexImage2D( GL_TEXTURE_2D, 0, GL_RG8, ( GLsizei )AREATEX_WIDTH, ( GLsizei )AREATEX_HEIGHT, 0, GL_RG, GL_UNSIGNED_BYTE, areaTexBytes );
-        }
-        if (search_tex == 0) {
-            glGenTextures( 1, &search_tex );
-            glBindTexture( GL_TEXTURE_2D, search_tex );
-            glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
-            glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
-            glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-            glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-            glTexImage2D( GL_TEXTURE_2D, 0, GL_R8, ( GLsizei )SEARCHTEX_WIDTH, ( GLsizei )SEARCHTEX_HEIGHT, 0, GL_RED, GL_UNSIGNED_BYTE, searchTexBytes );
-        }
-        {
-            evtMgr.emit<UseColorBufferEvent>("weight");
-            Shader smaaWeight = getShader("smaaWeight");
-            smaaWeight.use();
-            smaaWeight.set2f("imgSize", context->width, context->height);
-            ColorBufferRef& edgeBuf = colorBufferCom->dict["edge"];
-            clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
-                      GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-            setViewport(screenViewport);
-            m_evtMgr->emit<ActiveTextureByIDEvent>(smaaWeight, "edgesTex", 0, edgeBuf.tex);
-            m_evtMgr->emit<ActiveTextureByIDEvent>(smaaWeight, "areaTex", 1, area_tex);
-            m_evtMgr->emit<ActiveTextureByIDEvent>(smaaWeight, "searchTex", 2, search_tex);
-            renderQuad();
-            evtMgr.emit<UnuseColorBufferEvent>("weight");
-        }
-        {
-            Shader smaa = getShader("smaaBlending");
-            smaa.use();
-            smaa.set2f("imgSize", context->width, context->height);
-            ColorBufferRef& weightBuf = colorBufferCom->dict["weight"];
-            m_evtMgr->emit<ActiveTextureByIDEvent>(smaa, "colorTex", 0, coreBuf.tex);
-            m_evtMgr->emit<ActiveTextureByIDEvent>(smaa, "blendTex", 1, weightBuf.tex);
-            clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
-                GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-            setViewport(screenViewport);
-            renderQuad();
-        }
+	   /*----- first-pass end -----*/
+
+		ColorBufferRef& coreBuf = colorBufferCom->dict["core"];
+
+		if (gSettingCom->get1b("enableSMAA") == true) {
+			// debug edge detect
+			{
+				evtMgr.emit<UseColorBufferEvent>("edge");
+				Shader edgeDetect = getShader("smaaEdgeDetect");
+				edgeDetect.use();
+				edgeDetect.set2f("imgSize", context->width, context->height);
+				clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
+					GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+				setViewport(screenViewport);
+				m_evtMgr->emit<ActiveTextureByIDEvent>(edgeDetect, "colorTex", 0, coreBuf.tex);
+				renderQuad();
+				evtMgr.emit<UnuseColorBufferEvent>("edge");
+			}
+
+			static unsigned int area_tex = 0;
+			static unsigned int search_tex = 0;
+			if (area_tex == 0) {
+				glGenTextures(1, &area_tex);
+				glBindTexture(GL_TEXTURE_2D, area_tex);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RG8, (GLsizei)AREATEX_WIDTH, (GLsizei)AREATEX_HEIGHT, 0, GL_RG, GL_UNSIGNED_BYTE, areaTexBytes);
+			}
+			if (search_tex == 0) {
+				glGenTextures(1, &search_tex);
+				glBindTexture(GL_TEXTURE_2D, search_tex);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, (GLsizei)SEARCHTEX_WIDTH, (GLsizei)SEARCHTEX_HEIGHT, 0, GL_RED, GL_UNSIGNED_BYTE, searchTexBytes);
+			}
+			{
+				evtMgr.emit<UseColorBufferEvent>("weight");
+				Shader smaaWeight = getShader("smaaWeight");
+				smaaWeight.use();
+				smaaWeight.set2f("imgSize", context->width, context->height);
+				ColorBufferRef& edgeBuf = colorBufferCom->dict["edge"];
+				clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
+					GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+				setViewport(screenViewport);
+				m_evtMgr->emit<ActiveTextureByIDEvent>(smaaWeight, "edgesTex", 0, edgeBuf.tex);
+				m_evtMgr->emit<ActiveTextureByIDEvent>(smaaWeight, "areaTex", 1, area_tex);
+				m_evtMgr->emit<ActiveTextureByIDEvent>(smaaWeight, "searchTex", 2, search_tex);
+				renderQuad();
+				evtMgr.emit<UnuseColorBufferEvent>("weight");
+			}
+			{
+				Shader smaaBlending = getShader("smaaBlending");
+				smaaBlending.use();
+				smaaBlending.set2f("imgSize", context->width, context->height);
+				ColorBufferRef& weightBuf = colorBufferCom->dict["weight"];
+				m_evtMgr->emit<ActiveTextureByIDEvent>(smaaBlending, "colorTex", 0, coreBuf.tex);
+				m_evtMgr->emit<ActiveTextureByIDEvent>(smaaBlending, "blendTex", 1, weightBuf.tex);
+				setViewport(screenViewport);
+				renderQuad();
+			}
+		} else {
+			cout << "no smaa" << endl;
+			renderColorBuffer("core", context->width, context->height);
+		}
 		
 		// skybox pass
 		evtMgr.emit<CopyGBufferDepth2ColorBufferEvent>("main", "");// 画skybox需要GBuffer的深度信息
@@ -171,9 +174,9 @@ namespace renderer {
 		renderSkybox("", objCamera, screenViewport);
 		renderLightObjects("", objCamera, screenViewport);
 
-		// renderColorBufferDebug("core", context->width, context->height);
+		// renderColorBuffer("core", context->width, context->height);
 		// renderGBufferDebug("main", context->width, context->height);
-		// renderColorBufferDebug("ssaoBlur", context->width, context->height);
+		// renderColorBuffer("ssaoBlur", context->width, context->height);
 		CheckGLError;
 		m_evtMgr->emit<DrawUIEvent>();
 		SDL_GL_SwapWindow(context->win);
@@ -395,7 +398,7 @@ namespace renderer {
 	}
     
     
-    void RenderSystem::renderColorBufferDebug(std::string colorBufferAliasName, size_t winWidth, size_t winHeight) {
+    void RenderSystem::renderColorBuffer(std::string colorBufferAliasName, size_t winWidth, size_t winHeight) {
         Shader shader = getShader("screen");
         shader.use();
         auto colorBufferCom = m_objMgr->getSingletonComponent<ColorBufferDictCom>();

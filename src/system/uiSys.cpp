@@ -57,6 +57,11 @@ namespace renderer {
 			bool enableSSAO = gSettingCom->getValue("enableSSAO");
 			ImGui::Checkbox("enableSSAO", &enableSSAO);
 			gSettingCom->setValue("enableSSAO", enableSSAO);
+		
+			bool enableSMAA = gSettingCom->getValue("enableSMAA");
+			ImGui::Checkbox("enableSMAA", &enableSMAA);
+			gSettingCom->setValue("enableSMAA", enableSMAA);
+
 
 			auto pos = cameraView->GetCameraPosition();
 			ImGui::Text("Camera: %.2f %.2f %.2f", pos.x, pos.y, pos.z);
