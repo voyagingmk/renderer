@@ -138,7 +138,7 @@
             "type": "PointLight",
             "far_plane": 10000,
             "spatial": [
-                [-20.0,  10.0, -20.0],
+                [10.0,  10.0, 0.0],
                 [1, 1, 1],
                 [1, 0, 0, 0]
             ],
@@ -181,7 +181,7 @@
             ]
         }
     ],
-    "object4": [      
+    "object9": [      
         {
             "model": "sponza.obj",
             "spatial": [

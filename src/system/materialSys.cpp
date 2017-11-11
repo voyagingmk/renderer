@@ -34,7 +34,7 @@ namespace renderer {
 					", type: " << t << ", name: "<< name.data <<std::endl;
 			}*/
 			MaterialSettingID id = ++com->idCount;
-			MaterialSettingComBase* setting = new MaterialPBRSettingCom("", 0.5, 0.5);
+			MaterialSettingComBase* setting = new MaterialPBRSettingCom("", 0.4, 0.5);
 			if (pMaterial->GetTextureCount(aiTextureType_DIFFUSE) > 0) {
 				aiString Path;
 				if (pMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS) {

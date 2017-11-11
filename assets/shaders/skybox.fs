@@ -8,5 +8,4 @@ uniform samplerCube skybox;
 void main()
 {    
     color = texture(skybox, TexCoord);
-    color.rgb = pow(color.rgb, vec3(1.0 / 2.2));
 }
