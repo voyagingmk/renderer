@@ -162,6 +162,14 @@ namespace renderer {
             generateOuterBoxMeshes(*com);
             m_evtMgr->emit<AddPointLightEvent>(obj);
 			m_evtMgr->emit<CreateMeshBufferEvent>(obj);
+			obj.addComponent<MotionCom>();
+			ActionData data;
+			data.repeat = -1;
+			//data.actions.push_back(std::make_shared<MoveByAction>(0.5f, Vector3dF(-1.0f, 0.0f, 0.0f)));
+			//data.actions.push_back(std::make_shared<MoveByAction>(0.5f, Vector3dF(1.0f, 0.0f, 0.0f)));
+			data.actions.push_back(std::make_shared<MoveByAction>(2.0f, Vector3dF{ 40.0f, 0.0f, 40.0f }));
+			data.actions.push_back(std::make_shared<MoveByAction>(2.0f, Vector3dF{ -40.0f, 0.0f, -40.0f }));
+			m_evtMgr->emit<AddActionEvent>(obj, "move", data);
 		}
 	}
 

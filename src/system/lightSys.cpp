@@ -9,6 +9,7 @@ namespace renderer {
 		printf("LightSystem init\n");
         evtMgr.on<UpdatePointLightEvent>(*this);
         evtMgr.on<AddPointLightEvent>(*this);
+		evtMgr.on<UpdateSpatialDataEvent>(*this);
     }
     
     void LightSystem::update(ObjectManager &objMgr, EventManager &evtMgr, float dt) {
@@ -22,6 +23,12 @@ namespace renderer {
     void LightSystem::receive(const AddPointLightEvent &evt) {  
 		updatePointLight(evt.obj);
     }
+
+	void LightSystem::receive(const UpdateSpatialDataEvent &evt) {
+		if (evt.obj.hasComponent<PointLightTransform>()) {
+			updatePointLight(evt.obj);
+		}
+	}
 
 	void LightSystem::updatePointLight(Object obj) {
 		auto spatialData = obj.component<SpatialData>();

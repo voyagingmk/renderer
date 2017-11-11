@@ -4,6 +4,7 @@
 #include "base.hpp"
 #include "ecs/ecs.hpp"
 #include "event/lightEvent.hpp"
+#include "event/spatialEvent.hpp"
 #include "com/lightCom.hpp"
 
 using namespace ecs;
@@ -19,6 +20,8 @@ namespace renderer {
         void receive(const UpdatePointLightEvent &evt);	
         
         void receive(const AddPointLightEvent &evt);
+
+		void receive(const UpdateSpatialDataEvent &evt);
 
 		void updatePointLight(Object obj);
     };     

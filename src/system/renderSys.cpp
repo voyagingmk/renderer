@@ -72,8 +72,11 @@ namespace renderer {
 		auto pointLightTrans = m_objMgr->getSingletonComponent<PointLightTransform>();
 		pointShadowDepthShader.setMatrixes4f("lightPVs", pointLightTrans->lightPVs);
         float far_plane = pointLightTrans->f;
+		auto lightPos = pointLightTrans.object().component<SpatialData>()->pos;
+		lightPos.debug();
 		pointShadowDepthShader.set1f("far_plane", far_plane);
-        pointShadowDepthShader.set3f("lightPos", pointLightTrans.object().component<SpatialData>()->pos);
+        pointShadowDepthShader.set3f("lightPos", lightPos);
+
 		pointShadowDepthShader.set1f("normalOffset", gSettingCom->get1f("normalOffset", -1.3f));
         CheckGLError;
         auto colorBufferCom = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
