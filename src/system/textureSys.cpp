@@ -128,19 +128,21 @@ namespace renderer {
 													// Set our texture parameters
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, channels == 4 ? GL_CLAMP_TO_EDGE : GL_REPEAT);	// Set texture wrapping to GL_REPEAT
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, channels == 4 ? GL_CLAMP_TO_EDGE : GL_REPEAT);
-		// Set texture filtering
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-		auto format = GL_RGB;
-		auto formatWithAlpha = GL_RGBA;
 		if (evt.toLinear) {
-			format = GL_SRGB;
-			formatWithAlpha = GL_SRGB_ALPHA;
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		}
+		GLenum format;
+		if (channels == 1)
+			format = GL_RED;
+		else if (channels == 3)
+			format = GL_RGB;
+		else if (channels == 4)
+			format = GL_RGBA;
+		auto formatWithAlpha = GL_RGBA;
 
-		glTexImage2D(GL_TEXTURE_2D, 0, channels == 4 ? formatWithAlpha : format,
-			width, height, 0, channels == 4 ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, image);
+		glTexImage2D(GL_TEXTURE_2D, 0,format,
+			width, height, 0, format, GL_UNSIGNED_BYTE, image);
 		glGenerateMipmap(GL_TEXTURE_2D);
 		SOIL_free_image_data(image);
 		glBindTexture(GL_TEXTURE_2D, 0); // Unbind texture when done, so we won't accidentily mess up our texture.
