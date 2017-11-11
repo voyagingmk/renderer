@@ -102,6 +102,19 @@ namespace renderer {
 	   /*----- first-pass end -----*/
 
 		ColorBufferRef& coreBuf = colorBufferCom->dict["core"];
+		ColorBufferRef& finalBuf = colorBufferCom->dict["final"];
+
+		evtMgr.emit<UseColorBufferEvent>("final");
+		clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
+			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+		setViewport(screenViewport);
+		renderColorBuffer("core", context->width, context->height, true);
+		evtMgr.emit<CopyGBufferDepth2ColorBufferEvent>("main", "final");// 画skybox需要GBuffer的深度信息
+		// skybox pass
+		CheckGLError;
+		renderSkybox("", objCamera, screenViewport);
+		renderLightObjects("", objCamera, screenViewport);
+		evtMgr.emit<UnuseColorBufferEvent>("final");
 
 		if (gSettingCom->get1b("enableSMAA") == true) {
 			// debug edge detect
@@ -113,7 +126,7 @@ namespace renderer {
 				clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
 					GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 				setViewport(screenViewport);
-				m_evtMgr->emit<ActiveTextureByIDEvent>(edgeDetect, "colorTex", 0, coreBuf.tex);
+				m_evtMgr->emit<ActiveTextureByIDEvent>(edgeDetect, "colorTex", 0, finalBuf.tex);
 				renderQuad();
 				evtMgr.emit<UnuseColorBufferEvent>("edge");
 			}
@@ -154,37 +167,21 @@ namespace renderer {
 				evtMgr.emit<UnuseColorBufferEvent>("weight");
 			}
 			{
-				evtMgr.emit<UseColorBufferEvent>("final");
 				Shader smaaBlending = getShader("smaaBlending");
 				smaaBlending.use();
 				smaaBlending.set2f("imgSize", context->width, context->height);
 				ColorBufferRef& weightBuf = colorBufferCom->dict["weight"];
-				m_evtMgr->emit<ActiveTextureByIDEvent>(smaaBlending, "colorTex", 0, coreBuf.tex);
+				m_evtMgr->emit<ActiveTextureByIDEvent>(smaaBlending, "colorTex", 0, finalBuf.tex);
 				m_evtMgr->emit<ActiveTextureByIDEvent>(smaaBlending, "blendTex", 1, weightBuf.tex);
 				clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
 					GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 				setViewport(screenViewport);
 				renderQuad();
-				evtMgr.emit<UnuseColorBufferEvent>("final");
+				renderColorBuffer("edge", context->width, context->height);
 			}
 		} else {
-			evtMgr.emit<UseColorBufferEvent>("final");
-			clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
-				GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-			setViewport(screenViewport);
-			renderColorBuffer("core", context->width, context->height);
-			evtMgr.emit<UnuseColorBufferEvent>("final");
+			renderColorBuffer("final", context->width, context->height);
 		}
-		
-		// skybox pass
-		evtMgr.emit<CopyGBufferDepth2ColorBufferEvent>("main", "final");// 画skybox需要GBuffer的深度信息
-		CheckGLError;
-		evtMgr.emit<UseColorBufferEvent>("final");
-		renderSkybox("", objCamera, screenViewport);
-		renderLightObjects("", objCamera, screenViewport);
-		evtMgr.emit<UnuseColorBufferEvent>("final");
-		renderColorBuffer("final", context->width, context->height);
-
 		// renderColorBuffer("core", context->width, context->height);
 		// renderGBufferDebug("main", context->width, context->height);
 		// renderColorBuffer("ssaoBlur", context->width, context->height);
@@ -409,9 +406,10 @@ namespace renderer {
 	}
     
     
-    void RenderSystem::renderColorBuffer(std::string colorBufferAliasName, size_t winWidth, size_t winHeight) {
+    void RenderSystem::renderColorBuffer(std::string colorBufferAliasName, size_t winWidth, size_t winHeight, bool noGamma) {
         Shader shader = getShader("screen");
         shader.use();
+		shader.set1b("noGamma", noGamma);
         auto colorBufferCom = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
         ColorBufferRef& buf = colorBufferCom->dict[colorBufferAliasName];
         clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),

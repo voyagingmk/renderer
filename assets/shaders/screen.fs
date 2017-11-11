@@ -5,6 +5,7 @@ out vec4 color;
 in vec2 TexCoord;
 
 uniform sampler2D texture1;
+uniform bool noGamma;
 
 vec4 Inversion();
 vec4 Grayscale();
@@ -23,7 +24,9 @@ void main()
      
     // gamma correction
     //color.rgb = pow(mapped, vec3(1.0 / 2.2));
-    color.rgb = pow(color.rgb, vec3(1.0 / 2.2));
+    if (!noGamma) {
+        color.rgb = pow(color.rgb, vec3(1.0 / 2.2));
+    }
     // color = Inversion();
     // color = Grayscale();
     // color = Sharpen();

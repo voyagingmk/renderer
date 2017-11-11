@@ -51,7 +51,7 @@ namespace renderer {
 
         void uploadLights(Shader shader);
        
-        void renderColorBuffer(std::string colorBufferAliasName, size_t winWidth, size_t winHeight);
+        void renderColorBuffer(std::string colorBufferAliasName, size_t winWidth, size_t winHeight, bool noGamma = false);
         
         void renderGBufferDebug(std::string gBufferAliasName, size_t winWidth, size_t winHeight);
 	};
