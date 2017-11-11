@@ -60,6 +60,7 @@ namespace renderer {
 		FboID fboID;
 		size_t width;
 		size_t height;
+		TexRef depthTex;
 	};
 
 
@@ -70,7 +71,6 @@ namespace renderer {
 		FboID innerFboID;
 		TexRef innerTex;
 		BufType depthType;
-		TexRef depthTex; // include stencil
 		RboID depthRboID; // include stencil
 	};
 

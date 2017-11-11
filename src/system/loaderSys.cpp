@@ -100,8 +100,8 @@ namespace renderer {
         
         m_evtMgr->emit<CreateColorBufferEvent>(
             winWidth, winHeight,
-            GL_RGBA8, GL_RGBA, GL_FLOAT,
-            BufType::None, 0, GL_LINEAR, "final");
+			GL_RGBA16F, GL_RGBA, GL_FLOAT,
+            BufType::Tex, 0, GL_LINEAR, "final");
         
         m_evtMgr->emit<CreateGBufferEvent>(winWidth, winHeight, "main");
         

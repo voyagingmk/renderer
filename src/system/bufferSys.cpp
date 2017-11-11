@@ -494,10 +494,17 @@ namespace renderer {
 			GL_COLOR_ATTACHMENT3 };
 		glDrawBuffers(4, attachments);
 		// create and attach depth buffer (renderbuffer)
+		/*
 		glGenRenderbuffers(1, &buf.depthRboID);
 		glBindRenderbuffer(GL_RENDERBUFFER, buf.depthRboID);        
 		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, buf.depthRboID);
+		*/
+		glGenTextures(1, &buf.depthTex.texID);
+		glBindTexture(GL_TEXTURE_2D, buf.depthTex.texID);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, width, height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, buf.depthTex.texID, 0);
+
 		// finally check if framebuffer is complete
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 			std::cout << "Framebuffer not complete!" << std::endl;
@@ -516,19 +523,22 @@ namespace renderer {
 	}
 
 	void BufferSystem::CopyFrameBufferDepth(FrameBufferBase& buf, FrameBufferBase& buf2) {
-		glBindFramebuffer(GL_READ_FRAMEBUFFER, buf.fboID);
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, buf2.fboID || 0);
-		// write to default framebuffer
-		// blit to default framebuffer.
-		// Note that this may or may not work as the internal formats of both the FBO and default framebuffer have to match.
-		// the internal formats are implementation defined. 
-		// This works on all of my systems, but if it doesn't on yours you'll likely have to write to the 		
-		// depth buffer in another shader stage
-		// (or somehow see to match the default framebuffer's internal format with the FBO's internal format).
-		glBlitFramebuffer(0, 0, buf.width, buf.height, 0, 0, buf.width, buf.height, GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT, GL_NEAREST);
-		checkGLError;
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+		if (buf2.fboID > 0) {
+			glBlitNamedFramebuffer(
+				buf.fboID,
+				buf2.fboID,
+				0, 0, buf.width, buf.height,
+				0, 0, buf.width, buf.height,
+				GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT, GL_NEAREST);
+		}
+		else {
+			glBindFramebuffer(GL_READ_FRAMEBUFFER, buf.fboID);
+			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+			glBlitFramebuffer(0, 0, buf.width, buf.height, 0, 0, buf.width, buf.height, GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT, GL_NEAREST);
+			checkGLError;
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+		}
 	}
 };
