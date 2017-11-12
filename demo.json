@@ -139,7 +139,26 @@
         
     ],
     "light": [
-
+        {
+            "type": "DirLight",
+            "ambient": [
+                255,
+                0,
+                0
+            ],
+            "diffuse": [
+                255,
+                255,
+                255
+            ],
+            "specular": [
+                255,
+                255,
+                255
+            ],
+            "direction": [1.0, -1.0, 0.0],
+            "shadow": true
+        },
         {
             "type": "PointLight",
             "far_plane": 10000,
