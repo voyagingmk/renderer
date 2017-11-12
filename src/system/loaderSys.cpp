@@ -111,6 +111,11 @@ namespace renderer {
       
         m_evtMgr->emit<CreateDpethBufferEvent>("shadow", "pointDepth", DepthTexType::CubeMap, 1024);
 
+		m_evtMgr->emit<CreateColorBufferEvent>(
+			winWidth, winHeight,
+			GL_RED, GL_RED, GL_FLOAT,
+			BufType::None, 0, GL_LINEAR, "sssm"); // screenspaceshadowmap
+
 		CreateGlobalQuadObject();
 
 	}
@@ -142,6 +147,7 @@ namespace renderer {
 	}
 
 	void LoaderSystem::loadLights(const json &config) {
+		int count = 0;
 		for (auto lightInfo : config["light"])
 		{
 			Object obj = m_objMgr->create();
@@ -169,9 +175,17 @@ namespace renderer {
 			data.repeat = -1;
 			//data.actions.push_back(std::make_shared<MoveByAction>(0.5f, Vector3dF(-1.0f, 0.0f, 0.0f)));
 			//data.actions.push_back(std::make_shared<MoveByAction>(0.5f, Vector3dF(1.0f, 0.0f, 0.0f)));
-			data.actions.push_back(std::make_shared<MoveByAction>(2.0f, Vector3dF{ 40.0f, 0.0f, 40.0f }));
-			data.actions.push_back(std::make_shared<MoveByAction>(2.0f, Vector3dF{ -40.0f, 0.0f, -40.0f }));
-			//m_evtMgr->emit<AddActionEvent>(obj, "move", data);
+			if (count == 0) {
+				data.actions.push_back(std::make_shared<MoveByAction>(2.0f, Vector3dF{ 0.0f, 0.0f, 40.0f }));
+				data.actions.push_back(std::make_shared<MoveByAction>(2.0f, Vector3dF{ 0.0f, 0.0f, -40.0f }));
+			}
+			else {
+				data.actions.push_back(std::make_shared<MoveByAction>(3.0f, Vector3dF{ 0.0f, 0.0f, -40.0f }));
+				data.actions.push_back(std::make_shared<MoveByAction>(3.0f, Vector3dF{ 0.0f, 0.0f, 40.0f }));
+			}
+			count++;
+		//	m_evtMgr->emit<AddActionEvent>(obj, "move", data);
+
 		}
 	}
 

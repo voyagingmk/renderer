@@ -64,32 +64,9 @@ namespace renderer {
 		ssaoPass(objCamera, "main", "ssao", context->width, context->height);
 		ssaoBlurPass(objCamera, "ssao", "ssaoBlur", context->width, context->height);
 
-		// shadow cubemap pass
-		evtMgr.emit<UseColorBufferEvent>("shadow");
-		CheckGLError;
-		Shader pointShadowDepthShader = getShader("pointShadowDepth");
-		pointShadowDepthShader.use();
-		auto pointLightTrans = m_objMgr->getSingletonComponent<PointLightTransform>();
-		pointShadowDepthShader.setMatrixes4f("lightPVs", pointLightTrans->lightPVs);
-		float far_plane = pointLightTrans->f;
-		auto lightPos = pointLightTrans.object().component<SpatialData>()->pos;
-		pointShadowDepthShader.set1f("far_plane", far_plane);
-		pointShadowDepthShader.set3f("lightPos", lightPos);
-
-		pointShadowDepthShader.set1f("normalOffset", gSettingCom->get1f("normalOffset", -1.3f));
-		CheckGLError;
 		auto colorBufferCom = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
-		ColorBufferRef& buf = colorBufferCom->dict["shadow"];
-		glCullFace(GL_FRONT);
-		evtMgr.emit<RenderSceneEvent>(
-			objCamera,
-			std::make_tuple(0, 0, buf.width, buf.height),
-			Color(0.0f, 0.0f, 0.0f, 1.0f),
-			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT,
-			&pointShadowDepthShader);
-		evtMgr.emit<UnuseColorBufferEvent>("shadow");
-		glCullFace(GL_BACK);
-		CheckGLError;
+
+		sssmPass("main", objCamera);
 
 		// lighting pass
 		deferredLightingPass("core", objCamera, "main", context->width, context->height);
@@ -189,7 +166,7 @@ namespace renderer {
 		}
 		// renderColorBuffer("core", context->width, context->height);
 		// renderGBufferDebug("main", context->width, context->height);
-		// renderColorBuffer("ssaoBlur", context->width, context->height);
+		// renderColorBuffer("sssm", context->width, context->height, true, true);
 		CheckGLError;
 		m_evtMgr->emit<DrawUIEvent>();
 		SDL_GL_SwapWindow(context->win);
@@ -338,6 +315,66 @@ namespace renderer {
 		m_evtMgr->emit<UnuseColorBufferEvent>(ssaoBlurBuffer);
 	}
 
+	void RenderSystem::sssmPass(std::string gBufferAliasName, Object objCamera) {
+		// combine all light-space shadow map to screen-space shadow map
+		auto colorBufferCom = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
+		auto gSettingCom = m_objMgr->getSingletonComponent<GlobalSettingCom>();
+		auto gBufferCom = m_objMgr->getSingletonComponent<GBufferDictCom>();
+		GBufferRef& gBuf = gBufferCom->dict[gBufferAliasName];
+		ColorBufferRef& shadowBuf = colorBufferCom->dict["shadow"];
+		ColorBufferRef& sssmBuf = colorBufferCom->dict["sssm"];
+		Shader sssmShader = getShader("sssm");
+
+		m_evtMgr->emit<UseColorBufferEvent>("sssm");
+		setViewport(std::make_tuple(0, 0, sssmBuf.width, sssmBuf.height));
+		clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
+			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+		m_evtMgr->emit<UnuseColorBufferEvent>("sssm");
+
+		for (auto obj: m_objMgr->entities<PointLightTransform, SpatialData>()) {
+			auto spatialDataCom = obj.component<SpatialData>();
+			auto lightCom = obj.component<PointLightCom>();
+			auto transCom = obj.component<PointLightTransform>();
+
+			m_evtMgr->emit<UseColorBufferEvent>("shadow");
+			CheckGLError;
+			Shader pointShadowDepthShader = getShader("pointShadowDepth");
+			pointShadowDepthShader.use();
+			pointShadowDepthShader.setMatrixes4f("lightPVs", transCom->lightPVs);
+			pointShadowDepthShader.set1f("far_plane", transCom->f);
+			pointShadowDepthShader.set3f("lightPos", obj.component<SpatialData>()->pos);
+			pointShadowDepthShader.set1f("normalOffset", gSettingCom->get1f("normalOffset", -1.3f));
+			CheckGLError;
+			glCullFace(GL_FRONT);
+			m_evtMgr->emit<RenderSceneEvent>(
+				objCamera,
+				std::make_tuple(0, 0, shadowBuf.width, shadowBuf.height),
+				Color(0.0f, 0.0f, 0.0f, 1.0f),
+				GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT,
+				&pointShadowDepthShader);
+			m_evtMgr->emit<UnuseColorBufferEvent>("shadow");
+			glCullFace(GL_BACK);
+
+			// combine
+			glEnable(GL_BLEND);
+		    glBlendFunc(GL_ONE, GL_ONE);
+			m_evtMgr->emit<UseColorBufferEvent>("sssm");
+			sssmShader.use();
+			m_evtMgr->emit<UploadCameraToShaderEvent>(objCamera, sssmShader);
+			m_evtMgr->emit<ActiveTextureByIDEvent>(sssmShader, "gPosition", 0, gBuf.posTexID);
+			m_evtMgr->emit<ActiveTextureByIDEvent>(sssmShader, "depthMap", 1, shadowBuf.depthTex);
+			uploadLight(sssmShader, 0, obj);
+			sssmShader.set1i("LightNum", 1);
+			sssmShader.set1f("depthBias", gSettingCom->get1f("depthBias", 1.0f));
+			sssmShader.set1f("diskFactor", gSettingCom->get1f("diskFactor", 3.0f));
+			setViewport(std::make_tuple(0, 0, sssmBuf.width, sssmBuf.height));
+			renderQuad();
+			m_evtMgr->emit<UnuseColorBufferEvent>("sssm");
+			glDisable(GL_BLEND);
+			CheckGLError;
+		}
+	}
+
 	void RenderSystem::deferredLightingPass(std::string colorBufferAliasName, Object objCamera, std::string gBufferAliasName, size_t winWidth, size_t winHeight) {
 		m_evtMgr->emit<UseColorBufferEvent>(colorBufferAliasName);
 		auto gSettingCom = m_objMgr->getSingletonComponent<GlobalSettingCom>();
@@ -353,11 +390,9 @@ namespace renderer {
 		auto colorBufferCom = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
 		ColorBufferRef& ssaoBuf = colorBufferCom->dict["ssaoBlur"];
 		m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "ssao", 4, ssaoBuf.tex.texID);
-        ColorBufferRef& shadowBuf = colorBufferCom->dict["shadow"];
-        m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "depthMap", 5, shadowBuf.depthTex);
-		shader.set1f("depthBias", gSettingCom->get1f("depthBias", 1.0f));
+        ColorBufferRef& sssmBuf = colorBufferCom->dict["sssm"];
+        m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "sssm", 5, sssmBuf.tex);
         shader.set1i("enableSSAO", gSettingCom->get1b("enableSSAO", true));
-		shader.set1f("diskFactor", gSettingCom->get1f("diskFactor", 3.0f));
 		setViewport(std::make_tuple(0, 0, winWidth, winHeight));
 		clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
 			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -368,27 +403,31 @@ namespace renderer {
     
     void RenderSystem::uploadLights(Shader shader) {
         uint32_t i = 0;
-        for (auto obj : m_objMgr->entities<PointLightCom, SpatialData>()) {
-            auto spatialDataCom = obj.component<SpatialData>();
-            auto transCom = obj.component<PointLightTransform>();
-            auto lightCom = obj.component<PointLightCom>();
-            shader.set3f(("lights[" + std::to_string(i) + "].Position").c_str(), spatialDataCom->pos);
-            shader.set3f(("lights[" + std::to_string(i) + "].Color").c_str(), lightCom->ambient);
-            shader.set1f(("lights[" + std::to_string(i) + "].far_plane").c_str(), transCom->f);
-			auto gSettingCom = m_objMgr->getSingletonComponent<GlobalSettingCom>();
-			float constant = gSettingCom->get1f("pointLightConstant");
-			float linear = gSettingCom->get1f("pointLightLinear");
-			float quadratic = gSettingCom->get1f("pointLightQuad");
-			shader.set1f(("lights[" + std::to_string(i) + "].constant").c_str(), constant);
-			shader.set1f(("lights[" + std::to_string(i) + "].Linear").c_str(), linear);
-			shader.set1f(("lights[" + std::to_string(i) + "].Quadratic").c_str(), quadratic);
-			//shader.set1f(("lights[" + std::to_string(i) + "].constant").c_str(), lightCom->constant);
-			//shader.set1f(("lights[" + std::to_string(i) + "].Linear").c_str(), lightCom->linear);
-            //shader.set1f(("lights[" + std::to_string(i) + "].Quadratic").c_str(), lightCom->quadratic);
+        for (auto obj : m_objMgr->entities<PointLightCom, PointLightTransform, SpatialData>()) {
+			uploadLight(shader, i, obj);
             i++;
         }
         shader.set1i("LightNum", i);
     }
+
+	void RenderSystem::uploadLight(Shader shader, uint32_t i, Object lightObject) {
+		auto spatialDataCom = lightObject.component<SpatialData>();
+		auto lightCom = lightObject.component<PointLightCom>();
+		auto transCom = lightObject.component<PointLightTransform>();
+		shader.set3f(("lights[" + std::to_string(i) + "].Position").c_str(), spatialDataCom->pos);
+		shader.set3f(("lights[" + std::to_string(i) + "].Color").c_str(), lightCom->ambient);
+		shader.set1f(("lights[" + std::to_string(i) + "].far_plane").c_str(), transCom->f);
+		auto gSettingCom = m_objMgr->getSingletonComponent<GlobalSettingCom>();
+		float constant = gSettingCom->get1f("pointLightConstant");
+		float linear = gSettingCom->get1f("pointLightLinear");
+		float quadratic = gSettingCom->get1f("pointLightQuad");
+		shader.set1f(("lights[" + std::to_string(i) + "].constant").c_str(), constant);
+		shader.set1f(("lights[" + std::to_string(i) + "].Linear").c_str(), linear);
+		shader.set1f(("lights[" + std::to_string(i) + "].Quadratic").c_str(), quadratic);
+		//shader.set1f(("lights[" + std::to_string(i) + "].constant").c_str(), lightCom->constant);
+		//shader.set1f(("lights[" + std::to_string(i) + "].Linear").c_str(), lightCom->linear);
+		//shader.set1f(("lights[" + std::to_string(i) + "].Quadratic").c_str(), lightCom->quadratic);
+	}
 
 	void RenderSystem::renderLightObjects(std::string colorBufferAliasName, Object objCamera, Viewport viewport) {
 		m_evtMgr->emit<UseColorBufferEvent>(colorBufferAliasName); 

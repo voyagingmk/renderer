@@ -43,6 +43,8 @@ namespace renderer {
 
 		void ssaoBlurPass(Object objCamera, std::string ssaoBuffer, std::string ssaoBlurBuffer, size_t winWidth, size_t winHeight);
 
+		void sssmPass(std::string gBufferAliasName, Object objCamera);
+
 		void deferredLightingPass(std::string colorBufferAliasName, Object objCamera, std::string gBufferAliasName, size_t winWidth, size_t winHeight);
 
 		void renderSkybox(std::string colorBufferAliasName, Object objCamera, Viewport viewport);
@@ -50,7 +52,9 @@ namespace renderer {
 		void renderLightObjects(std::string colorBufferAliasName, Object objCamera, Viewport viewport);
 
         void uploadLights(Shader shader);
-       
+
+		void uploadLight(Shader shader, uint32_t i, Object lightObject);
+
         void renderColorBuffer(std::string colorBufferAliasName, size_t winWidth, size_t winHeight, bool noGamma = false, bool noToneMapping = false);
         
         void renderGBufferDebug(std::string gBufferAliasName, size_t winWidth, size_t winHeight);
