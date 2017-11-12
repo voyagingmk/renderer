@@ -9,10 +9,15 @@ namespace renderer {
 
 	class LightBase {
 	public:
-		enum class Type {
-			Direction = 1,
-			Point = 2
-		};
+		LightBase(Color ambient,
+			Color diffuse,
+			Color specular) :
+			ambient(ambient),
+			diffuse(diffuse),
+			specular(specular) {}
+		Color ambient;
+		Color diffuse;
+		Color specular;
 	};
 	
 	class PointLightCom: public LightBase {
@@ -23,21 +28,27 @@ namespace renderer {
 			float constant,
 			float linear,
 			float quadratic):
+				LightBase(ambient, diffuse, specular),
 				radius(0),
-				ambient(ambient),
-				diffuse(diffuse),
-				specular(specular),
 				constant(constant),
 				linear(linear),
 				quadratic(quadratic)
 		{}
 		float radius;
-		Color ambient;
-		Color diffuse;
-		Color specular;
 		float constant;
 		float linear;
 		float quadratic;
+	};
+
+	class DirLightCom : public LightBase {
+	public:
+		DirLightCom(Color ambient,
+			Color diffuse,
+			Color specular, Vector3dF dir) :
+			LightBase(ambient, diffuse, specular),
+			direction(dir.Normalize())
+		{}
+		Vector3dF direction;
 	};
 
 	 

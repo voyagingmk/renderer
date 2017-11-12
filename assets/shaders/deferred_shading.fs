@@ -22,6 +22,8 @@ uniform bool enableSSAO;
 
 
 struct Light {
+    int type;
+    vec3 Direction;
     vec3 Position;
     vec3 Color;
     float far_plane;
@@ -108,10 +110,16 @@ void main()
     vec3 Lo = vec3(0.0);
     for(int i = 0; i < LightNum; ++i) 
     {
+        vec3 lightDir;
+        if (lights[i].type == 1) { // directional light
+            lightDir = -lights[i].Direction;
+        } else {
+            lightDir = lights[i].Position - FragPos;
+        }
         // calculate per-light radiance
-        vec3 L = normalize(lights[i].Position - FragPos);
+        vec3 L = normalize(lightDir);
         vec3 H = normalize(V + L);
-        float distance = length(lights[i].Position - FragPos);
+        float distance = length(lightDir);
         float attenuation = 1.0 / ( 1.0 + lights[i].Linear * distance + lights[i].Quadratic * distance * distance);
         vec3 radiance = lights[i].Color * attenuation;
 

@@ -52,7 +52,7 @@ namespace renderer {
 		obj.addComponent<GBufferDictCom>();
 		obj.addComponent<ColorBufferDictCom>();
 		auto gSettingCom = obj.addComponent<GlobalSettingCom>();
-        gSettingCom->setValue("depthBias", 2.0f);
+        gSettingCom->setValue("depthBias", 0.5f);
 		gSettingCom->setValue("normalOffset", 0.0f);
 		gSettingCom->setValue("diskFactor", 3.0f);
 		gSettingCom->setValue("pointLightConstant", 1.0f);
@@ -151,41 +151,51 @@ namespace renderer {
 		for (auto lightInfo : config["light"])
 		{
 			Object obj = m_objMgr->create();
-			auto spatial = lightInfo["spatial"];
-            float far_plane = lightInfo["far_plane"];
-			loadSpatialData(obj, spatial);
-			auto transCom = obj.addComponent<PointLightTransform>();
-			transCom->aspect = 1.0f;
-			transCom->fovy = 90.0f;
-			transCom->n = 1.0f;
-			transCom->f = far_plane;
-			obj.addComponent<PointLightCom>(
-				parseColor(lightInfo["ambient"]),
-				parseColor(lightInfo["diffuse"]),
-				parseColor(lightInfo["specular"]),
-				lightInfo["constant"],
-				lightInfo["linear"],
-                lightInfo["quadratic"]);
-            auto com = obj.addComponent<Meshes>();
-            generateOuterBoxMeshes(*com);
-            m_evtMgr->emit<AddPointLightEvent>(obj);
-			m_evtMgr->emit<CreateMeshBufferEvent>(obj);
-			obj.addComponent<MotionCom>();
-			ActionData data;
-			data.repeat = -1;
-			//data.actions.push_back(std::make_shared<MoveByAction>(0.5f, Vector3dF(-1.0f, 0.0f, 0.0f)));
-			//data.actions.push_back(std::make_shared<MoveByAction>(0.5f, Vector3dF(1.0f, 0.0f, 0.0f)));
-			if (count == 0) {
-				data.actions.push_back(std::make_shared<MoveByAction>(2.0f, Vector3dF{ 0.0f, 0.0f, 40.0f }));
-				data.actions.push_back(std::make_shared<MoveByAction>(2.0f, Vector3dF{ 0.0f, 0.0f, -40.0f }));
+			std::string type = lightInfo["type"];
+			if (type == "PointLight") {
+				auto spatial = lightInfo["spatial"];
+				float far_plane = lightInfo["far_plane"];
+				loadSpatialData(obj, spatial);
+				auto transCom = obj.addComponent<PointLightTransform>();
+				transCom->aspect = 1.0f;
+				transCom->fovy = 90.0f;
+				transCom->n = 1.0f;
+				transCom->f = far_plane;
+				obj.addComponent<PointLightCom>(
+					parseColor(lightInfo["ambient"]),
+					parseColor(lightInfo["diffuse"]),
+					parseColor(lightInfo["specular"]),
+					lightInfo["constant"],
+					lightInfo["linear"],
+					lightInfo["quadratic"]);
+				auto com = obj.addComponent<Meshes>();
+				generateOuterBoxMeshes(*com);
+				m_evtMgr->emit<AddPointLightEvent>(obj);
+				m_evtMgr->emit<CreateMeshBufferEvent>(obj);
+				obj.addComponent<MotionCom>();
+				ActionData data;
+				data.repeat = -1;
+				//data.actions.push_back(std::make_shared<MoveByAction>(0.5f, Vector3dF(-1.0f, 0.0f, 0.0f)));
+				//data.actions.push_back(std::make_shared<MoveByAction>(0.5f, Vector3dF(1.0f, 0.0f, 0.0f)));
+				if (count == 0) {
+					data.actions.push_back(std::make_shared<MoveByAction>(2.0f, Vector3dF{ 0.0f, 0.0f, 40.0f }));
+					data.actions.push_back(std::make_shared<MoveByAction>(2.0f, Vector3dF{ 0.0f, 0.0f, -40.0f }));
+				}
+				else {
+					data.actions.push_back(std::make_shared<MoveByAction>(3.0f, Vector3dF{ 0.0f, 0.0f, -40.0f }));
+					data.actions.push_back(std::make_shared<MoveByAction>(3.0f, Vector3dF{ 0.0f, 0.0f, 40.0f }));
+				}
+				count++;
+				//	m_evtMgr->emit<AddActionEvent>(obj, "move", data);
+			} else if (type == "DirLight") {
+				auto direction = lightInfo["direction"];
+				Vector3dF dir = Vector3dF{ (float)direction[0], (float)direction[1], (float)direction[2] };
+				obj.addComponent<DirLightCom>(
+					parseColor(lightInfo["ambient"]),
+					parseColor(lightInfo["diffuse"]),
+					parseColor(lightInfo["specular"]),
+					dir);
 			}
-			else {
-				data.actions.push_back(std::make_shared<MoveByAction>(3.0f, Vector3dF{ 0.0f, 0.0f, -40.0f }));
-				data.actions.push_back(std::make_shared<MoveByAction>(3.0f, Vector3dF{ 0.0f, 0.0f, 40.0f }));
-			}
-			count++;
-		//	m_evtMgr->emit<AddActionEvent>(obj, "move", data);
-
 		}
 	}
 
@@ -256,7 +266,6 @@ namespace renderer {
 		}
 	}
 	
-    
     void LoaderSystem::loadShaders(string shaderDir, const json &config)
     {
         for (auto shaderInfo : config["shader"])

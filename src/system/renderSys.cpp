@@ -331,6 +331,7 @@ namespace renderer {
 			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		m_evtMgr->emit<UnuseColorBufferEvent>("sssm");
 
+		// Point Light Pass
 		for (auto obj: m_objMgr->entities<PointLightTransform, SpatialData>()) {
 			auto spatialDataCom = obj.component<SpatialData>();
 			auto lightCom = obj.component<PointLightCom>();
@@ -373,6 +374,7 @@ namespace renderer {
 			glDisable(GL_BLEND);
 			CheckGLError;
 		}
+		// Directional Light Pass
 	}
 
 	void RenderSystem::deferredLightingPass(std::string colorBufferAliasName, Object objCamera, std::string gBufferAliasName, size_t winWidth, size_t winHeight) {
@@ -407,26 +409,39 @@ namespace renderer {
 			uploadLight(shader, i, obj);
             i++;
         }
+		// Directional Light
+		for (auto obj : m_objMgr->entities<DirLightCom>()) {
+			uploadLight(shader, i, obj);
+			i++;
+		}
         shader.set1i("LightNum", i);
     }
 
 	void RenderSystem::uploadLight(Shader shader, uint32_t i, Object lightObject) {
-		auto spatialDataCom = lightObject.component<SpatialData>();
-		auto lightCom = lightObject.component<PointLightCom>();
-		auto transCom = lightObject.component<PointLightTransform>();
-		shader.set3f(("lights[" + std::to_string(i) + "].Position").c_str(), spatialDataCom->pos);
-		shader.set3f(("lights[" + std::to_string(i) + "].Color").c_str(), lightCom->ambient);
-		shader.set1f(("lights[" + std::to_string(i) + "].far_plane").c_str(), transCom->f);
-		auto gSettingCom = m_objMgr->getSingletonComponent<GlobalSettingCom>();
-		float constant = gSettingCom->get1f("pointLightConstant");
-		float linear = gSettingCom->get1f("pointLightLinear");
-		float quadratic = gSettingCom->get1f("pointLightQuad");
-		shader.set1f(("lights[" + std::to_string(i) + "].constant").c_str(), constant);
-		shader.set1f(("lights[" + std::to_string(i) + "].Linear").c_str(), linear);
-		shader.set1f(("lights[" + std::to_string(i) + "].Quadratic").c_str(), quadratic);
-		//shader.set1f(("lights[" + std::to_string(i) + "].constant").c_str(), lightCom->constant);
-		//shader.set1f(("lights[" + std::to_string(i) + "].Linear").c_str(), lightCom->linear);
-		//shader.set1f(("lights[" + std::to_string(i) + "].Quadratic").c_str(), lightCom->quadratic);
+		if (lightObject.hasComponent<PointLightCom>()) {
+			auto spatialDataCom = lightObject.component<SpatialData>();
+			auto lightCom = lightObject.component<PointLightCom>();
+			auto transCom = lightObject.component<PointLightTransform>();
+			shader.set1i(("lights[" + std::to_string(i) + "].type").c_str(), 2);
+			shader.set3f(("lights[" + std::to_string(i) + "].Position").c_str(), spatialDataCom->pos);
+			shader.set3f(("lights[" + std::to_string(i) + "].Color").c_str(), lightCom->ambient);
+			shader.set1f(("lights[" + std::to_string(i) + "].far_plane").c_str(), transCom->f);
+			auto gSettingCom = m_objMgr->getSingletonComponent<GlobalSettingCom>();
+			float constant = gSettingCom->get1f("pointLightConstant");
+			float linear = gSettingCom->get1f("pointLightLinear");
+			float quadratic = gSettingCom->get1f("pointLightQuad");
+			shader.set1f(("lights[" + std::to_string(i) + "].constant").c_str(), constant);
+			shader.set1f(("lights[" + std::to_string(i) + "].Linear").c_str(), linear);
+			shader.set1f(("lights[" + std::to_string(i) + "].Quadratic").c_str(), quadratic);
+			//shader.set1f(("lights[" + std::to_string(i) + "].constant").c_str(), lightCom->constant);
+			//shader.set1f(("lights[" + std::to_string(i) + "].Linear").c_str(), lightCom->linear);
+			//shader.set1f(("lights[" + std::to_string(i) + "].Quadratic").c_str(), lightCom->quadratic);
+		} else if(lightObject.hasComponent<DirLightCom>()) {
+			auto lightCom = lightObject.component<DirLightCom>();
+			shader.set1i(("lights[" + std::to_string(i) + "].type").c_str(), 1);
+			shader.set3f(("lights[" + std::to_string(i) + "].Direction").c_str(), lightCom->direction);
+			shader.set3f(("lights[" + std::to_string(i) + "].Color").c_str(), lightCom->ambient);
+		}
 	}
 
 	void RenderSystem::renderLightObjects(std::string colorBufferAliasName, Object objCamera, Viewport viewport) {
