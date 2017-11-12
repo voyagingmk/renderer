@@ -53,7 +53,7 @@ namespace renderer {
 		obj.addComponent<ColorBufferDictCom>();
 		auto gSettingCom = obj.addComponent<GlobalSettingCom>();
         gSettingCom->setValue("depthBias", 2.0f);
-		gSettingCom->setValue("normalOffset", -1.3f);
+		gSettingCom->setValue("normalOffset", 0.0f);
 		gSettingCom->setValue("diskFactor", 3.0f);
 		gSettingCom->setValue("pointLightConstant", 1.0f);
 		gSettingCom->setValue("pointLightLinear", 0.0014f);

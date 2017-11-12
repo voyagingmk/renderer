@@ -343,7 +343,7 @@ namespace renderer {
 			pointShadowDepthShader.setMatrixes4f("lightPVs", transCom->lightPVs);
 			pointShadowDepthShader.set1f("far_plane", transCom->f);
 			pointShadowDepthShader.set3f("lightPos", obj.component<SpatialData>()->pos);
-			pointShadowDepthShader.set1f("normalOffset", gSettingCom->get1f("normalOffset", -1.3f));
+			pointShadowDepthShader.set1f("normalOffset", gSettingCom->get1f("normalOffset", 0.0f));
 			CheckGLError;
 			glCullFace(GL_FRONT);
 			m_evtMgr->emit<RenderSceneEvent>(
