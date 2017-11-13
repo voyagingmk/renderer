@@ -40,6 +40,15 @@ namespace renderer {
 		float quadratic;
 	};
 
+
+	struct PointLightTransform {
+		float fovy;
+		float aspect;
+		float n;
+		float f;
+		std::vector<Matrix4x4> lightPVs;
+	};
+
 	class DirLightCom : public LightBase {
 	public:
 		DirLightCom(Color ambient,
@@ -51,14 +60,21 @@ namespace renderer {
 		Vector3dF direction;
 	};
 
-	 
-    struct PointLightTransform {
-        float fovy;
-        float aspect;
-        float n;
-        float f;
-        std::vector<Matrix4x4> lightPVs;
-    };
+	class SpotLightCom : public LightBase {
+	public:
+		SpotLightCom(Color ambient,
+			Color diffuse,
+			Color specular, Vector3dF dir, RadianF cutOff, RadianF outerCutOff) :
+			LightBase(ambient, diffuse, specular),
+			direction(dir.Normalize()),
+			cutOff(cutOff),
+			outerCutOff(outerCutOff)
+		{}
+		Vector3dF direction;
+		RadianF cutOff;
+		RadianF outerCutOff;
+	};
+
 };
 
 #endif

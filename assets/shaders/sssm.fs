@@ -79,6 +79,5 @@ void main()
      // retrieve data from gbuffer
     vec3 FragPos = (viewInv * vec4(texture(gPosition, TexCoord).rgb, 1.0)).xyz;
     float shadow = ShadowCalculation_Hard(FragPos, lights[0]);
-    float brightness = 1 - shadow;
-    FragColor =  brightness / (1 + brightness);
+    FragColor = shadow;
 }

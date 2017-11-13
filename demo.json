@@ -160,6 +160,33 @@
             "shadow": true
         },
         {
+            "type": "SpotLight",
+            "spatial": [
+                [0.0,  50.0, 0.0],
+                [1, 1, 1],
+                [1, 0, 0, 0]
+            ],
+            "direction": [0.0, -1.0, 0.0],
+            "cutOff": 12.5,
+            "outerCutOff": 30.5,
+            "ambient": [
+                255,
+                255,
+                255
+            ],
+            "diffuse": [
+                255,
+                255,
+                255
+            ],
+            "specular": [
+                255,
+                255,
+                255
+            ],
+            "shadow": true
+        },
+        {
             "type": "PointLight",
             "far_plane": 10000,
             "spatial": [

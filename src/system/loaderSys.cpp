@@ -195,6 +195,18 @@ namespace renderer {
 					parseColor(lightInfo["diffuse"]),
 					parseColor(lightInfo["specular"]),
 					dir);
+			} else if (type == "SpotLight") {
+				auto direction = lightInfo["direction"];
+				float cutOff = lightInfo["cutOff"];
+				float outerCutOff = lightInfo["outerCutOff"];
+				Vector3dF dir = Vector3dF{ (float)direction[0], (float)direction[1], (float)direction[2] };
+				obj.addComponent<SpotLightCom>(
+					parseColor(lightInfo["ambient"]),
+					parseColor(lightInfo["diffuse"]),
+					parseColor(lightInfo["specular"]),
+					dir, DegreeF(cutOff).ToRadian(), DegreeF(outerCutOff).ToRadian());
+				auto spatial = lightInfo["spatial"];
+				loadSpatialData(obj, spatial);
 			}
 		}
 	}

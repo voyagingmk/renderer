@@ -30,6 +30,8 @@ struct Light {
     float constant;
     float Linear;
     float Quadratic;
+    float cutOff;
+    float outerCutOff;
 };
 uniform int LightNum;
 const int MAX_LIGHTS = 32;
@@ -110,18 +112,26 @@ void main()
     vec3 Lo = vec3(0.0);
     for(int i = 0; i < LightNum; ++i) 
     {
+        Light light = lights[i];
         vec3 lightDir;
-        if (lights[i].type == 1) { // directional light
-            lightDir = -lights[i].Direction;
-        } else {
-            lightDir = lights[i].Position - FragPos;
+        int type = light.type;
+        float intensity = 1.0;
+        if (type == 1) { // directional light
+            lightDir = -light.Direction;
+        } else if(type == 2) {
+            lightDir = light.Position - FragPos;
+        } else if(type == 3) {
+            lightDir = light.Position - FragPos;
+            float theta = dot(normalize(lightDir), -normalize(light.Direction)); 
+            float epsilon = (light.cutOff - light.outerCutOff);
+            intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
         }
         // calculate per-light radiance
         vec3 L = normalize(lightDir);
         vec3 H = normalize(V + L);
         float distance = length(lightDir);
-        float attenuation = 1.0 / ( 1.0 + lights[i].Linear * distance + lights[i].Quadratic * distance * distance);
-        vec3 radiance = lights[i].Color * attenuation;
+        float attenuation = 1.0 / ( 1.0 +light.Linear * distance +light.Quadratic * distance * distance);
+        vec3 radiance = light.Color * attenuation;
 
         // Cook-Torrance BRDF
         float NDF = DistributionGGX(N, H, material.roughness);   
@@ -148,16 +158,15 @@ void main()
         float NdotL = max(dot(N, L), 0.0);        
 
         // add to outgoing radiance Lo
-        Lo += (kD * material.albedo / PI + brdf) * radiance * NdotL;  // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
+        Lo += (kD * material.albedo / PI + brdf) * radiance * NdotL * intensity;  // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
     }   
     
     float shadow = texture(sssm, TexCoord).r;
-
     // ambient lighting (note that the next IBL tutorial will replace 
     // this ambient lighting with environment lighting).
     vec3 ambient = vec3(0.03) * material.albedo * material.ao;
     
-    vec3 color = ambient + Lo * shadow;
+    vec3 color = ambient + Lo * ( 1- shadow);
 
     if (enableSSAO) {
         color *= AmbientOcclusion;
