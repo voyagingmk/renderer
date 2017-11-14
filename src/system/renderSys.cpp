@@ -86,7 +86,11 @@ namespace renderer {
 			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		setViewport(screenViewport);
 		renderColorBuffer("core", context->width, context->height, true, true);
+		evtMgr.emit<UnuseColorBufferEvent>("final");
+
 		evtMgr.emit<CopyGBufferDepth2ColorBufferEvent>("main", "final");// 画skybox需要GBuffer的深度信息
+
+		evtMgr.emit<UseColorBufferEvent>("final");
 		// skybox pass
 		CheckGLError;
 		renderSkybox("", objCamera, screenViewport);
