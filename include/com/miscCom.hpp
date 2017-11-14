@@ -33,7 +33,7 @@ namespace renderer {
 
 		template<class T>
 		T getValue(std::string k, nlohmann::json defaultVal) {
-			return (T)(getValue(k, defaultVal));
+			return (T)(_getValue(k, defaultVal));
 		}
 
 		inline double get1d(std::string k, nlohmann::json defaultVal = nullptr) {
