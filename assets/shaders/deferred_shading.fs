@@ -16,9 +16,7 @@ uniform sampler2D gPosition; // FragPos
 uniform sampler2D gNormal;
 uniform sampler2D gAlbedo;
 uniform sampler2D gPBR;
-uniform sampler2D ssao;
-uniform sampler2D sssm;
-uniform bool enableSSAO;
+uniform samplerCube depthCubeMap;
 
 
 struct Light {
@@ -33,12 +31,13 @@ struct Light {
     float cutOff;
     float outerCutOff;
 };
-uniform int LightNum;
-const int MAX_LIGHTS = 32;
-uniform Light lights[MAX_LIGHTS];
+uniform Light light;
 uniform vec3 viewPos;
 uniform mat4 view;
 uniform mat4 viewInv;
+uniform float depthBias;
+uniform float diskFactor;
+uniform bool begin;
 
 
 const float PI = 3.14159265359;
@@ -85,12 +84,115 @@ vec3 fresnelSchlick(float cosTheta, vec3 F0)
 // ----------------------------------------------------------------------------
 
 
+// array of offset direction for sampling
+vec3 gridSamplingDisk[20] = vec3[]
+(
+   vec3(1, 1, 1), vec3(1, -1, 1), vec3(-1, -1, 1), vec3(-1, 1, 1), 
+   vec3(1, 1, -1), vec3(1, -1, -1), vec3(-1, -1, -1), vec3(-1, 1, -1),
+   vec3(1, 1, 0), vec3(1, -1, 0), vec3(-1, -1, 0), vec3(-1, 1, 0),
+   vec3(1, 0, 1), vec3(-1, 0, 1), vec3(1, 0, -1), vec3(-1, 0, -1),
+   vec3(0, 1, 1), vec3(0, -1, 1), vec3(0, -1, -1), vec3(0, 1, -1)
+);
+
+float ShadowCalculation_Soft(vec3 fragPos, Light light)
+{
+    // Get vector between fragment position and light position
+    vec3 fragToLight = fragPos - light.Position;
+    // Use the fragment to light vector to sample from the depth map    
+    // float closestDepth = texture(depthMap, fragToLight).r;
+    // It is currently in linear range between [0,1]. Let's re-transform it back to original depth value
+    // closestDepth *= light.far_plane;
+    // Now get current linear depth as the length between the fragment and light position
+    float currentDepth = length(fragToLight);
+    float shadow = 0.0;
+    int samples = 20;
+    float viewDistance = length(viewPos - fragPos);
+    float diskRadius = (1.0 + (viewDistance / light.far_plane)) / diskFactor;
+    float closestDepth;
+    for(int i = 0; i < samples; ++i)
+    {
+        closestDepth = texture(depthCubeMap, fragToLight + gridSamplingDisk[i] * diskRadius).r;
+        closestDepth *= light.far_plane;   // Undo mapping [0;1]
+        if(currentDepth - depthBias > closestDepth)
+            shadow += 1.0;
+    }
+    shadow /= float(samples);
+    return shadow;
+}
+
+float ShadowCalculation_Hard(vec3 fragPos, Light light)
+{
+    // get vector between fragment position and light position
+    vec3 fragToLight = fragPos - light.Position;
+    // ise the fragment to light vector to sample from the depth map    
+    float closestDepth = texture(depthCubeMap, fragToLight).r;
+    // it is currently in linear range between [0,1], let's re-transform it back to original depth value
+    closestDepth *= light.far_plane;
+    // now get current linear depth as the length between the fragment and light position
+    float currentDepth = length(fragToLight);
+    // test for shadows
+    float bias = depthBias; // we use a much larger bias since depth is now in [near_plane, far_plane] range
+    float shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;        
+
+    return shadow;
+}
+
+
+vec3 calRadiance(vec3 FragPos, Material material, Light light, vec3 F0, vec3 N, vec3 V) {
+    vec3 lightDir;
+    int type = light.type;
+    float intensity = 1.0;
+    if (type == 1) { // directional light
+        lightDir = -light.Direction;
+    } else if(type == 2) {
+        lightDir = light.Position - FragPos;
+    } else if(type == 3) {
+        lightDir = light.Position - FragPos;
+        float theta = dot(normalize(lightDir), -normalize(light.Direction)); 
+        float epsilon = (light.cutOff - light.outerCutOff);
+        intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
+    }
+    // calculate per-light radiance
+    vec3 L = normalize(lightDir);
+    vec3 H = normalize(V + L);
+    float distance = length(lightDir);
+    float attenuation = 1.0 / ( 1.0 +light.Linear * distance +light.Quadratic * distance * distance);
+    vec3 radiance = light.Color * attenuation;
+
+    // Cook-Torrance BRDF
+    float NDF = DistributionGGX(N, H, material.roughness);   
+    float G   = GeometrySmith(N, V, L, material.roughness);      
+    vec3 F    = fresnelSchlick(max(dot(H, V), 0.0), F0);
+
+    vec3 nominator    = NDF * G * F; 
+    float denominator = 4 * max(dot(V, N), 0.0) * max(dot(L, N), 0.0) + 0.001; // 0.001 to prevent divide by zero.
+    vec3 brdf = nominator / denominator;
+
+    // kS is equal to Fresnel
+    vec3 kS = F;
+    kS = kS * material.specular;
+    // for energy conservation, the diffuse and specular light can't
+    // be above 1.0 (unless the surface emits light); to preserve this
+    // relationship the diffuse component (kD) should equal 1.0 - kS.
+    vec3 kD = vec3(1.0) - kS;
+    // multiply kD by the inverse metalness such that only non-metals 
+    // have diffuse lighting, or a linear blend if partly metal (pure metals
+    // have no diffuse light).
+    kD *= 1.0 - material.metallic;	  
+
+    // scale light by NdotL
+    float NdotL = max(dot(N, L), 0.0);        
+
+    float shadow = ShadowCalculation_Hard(FragPos, light);
+    vec3 Lo = (kD * material.albedo / PI + brdf) * radiance * NdotL * intensity * (1.0 - shadow);  // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
+    return Lo;
+}
+
 void main()
 {		
      // retrieve data from gbuffer
     vec3 FragPos = (viewInv * vec4(texture(gPosition, TexCoord).rgb, 1.0)).xyz;
     vec3 Normal = (viewInv * vec4(normalize(texture(gNormal, TexCoord).rgb), 0.0)).xyz;
-    float AmbientOcclusion = texture(ssao, TexCoord).r;
     Material material;
     material.albedo = texture(gAlbedo, TexCoord).rgb;
     vec4 pbrData = texture(gPBR, TexCoord).rgba;
@@ -99,85 +201,20 @@ void main()
     material.specular = pbrData.b;
     material.ao = pbrData.a;
 
+    if (begin) {
+        // ambient lighting (note that the next IBL tutorial will replace 
+        // this ambient lighting with environment lighting).
+        vec3 ambient = vec3(0.03) * material.albedo * material.ao;
+        FragColor = vec4(ambient, 1.0);
+        return;
+    }
     vec3 N = normalize(Normal);
     vec3 V = normalize(viewPos - FragPos);
-    vec3 R = reflect(-V, N); 
 
     // calculate reflectance at normal incidence; if dia-electric (like plastic) use F0 
     // of 0.04 and if it's a metal, use their albedo color as F0 (metallic workflow)    
     vec3 F0 = vec3(0.04); 
     F0 = mix(F0, material.albedo, material.metallic);
-
-    // reflectance equation
-    vec3 Lo = vec3(0.0);
-    for(int i = 0; i < LightNum; ++i) 
-    {
-        Light light = lights[i];
-        vec3 lightDir;
-        int type = light.type;
-        float intensity = 1.0;
-        if (type == 1) { // directional light
-            lightDir = -light.Direction;
-        } else if(type == 2) {
-            lightDir = light.Position - FragPos;
-        } else if(type == 3) {
-            lightDir = light.Position - FragPos;
-            float theta = dot(normalize(lightDir), -normalize(light.Direction)); 
-            float epsilon = (light.cutOff - light.outerCutOff);
-            intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
-        }
-        // calculate per-light radiance
-        vec3 L = normalize(lightDir);
-        vec3 H = normalize(V + L);
-        float distance = length(lightDir);
-        float attenuation = 1.0 / ( 1.0 +light.Linear * distance +light.Quadratic * distance * distance);
-        vec3 radiance = light.Color * attenuation;
-
-        // Cook-Torrance BRDF
-        float NDF = DistributionGGX(N, H, material.roughness);   
-        float G   = GeometrySmith(N, V, L, material.roughness);      
-        vec3 F    = fresnelSchlick(max(dot(H, V), 0.0), F0);
-           
-        vec3 nominator    = NDF * G * F; 
-        float denominator = 4 * max(dot(V, N), 0.0) * max(dot(L, N), 0.0) + 0.001; // 0.001 to prevent divide by zero.
-        vec3 brdf = nominator / denominator;
-        
-        // kS is equal to Fresnel
-        vec3 kS = F;
-        kS = kS * material.specular;
-        // for energy conservation, the diffuse and specular light can't
-        // be above 1.0 (unless the surface emits light); to preserve this
-        // relationship the diffuse component (kD) should equal 1.0 - kS.
-        vec3 kD = vec3(1.0) - kS;
-        // multiply kD by the inverse metalness such that only non-metals 
-        // have diffuse lighting, or a linear blend if partly metal (pure metals
-        // have no diffuse light).
-        kD *= 1.0 - material.metallic;	  
-
-        // scale light by NdotL
-        float NdotL = max(dot(N, L), 0.0);        
-
-        // add to outgoing radiance Lo
-        Lo += (kD * material.albedo / PI + brdf) * radiance * NdotL * intensity;  // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
-    }   
-    
-    float shadow = texture(sssm, TexCoord).r;
-    // ambient lighting (note that the next IBL tutorial will replace 
-    // this ambient lighting with environment lighting).
-    vec3 ambient = vec3(0.03) * material.albedo * material.ao;
-    
-    vec3 color = ambient + Lo * ( 1- shadow);
-
-    if (enableSSAO) {
-        color *= AmbientOcclusion;
-    }
-
-    // HDR tonemapping
-    // color = color / (color + vec3(1.0));
-    // gamma correct
-    // 0.5 gamma-corrected, 就是线性空间的值
-    // 0.5**(1/2.2) = 0.729（变亮)，就是所谓sRGB，not gamma-corrected，是为了直接输出到显示器做的encoding
-    // 所以shader里需要手动做一次 pow(1/2.2)
-    FragColor = vec4(color, 1.0);
-    // FragColor.rgb = pow(FragColor.rgb, vec3(1.0 / 2.2));
+    vec3 Lo = calRadiance(FragPos, material, light, F0, N, V);
+    FragColor = vec4(Lo, 1.0);
 }

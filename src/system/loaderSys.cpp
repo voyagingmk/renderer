@@ -109,13 +109,6 @@ namespace renderer {
         
         m_evtMgr->emit<CreateNoiseTextureEvent>("ssaoNoise");
       
-        m_evtMgr->emit<CreateDpethBufferEvent>("shadow", "pointDepth", DepthTexType::CubeMap, 1024);
-
-		m_evtMgr->emit<CreateColorBufferEvent>(
-			winWidth, winHeight,
-			GL_RED, GL_RED, GL_FLOAT,
-			BufType::None, 0, GL_LINEAR, "sssm"); // screenspaceshadowmap
-
 		CreateGlobalQuadObject();
 
 	}
@@ -151,6 +144,7 @@ namespace renderer {
 		for (auto lightInfo : config["light"])
 		{
 			Object obj = m_objMgr->create();
+			obj.addComponent<LightTag>();
 			std::string type = lightInfo["type"];
 			if (type == "PointLight") {
 				auto spatial = lightInfo["spatial"];
@@ -167,12 +161,15 @@ namespace renderer {
 					parseColor(lightInfo["specular"]),
 					lightInfo["constant"],
 					lightInfo["linear"],
-					lightInfo["quadratic"]);
+					lightInfo["quadratic"],
+					1024);
 				auto com = obj.addComponent<Meshes>();
 				generateOuterBoxMeshes(*com);
 				m_evtMgr->emit<AddPointLightEvent>(obj);
 				m_evtMgr->emit<CreateMeshBufferEvent>(obj);
+				m_evtMgr->emit<EnableLightShadowEvent>(obj);
 				obj.addComponent<MotionCom>();
+
 				ActionData data;
 				data.repeat = -1;
 				//data.actions.push_back(std::make_shared<MoveByAction>(0.5f, Vector3dF(-1.0f, 0.0f, 0.0f)));

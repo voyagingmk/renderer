@@ -21,6 +21,22 @@ namespace renderer {
 		{}
 		ecs::Object obj;
 	};
+
+	class EnableLightShadowEvent : public ecs::Event<EnableLightShadowEvent> {
+	public:
+		EnableLightShadowEvent(ecs::Object obj) :
+			obj(obj)
+		{}
+		ecs::Object obj;
+	};
+
+	class DisableLightShadowEvent : public ecs::Event<DisableLightShadowEvent> {
+	public:
+		DisableLightShadowEvent(ecs::Object obj) :
+			obj(obj)
+		{}
+		ecs::Object obj;
+	};
 };
 
 #endif

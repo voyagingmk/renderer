@@ -23,6 +23,10 @@ namespace renderer {
 
 		void receive(const UpdateSpatialDataEvent &evt);
 
+		void receive(const EnableLightShadowEvent &evt);
+
+		void receive(const DisableLightShadowEvent &evt);
+
 		void updatePointLight(Object obj);
     };     
 }

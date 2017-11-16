@@ -3,6 +3,7 @@
 
 #include "base.hpp"
 #include "ecs/ecs.hpp"
+#include "com/bufferCom.hpp"
 
 namespace renderer {
 

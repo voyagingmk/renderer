@@ -71,7 +71,10 @@ namespace renderer {
 
     void BufferSystem::receive(const CreateDpethBufferEvent& evt) {
         auto com = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
-        ColorBufferRef buf = CreateDepthFrameBuffer(evt.dtType, evt.texAliasname, evt.width);
+        if (com->dict.find(std::string(evt.aliasName)) != com->dict.end()) {
+			return;
+		}
+		ColorBufferRef buf = CreateDepthFrameBuffer(evt.dtType, evt.texAliasname, evt.width);
         com->dict[std::string(evt.aliasName)] = buf;
     }
     
@@ -90,7 +93,7 @@ namespace renderer {
 
 	void BufferSystem::receive(const DestroyColorBufferEvent& evt) {
 		auto com = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
-		auto it = com->dict.find(evt.aliasName);
+		auto it = com->dict.find(std::string(evt.aliasName));
 		if (it == com->dict.end()) {
 			return;
 		}

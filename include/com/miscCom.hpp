@@ -17,6 +17,8 @@ namespace renderer {
 		std::string texName;
 	};
 
+	struct LightTag : public TagComBase {};
+
     struct GlobalSkyboxTag : public TagComBase {};
     
     struct ReceiveLightTag : public TagComBase {};

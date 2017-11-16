@@ -66,10 +66,14 @@ namespace renderer {
 
 		auto colorBufferCom = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
 
-		sssmPass("main", objCamera);
+		updateShadowMapPass("main", objCamera);
 
 		// lighting pass
 		deferredLightingPass("core", objCamera, "main", context->width, context->height);
+		
+		renderColorBuffer("core", context->width, context->height);
+		SDL_GL_SwapWindow(context->win);
+		return;
 		CheckGLError;
 
 		//setViewport(std::make_tuple(0, 0, context->width, context->height));
@@ -170,7 +174,6 @@ namespace renderer {
 		}
 		// renderColorBuffer("core", context->width, context->height);
 		// renderGBufferDebug("main", context->width, context->height);
-		// renderColorBuffer("sssm", context->width, context->height, true, true);
 		CheckGLError;
 		m_evtMgr->emit<DrawUIEvent>();
 		SDL_GL_SwapWindow(context->win);
@@ -230,7 +233,6 @@ namespace renderer {
 				if (evt.shader == nullptr) {
 					shader = getShader(setting);
 					shader.use();
-					uploadLights(shader);
 				}
 				m_evtMgr->emit<ActiveMaterialEvent>(settingID, shader);
 				m_evtMgr->emit<DrawOneMeshBufferEvent>(meshBuffer);
@@ -319,29 +321,19 @@ namespace renderer {
 		m_evtMgr->emit<UnuseColorBufferEvent>(ssaoBlurBuffer);
 	}
 
-	void RenderSystem::sssmPass(std::string gBufferAliasName, Object objCamera) {
-		// combine all light-space shadow map to screen-space shadow map
+	void RenderSystem::updateShadowMapPass(std::string gBufferAliasName, Object objCamera) {
 		auto colorBufferCom = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
 		auto gSettingCom = m_objMgr->getSingletonComponent<GlobalSettingCom>();
 		auto gBufferCom = m_objMgr->getSingletonComponent<GBufferDictCom>();
 		GBufferRef& gBuf = gBufferCom->dict[gBufferAliasName];
-		ColorBufferRef& shadowBuf = colorBufferCom->dict["shadow"];
-		ColorBufferRef& sssmBuf = colorBufferCom->dict["sssm"];
-		Shader sssmShader = getShader("sssm");
-
-		m_evtMgr->emit<UseColorBufferEvent>("sssm");
-		setViewport(std::make_tuple(0, 0, sssmBuf.width, sssmBuf.height));
-		clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
-			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-		m_evtMgr->emit<UnuseColorBufferEvent>("sssm");
-
 		// Point Light Pass
 		for (auto obj: m_objMgr->entities<PointLightTransform, SpatialData>()) {
 			auto spatialDataCom = obj.component<SpatialData>();
 			auto lightCom = obj.component<PointLightCom>();
 			auto transCom = obj.component<PointLightTransform>();
-
-			m_evtMgr->emit<UseColorBufferEvent>("shadow");
+			auto bufAliasname = "pointLightDepth" + std::to_string(obj.ID());
+			ColorBufferRef& shadowBuf = colorBufferCom->dict[bufAliasname];
+			m_evtMgr->emit<UseColorBufferEvent>(bufAliasname);
 			CheckGLError;
 			Shader pointShadowDepthShader = getShader("pointShadowDepth");
 			pointShadowDepthShader.use();
@@ -359,29 +351,15 @@ namespace renderer {
 				&pointShadowDepthShader);
 			m_evtMgr->emit<UnuseColorBufferEvent>("shadow");
 			glCullFace(GL_BACK);
-
-			// combine
-			glEnable(GL_BLEND);
-		    glBlendFunc(GL_ONE, GL_ONE);
-			m_evtMgr->emit<UseColorBufferEvent>("sssm");
-			sssmShader.use();
-			m_evtMgr->emit<UploadCameraToShaderEvent>(objCamera, sssmShader);
-			m_evtMgr->emit<ActiveTextureByIDEvent>(sssmShader, "gPosition", 0, gBuf.posTexID);
-			m_evtMgr->emit<ActiveTextureByIDEvent>(sssmShader, "depthMap", 1, shadowBuf.depthTex);
-			uploadLight(sssmShader, 0, obj);
-			sssmShader.set1i("LightNum", 1);
-			sssmShader.set1f("depthBias", gSettingCom->get1f("depthBias", 1.0f));
-			sssmShader.set1f("diskFactor", gSettingCom->get1f("diskFactor", 3.0f));
-			setViewport(std::make_tuple(0, 0, sssmBuf.width, sssmBuf.height));
-			renderQuad();
-			m_evtMgr->emit<UnuseColorBufferEvent>("sssm");
-			glDisable(GL_BLEND);
 			CheckGLError;
 		}
 		// Directional Light Pass
 	}
 
 	void RenderSystem::deferredLightingPass(std::string colorBufferAliasName, Object objCamera, std::string gBufferAliasName, size_t winWidth, size_t winHeight) {
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_ONE, GL_ONE);
+		glDisable(GL_DEPTH_TEST);
 		m_evtMgr->emit<UseColorBufferEvent>(colorBufferAliasName);
 		auto gSettingCom = m_objMgr->getSingletonComponent<GlobalSettingCom>();
 		Shader shader = getShader("deferredShading");
@@ -394,72 +372,63 @@ namespace renderer {
 		m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "gAlbedo", 2, buf.albedoTexID);
 		m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "gPBR", 3, buf.pbrTexID);
 		auto colorBufferCom = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
-		ColorBufferRef& ssaoBuf = colorBufferCom->dict["ssaoBlur"];
-		m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "ssao", 4, ssaoBuf.tex.texID);
-        ColorBufferRef& sssmBuf = colorBufferCom->dict["sssm"];
-        m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "sssm", 5, sssmBuf.tex);
-        shader.set1i("enableSSAO", gSettingCom->get1b("enableSSAO", true));
+		//ColorBufferRef& ssaoBuf = colorBufferCom->dict["ssaoBlur"];
+		//m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "ssao", 4, ssaoBuf.tex.texID);
+		shader.set1f("depthBias", gSettingCom->get1f("depthBias", 1.0f));
+		shader.set1f("diskFactor", gSettingCom->get1f("diskFactor", 3.0f));
 		setViewport(std::make_tuple(0, 0, winWidth, winHeight));
 		clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
 			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-        uploadLights(shader);
+		shader.set1i("begin", true);
 		renderQuad();
+		shader.set1i("begin", false);
+		for (auto obj : m_objMgr->entities<LightTag>()) {
+			uploadLight(shader, obj);
+			renderQuad();
+		}
 		m_evtMgr->emit<UnuseColorBufferEvent>(colorBufferAliasName);
+		glEnable(GL_DEPTH_TEST);
+		glDisable(GL_BLEND);
 	}
     
-    void RenderSystem::uploadLights(Shader shader) {
-        uint32_t i = 0;
-        for (auto obj : m_objMgr->entities<PointLightCom, PointLightTransform, SpatialData>()) {
-			uploadLight(shader, i, obj);
-            i++;
-        }
-		// Directional Light
-		for (auto obj : m_objMgr->entities<DirLightCom>()) {
-			uploadLight(shader, i, obj);
-			i++;
-		}
-		// Spot Light
-		for (auto obj : m_objMgr->entities<SpotLightCom, SpatialData>()) {
-			uploadLight(shader, i, obj);
-			i++;
-		}
-        shader.set1i("LightNum", i);
-    }
-
-	void RenderSystem::uploadLight(Shader shader, uint32_t i, Object lightObject) {
+	void RenderSystem::uploadLight(Shader shader, Object lightObject) {
+		auto colorBufferCom = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
 		if (lightObject.hasComponent<PointLightCom>()) {
 			auto spatialDataCom = lightObject.component<SpatialData>();
 			auto lightCom = lightObject.component<PointLightCom>();
 			auto transCom = lightObject.component<PointLightTransform>();
-			shader.set1i(("lights[" + std::to_string(i) + "].type").c_str(), 2);
-			shader.set3f(("lights[" + std::to_string(i) + "].Position").c_str(), spatialDataCom->pos);
-			shader.set3f(("lights[" + std::to_string(i) + "].Color").c_str(), lightCom->ambient);
-			shader.set1f(("lights[" + std::to_string(i) + "].far_plane").c_str(), transCom->f);
+			shader.set1i("light.type", 2);
+			shader.set3f("light.Position", spatialDataCom->pos);
+			shader.set3f("light.Color", lightCom->ambient);
+			shader.set1f("light.far_plane", transCom->f);
+			auto bufAliasname = "pointLightDepth" + std::to_string(lightObject.ID());
+			ColorBufferRef& shadowBuf = colorBufferCom->dict[bufAliasname];
+			m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "depthCubeMap", 4, shadowBuf.depthTex);
 			//shader.set1f(("lights[" + std::to_string(i) + "].constant").c_str(), lightCom->constant);
 			//shader.set1f(("lights[" + std::to_string(i) + "].Linear").c_str(), lightCom->linear);
 			//shader.set1f(("lights[" + std::to_string(i) + "].Quadratic").c_str(), lightCom->quadratic);
 		} else if(lightObject.hasComponent<DirLightCom>()) {
 			auto lightCom = lightObject.component<DirLightCom>();
-			shader.set1i(("lights[" + std::to_string(i) + "].type").c_str(), 1);
-			shader.set3f(("lights[" + std::to_string(i) + "].Direction").c_str(), lightCom->direction);
-			shader.set3f(("lights[" + std::to_string(i) + "].Color").c_str(), lightCom->ambient);
+			shader.set1i("light.type", 1);
+			shader.set3f("light.Direction", lightCom->direction);
+			shader.set3f("light.Color", lightCom->ambient);
 		} else if (lightObject.hasComponent<SpotLightCom>()) {
 			auto spatialDataCom = lightObject.component<SpatialData>();
 			auto lightCom = lightObject.component<SpotLightCom>();
-			shader.set1i(("lights[" + std::to_string(i) + "].type").c_str(), 3);
-			shader.set3f(("lights[" + std::to_string(i) + "].Direction").c_str(), lightCom->direction);
-			shader.set3f(("lights[" + std::to_string(i) + "].Color").c_str(), lightCom->ambient);
-			shader.set3f(("lights[" + std::to_string(i) + "].Position").c_str(), spatialDataCom->pos);
-			shader.set1f(("lights[" + std::to_string(i) + "].cutOff").c_str(), cos(lightCom->cutOff.radian));
-			shader.set1f(("lights[" + std::to_string(i) + "].outerCutOff").c_str(), cos(lightCom->outerCutOff.radian));
+			shader.set1i("light.type", 3);
+			shader.set3f("light.Direction", lightCom->direction);
+			shader.set3f("light.Color", lightCom->ambient);
+			shader.set3f("light.Position", spatialDataCom->pos);
+			shader.set1f("light.cutOff", cos(lightCom->cutOff.radian));
+			shader.set1f("light.outerCutOff", cos(lightCom->outerCutOff.radian));
 		}
 		auto gSettingCom = m_objMgr->getSingletonComponent<GlobalSettingCom>();
 		float constant = gSettingCom->get1f("pointLightConstant");
 		float linear = gSettingCom->get1f("pointLightLinear");
 		float quadratic = gSettingCom->get1f("pointLightQuad");
-		shader.set1f(("lights[" + std::to_string(i) + "].constant").c_str(), constant);
-		shader.set1f(("lights[" + std::to_string(i) + "].Linear").c_str(), linear);
-		shader.set1f(("lights[" + std::to_string(i) + "].Quadratic").c_str(), quadratic);
+		shader.set1f("light.constant", constant);
+		shader.set1f("light.Linear", linear);
+		shader.set1f("light.Quadratic", quadratic);
 	}
 
 	void RenderSystem::renderLightObjects(std::string colorBufferAliasName, Object objCamera, Viewport viewport) {

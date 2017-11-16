@@ -1,6 +1,6 @@
 #version 410 core
 
-out vec4 color;
+out vec4 FragColor;
 
 in vec2 TexCoord;
 
@@ -18,18 +18,24 @@ vec3 ACESToneMapping(vec3 color, float adapted_lum);
 void main()
 { 
     vec3 c = vec3(texture(texture1, TexCoord).rgb);
-    color = vec4(c, 1.0);
+    vec4 color = vec4(c, 1.0);
 
     // reinhard tone mapping
     //vec3 mapped = color.rgb / (color.rgb + vec3(1.0));
 
     if (!noToneMapping) {
-        color.rgb = ACESToneMapping(color.rgb, 1.0);
+       color.rgb = ACESToneMapping(color.rgb, 1.0);
     }
 
-    if (!noGamma) {
+    if (!noGamma) {   
+        // gamma correct
+        // 0.5 gamma-corrected, 就是线性空间的值
+        // 0.5**(1/2.2) = 0.729（变亮)，就是所谓sRGB，not gamma-corrected，是为了直接输出到显示器做的encoding
+        // 所以shader里需要手动做一次 pow(1/2.2)
         color.rgb = pow(color.rgb, vec3(1.0 / 2.2));
     }
+    
+    FragColor = color;
     // color = Inversion();
     // color = Grayscale();
     // color = Sharpen();

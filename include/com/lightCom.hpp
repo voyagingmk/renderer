@@ -27,17 +27,20 @@ namespace renderer {
 			Color specular,
 			float constant,
 			float linear,
-			float quadratic):
+			float quadratic,
+			size_t shadowmapSize):
 				LightBase(ambient, diffuse, specular),
 				radius(0),
 				constant(constant),
 				linear(linear),
-				quadratic(quadratic)
+				quadratic(quadratic),
+				shadowmapSize(shadowmapSize)
 		{}
 		float radius;
 		float constant;
 		float linear;
 		float quadratic;
+		size_t shadowmapSize;
 	};
 
 
