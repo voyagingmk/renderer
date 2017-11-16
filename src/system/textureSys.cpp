@@ -229,6 +229,7 @@ namespace renderer {
 	}
     
     void TextureSystem::receive(const DeactiveTextureEvent &evt) {
+        glActiveTexture(GL_TEXTURE0 + evt.idx);
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 

@@ -130,6 +130,11 @@ namespace renderer {
             m_evtMgr->emit<ActiveTextureEvent>(shader, texInfo.first.c_str(), idx, texInfo.second.c_str());
             idx++;
         }
+        
+        for(;idx < 6; idx++) {
+            m_evtMgr->emit<DeactiveTextureEvent>(idx);
+        }
+     
 	}
 
 	void MaterialSystem::receive(const DeactiveMaterialEvent &evt) {
