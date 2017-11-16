@@ -53,7 +53,7 @@ namespace renderer {
 
 
 	void LightSystem::receive(const EnableLightShadowEvent &evt) {
-		auto aliasname = "pointLightDepth" + std::to_string(evt.obj.ID());
+		auto aliasname = "lightDepth" + std::to_string(evt.obj.ID());
 		m_evtMgr->emit<CreateDpethBufferEvent>(
 			aliasname.c_str(),
 			aliasname.c_str(), 
@@ -62,7 +62,7 @@ namespace renderer {
 	}
 
 	void LightSystem::receive(const DisableLightShadowEvent &evt) {
-		auto aliasname = "pointLightDepth" + std::to_string(evt.obj.ID());
+		auto aliasname = "lightDepth" + std::to_string(evt.obj.ID());
 		m_evtMgr->emit<DestroyColorBufferEvent>(aliasname.c_str());
 	}
 };

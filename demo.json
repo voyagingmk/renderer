@@ -136,11 +136,11 @@
     ],
     "light": [
         {
-            "type": "DirLight0",
+            "type": "DirLight",
             "ambient": [
                 255,
-                0,
-                0
+                255,
+                255
             ],
             "diffuse": [
                 255,

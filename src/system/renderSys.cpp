@@ -331,7 +331,7 @@ namespace renderer {
 			auto spatialDataCom = obj.component<SpatialData>();
 			auto lightCom = obj.component<PointLightCom>();
 			auto transCom = obj.component<PointLightTransform>();
-			auto bufAliasname = "pointLightDepth" + std::to_string(obj.ID());
+			auto bufAliasname = "lightDepth" + std::to_string(obj.ID());
 			ColorBufferRef& shadowBuf = colorBufferCom->dict[bufAliasname];
 			m_evtMgr->emit<UseColorBufferEvent>(bufAliasname);
 			CheckGLError;
@@ -401,9 +401,6 @@ namespace renderer {
 			shader.set3f("light.Position", spatialDataCom->pos);
 			shader.set3f("light.Color", lightCom->ambient);
 			shader.set1f("light.far_plane", transCom->f);
-			auto bufAliasname = "pointLightDepth" + std::to_string(lightObject.ID());
-			ColorBufferRef& shadowBuf = colorBufferCom->dict[bufAliasname];
-			m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "depthCubeMap", 4, shadowBuf.depthTex);
 			//shader.set1f(("lights[" + std::to_string(i) + "].constant").c_str(), lightCom->constant);
 			//shader.set1f(("lights[" + std::to_string(i) + "].Linear").c_str(), lightCom->linear);
 			//shader.set1f(("lights[" + std::to_string(i) + "].Quadratic").c_str(), lightCom->quadratic);
@@ -421,6 +418,15 @@ namespace renderer {
 			shader.set3f("light.Position", spatialDataCom->pos);
 			shader.set1f("light.cutOff", cos(lightCom->cutOff.radian));
 			shader.set1f("light.outerCutOff", cos(lightCom->outerCutOff.radian));
+		}
+		std::string depthBufName = "lightDepth" + std::to_string(lightObject.ID());
+		if (colorBufferCom->dict.find(depthBufName) != colorBufferCom->dict.end()) {
+			ColorBufferRef& shadowBuf = colorBufferCom->dict[depthBufName];
+			m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "depthCubeMap", 4, shadowBuf.depthTex);
+			shader.set1i("light.castShadow", 1);
+		}
+		else {
+			shader.set1i("light.castShadow", 0);
 		}
 		auto gSettingCom = m_objMgr->getSingletonComponent<GlobalSettingCom>();
 		float constant = gSettingCom->get1f("pointLightConstant");

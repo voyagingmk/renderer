@@ -30,6 +30,7 @@ struct Light {
     float Quadratic;
     float cutOff;
     float outerCutOff;
+    bool castShadow;
 };
 uniform Light light;
 uniform vec3 viewPos;
@@ -183,7 +184,11 @@ vec3 calRadiance(vec3 FragPos, Material material, Light light, vec3 F0, vec3 N, 
     // scale light by NdotL
     float NdotL = max(dot(N, L), 0.0);        
 
-    float shadow = ShadowCalculation_Hard(FragPos, light);
+
+    float shadow = 0;
+    if (light.castShadow) {
+        shadow = ShadowCalculation_Hard(FragPos, light);
+    }
     vec3 Lo = (kD * material.albedo / PI + brdf) * radiance * NdotL * intensity * (1.0 - shadow);  // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
     return Lo;
 }
