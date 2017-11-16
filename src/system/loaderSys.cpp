@@ -204,7 +204,9 @@ namespace renderer {
 					dir, DegreeF(cutOff).ToRadian(), DegreeF(outerCutOff).ToRadian());
 				auto spatial = lightInfo["spatial"];
 				loadSpatialData(obj, spatial);
-			}
+            } else {
+                obj.destroy();
+            }
 		}
 	}
 

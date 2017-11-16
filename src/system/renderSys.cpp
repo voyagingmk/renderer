@@ -71,9 +71,9 @@ namespace renderer {
 		// lighting pass
 		deferredLightingPass("core", objCamera, "main", context->width, context->height);
 		
-		renderColorBuffer("core", context->width, context->height);
-		SDL_GL_SwapWindow(context->win);
-		return;
+		//renderColorBuffer("core", context->width, context->height);
+		//SDL_GL_SwapWindow(context->win);
+		//return;
 		CheckGLError;
 
 		//setViewport(std::make_tuple(0, 0, context->width, context->height));
