@@ -20,6 +20,9 @@ namespace renderer {
         void receive(const DrawUIEvent &evt);
      
         void receive(const SetupSDLDoneEvent &evt);
+	private:
+		void settingUI();
+		void lightUI();
 	};
 
 };

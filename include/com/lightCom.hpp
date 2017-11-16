@@ -11,13 +11,16 @@ namespace renderer {
 	public:
 		LightBase(Color ambient,
 			Color diffuse,
-			Color specular) :
+			Color specular,
+			float intensity) :
 			ambient(ambient),
 			diffuse(diffuse),
-			specular(specular) {}
+			specular(specular),
+			intensity(intensity) {}
 		Color ambient;
 		Color diffuse;
 		Color specular;
+		float intensity;
 	};
 	
 	class PointLightCom: public LightBase {
@@ -25,11 +28,12 @@ namespace renderer {
 		PointLightCom(Color ambient,
 			Color diffuse,
 			Color specular,
+			float intensity,
 			float constant,
 			float linear,
 			float quadratic,
 			size_t shadowmapSize):
-				LightBase(ambient, diffuse, specular),
+				LightBase(ambient, diffuse, specular, intensity),
 				radius(0),
 				constant(constant),
 				linear(linear),
@@ -56,8 +60,10 @@ namespace renderer {
 	public:
 		DirLightCom(Color ambient,
 			Color diffuse,
-			Color specular, Vector3dF dir) :
-			LightBase(ambient, diffuse, specular),
+			Color specular,
+			float intensity,
+			Vector3dF dir) :
+			LightBase(ambient, diffuse, specular, intensity),
 			direction(dir.Normalize())
 		{}
 		Vector3dF direction;
@@ -67,8 +73,12 @@ namespace renderer {
 	public:
 		SpotLightCom(Color ambient,
 			Color diffuse,
-			Color specular, Vector3dF dir, RadianF cutOff, RadianF outerCutOff) :
-			LightBase(ambient, diffuse, specular),
+			Color specular,
+			float intensity,
+			Vector3dF dir,
+			RadianF cutOff, 
+			RadianF outerCutOff) :
+			LightBase(ambient, diffuse, specular, intensity),
 			direction(dir.Normalize()),
 			cutOff(cutOff),
 			outerCutOff(outerCutOff)

@@ -146,6 +146,7 @@ namespace renderer {
 			Object obj = m_objMgr->create();
 			obj.addComponent<LightTag>();
 			std::string type = lightInfo["type"];
+			float intensity = lightInfo["intensity"];
 			if (type == "PointLight") {
 				auto spatial = lightInfo["spatial"];
 				float far_plane = lightInfo["far_plane"];
@@ -159,6 +160,7 @@ namespace renderer {
 					parseColor(lightInfo["ambient"]),
 					parseColor(lightInfo["diffuse"]),
 					parseColor(lightInfo["specular"]),
+					intensity,
 					lightInfo["constant"],
 					lightInfo["linear"],
 					lightInfo["quadratic"],
@@ -191,6 +193,7 @@ namespace renderer {
 					parseColor(lightInfo["ambient"]),
 					parseColor(lightInfo["diffuse"]),
 					parseColor(lightInfo["specular"]),
+					intensity,
 					dir);
 			} else if (type == "SpotLight") {
 				auto direction = lightInfo["direction"];
@@ -201,6 +204,7 @@ namespace renderer {
 					parseColor(lightInfo["ambient"]),
 					parseColor(lightInfo["diffuse"]),
 					parseColor(lightInfo["specular"]),
+					intensity,
 					dir, DegreeF(cutOff).ToRadian(), DegreeF(outerCutOff).ToRadian());
 				auto spatial = lightInfo["spatial"];
 				loadSpatialData(obj, spatial);

@@ -21,6 +21,7 @@ uniform samplerCube depthCubeMap;
 
 struct Light {
     int type;
+    float intensity;
     vec3 Direction;
     vec3 Position;
     vec3 Color;
@@ -189,7 +190,7 @@ vec3 calRadiance(vec3 FragPos, Material material, Light light, vec3 F0, vec3 N, 
     if (light.castShadow) {
         shadow = ShadowCalculation_Hard(FragPos, light);
     }
-    vec3 Lo = (kD * material.albedo / PI + brdf) * radiance * NdotL * intensity * (1.0 - shadow);  // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
+    vec3 Lo = (kD * material.albedo / PI + brdf) * radiance * NdotL * light.intensity * intensity * (1.0 - shadow);  // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
     return Lo;
 }
 
