@@ -144,9 +144,13 @@ namespace renderer {
 		for (auto lightInfo : config["light"])
 		{
 			Object obj = m_objMgr->create();
+			obj.addComponent<LightCommon>(
+				parseColor(lightInfo["ambient"]),
+				parseColor(lightInfo["diffuse"]),
+				parseColor(lightInfo["specular"]),
+				lightInfo["intensity"]);
 			obj.addComponent<LightTag>();
 			std::string type = lightInfo["type"];
-			float intensity = lightInfo["intensity"];
 			if (type == "PointLight") {
 				auto spatial = lightInfo["spatial"];
 				float far_plane = lightInfo["far_plane"];
@@ -157,10 +161,6 @@ namespace renderer {
 				transCom->n = 1.0f;
 				transCom->f = far_plane;
 				obj.addComponent<PointLightCom>(
-					parseColor(lightInfo["ambient"]),
-					parseColor(lightInfo["diffuse"]),
-					parseColor(lightInfo["specular"]),
-					intensity,
 					lightInfo["constant"],
 					lightInfo["linear"],
 					lightInfo["quadratic"],
@@ -189,22 +189,13 @@ namespace renderer {
 			} else if (type == "DirLight") {
 				auto direction = lightInfo["direction"];
 				Vector3dF dir = Vector3dF{ (float)direction[0], (float)direction[1], (float)direction[2] };
-				obj.addComponent<DirLightCom>(
-					parseColor(lightInfo["ambient"]),
-					parseColor(lightInfo["diffuse"]),
-					parseColor(lightInfo["specular"]),
-					intensity,
-					dir);
+				obj.addComponent<DirLightCom>(dir);
 			} else if (type == "SpotLight") {
 				auto direction = lightInfo["direction"];
 				float cutOff = lightInfo["cutOff"];
 				float outerCutOff = lightInfo["outerCutOff"];
 				Vector3dF dir = Vector3dF{ (float)direction[0], (float)direction[1], (float)direction[2] };
 				obj.addComponent<SpotLightCom>(
-					parseColor(lightInfo["ambient"]),
-					parseColor(lightInfo["diffuse"]),
-					parseColor(lightInfo["specular"]),
-					intensity,
 					dir, DegreeF(cutOff).ToRadian(), DegreeF(outerCutOff).ToRadian());
 				auto spatial = lightInfo["spatial"];
 				loadSpatialData(obj, spatial);

@@ -393,14 +393,15 @@ namespace renderer {
     
 	void RenderSystem::uploadLight(Shader shader, Object lightObject) {
 		auto colorBufferCom = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
+		auto lightCommon = lightObject.component<LightCommon>();
+		shader.set1f("light.intensity", lightCommon->intensity);
+		shader.set3f("light.Color", lightCommon->ambient);
 		if (lightObject.hasComponent<PointLightCom>()) {
 			auto spatialDataCom = lightObject.component<SpatialData>();
 			auto lightCom = lightObject.component<PointLightCom>();
 			auto transCom = lightObject.component<PointLightTransform>();
 			shader.set1i("light.type", 2);
-			shader.set1f("light.intensity", lightCom->intensity);
 			shader.set3f("light.Position", spatialDataCom->pos);
-			shader.set3f("light.Color", lightCom->ambient);
 			shader.set1f("light.far_plane", transCom->f);
 			//shader.set1f(("lights[" + std::to_string(i) + "].constant").c_str(), lightCom->constant);
 			//shader.set1f(("lights[" + std::to_string(i) + "].Linear").c_str(), lightCom->linear);
@@ -408,16 +409,12 @@ namespace renderer {
 		} else if(lightObject.hasComponent<DirLightCom>()) {
 			auto lightCom = lightObject.component<DirLightCom>();
 			shader.set1i("light.type", 1);
-			shader.set1f("light.intensity", lightCom->intensity);
 			shader.set3f("light.Direction", lightCom->direction);
-			shader.set3f("light.Color", lightCom->ambient);
 		} else if (lightObject.hasComponent<SpotLightCom>()) {
 			auto spatialDataCom = lightObject.component<SpatialData>();
 			auto lightCom = lightObject.component<SpotLightCom>();
 			shader.set1i("light.type", 3);
-			shader.set1f("light.intensity", lightCom->intensity);
 			shader.set3f("light.Direction", lightCom->direction);
-			shader.set3f("light.Color", lightCom->ambient);
 			shader.set3f("light.Position", spatialDataCom->pos);
 			shader.set1f("light.cutOff", cos(lightCom->cutOff.radian));
 			shader.set1f("light.outerCutOff", cos(lightCom->outerCutOff.radian));

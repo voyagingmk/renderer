@@ -7,9 +7,9 @@
 
 namespace renderer {
 
-	class LightBase {
+	class LightCommon {
 	public:
-		LightBase(Color ambient,
+		LightCommon(Color ambient,
 			Color diffuse,
 			Color specular,
 			float intensity) :
@@ -23,17 +23,13 @@ namespace renderer {
 		float intensity;
 	};
 	
-	class PointLightCom: public LightBase {
+	class PointLightCom {
 	public:
-		PointLightCom(Color ambient,
-			Color diffuse,
-			Color specular,
-			float intensity,
+		PointLightCom(
 			float constant,
 			float linear,
 			float quadratic,
 			size_t shadowmapSize):
-				LightBase(ambient, diffuse, specular, intensity),
 				radius(0),
 				constant(constant),
 				linear(linear),
@@ -56,29 +52,19 @@ namespace renderer {
 		std::vector<Matrix4x4> lightPVs;
 	};
 
-	class DirLightCom : public LightBase {
+	class DirLightCom {
 	public:
-		DirLightCom(Color ambient,
-			Color diffuse,
-			Color specular,
-			float intensity,
-			Vector3dF dir) :
-			LightBase(ambient, diffuse, specular, intensity),
+		DirLightCom(Vector3dF dir) :
 			direction(dir.Normalize())
 		{}
 		Vector3dF direction;
 	};
 
-	class SpotLightCom : public LightBase {
+	class SpotLightCom {
 	public:
-		SpotLightCom(Color ambient,
-			Color diffuse,
-			Color specular,
-			float intensity,
-			Vector3dF dir,
+		SpotLightCom(Vector3dF dir,
 			RadianF cutOff, 
 			RadianF outerCutOff) :
-			LightBase(ambient, diffuse, specular, intensity),
 			direction(dir.Normalize()),
 			cutOff(cutOff),
 			outerCutOff(outerCutOff)

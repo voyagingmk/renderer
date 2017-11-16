@@ -32,10 +32,31 @@ namespace renderer {
 
 	void UISystem::lightUI() {
 		ImGui::Begin("Settings");
-		for (auto obj : m_objMgr->entities<LightTag>()) {
+		for (auto obj : m_objMgr->entities<LightTag, LightCommon>()) {
+			ImGui::PushID(obj.ID());
 			if (obj.hasComponent<PointLightCom>()) {
-
+				ImGui::Text(("PointLight" + std::to_string(obj.ID())).c_str());
+				auto lightCom = obj.component<PointLightCom>();
+			} else if (obj.hasComponent<DirLightCom>()) {
+				ImGui::Text(("DirLight" + std::to_string(obj.ID())).c_str());
+				auto lightCom = obj.component<DirLightCom>();
+			} else if (obj.hasComponent<SpotLightCom>()) {
+				ImGui::Text(("SpotLight" + std::to_string(obj.ID())).c_str());
+				auto lightCom = obj.component<SpotLightCom>();
+				auto cutOff = lightCom->cutOff.ToDegree();
+				auto outerCutOff = lightCom->outerCutOff.ToDegree();
+				ImGui::SliderFloat("cutOff", &cutOff.degree, 0.001f, 180.0f);
+				ImGui::SliderFloat("outerCutOff", &outerCutOff.degree, 0.001f, 180.0f);
+				lightCom->cutOff = cutOff.ToRadian();
+				if (outerCutOff.degree < cutOff.degree) {
+					outerCutOff.degree = cutOff.degree;
+				}
+				lightCom->outerCutOff = outerCutOff.ToRadian();
 			}
+			auto lightCommon = obj.component<LightCommon>();
+			ImGui::SliderFloat("intensity", &lightCommon->intensity, 0.001f, 50.0f);
+			ImGui::ColorEdit3("ambient", lightCommon->ambient.rgba);
+			ImGui::PopID();
 		}
 		ImGui::End();
 	}

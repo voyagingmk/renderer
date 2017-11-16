@@ -5,6 +5,7 @@
 
 namespace renderer {
 	class Color {
+	public:
 		float rgba[4] = { 0 };
 	public:
 		Color();
