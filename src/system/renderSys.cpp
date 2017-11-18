@@ -86,9 +86,6 @@ namespace renderer {
 		ColorBufferRef& finalBuf = colorBufferCom->dict["final"];
 
 		evtMgr.emit<UseColorBufferEvent>("final");
-		clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
-			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-		setViewport(screenViewport);
 		renderColorBuffer("core", context->width, context->height, true, true);
 		evtMgr.emit<UnuseColorBufferEvent>("final");
 
@@ -388,17 +385,17 @@ namespace renderer {
 		glBlendFunc(GL_ONE, GL_ONE);
 		glDisable(GL_DEPTH_TEST);
 		m_evtMgr->emit<UseColorBufferEvent>(colorBufferAliasName);
+		auto colorBufferCom = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
 		auto gSettingCom = m_objMgr->getSingletonComponent<GlobalSettingCom>();
+		auto gBufferCom = m_objMgr->getSingletonComponent<GBufferDictCom>();
+		GBufferRef& buf = gBufferCom->dict[gBufferAliasName];
 		Shader shader = getShader("deferredShading");
 		shader.use();
 		m_evtMgr->emit<UploadCameraToShaderEvent>(objCamera, shader);
-		auto gBufferCom = m_objMgr->getSingletonComponent<GBufferDictCom>();
-		GBufferRef& buf = gBufferCom->dict[gBufferAliasName];
 		m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "gPosition", 0, buf.posTexID);
 		m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "gNormal", 1, buf.normalTexID);
 		m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "gAlbedo", 2, buf.albedoTexID);
 		m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "gPBR", 3, buf.pbrTexID);
-		auto colorBufferCom = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
 		//ColorBufferRef& ssaoBuf = colorBufferCom->dict["ssaoBlur"];
 		//m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "ssao", 4, ssaoBuf.tex.texID);
 		shader.set1f("depthBias", gSettingCom->get1f("depthBias", 1.0f));
@@ -406,13 +403,20 @@ namespace renderer {
 		setViewport(std::make_tuple(0, 0, winWidth, winHeight));
 		clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
 			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-		shader.set1i("begin", true);
+		shader.set1i("begin", 1);
+	//	int loc = glGetUniformLocation(shader.spHDL, "begin");
+	//  int b = -1;
+	//	glGetUniformiv(shader.spHDL, loc, &b);
+		// shader.validate();
+		checkGLError;
 		renderQuad();
-		shader.set1i("begin", false);
+		shader.set1i("begin", 0);
 		for (auto obj : m_objMgr->entities<LightTag>()) {
 			uploadLight(shader, obj);
 			renderQuad();
 		}
+		glUseProgram(0);
+		checkGLError;
 		m_evtMgr->emit<UnuseColorBufferEvent>(colorBufferAliasName);
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);
