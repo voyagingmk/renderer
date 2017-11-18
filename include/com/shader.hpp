@@ -57,6 +57,7 @@ namespace renderer
         void setTransform4f(const char *name, Transform4x4 trans);
 		void set3fArray(const char *name, std::vector<Vector3dF>& arr, int n = 0);
         void use();
+		void validate();
     };
 
     typedef std::map<std::string, ShaderProgramHDL> ShaderProgramAlias;

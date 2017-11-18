@@ -174,3 +174,10 @@ void Shader::use() {
 }
 
 
+void Shader::validate() {
+	assert(spHDL > 0);
+	glValidateProgram(spHDL);
+}
+
+
+
