@@ -203,6 +203,7 @@ namespace renderer {
     }
     
 	void RenderSystem::receive(const RenderSceneEvent &evt) {
+		CheckGLError;
 		auto matSetCom = m_objMgr->getSingletonComponent<MaterialSet>();
 		glEnable(GL_DEPTH_TEST);
         setViewport(evt.viewport);
@@ -220,7 +221,6 @@ namespace renderer {
              ReceiveLightTag,
              MeshBuffersCom>()) {
 			auto matCom = obj.component<MaterialCom>();
-			m_evtMgr->emit<ActiveTextureEvent>(shader, "normalMap", 0, "GA_CW_N_1");
 			CheckGLError; 
 			m_evtMgr->emit<UploadCameraToShaderEvent>(evt.objCamera, shader);
 			CheckGLError; 
@@ -327,11 +327,14 @@ namespace renderer {
 		auto gBufferCom = m_objMgr->getSingletonComponent<GBufferDictCom>();
 		GBufferRef& gBuf = gBufferCom->dict[gBufferAliasName];
 		// Point Light Pass
-		for (auto obj: m_objMgr->entities<PointLightTransform, SpatialData>()) {
-			auto spatialDataCom = obj.component<SpatialData>();
+		for (auto obj: m_objMgr->entities<PointLightCom, PointLightTransform, SpatialData>()) {
 			auto lightCom = obj.component<PointLightCom>();
 			auto transCom = obj.component<PointLightTransform>();
+			auto spatialDataCom = obj.component<SpatialData>();
 			auto bufAliasname = "lightDepth" + std::to_string(obj.ID());
+			if (colorBufferCom->dict.find(bufAliasname) == colorBufferCom->dict.end()) {
+				continue;
+			}
 			ColorBufferRef& shadowBuf = colorBufferCom->dict[bufAliasname];
 			m_evtMgr->emit<UseColorBufferEvent>(bufAliasname);
 			CheckGLError;
@@ -349,11 +352,35 @@ namespace renderer {
 				Color(0.0f, 0.0f, 0.0f, 1.0f),
 				GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT,
 				&pointShadowDepthShader);
-			m_evtMgr->emit<UnuseColorBufferEvent>("shadow");
+			m_evtMgr->emit<UnuseColorBufferEvent>(bufAliasname);
 			glCullFace(GL_BACK);
 			CheckGLError;
 		}
 		// Directional Light Pass
+		for (auto obj : m_objMgr->entities<DirLightCom, DirLightTransform, SpatialData>()) {
+			auto lightCom = obj.component<DirLightCom>();
+			auto transCom = obj.component<DirLightTransform>();
+			auto spatialDataCom = obj.component<SpatialData>();
+			auto bufAliasname = "lightDepth" + std::to_string(obj.ID());
+			if (colorBufferCom->dict.find(bufAliasname) == colorBufferCom->dict.end()) {
+				continue;
+			}
+			ColorBufferRef& shadowBuf = colorBufferCom->dict[bufAliasname];
+			m_evtMgr->emit<UseColorBufferEvent>(bufAliasname);
+			CheckGLError;
+			Shader dirLightDepthShader = getShader("dirLightDepth");
+			dirLightDepthShader.use();
+			dirLightDepthShader.setMatrix4f("lightPV", transCom->lightPV);
+			// dirLightShadowShader.set3f("lightPos", obj.component<SpatialData>()->pos);
+			CheckGLError;
+			m_evtMgr->emit<RenderSceneEvent>(
+				objCamera,
+				std::make_tuple(0, 0, shadowBuf.width, shadowBuf.height),
+				Color(0.0f, 0.0f, 0.0f, 1.0f),
+				GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT,
+				&dirLightDepthShader);
+			m_evtMgr->emit<UnuseColorBufferEvent>(bufAliasname);
+		}
 	}
 
 	void RenderSystem::deferredLightingPass(std::string colorBufferAliasName, Object objCamera, std::string gBufferAliasName, size_t winWidth, size_t winHeight) {
@@ -408,8 +435,10 @@ namespace renderer {
 			//shader.set1f(("lights[" + std::to_string(i) + "].Quadratic").c_str(), lightCom->quadratic);
 		} else if(lightObject.hasComponent<DirLightCom>()) {
 			auto lightCom = lightObject.component<DirLightCom>();
+			auto transCom = lightObject.component<DirLightTransform>();
 			shader.set1i("light.type", 1);
 			shader.set3f("light.Direction", lightCom->direction);
+			shader.setMatrix4f("light.lightPV", transCom->lightPV);
 		} else if (lightObject.hasComponent<SpotLightCom>()) {
 			auto spatialDataCom = lightObject.component<SpatialData>();
 			auto lightCom = lightObject.component<SpotLightCom>();
@@ -422,7 +451,12 @@ namespace renderer {
 		std::string depthBufName = "lightDepth" + std::to_string(lightObject.ID());
 		if (colorBufferCom->dict.find(depthBufName) != colorBufferCom->dict.end()) {
 			ColorBufferRef& shadowBuf = colorBufferCom->dict[depthBufName];
-			m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "depthCubeMap", 4, shadowBuf.depthTex);
+			if (shadowBuf.depthTex.type == TexType::CubeMap){
+				m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "depthCubeMap", 4, shadowBuf.depthTex);
+			}
+			else {
+				m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "depthMap", 4, shadowBuf.depthTex);
+			}
 			shader.set1i("light.castShadow", 1);
 		}
 		else {

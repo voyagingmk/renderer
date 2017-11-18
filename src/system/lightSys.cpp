@@ -9,8 +9,8 @@ using namespace std;
 namespace renderer {
     void LightSystem::init(ObjectManager &objMgr, EventManager &evtMgr) {
 		printf("LightSystem init\n");
-        evtMgr.on<UpdatePointLightEvent>(*this);
-        evtMgr.on<AddPointLightEvent>(*this);
+        evtMgr.on<UpdateLightEvent>(*this);
+        evtMgr.on<AddLightEvent>(*this);
 		evtMgr.on<UpdateSpatialDataEvent>(*this);
 		evtMgr.on<EnableLightShadowEvent>(*this);
 		evtMgr.on<DisableLightShadowEvent>(*this);
@@ -20,17 +20,24 @@ namespace renderer {
         
     }
 
-    void LightSystem::receive(const UpdatePointLightEvent &evt) {
-		updatePointLight(evt.obj);
+    void LightSystem::receive(const UpdateLightEvent &evt) {
+		updateLight(evt.obj);
     }
 
-    void LightSystem::receive(const AddPointLightEvent &evt) {  
-		updatePointLight(evt.obj);
+    void LightSystem::receive(const AddLightEvent &evt) {  
+		updateLight(evt.obj);
     }
 
 	void LightSystem::receive(const UpdateSpatialDataEvent &evt) {
-		if (evt.obj.hasComponent<PointLightTransform>()) {
-			updatePointLight(evt.obj);
+		updateLight(evt.obj);
+	}
+
+	void LightSystem::updateLight(Object obj) {
+		if (obj.hasComponent<PointLightTransform>()) {
+			updatePointLight(obj);
+		}
+		else if (obj.hasComponent<DirLightTransform>()) {
+			updateDirLight(obj);
 		}
 	}
 
@@ -51,14 +58,32 @@ namespace renderer {
 		com->lightPVs[5] = shadowProj * LookAt(lightPos, lightPos + Vector3dF{ 0.0, 0.0, -1.0 }, { 0.0, -1.0, 0.0 }); // far
 	}
 
+	void LightSystem::updateDirLight(Object obj) {
+		auto spatialData = obj.component<SpatialData>();
+		auto com = obj.component<DirLightTransform>();
+		Matrix4x4 shadowProj;
+		shadowProj = Ortho(-com->size, com->size, -com->size, com->size, com->n, com->f);
+		Vector3dF lightPos = spatialData->pos;
+		com->lightPV = shadowProj * LookAt(lightPos, Vector3dF{ 0.0, 0.0, 0.0 }, { 0.0, 1.0, 0.0 });
+	}
+
 
 	void LightSystem::receive(const EnableLightShadowEvent &evt) {
 		auto aliasname = "lightDepth" + std::to_string(evt.obj.ID());
-		m_evtMgr->emit<CreateDpethBufferEvent>(
-			aliasname.c_str(),
-			aliasname.c_str(), 
-			DepthTexType::CubeMap, 
-			1024);
+		if (evt.obj.hasComponent<PointLightCom>()) {
+			m_evtMgr->emit<CreateDpethBufferEvent>(
+				aliasname.c_str(),
+				aliasname.c_str(),
+				DepthTexType::CubeMap,
+				1024);
+		}
+		else if (evt.obj.hasComponent<DirLightCom>()) {
+			m_evtMgr->emit<CreateDpethBufferEvent>(
+				aliasname.c_str(),
+				aliasname.c_str(),
+				DepthTexType::DepthStencil,
+				1024);
+		}
 	}
 
 	void LightSystem::receive(const DisableLightShadowEvent &evt) {

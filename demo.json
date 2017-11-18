@@ -49,6 +49,11 @@
             "fs": "depthMap.fs"
         },
         {
+            "alias": "dirLightDepth",
+            "vs": "dirLightDepth.vs",
+            "fs": "dirLightDepth.fs"
+        },
+        {
             "alias": "pointShadowDepth",
             "gs": "pointShadowDepth.gs",
             "vs": "pointShadowDepth.vs",
@@ -136,8 +141,16 @@
     ],
     "light": [
         {
-            "type": "DirLight",
+            "type": "DirLight0",
             "intensity": 0.1,
+            "size": 30.0,
+            "near_plane": 1.0,
+            "far_plane": 30.0,
+            "spatial": [
+                [-50.0,  50.0, -50.0],
+                [1, 1, 1],
+                [1, 0, 0, 0]
+            ],
             "ambient": [
                 255,
                 255,
@@ -157,7 +170,7 @@
             "shadow": true
         },
         {
-            "type": "SpotLight",
+            "type": "SpotLight0",
             "intensity": 0.3,
             "spatial": [
                 [0.0,  50.0, 0.0],
@@ -185,7 +198,7 @@
             "shadow": true
         },
         {
-            "type": "PointLight",
+            "type": "PointLight0",
             "intensity": 1.0,
             "far_plane": 10000,
             "spatial": [
@@ -214,7 +227,7 @@
             "shadow": true
         },
         {
-            "type": "PointLight",
+            "type": "PointLight0",
             "intensity": 2.0,
             "far_plane": 10000,
             "spatial": [
@@ -242,7 +255,7 @@
             "quadratic": 1.8,
             "shadow": true
         }, {
-            "type": "PointLight",
+            "type": "PointLight0",
             "intensity": 3.0,
             "far_plane": 10000,
             "spatial": [

@@ -60,6 +60,13 @@ namespace renderer {
 		Vector3dF direction;
 	};
 
+	struct DirLightTransform {
+		float size;
+		float n;
+		float f;
+		Matrix4x4 lightPV;
+	};
+
 	class SpotLightCom {
 	public:
 		SpotLightCom(Vector3dF dir,

@@ -17,9 +17,9 @@ namespace renderer {
 
 		void update(ObjectManager &objMgr, EventManager &evtMgr, float dt) override;
 		
-        void receive(const UpdatePointLightEvent &evt);	
+        void receive(const UpdateLightEvent &evt);	
         
-        void receive(const AddPointLightEvent &evt);
+        void receive(const AddLightEvent &evt);
 
 		void receive(const UpdateSpatialDataEvent &evt);
 
@@ -27,7 +27,13 @@ namespace renderer {
 
 		void receive(const DisableLightShadowEvent &evt);
 
+	private:
+
+		void updateLight(Object obj);
+
 		void updatePointLight(Object obj);
+
+		void updateDirLight(Object obj);
     };     
 }
 

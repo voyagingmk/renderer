@@ -144,12 +144,6 @@ namespace renderer {
 		for (auto lightInfo : config["light"])
 		{
 			Object obj = m_objMgr->create();
-			obj.addComponent<LightCommon>(
-				parseColor(lightInfo["ambient"]),
-				parseColor(lightInfo["diffuse"]),
-				parseColor(lightInfo["specular"]),
-				lightInfo["intensity"]);
-			obj.addComponent<LightTag>();
 			std::string type = lightInfo["type"];
 			if (type == "PointLight") {
 				auto spatial = lightInfo["spatial"];
@@ -167,7 +161,6 @@ namespace renderer {
 					1024);
 				auto com = obj.addComponent<Meshes>();
 				generateOuterBoxMeshes(*com);
-				m_evtMgr->emit<AddPointLightEvent>(obj);
 				m_evtMgr->emit<CreateMeshBufferEvent>(obj);
 				m_evtMgr->emit<EnableLightShadowEvent>(obj);
 				obj.addComponent<MotionCom>();
@@ -187,9 +180,19 @@ namespace renderer {
 				count++;
 				//	m_evtMgr->emit<AddActionEvent>(obj, "move", data);
 			} else if (type == "DirLight") {
+				auto spatial = lightInfo["spatial"];
+				loadSpatialData(obj, spatial);
 				auto direction = lightInfo["direction"];
 				Vector3dF dir = Vector3dF{ (float)direction[0], (float)direction[1], (float)direction[2] };
 				obj.addComponent<DirLightCom>(dir);
+				auto transCom = obj.addComponent<DirLightTransform>();
+				float size = lightInfo["size"];
+				float near_plane = lightInfo["near_plane"];
+				float far_plane = lightInfo["far_plane"];
+				transCom->size = size;
+				transCom->n = near_plane;
+				transCom->f = far_plane;
+				m_evtMgr->emit<EnableLightShadowEvent>(obj);
 			} else if (type == "SpotLight") {
 				auto direction = lightInfo["direction"];
 				float cutOff = lightInfo["cutOff"];
@@ -201,7 +204,16 @@ namespace renderer {
 				loadSpatialData(obj, spatial);
             } else {
                 obj.destroy();
+				continue;
             }
+
+			obj.addComponent<LightCommon>(
+				parseColor(lightInfo["ambient"]),
+				parseColor(lightInfo["diffuse"]),
+				parseColor(lightInfo["specular"]),
+				lightInfo["intensity"]);
+			obj.addComponent<LightTag>();
+			m_evtMgr->emit<AddLightEvent>(obj);
 		}
 	}
 

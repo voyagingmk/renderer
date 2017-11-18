@@ -17,6 +17,7 @@ uniform sampler2D gNormal;
 uniform sampler2D gAlbedo;
 uniform sampler2D gPBR;
 uniform samplerCube depthCubeMap;
+uniform sampler2D depthMap;
 
 
 struct Light {
@@ -32,6 +33,7 @@ struct Light {
     float cutOff;
     float outerCutOff;
     bool castShadow;
+    mat4 lightPV;
 };
 uniform Light light;
 uniform vec3 viewPos;
@@ -101,7 +103,7 @@ float ShadowCalculation_Soft(vec3 fragPos, Light light)
     // Get vector between fragment position and light position
     vec3 fragToLight = fragPos - light.Position;
     // Use the fragment to light vector to sample from the depth map    
-    // float closestDepth = texture(depthMap, fragToLight).r;
+    // float closestDepth = texture(depthCubeMap, fragToLight).r;
     // It is currently in linear range between [0,1]. Let's re-transform it back to original depth value
     // closestDepth *= light.far_plane;
     // Now get current linear depth as the length between the fragment and light position
@@ -136,6 +138,43 @@ float ShadowCalculation_Hard(vec3 fragPos, Light light)
     float bias = depthBias; // we use a much larger bias since depth is now in [near_plane, far_plane] range
     float shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;        
 
+    return shadow;
+}
+
+
+float ShadowCalculation_Dir_Hard(vec3 fragPos, Light light, vec3 N)
+{
+    vec4 fragPosLightSpace = light.lightPV * vec4(fragPos, 1.0);
+    // perform perspective divide
+    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+    // transform to [0,1] range
+    projCoords = projCoords * 0.5 + 0.5;
+    // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
+    float closestDepth = texture(depthMap, projCoords.xy).r; 
+    // get depth of current fragment from light's perspective
+    float currentDepth = projCoords.z;
+    // calculate bias (based on depth map resolution and slope)
+    vec3 lightDir = normalize(light.Position - fragPos);
+    float bias = max(0.05 * (1.0 - dot(N, lightDir)), 0.005);
+    // check whether current frag pos is in shadow
+    // float shadow = currentDepth - bias > closestDepth  ? 1.0 : 0.0;
+    // PCF
+    float shadow = 0.0;
+    vec2 texelSize = 1.0 / textureSize(depthMap, 0);
+    for(int x = -1; x <= 1; ++x)
+    {
+        for(int y = -1; y <= 1; ++y)
+        {
+            float pcfDepth = texture(depthMap, projCoords.xy + vec2(x, y) * texelSize).r; 
+            shadow += currentDepth - bias > pcfDepth  ? 1.0 : 0.0;        
+        }    
+    }
+    shadow /= 9.0;
+    
+    // keep the shadow at 0.0 when outside the far_plane region of the light's frustum.
+    if(projCoords.z > 1.0)
+        shadow = 0.0;
+        
     return shadow;
 }
 
@@ -188,7 +227,12 @@ vec3 calRadiance(vec3 FragPos, Material material, Light light, vec3 F0, vec3 N, 
 
     float shadow = 0;
     if (light.castShadow) {
-        shadow = ShadowCalculation_Hard(FragPos, light);
+        if (type == 1) {
+            shadow = ShadowCalculation_Dir_Hard(FragPos, light, N);
+        } 
+        else if (type == 2) {
+            shadow = ShadowCalculation_Hard(FragPos, light);
+        }
     }
     vec3 Lo = (kD * material.albedo / PI + brdf) * radiance * NdotL * light.intensity * intensity * (1.0 - shadow);  // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
     return Lo;

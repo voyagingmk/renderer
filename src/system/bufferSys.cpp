@@ -321,6 +321,7 @@ namespace renderer {
         auto it = texDict->find(texAliasname);
 		assert(it != texDict->end());
         TexRef texRef = it->second;
+		assert(texRef.texID > 0);
         buf.width = texRef.width;
         buf.height = texRef.height;
         buf.depthTex = texRef;

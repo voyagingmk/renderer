@@ -6,17 +6,17 @@
 
 namespace renderer {
     
-	class AddPointLightEvent: public ecs::Event<AddPointLightEvent> {
+	class AddLightEvent: public ecs::Event<AddLightEvent> {
 	public:
-		AddPointLightEvent(ecs::Object obj) :
+		AddLightEvent(ecs::Object obj) :
 			obj(obj)
 		{}
 		ecs::Object obj;
 	};
 
-	class UpdatePointLightEvent: public ecs::Event<UpdatePointLightEvent> {
+	class UpdateLightEvent: public ecs::Event<UpdateLightEvent> {
 	public:
-		UpdatePointLightEvent(ecs::Object obj) :
+		UpdateLightEvent(ecs::Object obj) :
 			obj(obj)
 		{}
 		ecs::Object obj;
