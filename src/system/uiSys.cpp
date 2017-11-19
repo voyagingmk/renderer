@@ -55,6 +55,7 @@ namespace renderer {
 				if (spatialData->pos != posV || dirLightTrans->size != size || dirLightTrans->n != n || dirLightTrans->f != f) {
 					dirLightTrans->n = n;
 					dirLightTrans->f = f;
+					dirLightTrans->size = size;
 					spatialData->pos = posV;
 					m_evtMgr->emit<UpdateLightEvent>(obj);
 				}
@@ -128,6 +129,10 @@ namespace renderer {
 		bool enableGamma = gSettingCom->getValue("enableGamma");
 		ImGui::Checkbox("GammaCorrect", &enableGamma);
 		gSettingCom->setValue("enableGamma", enableGamma);
+
+		bool debugShadow = gSettingCom->getValue("debugShadow");
+		ImGui::Checkbox("DebugShadow", &debugShadow);
+		gSettingCom->setValue("debugShadow", debugShadow);
 
 		auto pos = cameraView->GetCameraPosition();
 		ImGui::Text("Camera: %.2f %.2f %.2f", pos.x, pos.y, pos.z);

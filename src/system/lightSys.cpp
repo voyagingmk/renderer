@@ -80,7 +80,7 @@ namespace renderer {
 			m_evtMgr->emit<CreateDpethBufferEvent>(
 				aliasname.c_str(),
 				aliasname.c_str(),
-				DepthTexType::DepthStencil,
+				DepthTexType::DepthOnly,
 				1024);
 		}
 	}

@@ -154,7 +154,7 @@ float ShadowCalculation_Dir(vec3 fragPos, Light light, vec3 N, bool pcf)
     // get depth of current fragment from light's perspective
     float currentDepth = projCoords.z;
     // calculate bias (based on depth map resolution and slope)
-    vec3 lightDir = normalize(light.Position - fragPos);
+    vec3 lightDir = normalize(light.Position);
     float bias = max(0.05 * (1.0 - dot(N, lightDir)), 0.005);
     float shadow = 0.0;
     // check whether current frag pos is in shadow
@@ -178,7 +178,7 @@ float ShadowCalculation_Dir(vec3 fragPos, Light light, vec3 N, bool pcf)
     // keep the shadow at 0.0 when outside the far_plane region of the light's frustum.
     if(projCoords.z > 1.0)
         shadow = 0.0;
-   // shadow = 0.0;
+    // shadow = closestDepth;
     return shadow;
 }
 
@@ -232,8 +232,8 @@ vec3 calRadiance(vec3 FragPos, Material material, Light light, vec3 F0, vec3 N, 
     float shadow = 0;
     if (light.castShadow) {
         if (type == 1) {
-            shadow = ShadowCalculation_Dir(FragPos, light, N, false);
-           // return vec3(1 - shadow);
+            shadow = ShadowCalculation_Dir(FragPos, light, N, true);
+            //return vec3(1 - shadow);
         } 
         else if (type == 2) {
             shadow = ShadowCalculation_Hard(FragPos, light);
@@ -260,8 +260,7 @@ void main()
         // ambient lighting (note that the next IBL tutorial will replace 
         // this ambient lighting with environment lighting).
         vec3 ambient = vec3(0.03) * material.albedo * material.ao;
-        FragColor = vec4(ambient, 1.0);
-       // FragColor = vec4(vec3(0.0), 1.0);
+        //FragColor = vec4(ambient, 1.0);
         return;
     }
     vec3 N = normalize(Normal);

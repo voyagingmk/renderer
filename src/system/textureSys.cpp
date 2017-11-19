@@ -71,7 +71,7 @@ namespace renderer {
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
             GLfloat borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
             glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
-            if(dtType == DepthTexType::DepthStencil)
+            if(dtType == DepthTexType::DepthOnly)
                 glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,width, height, 0, GL_DEPTH_COMPONENT,  GL_FLOAT, 0);
             if(dtType == DepthTexType::DepthStencil)
                 glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, width, height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, 0);
