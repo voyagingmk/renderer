@@ -93,11 +93,16 @@ namespace renderer {
 		renderSkybox("", objCamera, screenViewport);
 		renderLightObjects("", objCamera, screenViewport);
 		evtMgr.emit<UnuseColorBufferEvent>(curSceneBuf);
+		
+		if (gSettingCom->get1b("enableSSAO")) {
+			ssaoApplyPass(curSceneBuf, anotherSceneBuf, "ssaoBlur", context->width, context->height);
+			swap(curSceneBuf, anotherSceneBuf);
+		}
 
 		bool noToneMapping = !gSettingCom->get1b("enableToneMapping");
 		bool noGamma = !gSettingCom->get1b("enableGamma");
 
-		if (gSettingCom->get1b("enableSMAA") == true) {
+		if (gSettingCom->get1b("enableSMAA")) {
 			// debug edge detect
 			{
 				evtMgr.emit<UseColorBufferEvent>("edge");
@@ -316,7 +321,6 @@ namespace renderer {
 	}
 
 	void RenderSystem::ssaoApplyPass(std::string inputBuffer, std::string outputBuffer, std::string ssaoBlurBuffer, size_t winWidth, size_t winHeight) {
-		m_evtMgr->emit<UseColorBufferEvent>(ssaoBlurBuffer);
 		auto colorBufferCom = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
 		ColorBufferRef& inputBuf = colorBufferCom->dict[inputBuffer];
 		ColorBufferRef& outputBuf = colorBufferCom->dict[outputBuffer];
