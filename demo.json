@@ -112,7 +112,15 @@
         {
             "alias": "deferredShading",
             "vs": "screen.vs",
-            "fs": "deferred_shading.fs"
+            "fs": "deferred_shading.fs",
+            "textures":{
+                "gPosition": 0,
+                "gNormal": 1,
+                "gAlbedo": 2,
+                "gPBR": 3,
+                "depthCubeMap": 4,
+                "depthMap": 5
+            }
         }
         
     ],
@@ -141,7 +149,7 @@
     ],
     "light": [
         {
-            "type": "DirLight0",
+            "type": "DirLight",
             "intensity": 0.1,
             "size": 30.0,
             "near_plane": 1.0,
