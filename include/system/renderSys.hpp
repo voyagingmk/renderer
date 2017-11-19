@@ -42,7 +42,9 @@ namespace renderer {
 
 		void ssaoPass(Object objCamera, std::string gBufferAliasName, std::string ssaoBuffer, size_t winWidth, size_t winHeight);
 
-		void ssaoBlurPass(Object objCamera, std::string ssaoBuffer, std::string ssaoBlurBuffer, size_t winWidth, size_t winHeight);
+		void ssaoBlurPass(std::string ssaoBuffer, std::string ssaoBlurBuffer, size_t winWidth, size_t winHeight);
+		
+		void ssaoApplyPass(std::string inputBuffer, std::string ouputBuffer, std::string ssaoBlurBuffer, size_t winWidth, size_t winHeight);
 
 		void updateShadowMapPass(std::string gBufferAliasName, Object objCamera);
 

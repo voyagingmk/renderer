@@ -107,7 +107,11 @@
         {
             "alias": "ssaoApply",
             "vs": "screen.vs",
-            "fs": "ssaoApply.fs"
+            "fs": "ssaoApply.fs",
+            "textures":{
+                "img": 0,
+                "ssao": 1
+            }
         },
         {
             "alias": "ssaoBlur",
