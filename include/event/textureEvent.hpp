@@ -65,19 +65,19 @@ namespace renderer {
     
     class CreateNoiseTextureEvent : public ecs::Event<CreateNoiseTextureEvent> {
     public:
-        CreateNoiseTextureEvent(const std::string& aliasname):
+        CreateNoiseTextureEvent(const std::string aliasname):
             aliasname(aliasname)
         {}
-		const std::string& aliasname;
+		const std::string aliasname;
     };
     
     
 	class DestroyTextureEvent : public ecs::Event<DestroyTextureEvent> {
 	public:
-		DestroyTextureEvent(const std::string& aliasname):
+		DestroyTextureEvent(const std::string aliasname):
 			aliasname(aliasname)
 		{}
-		const std::string& aliasname;
+		const std::string aliasname;
 	};
 
 	class ActiveTextureEvent : public ecs::Event<ActiveTextureEvent> {

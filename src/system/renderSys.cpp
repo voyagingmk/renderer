@@ -165,7 +165,7 @@ namespace renderer {
 		} else {
 			renderColorBuffer("final", context->width, context->height, noGamma, noToneMapping);
 		}
-		// renderColorBuffer("core", context->width, context->height);
+		renderColorBuffer("ssaoBlur", context->width, context->height, true, true);
 		// renderGBufferDebug("main", context->width, context->height);
 		CheckGLError;
 		m_evtMgr->emit<DrawUIEvent>();

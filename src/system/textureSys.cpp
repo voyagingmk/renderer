@@ -208,11 +208,13 @@ namespace renderer {
 	}
 
 	void TextureSystem::receive(const ActiveTextureEvent &evt) {
-		if (evt.aliasname == "") {
+		assert(strcmp(evt.aliasname, "") != 0);
+		if (strcmp(evt.aliasname , "") == 0) {
 			return;
 		}
 		auto texDict = m_objMgr->getSingletonComponent<TextureDict>();
-		auto it = texDict->find(evt.aliasname);
+		auto it = texDict->find(std::string(evt.aliasname));
+		assert(it != texDict->end());
 		if (it == texDict->end()) {
 			return;
         }

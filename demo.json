@@ -97,7 +97,12 @@
         {
             "alias": "ssao",
             "vs": "ssao.vs",
-            "fs": "ssao.fs"
+            "fs": "ssao.fs",
+            "textures":{
+                "gPosition": 0,
+                "gNormal": 1,
+                "texNoise": 2
+            }
         },
         {
             "alias": "ssaoApply",
