@@ -39,6 +39,19 @@ namespace renderer {
 		else if (obj.hasComponent<DirLightTransform>()) {
 			updateDirLight(obj);
 		}
+		else if (obj.hasComponent<SpotLightTransform>()) {
+			updateSpotLight(obj);
+		}
+	}
+
+	void LightSystem::updateSpotLight(Object obj) {
+		auto spotLightCom = obj.component<SpotLightCom>();
+		auto spatialData = obj.component<SpatialData>();
+		auto com = obj.component<SpotLightTransform>();
+		Matrix4x4 shadowProj;
+		shadowProj = Perspective(spotLightCom->outerCutOff.ToDegree().degree * 2.0f, com->aspect, com->n, com->f);
+		Vector3dF lightPos = spatialData->pos;
+		com->lightPV = shadowProj * LookAt(lightPos, lightPos + spotLightCom->direction, { 0.0, 1.0, 0.0 });  // right
 	}
 
 	void LightSystem::updatePointLight(Object obj) {
@@ -75,8 +88,13 @@ namespace renderer {
 				aliasname.c_str(),
 				DepthTexType::CubeMap,
 				1024);
-		}
-		else if (evt.obj.hasComponent<DirLightCom>()) {
+		} else if (evt.obj.hasComponent<DirLightCom>()) {
+			m_evtMgr->emit<CreateDpethBufferEvent>(
+				aliasname.c_str(),
+				aliasname.c_str(),
+				DepthTexType::DepthOnly,
+				1024);
+		} else if (evt.obj.hasComponent<SpotLightCom>()) {
 			m_evtMgr->emit<CreateDpethBufferEvent>(
 				aliasname.c_str(),
 				aliasname.c_str(),

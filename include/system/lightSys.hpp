@@ -31,6 +31,8 @@ namespace renderer {
 
 		void updateLight(Object obj);
 
+		void updateSpotLight(Object obj);
+
 		void updatePointLight(Object obj);
 
 		void updateDirLight(Object obj);

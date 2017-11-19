@@ -78,6 +78,14 @@ namespace renderer {
 		RadianF outerCutOff;
 	};
 
+
+	struct SpotLightTransform {
+		float fovy;
+		float aspect;
+		float n;
+		float f;
+		Matrix4x4 lightPV;
+	};
 };
 
 #endif
