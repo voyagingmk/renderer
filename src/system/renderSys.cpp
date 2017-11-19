@@ -102,73 +102,11 @@ namespace renderer {
 		bool noToneMapping = !gSettingCom->get1b("enableToneMapping");
 		bool noGamma = !gSettingCom->get1b("enableGamma");
 
-		if (gSettingCom->get1b("enableSMAA")) {
-			// debug edge detect
-			{
-				evtMgr.emit<UseColorBufferEvent>("edge");
-				Shader edgeDetect = getShader("smaaEdgeDetect");
-				edgeDetect.use();
-				edgeDetect.set2f("imgSize", context->width, context->height);
-				clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
-					GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-				setViewport(screenViewport);
-				ColorBufferRef& sceneBuf = colorBufferCom->dict[curSceneBuf];
-				m_evtMgr->emit<ActiveTextureByIDEvent>(edgeDetect, "colorTex", 0, sceneBuf.tex);
-				renderQuad();
-				evtMgr.emit<UnuseColorBufferEvent>("edge");
-			}
-
-			static unsigned int area_tex = 0;
-			static unsigned int search_tex = 0;
-			if (area_tex == 0) {
-				glGenTextures(1, &area_tex);
-				glBindTexture(GL_TEXTURE_2D, area_tex);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RG8, (GLsizei)AREATEX_WIDTH, (GLsizei)AREATEX_HEIGHT, 0, GL_RG, GL_UNSIGNED_BYTE, areaTexBytes);
-			}
-			if (search_tex == 0) {
-				glGenTextures(1, &search_tex);
-				glBindTexture(GL_TEXTURE_2D, search_tex);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, (GLsizei)SEARCHTEX_WIDTH, (GLsizei)SEARCHTEX_HEIGHT, 0, GL_RED, GL_UNSIGNED_BYTE, searchTexBytes);
-			}
-			{
-				evtMgr.emit<UseColorBufferEvent>("weight");
-				Shader smaaWeight = getShader("smaaWeight");
-				smaaWeight.use();
-				smaaWeight.set2f("imgSize", context->width, context->height);
-				ColorBufferRef& edgeBuf = colorBufferCom->dict["edge"];
-				clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
-					GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-				setViewport(screenViewport);
-				m_evtMgr->emit<ActiveTextureByIDEvent>(smaaWeight, "edgesTex", 0, edgeBuf.tex);
-				m_evtMgr->emit<ActiveTextureByIDEvent>(smaaWeight, "areaTex", 1, area_tex);
-				m_evtMgr->emit<ActiveTextureByIDEvent>(smaaWeight, "searchTex", 2, search_tex);
-				renderQuad();
-				evtMgr.emit<UnuseColorBufferEvent>("weight");
-			}
-			{
-				evtMgr.emit<UseColorBufferEvent>(anotherSceneBuf);
-				Shader smaaBlending = getShader("smaaBlending");
-				smaaBlending.use();
-				smaaBlending.set2f("imgSize", context->width, context->height);
-				ColorBufferRef& weightBuf = colorBufferCom->dict["weight"];
-				ColorBufferRef& sceneBuf = colorBufferCom->dict[curSceneBuf];
-				m_evtMgr->emit<ActiveTextureByIDEvent>(smaaBlending, "colorTex", 0, sceneBuf.tex);
-				m_evtMgr->emit<ActiveTextureByIDEvent>(smaaBlending, "blendTex", 1, weightBuf.tex);
-				clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
-					GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-				setViewport(screenViewport);
-				renderQuad();
-				evtMgr.emit<UnuseColorBufferEvent>(anotherSceneBuf);
-				swap(curSceneBuf, anotherSceneBuf);
-			}
+		if (gSettingCom->get1b("enableSMAA"))
+		{
+			setViewport(screenViewport);
+			smaaPass(curSceneBuf, anotherSceneBuf);
+			swap(curSceneBuf, anotherSceneBuf);
 		}
 		renderColorBuffer(curSceneBuf, context->width, context->height, noGamma, noToneMapping);
 		// renderColorBuffer("ssaoBlur", context->width, context->height, true, true);
@@ -538,7 +476,73 @@ namespace renderer {
 		}
 		m_evtMgr->emit<UnuseColorBufferEvent>(colorBufferAliasName);
 	}
-    
+   
+	void RenderSystem::smaaPass(std::string inputBuffer, std::string outputBuffer) {
+		auto colorBufferCom = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
+		ColorBufferRef& inputBuf = colorBufferCom->dict[inputBuffer];
+		{
+			// debug edge detect
+			m_evtMgr->emit<UseColorBufferEvent>("edge");
+			Shader edgeDetect = getShader("smaaEdgeDetect");
+			edgeDetect.use();
+			edgeDetect.set2f("imgSize", inputBuf.width, inputBuf.height);
+			clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
+				GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+			m_evtMgr->emit<ActiveTextureByIDEvent>(edgeDetect, "colorTex", 0, inputBuf.tex);
+			renderQuad();
+			m_evtMgr->emit<UnuseColorBufferEvent>("edge");
+		}
+
+		static unsigned int area_tex = 0;
+		static unsigned int search_tex = 0;
+		if (area_tex == 0) {
+			glGenTextures(1, &area_tex);
+			glBindTexture(GL_TEXTURE_2D, area_tex);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RG8, (GLsizei)AREATEX_WIDTH, (GLsizei)AREATEX_HEIGHT, 0, GL_RG, GL_UNSIGNED_BYTE, areaTexBytes);
+		}
+		if (search_tex == 0) {
+			glGenTextures(1, &search_tex);
+			glBindTexture(GL_TEXTURE_2D, search_tex);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, (GLsizei)SEARCHTEX_WIDTH, (GLsizei)SEARCHTEX_HEIGHT, 0, GL_RED, GL_UNSIGNED_BYTE, searchTexBytes);
+		}
+		{
+			m_evtMgr->emit<UseColorBufferEvent>("weight");
+			Shader smaaWeight = getShader("smaaWeight");
+			smaaWeight.use();
+			smaaWeight.set2f("imgSize", inputBuf.width, inputBuf.height);
+			ColorBufferRef& edgeBuf = colorBufferCom->dict["edge"];
+			clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
+				GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+			m_evtMgr->emit<ActiveTextureByIDEvent>(smaaWeight, "edgesTex", 0, edgeBuf.tex);
+			m_evtMgr->emit<ActiveTextureByIDEvent>(smaaWeight, "areaTex", 1, area_tex);
+			m_evtMgr->emit<ActiveTextureByIDEvent>(smaaWeight, "searchTex", 2, search_tex);
+			renderQuad();
+			m_evtMgr->emit<UnuseColorBufferEvent>("weight");
+		}
+		{
+			m_evtMgr->emit<UseColorBufferEvent>(outputBuffer);
+			Shader smaaBlending = getShader("smaaBlending");
+			smaaBlending.use();
+			smaaBlending.set2f("imgSize", inputBuf.width, inputBuf.height);
+			ColorBufferRef& weightBuf = colorBufferCom->dict["weight"];
+			ColorBufferRef& sceneBuf = colorBufferCom->dict[inputBuffer];
+			m_evtMgr->emit<ActiveTextureByIDEvent>(smaaBlending, "colorTex", 0, sceneBuf.tex);
+			m_evtMgr->emit<ActiveTextureByIDEvent>(smaaBlending, "blendTex", 1, weightBuf.tex);
+			clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
+				GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+			renderQuad();
+			m_evtMgr->emit<UnuseColorBufferEvent>(outputBuffer);
+		}
+	}
+
 	void RenderSystem::renderTex(TexRef& tex, size_t winWidth, size_t winHeight, bool noGamma, bool noToneMapping) {
 		Shader shader = getShader("screen");
 		shader.use();

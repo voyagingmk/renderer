@@ -56,6 +56,8 @@ namespace renderer {
 
 		void uploadLight(Shader shader, Object lightObject);
 
+		void smaaPass(std::string inputBuffer, std::string outputBuffer);
+
 		void renderTex(TexRef& tex, size_t winWidth, size_t winHeight, bool noGamma, bool noToneMapping);
 
         void renderColorBuffer(std::string colorBufferAliasName, size_t winWidth, size_t winHeight, bool noGamma = false, bool noToneMapping = false);
