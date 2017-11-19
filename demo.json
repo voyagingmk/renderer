@@ -149,7 +149,7 @@
     ],
     "light": [
         {
-            "type": "DirLight0",
+            "type": "DirLight",
             "intensity": 1.1,
             "size": 30.0,
             "near_plane": 0.0001,
@@ -207,7 +207,7 @@
             "shadow": true
         },
         {
-            "type": "PointLight0",
+            "type": "PointLight",
             "intensity": 1.0,
             "far_plane": 10000,
             "spatial": [
@@ -236,7 +236,7 @@
             "shadow": true
         },
         {
-            "type": "PointLight0",
+            "type": "PointLight",
             "intensity": 2.0,
             "far_plane": 10000,
             "spatial": [
@@ -264,7 +264,7 @@
             "quadratic": 1.8,
             "shadow": true
         }, {
-            "type": "PointLight0",
+            "type": "PointLight",
             "intensity": 3.0,
             "far_plane": 10000,
             "spatial": [

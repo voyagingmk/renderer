@@ -66,48 +66,10 @@ namespace renderer {
 		auto colorBufferCom = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
 
 		updateShadowMapPass("main", objCamera);
-		
-		if(gSettingCom->get1b("debugShadow")) {
-			/*
-			for (auto obj : m_objMgr->entities<DirLightCom, DirLightTransform>()) {
-				auto transCom = obj.component<DirLightTransform>();
-				auto bufAliasname = "lightDepth" + std::to_string(obj.ID());
-				ColorBufferRef& shadowBuf = colorBufferCom->dict[bufAliasname];
-				Shader shader = getShader("screen");
-				shader.use();
-				clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
-					GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-				setViewport(std::make_tuple(0, 0, context->width, context->height));
-				m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "texture1", 0, shadowBuf.depthTex);
-				renderQuad();
-				m_evtMgr->emit<DrawUIEvent>();
-				SDL_GL_SwapWindow(context->win);
-				return;
-			}
-			*/
-			for (auto obj : m_objMgr->entities<SpotLightCom, SpotLightTransform>()) {
-				auto transCom = obj.component<SpotLightTransform>();
-				auto bufAliasname = "lightDepth" + std::to_string(obj.ID());
-				ColorBufferRef& shadowBuf = colorBufferCom->dict[bufAliasname];
-				Shader shader = getShader("screen");
-				shader.use();
-				clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
-					GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-				setViewport(std::make_tuple(0, 0, context->width, context->height));
-				m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "texture1", 0, shadowBuf.depthTex);
-				renderQuad();
-				m_evtMgr->emit<DrawUIEvent>();
-				SDL_GL_SwapWindow(context->win);
-				return;
-			}
-		}
+		CheckGLError;
 
 		// lighting pass
 		deferredLightingPass("core", objCamera, "main", context->width, context->height);
-		
-		//renderColorBuffer("core", context->width, context->height);
-		//SDL_GL_SwapWindow(context->win);
-		//return;
 		CheckGLError;
 
 		//setViewport(std::make_tuple(0, 0, context->width, context->height));
@@ -553,20 +515,30 @@ namespace renderer {
 		m_evtMgr->emit<UnuseColorBufferEvent>(colorBufferAliasName);
 	}
     
-    void RenderSystem::renderColorBuffer(std::string colorBufferAliasName, size_t winWidth, size_t winHeight, bool noGamma, bool noToneMapping) {
-        Shader shader = getShader("screen");
-        shader.use();
+	void RenderSystem::renderTex(TexRef& tex, size_t winWidth, size_t winHeight, bool noGamma, bool noToneMapping) {
+		Shader shader = getShader("screen");
+		shader.use();
 		shader.set1b("noGamma", noGamma);
 		shader.set1b("noToneMapping", noToneMapping);
+		clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
+			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+		setViewport(std::make_tuple(0, 0, winWidth, winHeight));
+		m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "texture1", 0, tex);
+		renderQuad();
+	}
+
+    void RenderSystem::renderColorBuffer(std::string colorBufferAliasName, size_t winWidth, size_t winHeight, bool noGamma, bool noToneMapping) {
         auto colorBufferCom = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
         ColorBufferRef& buf = colorBufferCom->dict[colorBufferAliasName];
-        clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
-                  GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-        setViewport(std::make_tuple(0, 0, winWidth, winHeight));
-        m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "texture1", 0, buf.tex.texID);
-        renderQuad();
+        renderTex(buf.tex, winWidth, winHeight, noGamma, noToneMapping);
     }
-    
+
+	void RenderSystem::renderDepthBuffer(std::string colorBufferAliasName, size_t winWidth, size_t winHeight, bool noGamma, bool noToneMapping) {
+		auto colorBufferCom = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
+		ColorBufferRef& buf = colorBufferCom->dict[colorBufferAliasName];
+		renderTex(buf.depthTex, winWidth, winHeight, noGamma, noToneMapping);
+	}
+
     void RenderSystem::renderGBufferDebug(std::string gBufferAliasName, size_t winWidth, size_t winHeight) {
         Shader shader = getShader("screen");
         shader.use();

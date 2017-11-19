@@ -6,6 +6,7 @@
 #include "event/renderEvent.hpp"
 #include "event/uiEvent.hpp"
 #include "event/miscEvent.hpp"
+#include "com/bufferCom.hpp"
 #include "com/materialCom.hpp"
 #include "com/shader.hpp"
 
@@ -53,8 +54,12 @@ namespace renderer {
 
 		void uploadLight(Shader shader, Object lightObject);
 
+		void renderTex(TexRef& tex, size_t winWidth, size_t winHeight, bool noGamma, bool noToneMapping);
+
         void renderColorBuffer(std::string colorBufferAliasName, size_t winWidth, size_t winHeight, bool noGamma = false, bool noToneMapping = false);
-        
+		
+		void renderDepthBuffer(std::string colorBufferAliasName, size_t winWidth, size_t winHeight, bool noGamma = false, bool noToneMapping = false);
+
         void renderGBufferDebug(std::string gBufferAliasName, size_t winWidth, size_t winHeight);
 	};
 
