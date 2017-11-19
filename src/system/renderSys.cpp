@@ -60,39 +60,39 @@ namespace renderer {
 		// glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 		// ssao pass
+		// only need G-Buffer
 		ssaoPass(objCamera, "main", "ssao", context->width, context->height);
+		// optional
 		ssaoBlurPass("ssao", "ssaoBlur", context->width, context->height);
 
 		auto colorBufferCom = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
-
+		
+		// TODO: only update shadow map of dynamic lights
 		updateShadowMapPass("main", objCamera);
 		CheckGLError;
 
+		std::string curSceneBuf = "pingBuf";
+		std::string anotherSceneBuf = "pongBuf";
+
 		// lighting pass
-		deferredLightingPass("pingBuf", objCamera, "main", context->width, context->height);
+		deferredLightingPass(curSceneBuf, objCamera, "main", context->width, context->height);
 		CheckGLError;
 
-		//setViewport(std::make_tuple(0, 0, context->width, context->height));
-	   // clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
-	   // GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-	   /*----- first-pass end -----*/
 
-		ColorBufferRef& pingBuf = colorBufferCom->dict["pingBuf"];
-		ColorBufferRef& pongBuf = colorBufferCom->dict["pongBuf"];
+		evtMgr.emit<UseColorBufferEvent>(anotherSceneBuf);
+		renderColorBuffer(curSceneBuf, context->width, context->height, true, true);
+		evtMgr.emit<UnuseColorBufferEvent>(anotherSceneBuf);
+		swap(curSceneBuf, anotherSceneBuf);
 
-		evtMgr.emit<UseColorBufferEvent>("pongBuf");
-		renderColorBuffer("pingBuf", context->width, context->height, true, true);
-		evtMgr.emit<UnuseColorBufferEvent>("pongBuf");
+		evtMgr.emit<CopyGBufferDepth2ColorBufferEvent>("main", curSceneBuf.c_str());// 画skybox需要GBuffer的深度信息
 
-		evtMgr.emit<CopyGBufferDepth2ColorBufferEvent>("main", "pongBuf");// 画skybox需要GBuffer的深度信息
-
-		evtMgr.emit<UseColorBufferEvent>("pongBuf");
+		evtMgr.emit<UseColorBufferEvent>(curSceneBuf);
 		// skybox pass
 		CheckGLError;
 		renderSkybox("", objCamera, screenViewport);
 		renderLightObjects("", objCamera, screenViewport);
-		evtMgr.emit<UnuseColorBufferEvent>("pongBuf");
+		evtMgr.emit<UnuseColorBufferEvent>(curSceneBuf);
 
 		bool noToneMapping = !gSettingCom->get1b("enableToneMapping");
 		bool noGamma = !gSettingCom->get1b("enableGamma");
@@ -107,7 +107,8 @@ namespace renderer {
 				clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
 					GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 				setViewport(screenViewport);
-				m_evtMgr->emit<ActiveTextureByIDEvent>(edgeDetect, "colorTex", 0, pongBuf.tex);
+				ColorBufferRef& sceneBuf = colorBufferCom->dict[curSceneBuf];
+				m_evtMgr->emit<ActiveTextureByIDEvent>(edgeDetect, "colorTex", 0, sceneBuf.tex);
 				renderQuad();
 				evtMgr.emit<UnuseColorBufferEvent>("edge");
 			}
@@ -148,23 +149,23 @@ namespace renderer {
 				evtMgr.emit<UnuseColorBufferEvent>("weight");
 			}
 			{
-				evtMgr.emit<UseColorBufferEvent>("pingBuf");
+				evtMgr.emit<UseColorBufferEvent>(anotherSceneBuf);
 				Shader smaaBlending = getShader("smaaBlending");
 				smaaBlending.use();
 				smaaBlending.set2f("imgSize", context->width, context->height);
 				ColorBufferRef& weightBuf = colorBufferCom->dict["weight"];
-				m_evtMgr->emit<ActiveTextureByIDEvent>(smaaBlending, "colorTex", 0, pongBuf.tex);
+				ColorBufferRef& sceneBuf = colorBufferCom->dict[curSceneBuf];
+				m_evtMgr->emit<ActiveTextureByIDEvent>(smaaBlending, "colorTex", 0, sceneBuf.tex);
 				m_evtMgr->emit<ActiveTextureByIDEvent>(smaaBlending, "blendTex", 1, weightBuf.tex);
 				clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
 					GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 				setViewport(screenViewport);
 				renderQuad();
-				evtMgr.emit<UnuseColorBufferEvent>("pingBuf");
-				renderColorBuffer("pingBuf", context->width, context->height, noGamma, noToneMapping);
+				evtMgr.emit<UnuseColorBufferEvent>(anotherSceneBuf);
+				swap(curSceneBuf, anotherSceneBuf);
 			}
-		} else {
-			renderColorBuffer("pongBuf", context->width, context->height, noGamma, noToneMapping);
 		}
+		renderColorBuffer(curSceneBuf, context->width, context->height, noGamma, noToneMapping);
 		// renderColorBuffer("ssaoBlur", context->width, context->height, true, true);
 		// renderGBufferDebug("main", context->width, context->height);
 		CheckGLError;
