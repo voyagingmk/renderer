@@ -142,7 +142,7 @@ float ShadowCalculation_Hard(vec3 fragPos, Light light)
 }
 
 
-float ShadowCalculation_Dir_Hard(vec3 fragPos, Light light, vec3 N)
+float ShadowCalculation_Dir(vec3 fragPos, Light light, vec3 N, bool pcf)
 {
     vec4 fragPosLightSpace = light.lightPV * vec4(fragPos, 1.0);
     // perform perspective divide
@@ -156,25 +156,29 @@ float ShadowCalculation_Dir_Hard(vec3 fragPos, Light light, vec3 N)
     // calculate bias (based on depth map resolution and slope)
     vec3 lightDir = normalize(light.Position - fragPos);
     float bias = max(0.05 * (1.0 - dot(N, lightDir)), 0.005);
-    // check whether current frag pos is in shadow
-    // float shadow = currentDepth - bias > closestDepth  ? 1.0 : 0.0;
-    // PCF
     float shadow = 0.0;
-    vec2 texelSize = 1.0 / textureSize(depthMap, 0);
-    for(int x = -1; x <= 1; ++x)
-    {
-        for(int y = -1; y <= 1; ++y)
+    // check whether current frag pos is in shadow
+    // float 
+    if (pcf) {
+        // PCF
+        vec2 texelSize = 1.0 / textureSize(depthMap, 0);
+        for(int x = -1; x <= 1; ++x)
         {
-            float pcfDepth = texture(depthMap, projCoords.xy + vec2(x, y) * texelSize).r; 
-            shadow += currentDepth - bias > pcfDepth  ? 1.0 : 0.0;        
-        }    
+            for(int y = -1; y <= 1; ++y)
+            {
+                float pcfDepth = texture(depthMap, projCoords.xy + vec2(x, y) * texelSize).r; 
+                shadow += currentDepth - bias > pcfDepth  ? 1.0 : 0.0;        
+            }    
+        }
+        shadow /= 9.0;
+    } else {
+        shadow = currentDepth - bias > closestDepth  ? 1.0 : 0.0;
     }
-    shadow /= 9.0;
     
     // keep the shadow at 0.0 when outside the far_plane region of the light's frustum.
     if(projCoords.z > 1.0)
         shadow = 0.0;
-        
+    // return closestDepth;
     return shadow;
 }
 
@@ -228,7 +232,8 @@ vec3 calRadiance(vec3 FragPos, Material material, Light light, vec3 F0, vec3 N, 
     float shadow = 0;
     if (light.castShadow) {
         if (type == 1) {
-            shadow = ShadowCalculation_Dir_Hard(FragPos, light, N);
+            shadow = ShadowCalculation_Dir(FragPos, light, N, false);
+            //return vec3(1 - shadow);
         } 
         else if (type == 2) {
             shadow = ShadowCalculation_Hard(FragPos, light);
@@ -256,6 +261,7 @@ void main()
         // this ambient lighting with environment lighting).
         vec3 ambient = vec3(0.03) * material.albedo * material.ao;
         FragColor = vec4(ambient, 1.0);
+        FragColor = vec4(vec3(0.0), 1.0);
         return;
     }
     vec3 N = normalize(Normal);

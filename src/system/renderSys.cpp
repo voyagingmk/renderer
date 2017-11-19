@@ -354,10 +354,8 @@ namespace renderer {
 			CheckGLError;
 		}
 		// Directional Light Pass
-		for (auto obj : m_objMgr->entities<DirLightCom, DirLightTransform, SpatialData>()) {
-			auto lightCom = obj.component<DirLightCom>();
+		for (auto obj : m_objMgr->entities<DirLightCom, DirLightTransform>()) {
 			auto transCom = obj.component<DirLightTransform>();
-			auto spatialDataCom = obj.component<SpatialData>();
 			auto bufAliasname = "lightDepth" + std::to_string(obj.ID());
 			if (colorBufferCom->dict.find(bufAliasname) == colorBufferCom->dict.end()) {
 				continue;
@@ -368,6 +366,7 @@ namespace renderer {
 			Shader dirLightDepthShader = getShader("dirLightDepth");
 			dirLightDepthShader.use();
 			dirLightDepthShader.setMatrix4f("lightPV", transCom->lightPV);
+			auto lightPV = transCom->lightPV;
 			// dirLightShadowShader.set3f("lightPos", obj.component<SpatialData>()->pos);
 			CheckGLError;
 			m_evtMgr->emit<RenderSceneEvent>(
@@ -404,10 +403,6 @@ namespace renderer {
 		clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
 			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		shader.set1i("begin", 1);
-	//	int loc = glGetUniformLocation(shader.spHDL, "begin");
-	//  int b = -1;
-	//	glGetUniformiv(shader.spHDL, loc, &b);
-		// shader.validate();
 		checkGLError;
 		renderQuad();
 		shader.set1i("begin", 0);
@@ -438,10 +433,11 @@ namespace renderer {
 			//shader.set1f(("lights[" + std::to_string(i) + "].Linear").c_str(), lightCom->linear);
 			//shader.set1f(("lights[" + std::to_string(i) + "].Quadratic").c_str(), lightCom->quadratic);
 		} else if(lightObject.hasComponent<DirLightCom>()) {
+			auto spatialDataCom = lightObject.component<SpatialData>();
 			auto lightCom = lightObject.component<DirLightCom>();
 			auto transCom = lightObject.component<DirLightTransform>();
 			shader.set1i("light.type", 1);
-			shader.set3f("light.Direction", lightCom->direction);
+			shader.set3f("light.Direction", -spatialDataCom->pos.Normalize());
 			shader.setMatrix4f("light.lightPV", transCom->lightPV);
 		} else if (lightObject.hasComponent<SpotLightCom>()) {
 			auto spatialDataCom = lightObject.component<SpatialData>();

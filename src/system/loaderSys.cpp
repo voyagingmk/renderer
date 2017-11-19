@@ -182,9 +182,7 @@ namespace renderer {
 			} else if (type == "DirLight") {
 				auto spatial = lightInfo["spatial"];
 				loadSpatialData(obj, spatial);
-				auto direction = lightInfo["direction"];
-				Vector3dF dir = Vector3dF{ (float)direction[0], (float)direction[1], (float)direction[2] };
-				obj.addComponent<DirLightCom>(dir);
+				obj.addComponent<DirLightCom>();
 				auto transCom = obj.addComponent<DirLightTransform>();
 				float size = lightInfo["size"];
 				float near_plane = lightInfo["near_plane"];

@@ -1,9 +1,11 @@
 #include "stdafx.h"
 #include "system/uiSys.hpp"
 #include "com/sdlContext.hpp"
+#include "com/spatialData.hpp"
 #include "com/cameraCom.hpp"
 #include "com/lightCom.hpp"
 #include "com/miscCom.hpp"
+#include "event/lightEvent.hpp"
 #include "imgui_impl_sdl_gl3.h"
 
 using namespace std;
@@ -39,7 +41,14 @@ namespace renderer {
 				auto lightCom = obj.component<PointLightCom>();
 			} else if (obj.hasComponent<DirLightCom>()) {
 				ImGui::Text(("DirLight" + std::to_string(obj.ID())).c_str());
-				auto lightCom = obj.component<DirLightCom>();
+				auto spatialData = obj.component<SpatialData>();
+				float pos[3] = { spatialData->pos.x, spatialData->pos.y, spatialData->pos.z };
+				ImGui::SliderFloat3("position", pos, -100.0f, 100.0f);
+				auto posV = Vector3dF(pos[0], pos[1], pos[2]);
+				if (spatialData->pos != posV) {
+					spatialData->pos = posV;
+					m_evtMgr->emit<UpdateLightEvent>(obj);
+				}
 			} else if (obj.hasComponent<SpotLightCom>()) {
 				ImGui::Text(("SpotLight" + std::to_string(obj.ID())).c_str());
 				auto lightCom = obj.component<SpotLightCom>();

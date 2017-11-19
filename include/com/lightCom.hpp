@@ -54,10 +54,7 @@ namespace renderer {
 
 	class DirLightCom {
 	public:
-		DirLightCom(Vector3dF dir) :
-			direction(dir.Normalize())
-		{}
-		Vector3dF direction;
+		DirLightCom(){}
 	};
 
 	struct DirLightTransform {
