@@ -59,11 +59,13 @@ namespace renderer {
 		evtMgr.emit<UnuseGBufferEvent>("main");
 		// glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-		// ssao pass
-		// only need G-Buffer
-		ssaoPass(objCamera, "main", "ssao", context->width, context->height);
-		// optional
-		ssaoBlurPass("ssao", "ssaoBlur", context->width, context->height);
+		if (gSettingCom->get1b("enableSSAO")) {
+			// ssao pass
+			// only need G-Buffer
+			ssaoPass(objCamera, "main", "ssao", context->width, context->height);
+			// optional
+			ssaoBlurPass("ssao", "ssaoBlur", context->width, context->height);
+		}
 
 		auto colorBufferCom = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
 		
@@ -77,8 +79,6 @@ namespace renderer {
 		// lighting pass
 		deferredLightingPass(curSceneBuf, objCamera, "main", context->width, context->height);
 		CheckGLError;
-
-
 
 		evtMgr.emit<UseColorBufferEvent>(anotherSceneBuf);
 		renderColorBuffer(curSceneBuf, context->width, context->height, true, true);
@@ -109,9 +109,11 @@ namespace renderer {
 			swap(curSceneBuf, anotherSceneBuf);
 		}
 		renderColorBuffer(curSceneBuf, context->width, context->height, noGamma, noToneMapping);
+		CheckGLError;
+
 		// renderColorBuffer("ssaoBlur", context->width, context->height, true, true);
 		// renderGBufferDebug("main", context->width, context->height);
-		CheckGLError;
+
 		m_evtMgr->emit<DrawUIEvent>();
 		SDL_GL_SwapWindow(context->win);
 	}
