@@ -476,7 +476,7 @@ namespace renderer {
 				m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "depthCubeMap", 4, shadowBuf.depthTex);
 			}
 			else {
-				m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "depthMap", 4, shadowBuf.depthTex);
+				m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "depthMap", 5, shadowBuf.depthTex);
 			}
 			shader.set1i("light.castShadow", 1);
 		}

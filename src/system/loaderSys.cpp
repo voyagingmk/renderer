@@ -62,7 +62,7 @@ namespace renderer {
 		gSettingCom->setValue("enableSMAA", json(true));
 		gSettingCom->setValue("enableToneMapping", json(true));
 		gSettingCom->setValue("enableGamma", json(true));
-		gSettingCom->setValue("debugShadow", json(true));
+		gSettingCom->setValue("debugShadow", json(false));
 		
 
 
