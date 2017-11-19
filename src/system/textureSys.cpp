@@ -214,7 +214,7 @@ namespace renderer {
 		}
 		auto texDict = m_objMgr->getSingletonComponent<TextureDict>();
 		auto it = texDict->find(std::string(evt.aliasname));
-		assert(it != texDict->end());
+		// assert(it != texDict->end());
 		if (it == texDict->end()) {
 			return;
         }
