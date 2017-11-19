@@ -152,7 +152,7 @@
             "type": "DirLight",
             "intensity": 2.1,
             "size": 30.0,
-            "near_plane": 1.0,
+            "near_plane": 0.0001,
             "far_plane": 200.0,
             "spatial": [
                 [-50.0,  50.0, 0.0],
@@ -301,10 +301,10 @@
             ]
         },
         {
-            "model": "dog.obj",
+            "model": "teapot.obj",
             "spatial": [
                 [0, 0, 0],
-                [0.2, 0.2, 0.2],
+                [2, 2, 2],
                 [0, 0, 0]
             ]
         }

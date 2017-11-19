@@ -42,8 +42,7 @@ namespace renderer {
 		clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
 			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-		glEnable(GL_CULL_FACE);
-		glCullFace(GL_BACK);
+		// glCullFace(GL_BACK);
 
 		// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		/*----- first-pass: deferred rendering-----*/
@@ -343,6 +342,8 @@ namespace renderer {
 		auto gSettingCom = m_objMgr->getSingletonComponent<GlobalSettingCom>();
 		auto gBufferCom = m_objMgr->getSingletonComponent<GBufferDictCom>();
 		GBufferRef& gBuf = gBufferCom->dict[gBufferAliasName];
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_FRONT);
 		// Point Light Pass
 		for (auto obj: m_objMgr->entities<PointLightCom, PointLightTransform, SpatialData>()) {
 			auto lightCom = obj.component<PointLightCom>();
@@ -362,7 +363,6 @@ namespace renderer {
 			pointShadowDepthShader.set3f("lightPos", obj.component<SpatialData>()->pos);
 			pointShadowDepthShader.set1f("normalOffset", gSettingCom->get1f("normalOffset", 0.0f));
 			CheckGLError;
-			glCullFace(GL_FRONT);
 			m_evtMgr->emit<RenderSceneEvent>(
 				objCamera,
 				std::make_tuple(0, 0, shadowBuf.width, shadowBuf.height),
@@ -370,9 +370,10 @@ namespace renderer {
 				GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT,
 				&pointShadowDepthShader);
 			m_evtMgr->emit<UnuseColorBufferEvent>(bufAliasname);
-			glCullFace(GL_BACK);
 			CheckGLError;
 		}
+		glCullFace(GL_BACK);
+		glDisable(GL_CULL_FACE);
 		// Directional Light Pass
 		for (auto obj : m_objMgr->entities<DirLightCom, DirLightTransform>()) {
 			auto transCom = obj.component<DirLightTransform>();
