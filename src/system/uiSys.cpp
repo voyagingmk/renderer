@@ -42,10 +42,17 @@ namespace renderer {
 			} else if (obj.hasComponent<DirLightCom>()) {
 				ImGui::Text(("DirLight" + std::to_string(obj.ID())).c_str());
 				auto spatialData = obj.component<SpatialData>();
+				auto dirLightTrans = obj.component<DirLightTransform>();
+				float n = dirLightTrans->n;
+				float f = dirLightTrans->f;
+				ImGui::SliderFloat("near_plane", &n, 0.001f, 1000.0f);
+				ImGui::SliderFloat("far_plane", &f, 0.001f, 1000.0f);
 				float pos[3] = { spatialData->pos.x, spatialData->pos.y, spatialData->pos.z };
 				ImGui::SliderFloat3("position", pos, -100.0f, 100.0f);
 				auto posV = Vector3dF(pos[0], pos[1], pos[2]);
-				if (spatialData->pos != posV) {
+				if (spatialData->pos != posV || dirLightTrans->n != n || dirLightTrans->f != f) {
+					dirLightTrans->n = n;
+					dirLightTrans->f = f;
 					spatialData->pos = posV;
 					m_evtMgr->emit<UpdateLightEvent>(obj);
 				}
