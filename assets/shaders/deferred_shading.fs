@@ -154,8 +154,9 @@ float ShadowCalculation_Dir(vec3 fragPos, Light light, vec3 N, bool pcf)
     // get depth of current fragment from light's perspective
     float currentDepth = projCoords.z;
     // calculate bias (based on depth map resolution and slope)
-    vec3 lightDir = normalize(light.Position);
+    vec3 lightDir = normalize(light.Position - fragPos);
     float bias = max(0.05 * (1.0 - dot(N, lightDir)), 0.005);
+    bias = 0.005;
     float shadow = 0.0;
     // check whether current frag pos is in shadow
     // float 
@@ -188,7 +189,7 @@ vec3 calRadiance(vec3 FragPos, Material material, Light light, vec3 F0, vec3 N, 
     int type = light.type;
     float intensity = 1.0;
     if (type == 1) { // directional light
-        lightDir = -light.Direction;
+        lightDir = normalize(light.Position);
     } else if(type == 2) {
         lightDir = light.Position - FragPos;
     } else if(type == 3) {
@@ -232,7 +233,7 @@ vec3 calRadiance(vec3 FragPos, Material material, Light light, vec3 F0, vec3 N, 
     float shadow = 0;
     if (light.castShadow) {
         if (type == 1) {
-            shadow = ShadowCalculation_Dir(FragPos, light, N, true);
+            shadow = ShadowCalculation_Dir(FragPos, light, N, false);
             //return vec3(1 - shadow);
         } 
         else if (type == 2) {
