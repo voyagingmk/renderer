@@ -393,6 +393,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="..\src\com\bbox.cpp" />
     <ClCompile Include="..\src\com\color.cpp" />
     <ClCompile Include="..\src\com\geometry.cpp" />
+    <ClCompile Include="..\src\com\matrix.cpp" />
     <ClCompile Include="..\src\com\shaderCom.cpp">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)</ObjectFileName>
     </ClCompile>

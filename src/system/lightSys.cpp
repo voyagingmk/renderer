@@ -61,8 +61,7 @@ namespace renderer {
 	void LightSystem::updateDirLight(Object obj) {
 		auto spatialData = obj.component<SpatialData>();
 		auto com = obj.component<DirLightTransform>();
-		Matrix4x4 shadowProj;
-		shadowProj = Ortho(-com->size, com->size, -com->size, com->size, com->n, com->f);
+		Matrix4x4 shadowProj = Ortho(-com->size, com->size, -com->size, com->size, com->n, com->f);
 		Vector3dF lightPos = spatialData->pos;
 		com->lightPV = shadowProj * LookAt(lightPos, Vector3dF{ 0.0, 0.0, 0.0 }, { 0.0, 1.0, 0.0 });
 	}

@@ -437,7 +437,7 @@ namespace renderer {
 			auto lightCom = lightObject.component<DirLightCom>();
 			auto transCom = lightObject.component<DirLightTransform>();
 			shader.set1i("light.type", 1);
-			shader.set3f("light.Direction", -spatialDataCom->pos.Normalize());
+			shader.set3f("light.Direction", -(spatialDataCom->pos.Normalize()));
 			shader.setMatrix4f("light.lightPV", transCom->lightPV);
 		} else if (lightObject.hasComponent<SpotLightCom>()) {
 			auto spatialDataCom = lightObject.component<SpatialData>();
