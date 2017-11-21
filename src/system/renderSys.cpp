@@ -325,7 +325,7 @@ namespace renderer {
 			ColorBufferRef& shadowBuf = colorBufferCom->dict[bufAliasname];
 			m_evtMgr->emit<UseColorBufferEvent>(bufAliasname);
 			CheckGLError;
-			Shader dirLightDepthShader = getShader("dirLightDepth");
+			Shader dirLightDepthShader = getShader("standardShadowMap");
 			dirLightDepthShader.use();
 			dirLightDepthShader.setMatrix4f("lightPV", transCom->lightPV);
 			auto lightPV = transCom->lightPV;
@@ -349,9 +349,9 @@ namespace renderer {
 			ColorBufferRef& shadowBuf = colorBufferCom->dict[bufAliasname];
 			m_evtMgr->emit<UseColorBufferEvent>(bufAliasname);
 			CheckGLError;
-			Shader dirLightDepthShader = getShader("dirLightDepth");
-			dirLightDepthShader.use();
-			dirLightDepthShader.setMatrix4f("lightPV", transCom->lightPV);
+			Shader depthShader = getShader("standardShadowMap");
+			depthShader.use();
+			depthShader.setMatrix4f("lightPV", transCom->lightPV);
 			auto lightPV = transCom->lightPV;
 			// dirLightShadowShader.set3f("lightPos", obj.component<SpatialData>()->pos);
 			CheckGLError;
@@ -360,7 +360,7 @@ namespace renderer {
 				std::make_tuple(0, 0, shadowBuf.width, shadowBuf.height),
 				Color(0.0f, 0.0f, 0.0f, 1.0f),
 				GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT,
-				&dirLightDepthShader);
+				&depthShader);
 			m_evtMgr->emit<UnuseColorBufferEvent>(bufAliasname);
 		}
 	}

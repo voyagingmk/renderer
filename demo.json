@@ -49,9 +49,9 @@
             "fs": "depthMap.fs"
         },
         {
-            "alias": "dirLightDepth",
-            "vs": "dirLightDepth.vs",
-            "fs": "dirLightDepth.fs"
+            "alias": "standardShadowMap",
+            "vs": "standardShadowMap.vs",
+            "fs": "standardShadowMap.fs"
         },
         {
             "alias": "pointShadowDepth",

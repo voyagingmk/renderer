@@ -51,6 +51,21 @@ namespace renderer {
         obj.addComponent<MaterialSet>();
 		obj.addComponent<GBufferDictCom>();
 		obj.addComponent<ColorBufferDictCom>();
+        auto shadowMapSetting = obj.addComponent<ShadowMapSetting>();
+        shadowMapSetting->shaderSetting = {
+            { LightType::Dir, {
+                { ShadowType::Standard, "standardShadowMap" },
+                { ShadowType::VSM, "VarianceShadowMap" }
+            }},
+            { LightType::Point, {
+                { ShadowType::Standard, "standardShadowMap" },
+                { ShadowType::VSM, "VarianceShadowMap" }
+            }},
+            { LightType::Spot, {
+                {ShadowType::Standard, "standardShadowMap" },
+                {ShadowType::VSM, "VarianceShadowMap" }
+            }}
+        };
 		auto gSettingCom = obj.addComponent<GlobalSettingCom>();
         gSettingCom->setValue("depthBias", 0.5f);
 		gSettingCom->setValue("normalOffset", 0.0f);
@@ -146,6 +161,11 @@ namespace renderer {
 		for (auto lightInfo : config["light"])
 		{
 			Object obj = m_objMgr->create();
+            auto lightCommon = obj.addComponent<LightCommon>(
+              parseColor(lightInfo["ambient"]),
+              parseColor(lightInfo["diffuse"]),
+              parseColor(lightInfo["specular"]),
+              lightInfo["intensity"]);
 			std::string type = lightInfo["type"];
 			if (type == "PointLight") {
 				auto spatial = lightInfo["spatial"];
@@ -192,6 +212,7 @@ namespace renderer {
 				transCom->size = size;
 				transCom->n = near_plane;
 				transCom->f = far_plane;
+                lightCommon->shadowType = ShadowType::VSM;
 				m_evtMgr->emit<EnableLightShadowEvent>(obj);
 			} else if (type == "SpotLight") {
 				auto direction = lightInfo["direction"];
@@ -214,12 +235,6 @@ namespace renderer {
                 obj.destroy();
 				continue;
             }
-
-			obj.addComponent<LightCommon>(
-				parseColor(lightInfo["ambient"]),
-				parseColor(lightInfo["diffuse"]),
-				parseColor(lightInfo["specular"]),
-				lightInfo["intensity"]);
 			obj.addComponent<LightTag>();
 			m_evtMgr->emit<AddLightEvent>(obj);
 		}

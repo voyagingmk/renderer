@@ -82,24 +82,38 @@ namespace renderer {
 
 	void LightSystem::receive(const EnableLightShadowEvent &evt) {
 		auto aliasname = "lightDepth" + std::to_string(evt.obj.ID());
+        m_evtMgr->emit<DestroyColorBufferEvent>(aliasname.c_str());
+        auto lightCommon = evt.obj.component<LightCommon>();
+        size_t shadowMapSize = 1024;
 		if (evt.obj.hasComponent<PointLightCom>()) {
-			m_evtMgr->emit<CreateDpethBufferEvent>(
-				aliasname.c_str(),
-				aliasname.c_str(),
-				DepthTexType::CubeMap,
-				1024);
+            if (lightCommon->shadowType == ShadowType::Standard) {
+                m_evtMgr->emit<CreateDpethBufferEvent>(
+                    aliasname.c_str(),
+                    aliasname.c_str(),
+                    DepthTexType::CubeMap,
+                    shadowMapSize);
+            }
 		} else if (evt.obj.hasComponent<DirLightCom>()) {
-			m_evtMgr->emit<CreateDpethBufferEvent>(
-				aliasname.c_str(),
-				aliasname.c_str(),
-				DepthTexType::DepthOnly,
-				1024);
+            if (lightCommon->shadowType == ShadowType::Standard) {
+                m_evtMgr->emit<CreateDpethBufferEvent>(
+                    aliasname.c_str(),
+                    aliasname.c_str(),
+                    DepthTexType::DepthOnly,
+                    shadowMapSize);
+            } else if (lightCommon->shadowType == ShadowType::VSM) {
+                m_evtMgr->emit<CreateColorBufferEvent>(
+                   shadowMapSize, shadowMapSize,
+                   GL_RG32F, GL_RG, GL_FLOAT,
+                   BufType::Tex, 0, GL_LINEAR, aliasname.c_str());
+            }
 		} else if (evt.obj.hasComponent<SpotLightCom>()) {
-			m_evtMgr->emit<CreateDpethBufferEvent>(
-				aliasname.c_str(),
-				aliasname.c_str(),
-				DepthTexType::DepthOnly,
-				1024);
+            if (lightCommon->shadowType == ShadowType::Standard) {
+                m_evtMgr->emit<CreateDpethBufferEvent>(
+                    aliasname.c_str(),
+                    aliasname.c_str(),
+                    DepthTexType::DepthOnly,
+                    shadowMapSize);
+            }
 		}
 	}
 

@@ -7,6 +7,24 @@
 
 namespace renderer {
 
+    enum class ShadowType {
+        Standard,
+        VSM
+    };
+    
+    enum class LightType {
+        Dir,
+        Point,
+        Spot
+    };
+    
+    typedef std::map<ShadowType, std::string> ShadowShaderMap;
+    typedef std::map<LightType, ShadowShaderMap> ShadowShaderSetting;
+    
+    struct ShadowMapSetting {
+        ShadowShaderSetting shaderSetting;
+    };
+    
 	class LightCommon {
 	public:
 		LightCommon(Color ambient,
@@ -16,11 +34,14 @@ namespace renderer {
 			ambient(ambient),
 			diffuse(diffuse),
 			specular(specular),
-			intensity(intensity) {}
+			intensity(intensity),
+            shadowType(ShadowType::Standard)
+        {}
 		Color ambient;
 		Color diffuse;
 		Color specular;
 		float intensity;
+        ShadowType shadowType;
 	};
 	
 	class PointLightCom {
