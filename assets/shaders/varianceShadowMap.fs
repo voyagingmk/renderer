@@ -1,9 +1,7 @@
 #version 410 core
 
 in vec4 v_position;
-out vec4 outColor;
-
-uniform bool shadowType;
+out vec2 outColor;
 
 void main()
 {             
@@ -16,5 +14,5 @@ void main()
     float dx = dFdx(depth);
     float dy = dFdy(depth);
     moment2 += 0.25 * (dx * dx + dy * dy);
-    outColor = vec4( moment1, moment2, 0.0, 0.0);
+    outColor = vec2(moment1, moment2);
 }

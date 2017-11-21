@@ -55,15 +55,15 @@ namespace renderer {
         shadowMapSetting->shaderSetting = {
             { LightType::Dir, {
                 { ShadowType::Standard, "standardShadowMap" },
-                { ShadowType::VSM, "VarianceShadowMap" }
+                { ShadowType::VSM, "varianceShadowMap" }
             }},
             { LightType::Point, {
                 { ShadowType::Standard, "standardShadowMap" },
-                { ShadowType::VSM, "VarianceShadowMap" }
+                { ShadowType::VSM, "varianceShadowMap" }
             }},
             { LightType::Spot, {
                 {ShadowType::Standard, "standardShadowMap" },
-                {ShadowType::VSM, "VarianceShadowMap" }
+                {ShadowType::VSM, "varianceShadowMap" }
             }}
         };
 		auto gSettingCom = obj.addComponent<GlobalSettingCom>();

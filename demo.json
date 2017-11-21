@@ -54,6 +54,11 @@
             "fs": "standardShadowMap.fs"
         },
         {
+            "alias": "varianceShadowMap",
+            "vs": "varianceShadowMap.vs",
+            "fs": "varianceShadowMap.fs"
+        },     
+        {
             "alias": "pointShadowDepth",
             "gs": "pointShadowDepth.gs",
             "vs": "pointShadowDepth.vs",
@@ -160,7 +165,7 @@
         {
             "type": "DirLight",
             "intensity": 1.1,
-            "size": 30.0,
+            "size": 100.0,
             "near_plane": 0.0001,
             "far_plane": 200.0,
             "spatial": [
@@ -186,7 +191,7 @@
             "shadow": true
         },
         {
-            "type": "SpotLight",
+            "type": "SpotLight0",
             "intensity": 3.3,
             "near_plane": 35,
             "far_plane": 10000,
@@ -216,7 +221,7 @@
             "shadow": true
         },
         {
-            "type": "PointLight",
+            "type": "PointLight0",
             "intensity": 1.0,
             "far_plane": 10000,
             "spatial": [
@@ -245,7 +250,7 @@
             "shadow": true
         },
         {
-            "type": "PointLight",
+            "type": "PointLight0",
             "intensity": 2.0,
             "far_plane": 10000,
             "spatial": [
@@ -273,7 +278,7 @@
             "quadratic": 1.8,
             "shadow": true
         }, {
-            "type": "PointLight",
+            "type": "PointLight0",
             "intensity": 3.0,
             "far_plane": 10000,
             "spatial": [

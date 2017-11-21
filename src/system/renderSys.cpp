@@ -73,6 +73,10 @@ namespace renderer {
 		updateShadowMapPass("main", objCamera);
 		CheckGLError;
 
+		//renderColorBuffer("lightDepth7", 1024, 1024, true, true);
+		//SDL_GL_SwapWindow(context->win);
+		//return;
+
 		std::string curSceneBuf = "pingBuf";
 		std::string anotherSceneBuf = "pongBuf";
 
@@ -341,6 +345,7 @@ namespace renderer {
 		}
 		// Directional Light Pass
 		for (auto obj : m_objMgr->entities<DirLightCom, DirLightTransform>()) {
+			auto lightCommon = obj.component<LightCommon>();
 			auto transCom = obj.component<DirLightTransform>();
 			auto bufAliasname = "lightDepth" + std::to_string(obj.ID());
 			if (colorBufferCom->dict.find(bufAliasname) == colorBufferCom->dict.end()) {
@@ -349,7 +354,10 @@ namespace renderer {
 			ColorBufferRef& shadowBuf = colorBufferCom->dict[bufAliasname];
 			m_evtMgr->emit<UseColorBufferEvent>(bufAliasname);
 			CheckGLError;
-			Shader depthShader = getShader("standardShadowMap");
+
+			auto shadowMapSettingCom = m_objMgr->getSingletonComponent<ShadowMapSetting>();
+			auto shaderName = shadowMapSettingCom->shaderSetting[LightType::Dir][lightCommon->shadowType];
+			Shader depthShader = getShader(shaderName);
 			depthShader.use();
 			depthShader.setMatrix4f("lightPV", transCom->lightPV);
 			auto lightPV = transCom->lightPV;
@@ -407,6 +415,7 @@ namespace renderer {
 		auto colorBufferCom = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
 		auto lightCommon = lightObject.component<LightCommon>();
 		shader.set1f("light.intensity", lightCommon->intensity);
+		shader.set1i("light.shadowType", static_cast<int>(lightCommon->shadowType));
 		shader.set3f("light.Color", lightCommon->ambient);
 		if (lightObject.hasComponent<PointLightCom>()) {
 			auto spatialDataCom = lightObject.component<SpatialData>();
@@ -443,7 +452,11 @@ namespace renderer {
 				m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "depthCubeMap", 4, shadowBuf.depthTex);
 			}
 			else {
-				m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "depthMap", 5, shadowBuf.depthTex);
+				auto texRef = shadowBuf.depthTex;
+				if (lightCommon->shadowType == ShadowType::VSM) {
+					texRef = shadowBuf.tex;
+				}
+				m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "depthMap", 5, texRef);
 			}
 			shader.set1i("light.castShadow", 1);
 		}

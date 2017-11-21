@@ -22,6 +22,7 @@ uniform sampler2D depthMap;
 
 struct Light {
     int type;
+    int shadowType;
     float intensity;
     vec3 Direction;
     vec3 Position;
@@ -165,6 +166,7 @@ float ShadowCalculation_Spot_Hard(vec3 fragPos, Light light, vec3 N) {
     return shadow;
 }
 
+float chebyshevUpperBound(sampler2D shadowMap, float d, vec2 texCoord);
 
 float ShadowCalculation_Dir(vec3 fragPos, Light light, vec3 N, bool pcf)
 {
@@ -185,7 +187,10 @@ float ShadowCalculation_Dir(vec3 fragPos, Light light, vec3 N, bool pcf)
     float shadow = 0.0;
     // check whether current frag pos is in shadow
     // float 
-    if (pcf) {
+    if (light.shadowType == 1) {
+        // standard
+        shadow = currentDepth - bias > closestDepth  ? 1.0 : 0.0;
+    } else if (light.shadowType == 2) {
         // PCF
         vec2 texelSize = 1.0 / textureSize(depthMap, 0);
         for(int x = -1; x <= 1; ++x)
@@ -197,10 +202,11 @@ float ShadowCalculation_Dir(vec3 fragPos, Light light, vec3 N, bool pcf)
             }    
         }
         shadow /= 9.0;
-    } else {
-        shadow = currentDepth - bias > closestDepth  ? 1.0 : 0.0;
+    } else if (light.shadowType == 3) {
+        // vsm
+        shadow = 1 - chebyshevUpperBound(depthMap, currentDepth, projCoords.xy);
     }
-    
+
     // keep the shadow at 0.0 when outside the far_plane region of the light's frustum.
     if(projCoords.z > 1.0)
         shadow = 0.0;
@@ -303,4 +309,26 @@ void main()
     F0 = mix(F0, material.albedo, material.metallic);
     vec3 Lo = calRadiance(FragPos, material, light, F0, N, V);
     FragColor = vec4(Lo, 1.0);
+}
+
+
+
+// unshadow pr
+float chebyshevUpperBound(sampler2D shadowMap, float d, vec2 coord)
+{
+	vec2 moments = texture(shadowMap, coord).rg;
+	// Surface is fully lit. as the current fragment is before the light occluder
+	if (d <= moments.x)
+		return 1.0;
+
+	// The fragment is either in shadow or penumbra. We now use chebyshev's upperBound to check
+	// How likely this pixel is to be lit (p_max)
+	float variance = moments.y - (moments.x * moments.x);
+	//variance = max(variance, 0.000002);
+	variance = max(variance, 0.00002);
+
+	float d_minus_mean = d - moments.x;
+	float p_max = variance / (variance + d_minus_mean * d_minus_mean);
+
+	return p_max;
 }

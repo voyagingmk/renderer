@@ -382,13 +382,6 @@ namespace renderer {
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, target, buf.tex.texID, 0);
 		glBindTexture(target, 0);
 
-
-		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-			printf("[CreateFrameBuffer failed]");
-			DestroyFrameBuffer(buf);
-			glBindFramebuffer(GL_FRAMEBUFFER, 0);
-			return buf;
-		}
 		if (MSAA) {
 			// configure second post-processing framebuffer
 			glGenFramebuffers(1, &buf.innerFboID);
@@ -396,7 +389,7 @@ namespace renderer {
 			// create a color attachment texture
 			glGenTextures(1, &buf.innerTex.texID);
 			glBindTexture(GL_TEXTURE_2D, buf.innerTex.texID);
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, dataType, NULL);
+			glTexImage2D(GL_TEXTURE_2D, 0, innerFormat, width, height, 0, format, dataType, NULL);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texParam);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, texParam);
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, buf.innerTex.texID, 0);	// we only need a color buffer
@@ -432,9 +425,9 @@ namespace renderer {
                 glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, buf.depthRboID);
             }
         }
-
-		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-			printf("[CreateFrameBuffer failed]");
+		auto status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+		if (status != GL_FRAMEBUFFER_COMPLETE) {
+			printf("CreateColorBuffer failed, status:%04x\n", status);
 			DestroyFrameBuffer(buf);
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			return buf;

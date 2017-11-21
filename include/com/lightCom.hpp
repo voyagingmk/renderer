@@ -8,8 +8,9 @@
 namespace renderer {
 
     enum class ShadowType {
-        Standard,
-        VSM
+        Standard = 1,
+		PCF = 2,
+        VSM = 3
     };
     
     enum class LightType {
