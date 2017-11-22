@@ -256,9 +256,9 @@ namespace renderer {
 		setViewport(std::make_tuple(0, 0, winWidth, winHeight));
 		clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
 			GL_COLOR_BUFFER_BIT);
-		Shader shader = getShader("ssaoBlur");
-		shader.use();
-		m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "ssaoInput", 0, buf.tex.texID);
+		Shader blurShader = getShader("blur");
+		blurShader.use();
+		m_evtMgr->emit<ActiveTextureByIDEvent>(blurShader, "ssaoInput", 0, buf.tex.texID);
 		CheckGLError;
 		renderQuad();
 		m_evtMgr->emit<UnuseColorBufferEvent>(ssaoBlurBuffer);

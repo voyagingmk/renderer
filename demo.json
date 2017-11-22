@@ -119,9 +119,9 @@
             }
         },
         {
-            "alias": "ssaoBlur",
-            "vs": "ssao.vs",
-            "fs": "ssaoBlur.fs"
+            "alias": "blur",
+            "vs": "screen.vs",
+            "fs": "blur.fs"
         },
         {
             "alias": "deferredShading",
