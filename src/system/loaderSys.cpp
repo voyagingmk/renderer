@@ -160,13 +160,19 @@ namespace renderer {
 		int count = 0;
 		for (auto lightInfo : config["light"])
 		{
-			Object obj = m_objMgr->create();
-            auto lightCommon = obj.addComponent<LightCommon>(
-              parseColor(lightInfo["ambient"]),
-              parseColor(lightInfo["diffuse"]),
-              parseColor(lightInfo["specular"]),
-              lightInfo["intensity"]);
 			std::string type = lightInfo["type"];
+			if (type != "PointLight" && type != "DirLight" && type != "SpotLight") {
+				continue;
+			}
+			Object obj = m_objMgr->create();
+			auto lightCommon = obj.addComponent<LightCommon>(
+				parseColor(lightInfo["ambient"]),
+				parseColor(lightInfo["diffuse"]),
+				parseColor(lightInfo["specular"]),
+				lightInfo["intensity"]);
+			if (lightInfo["shadowType"].is_string() && lightInfo["shadowType"] == "vsm") {
+				lightCommon->shadowType = ShadowType::VSM;
+			}
 			if (type == "PointLight") {
 				auto spatial = lightInfo["spatial"];
 				float far_plane = lightInfo["far_plane"];
@@ -212,7 +218,6 @@ namespace renderer {
 				transCom->size = size;
 				transCom->n = near_plane;
 				transCom->f = far_plane;
-                lightCommon->shadowType = ShadowType::VSM;
 				m_evtMgr->emit<EnableLightShadowEvent>(obj);
 			} else if (type == "SpotLight") {
 				auto direction = lightInfo["direction"];

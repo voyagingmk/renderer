@@ -113,7 +113,12 @@ namespace renderer {
                     aliasname.c_str(),
                     DepthTexType::DepthOnly,
                     shadowMapSize);
-            }
+            } else if (lightCommon->shadowType == ShadowType::VSM) {
+				m_evtMgr->emit<CreateColorBufferEvent>(
+					shadowMapSize, shadowMapSize,
+					GL_RG32F, GL_RG, GL_FLOAT,
+					BufType::Tex, 0, GL_LINEAR, aliasname.c_str());
+			}
 		}
 	}
 

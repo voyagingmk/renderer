@@ -321,6 +321,7 @@ namespace renderer {
 		glDisable(GL_CULL_FACE);
 		// Spot Light Pass
 		for (auto obj : m_objMgr->entities<SpotLightCom, SpotLightTransform>()) {
+			auto lightCommon = obj.component<LightCommon>();
 			auto transCom = obj.component<SpotLightTransform>();
 			auto bufAliasname = "lightDepth" + std::to_string(obj.ID());
 			if (colorBufferCom->dict.find(bufAliasname) == colorBufferCom->dict.end()) {
@@ -329,9 +330,11 @@ namespace renderer {
 			ColorBufferRef& shadowBuf = colorBufferCom->dict[bufAliasname];
 			m_evtMgr->emit<UseColorBufferEvent>(bufAliasname);
 			CheckGLError;
-			Shader dirLightDepthShader = getShader("standardShadowMap");
-			dirLightDepthShader.use();
-			dirLightDepthShader.setMatrix4f("lightPV", transCom->lightPV);
+			auto shadowMapSettingCom = m_objMgr->getSingletonComponent<ShadowMapSetting>();
+			auto shaderName = shadowMapSettingCom->shaderSetting[LightType::Dir][lightCommon->shadowType];
+			Shader depthShader = getShader(shaderName);
+			depthShader.use();
+			depthShader.setMatrix4f("lightPV", transCom->lightPV);
 			auto lightPV = transCom->lightPV;
 			// dirLightShadowShader.set3f("lightPos", obj.component<SpatialData>()->pos);
 			CheckGLError;
@@ -340,7 +343,7 @@ namespace renderer {
 				std::make_tuple(0, 0, shadowBuf.width, shadowBuf.height),
 				Color(0.0f, 0.0f, 0.0f, 1.0f),
 				GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT,
-				&dirLightDepthShader);
+				&depthShader);
 			m_evtMgr->emit<UnuseColorBufferEvent>(bufAliasname);
 		}
 		// Directional Light Pass
