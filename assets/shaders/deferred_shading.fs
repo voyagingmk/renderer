@@ -142,33 +142,10 @@ float ShadowCalculation_Point_Hard(vec3 fragPos, Light light)
     return shadow;
 }
 
-float ShadowCalculation_Spot_Hard(vec3 fragPos, Light light, vec3 N) {
-     vec4 fragPosLightSpace = light.lightPV * vec4(fragPos, 1.0);
-    // perform perspective divide
-    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
-    // transform to [0,1] range
-    projCoords = projCoords * 0.5 + 0.5;
-    // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
-    float closestDepth = texture(depthMap, projCoords.xy).r; 
-    // get depth of current fragment from light's perspective
-    float currentDepth = projCoords.z;
-    // calculate bias (based on depth map resolution and slope)
-    // vec3 lightDir = normalize(light.Position - fragPos);
-    //vec3 lightDir = normalize(light.Position);
-    // float bias = max(0.05 * (1.0 - dot(N, lightDir)), 0.005);
-    float bias = 0.005;
-    float shadow = 0.0;
-    shadow = currentDepth - bias > closestDepth  ? 1.0 : 0.0;
-    // keep the shadow at 0.0 when outside the far_plane region of the light's frustum.
-    if(projCoords.z > 1.0)
-        shadow = 0.0;
-    // shadow = closestDepth;
-    return shadow;
-}
 
 float chebyshevUpperBound(sampler2D shadowMap, float d, vec2 texCoord);
 
-float ShadowCalculation_Dir(vec3 fragPos, Light light, vec3 N, bool pcf)
+float ShadowCalculation(vec3 fragPos, Light light, vec3 N)
 {
     vec4 fragPosLightSpace = light.lightPV * vec4(fragPos, 1.0);
     // perform perspective divide
@@ -264,15 +241,12 @@ vec3 calRadiance(vec3 FragPos, Material material, Light light, vec3 F0, vec3 N, 
     float shadow = 0;
     if (intensity > 0) {
         if (light.castShadow) {
-            if (type == 1) {
-                shadow = ShadowCalculation_Dir(FragPos, light, N, false);
+            if (type == 1 || type == 3) {
+                shadow = ShadowCalculation(FragPos, light, N);
                 //return vec3(1 - shadow);
             } else if (type == 2) {
                 // point light
                 shadow = ShadowCalculation_Point_Hard(FragPos, light);
-            } else if (type == 3) {
-                shadow = ShadowCalculation_Spot_Hard(FragPos, light, N);
-                // return vec3(1 - shadow);
             }
         }
     }
