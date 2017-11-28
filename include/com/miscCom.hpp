@@ -2,6 +2,7 @@
 #define RENDERER_COM_MISC_HPP
 
 #include "base.hpp"
+#include "ecs/setting.hpp"
 
 namespace renderer {
     
@@ -21,7 +22,17 @@ namespace renderer {
 
     struct GlobalSkyboxTag : public TagComBase {};
     
-    struct ReceiveLightTag : public TagComBase {};
+	struct ReceiveLightTag : public TagComBase {};
+
+	struct RenderQueueTag : public TagComBase {};
+
+	typedef int BufIdx;
+	typedef std::vector<std::pair<ecs::ObjectID, BufIdx>> RenderQueue;
+
+	struct RenderQueueCom {
+		RenderQueue queue;
+	};
+
 
 	struct GlobalSettingCom {
 		std::map<std::string, nlohmann::json> params;

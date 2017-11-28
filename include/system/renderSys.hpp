@@ -7,6 +7,7 @@
 #include "event/uiEvent.hpp"
 #include "event/miscEvent.hpp"
 #include "com/bufferCom.hpp"
+#include "com/miscCom.hpp"
 #include "com/materialCom.hpp"
 #include "com/shader.hpp"
 
@@ -25,8 +26,13 @@ namespace renderer {
 		void receive(const RenderSceneEvent &evt);
 
 		void receive(const CameraMoveEvent &evt);
-        
+
+		void receive(const ComponentAddedEvent<RenderQueueTag> &evt);
+
+		void receive(const ComponentRemovedEvent<RenderQueueTag> &evt);
+
     private:
+		void updateRenderQueue();
 
         void setViewport(const Viewport& viewport);
         

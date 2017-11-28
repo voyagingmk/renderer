@@ -45,12 +45,14 @@ namespace renderer {
 
 		Object obj = m_objMgr->create(); // singleTon, manage kinds of resources
 		obj.addComponent<RenderMode>();
+		obj.addComponent<RenderQueueCom>();
 		obj.addComponent<KeyState>();
         obj.addComponent<TextureDict>();
         obj.addComponent<ShaderProgramSet>();
         obj.addComponent<MaterialSet>();
 		obj.addComponent<GBufferDictCom>();
 		obj.addComponent<ColorBufferDictCom>();
+		obj.addComponent<RenderQueueCom>();
         auto shadowMapSetting = obj.addComponent<ShadowMapSetting>();
         shadowMapSetting->shaderSetting = {
             { LightType::Dir, {
@@ -255,6 +257,7 @@ namespace renderer {
 			loadMesh(config, obj, filename);
 			m_evtMgr->emit<CreateMeshBufferEvent>(obj);
             obj.addComponent<ReceiveLightTag>();
+			obj.addComponent<RenderQueueTag>();
             obj.addComponent<MotionCom>();
 			{
 				ActionData data;

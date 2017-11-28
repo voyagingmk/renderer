@@ -6,7 +6,6 @@
 #include "com/cameraCom.hpp"
 #include "com/bufferCom.hpp"
 #include "com/lightCom.hpp"
-#include "com/miscCom.hpp"
 #include "system/spatialSys.hpp"
 #include "event/materialEvent.hpp"
 #include "event/shaderEvent.hpp"
@@ -27,7 +26,45 @@ namespace renderer {
 		printf("RenderSystem init\n");
 		evtMgr.on<RenderSceneEvent>(*this);
 		evtMgr.on<CameraMoveEvent>(*this);
+		evtMgr.on<ComponentAddedEvent<RenderQueueTag>>(*this);
+		evtMgr.on<ComponentRemovedEvent<RenderQueueTag>>(*this);
 	}
+
+	void RenderSystem::receive(const ComponentAddedEvent<RenderQueueTag> &evt) {
+		updateRenderQueue();
+	}
+	
+	void RenderSystem::receive(const ComponentRemovedEvent<RenderQueueTag> &evt) {
+		updateRenderQueue();
+	}
+
+	void RenderSystem::updateRenderQueue() {
+		auto queueCom = m_objMgr->getSingletonComponent<RenderQueueCom>();
+		RenderQueue& queue = queueCom->queue;
+		queue.clear();
+		// collect all ID
+		for (const Object obj : m_objMgr->entities<RenderQueueTag>()) {
+			auto meshBufferCom = obj.component<MeshBuffersCom>();
+			for (BufIdx idx = 0; idx < meshBufferCom->buffers.size(); idx++) {
+				queue.push_back(std::make_pair(obj.ID(), idx));
+			}
+		}
+		// sort by materialID
+		std::sort(queue.begin(), queue.end(), [&](std::pair<ObjectID, BufIdx> a, std::pair<ObjectID, BufIdx> b) -> bool {
+			Object aObj = Object(m_objMgr, a.first);
+			Object bObj = Object(m_objMgr, b.first);
+			auto aCom = aObj.component<MeshBuffersCom>();
+			auto aMatCom = aObj.component<MaterialCom>();
+			auto bCom = bObj.component<MeshBuffersCom>();
+			auto bMatCom = bObj.component<MaterialCom>();
+			auto aBuf = aCom->buffers[a.second];
+			auto bBuf = bCom->buffers[b.second];
+			auto aSettingID = aMatCom->settingIDs[aBuf.matIdx];
+			auto bSettingID = bMatCom->settingIDs[bBuf.matIdx];
+			return (aSettingID < bSettingID);
+		});
+	}
+
 
 	// renderpipe loop, could move to another system
 	void RenderSystem::update(ObjectManager &objMgr, EventManager &evtMgr, float dt) {
@@ -147,8 +184,8 @@ namespace renderer {
     }
     
 	void RenderSystem::receive(const RenderSceneEvent &evt) {
-		
 		auto matSetCom = m_objMgr->getSingletonComponent<MaterialSet>();
+		auto renderQueueCom = m_objMgr->getSingletonComponent<RenderQueueCom>();
 		glEnable(GL_DEPTH_TEST);
         setViewport(evt.viewport);
         clearView(evt.clearColor, evt.clearBits);
@@ -159,31 +196,27 @@ namespace renderer {
 			shader.use();
 		}
 
-		// TODO: sort by material
-		for (const Object obj : m_objMgr->entities<
-             Meshes, MaterialCom, SpatialData,
-             ReceiveLightTag,
-             MeshBuffersCom>()) {
-			auto matCom = obj.component<MaterialCom>();
-			 
-			m_evtMgr->emit<UploadCameraToShaderEvent>(evt.objCamera, shader);
-			 
+		MaterialSettingID preSettingID = -1;
+		for (auto e: renderQueueCom->queue) {
+			Object obj = m_objMgr->get(e.first);
+			BufIdx bufIdx = e.second;
+			auto matCom = obj.component<MaterialCom>();		 
+			m_evtMgr->emit<UploadCameraToShaderEvent>(evt.objCamera, shader);	 
 			m_evtMgr->emit<UploadMatrixToShaderEvent>(obj, shader);
-			 
 			auto meshBufferCom = obj.component<MeshBuffersCom>();
-			for (auto meshBuffer: meshBufferCom->buffers) {
-				auto settingID = matCom->settingIDs[meshBuffer.matIdx];	
+			auto meshBuffer = meshBufferCom->buffers[bufIdx];
+			auto settingID = matCom->settingIDs[meshBuffer.matIdx];	
+			if (preSettingID != settingID) {
 				auto setting = matSetCom->settings[settingID];
 				if (evt.shader == nullptr) {
 					shader = getShader(setting);
 					shader.use();
 				}
 				m_evtMgr->emit<ActiveMaterialEvent>(settingID, shader);
-				m_evtMgr->emit<DrawOneMeshBufferEvent>(meshBuffer);
-				m_evtMgr->emit<DeactiveMaterialEvent>(settingID);
 			}
-			
-			
+			m_evtMgr->emit<DrawOneMeshBufferEvent>(meshBuffer);
+			preSettingID = settingID;
+			// m_evtMgr->emit<DeactiveMaterialEvent>(settingID);
 		}
 		
 	}
