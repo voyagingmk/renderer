@@ -4,43 +4,6 @@
     <ClCompile Include="D:\workplace\github\renderer\src\film.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="D:\workplace\github\renderer\external\GL\gl3w.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\external\imgui.cpp" />
-    <ClCompile Include="..\external\imgui_draw.cpp" />
-    <ClCompile Include="..\external\imgui_impl_sdl_gl3.cpp" />
-    <ClCompile Include="..\external\SOIL\image_DXT.c" />
-    <ClCompile Include="..\external\SOIL\image_helper.c" />
-    <ClCompile Include="..\external\SOIL\SOIL.c" />
-    <ClCompile Include="..\external\SOIL\stb_image_aug.c" />
-    <ClCompile Include="..\include\ecs\event.cpp" />
-    <ClCompile Include="..\include\ecs\object.cpp" />
-    <ClCompile Include="..\include\ecs\object_manager.cpp" />
-    <ClCompile Include="..\include\ecs\system.cpp" />
-    <ClCompile Include="..\include\ecs\test.cpp" />
-    <ClCompile Include="..\src\com\bbox.cpp" />
-    <ClCompile Include="..\src\com\color.cpp" />
-    <ClCompile Include="..\src\com\geometry.cpp" />
-    <ClCompile Include="..\src\com\shaderCom.cpp" />
-    <ClCompile Include="..\src\com\transform.cpp" />
-    <ClCompile Include="..\src\main.cpp" />
-    <ClCompile Include="..\src\main_ecs.cpp" />
-    <ClCompile Include="..\src\system\bufferSys.cpp" />
-    <ClCompile Include="..\src\system\cameraSys.cpp" />
-    <ClCompile Include="..\src\system\configSys.cpp" />
-    <ClCompile Include="..\src\system\envSys.cpp" />
-    <ClCompile Include="..\src\system\lightSys.cpp" />
-    <ClCompile Include="..\src\system\loaderSys.cpp" />
-    <ClCompile Include="..\src\system\materialSys.cpp" />
-    <ClCompile Include="..\src\system\motionSys.cpp" />
-    <ClCompile Include="..\src\system\renderSys.cpp" />
-    <ClCompile Include="..\src\system\shaderSys.cpp" />
-    <ClCompile Include="..\src\system\spatialSys.cpp" />
-    <ClCompile Include="..\src\system\textureSys.cpp" />
-    <ClCompile Include="..\src\system\uiSys.cpp" />
-    <ClCompile Include="..\src\utils\defines.cpp" />
-    <ClCompile Include="..\src\utils\profiler.cpp" />
     <ClCompile Include="..\src\com\matrix.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -49,6 +12,111 @@
     </ClCompile>
     <ClCompile Include="..\src\com\intersect_result.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\com\bbox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\system\bufferSys.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\system\cameraSys.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\com\color.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\system\configSys.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\system\envSys.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\ecs\event.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\com\geometry.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\system\lightSys.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\system\loaderSys.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\main_ecs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\utils\defines.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\system\materialSys.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\system\motionSys.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\ecs\object.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\ecs\object_manager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\utils\profiler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\system\renderSys.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\com\shaderCom.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\system\shaderSys.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\system\spatialSys.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\ecs\system.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\ecs\test.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\system\textureSys.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\com\transform.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\system\uiSys.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\SOIL\image_DXT.c">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\SOIL\image_helper.c">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\SOIL\SOIL.c">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\SOIL\stb_image_aug.c">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\imgui_impl_sdl_gl3.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\imgui_draw.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\imgui.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\workplace\github\renderer\external\GL\gl3w.c">
+      <Filter>External</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -61,84 +129,244 @@
     <Filter Include="Source Files">
       <UniqueIdentifier>{5E329BD2-4C4A-36DE-A5BE-7EB7C4D521DA}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{6a19a301-3be2-4232-acc6-1cce0ec485de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External">
+      <UniqueIdentifier>{67c1775d-f75c-4669-b2df-9e3daf43dee2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\external\SOIL\image_DXT.h" />
-    <ClInclude Include="..\external\SOIL\image_helper.h" />
-    <ClInclude Include="..\external\SOIL\SOIL.h" />
-    <ClInclude Include="..\external\SOIL\stbi_DDS_aug.h" />
-    <ClInclude Include="..\external\SOIL\stbi_DDS_aug_c.h" />
-    <ClInclude Include="..\external\SOIL\stb_image_aug.h" />
-    <ClInclude Include="..\include\base.hpp" />
-    <ClInclude Include="..\include\camera.hpp" />
-    <ClInclude Include="..\include\catch.hpp" />
-    <ClInclude Include="..\include\com\bbox.hpp" />
-    <ClInclude Include="..\include\com\bufferCom.hpp" />
-    <ClInclude Include="..\include\com\cameraCom.hpp" />
-    <ClInclude Include="..\include\com\color.hpp" />
-    <ClInclude Include="..\include\com\geometry.hpp" />
-    <ClInclude Include="..\include\com\glcommon.hpp" />
-    <ClInclude Include="..\include\com\keyState.hpp" />
-    <ClInclude Include="..\include\com\lightCom.hpp" />
-    <ClInclude Include="..\include\com\materialCom.hpp" />
-    <ClInclude Include="..\include\com\matrix.hpp" />
-    <ClInclude Include="..\include\com\meshes.hpp" />
-    <ClInclude Include="..\include\com\miscCom.hpp" />
-    <ClInclude Include="..\include\com\quaternion.hpp" />
-    <ClInclude Include="..\include\com\renderMode.hpp" />
-    <ClInclude Include="..\include\com\sdlContext.hpp" />
-    <ClInclude Include="..\include\com\shader.hpp" />
-    <ClInclude Include="..\include\com\spatialData.hpp" />
-    <ClInclude Include="..\include\com\transform.hpp" />
-    <ClInclude Include="..\include\com\vertex.hpp" />
-    <ClInclude Include="..\include\curve.hpp" />
-    <ClInclude Include="..\include\ecs\component_handle.hpp" />
-    <ClInclude Include="..\include\ecs\ecs.hpp" />
-    <ClInclude Include="..\include\ecs\event.hpp" />
-    <ClInclude Include="..\include\ecs\event_builtin.hpp" />
-    <ClInclude Include="..\include\ecs\manager.hpp" />
-    <ClInclude Include="..\include\ecs\object.hpp" />
-    <ClInclude Include="..\include\ecs\object_manager.hpp" />
-    <ClInclude Include="..\include\ecs\setting.hpp" />
-    <ClInclude Include="..\include\ecs\system.hpp" />
-    <ClInclude Include="..\include\ecs\test.hpp" />
-    <ClInclude Include="..\include\event\bufferEvent.hpp" />
-    <ClInclude Include="..\include\event\lightEvent.hpp" />
-    <ClInclude Include="..\include\event\materialEvent.hpp" />
-    <ClInclude Include="..\include\event\miscEvent.hpp" />
-    <ClInclude Include="..\include\event\renderEvent.hpp" />
-    <ClInclude Include="..\include\event\shaderEvent.hpp" />
-    <ClInclude Include="..\include\event\spatialEvent.hpp" />
-    <ClInclude Include="..\include\event\textureEvent.hpp" />
-    <ClInclude Include="..\include\event\winEvent.hpp" />
-    <ClInclude Include="..\include\film.hpp" />
-    <ClInclude Include="..\include\intersect_result.hpp" />
-    <ClInclude Include="..\include\main_ecs.hpp" />
-    <ClInclude Include="..\include\main_realtime.hpp" />
-    <ClInclude Include="..\include\ray.hpp" />
-    <ClInclude Include="..\include\realtime\glutils.hpp" />
-    <ClInclude Include="..\include\realtime\importer.hpp" />
-    <ClInclude Include="..\include\realtime\model.hpp" />
-    <ClInclude Include="..\include\realtime\renderer.hpp" />
-    <ClInclude Include="..\include\sdf.hpp" />
-    <ClInclude Include="..\include\system\bufferSys.hpp" />
-    <ClInclude Include="..\include\system\cameraSys.hpp" />
-    <ClInclude Include="..\include\system\configSys.hpp" />
-    <ClInclude Include="..\include\system\envSys.hpp" />
-    <ClInclude Include="..\include\system\lightSys.hpp" />
-    <ClInclude Include="..\include\system\loaderSys.hpp" />
-    <ClInclude Include="..\include\system\materialSys.hpp" />
-    <ClInclude Include="..\include\system\motionSys.hpp" />
-    <ClInclude Include="..\include\system\renderSys.hpp" />
-    <ClInclude Include="..\include\system\shaderSys.hpp" />
-    <ClInclude Include="..\include\system\spatialSys.hpp" />
-    <ClInclude Include="..\include\system\textureSys.hpp" />
-    <ClInclude Include="..\include\transform.hpp" />
-    <ClInclude Include="..\include\utils\defines.hpp" />
-    <ClInclude Include="..\include\utils\draw.hpp" />
-    <ClInclude Include="..\include\utils\error.hpp" />
-    <ClInclude Include="..\include\utils\helper.hpp" />
-    <ClInclude Include="..\include\utils\MemoryPool.hpp" />
-    <ClInclude Include="..\include\utils\profiler.hpp" />
+    <ClInclude Include="..\include\base.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\com\bbox.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\com\bufferCom.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\event\bufferEvent.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\system\bufferSys.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\camera.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\com\cameraCom.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\system\cameraSys.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\catch.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\com\color.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ecs\component_handle.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\curve.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\utils\draw.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ecs\ecs.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\system\envSys.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\utils\error.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ecs\event.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ecs\event_builtin.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\film.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\com\geometry.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\com\glcommon.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\realtime\glutils.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\utils\helper.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\intersect_result.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\com\keyState.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\com\lightCom.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\event\lightEvent.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\system\lightSys.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\system\loaderSys.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\main_ecs.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\main_realtime.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ecs\manager.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\com\materialCom.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\event\materialEvent.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\system\materialSys.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\com\matrix.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\utils\MemoryPool.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\com\meshes.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\com\miscCom.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\event\miscEvent.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\realtime\model.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\system\motionSys.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ecs\object.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ecs\object_manager.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\utils\profiler.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\com\quaternion.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ray.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\realtime\renderer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\event\renderEvent.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\com\renderMode.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\system\renderSys.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\sdf.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\com\sdlContext.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ecs\setting.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\com\shader.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\event\shaderEvent.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\system\shaderSys.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\com\spatialData.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\event\spatialEvent.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\system\spatialSys.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ecs\system.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ecs\test.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\event\textureEvent.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\system\textureSys.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\com\transform.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\transform.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\com\vertex.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\event\winEvent.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\system\configSys.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\utils\defines.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\SOIL\image_DXT.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\SOIL\image_helper.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\realtime\importer.hpp">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\SOIL\SOIL.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\SOIL\stb_image_aug.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\SOIL\stbi_DDS_aug.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\SOIL\stbi_DDS_aug_c.h">
+      <Filter>External</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
