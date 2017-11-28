@@ -5,15 +5,15 @@ using namespace renderer;
 
 UniLoc Shader::getUniformLocation(const std::string& name) {
 	if (locCache != nullptr) {
-		auto it = locCache.find(name);
-		if (it != locCache.end()) {
+		auto it = locCache->find(name);
+		if (it != locCache->end()) {
 			return it->second;
 		}
 	}
 	UniLoc loc = glGetUniformLocation(spHDL, name.c_str());
 	if (locCache != nullptr) {
-		locCache[name] = loc;
-		printf("cache loc %s, %d\n", name.c_str(), (int)loc);
+		(*locCache)[name] = loc;
+		// printf("cache loc %s, %d\n", name.c_str(), (int)loc);
 	}
 	return loc;
 }
