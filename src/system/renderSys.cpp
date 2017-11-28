@@ -120,7 +120,7 @@ namespace renderer {
 
 		m_evtMgr->emit<DrawUIEvent>();
 		SDL_GL_SwapWindow(context->win);
-		CheckGLError;
+		// CheckGLError;
 	}
 
 	void RenderSystem::receive(const CameraMoveEvent &evt) {
@@ -189,13 +189,12 @@ namespace renderer {
 	}
 
 	Shader RenderSystem::getShader(MaterialSettingComBase* com) {
-		auto spSetCom = m_objMgr->getSingletonComponent<ShaderProgramSet>();
-		return Shader(spSetCom->alias2HDL[com->shaderName]);
+		return getShader(com->shaderName);
 	}
 
 	Shader RenderSystem::getShader(std::string shaderName) {
 		auto spSetCom = m_objMgr->getSingletonComponent<ShaderProgramSet>();
-		return Shader(spSetCom->alias2HDL[shaderName]);
+		return Shader(spSetCom->alias2HDL[shaderName], spSetCom->spHDL2locCache);
 	}
 
     void RenderSystem::renderQuad() {

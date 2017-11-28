@@ -3,13 +3,19 @@
 
 using namespace renderer;
 
-
-UniLoc Shader::getUniformLocation(const char* name) {
-	return (UniLoc)glGetUniformLocation(spHDL, name);
-}
-
-UniLoc Shader::getUniformLocation(std::string name) {
-	return getUniformLocation(name.c_str());
+UniLoc Shader::getUniformLocation(const std::string& name) {
+	if (locCache != nullptr) {
+		auto it = locCache.find(name);
+		if (it != locCache.end()) {
+			return it->second;
+		}
+	}
+	UniLoc loc = glGetUniformLocation(spHDL, name.c_str());
+	if (locCache != nullptr) {
+		locCache[name] = loc;
+		printf("cache loc %s, %d\n", name.c_str(), (int)loc);
+	}
+	return loc;
 }
 
 void Shader::set4f(UniLoc loc, float f1, float f2, float f3, float f4) {
@@ -59,7 +65,7 @@ void Shader::setLight(Light* light) {
 }*/
 
 // by name
-void Shader::set4f(const char* name, float f1, float f2, float f3, float f4) {
+void Shader::set4f(const std::string& name, float f1, float f2, float f3, float f4) {
     UniLoc loc = getUniformLocation(name);
     if (loc == -1) {
         return;
@@ -67,7 +73,7 @@ void Shader::set4f(const char* name, float f1, float f2, float f3, float f4) {
     set4f(loc, f1, f2, f3, f4);
 }
 
-void Shader::set3f(const char* name, float f1, float f2, float f3) {
+void Shader::set3f(const std::string& name, float f1, float f2, float f3) {
     UniLoc loc = getUniformLocation(name);
     if (loc == -1) {
         return;
@@ -75,7 +81,7 @@ void Shader::set3f(const char* name, float f1, float f2, float f3) {
     set3f(loc, f1, f2, f3);
 }
 
-void Shader::set3f(const char* name, Vector3dF v) {
+void Shader::set3f(const std::string& name, Vector3dF v) {
     UniLoc loc = getUniformLocation(name);
     if (loc == -1) {
         return;
@@ -83,7 +89,7 @@ void Shader::set3f(const char* name, Vector3dF v) {
     set3f(loc, v.x, v.y, v.z);
 }
 
-void Shader::set3f(const char *name, Color c) {
+void Shader::set3f(const std::string& name, Color c) {
 	UniLoc loc = getUniformLocation(name);
 	if (loc == -1) {
 		return;
@@ -92,7 +98,7 @@ void Shader::set3f(const char *name, Color c) {
 }
 
 
-void Shader::set2f(const char* name, float f1, float f2) {
+void Shader::set2f(const std::string& name, float f1, float f2) {
     UniLoc loc = getUniformLocation(name);
     if (loc == -1) {
         return;
@@ -100,7 +106,7 @@ void Shader::set2f(const char* name, float f1, float f2) {
     set2f(loc, f1, f2);
 }
 
-void Shader::set1f(const char* name, float f1) {
+void Shader::set1f(const std::string& name, float f1) {
     UniLoc loc = getUniformLocation(name);
     if (loc == -1) {
         return;
@@ -108,7 +114,7 @@ void Shader::set1f(const char* name, float f1) {
     set1f(loc, f1);
 }
 
-void Shader::set1i(const char* name, int i1) {
+void Shader::set1i(const std::string& name, int i1) {
     UniLoc loc = getUniformLocation(name);
     if (loc == -1) {
         return;
@@ -116,7 +122,7 @@ void Shader::set1i(const char* name, int i1) {
     set1i(loc, i1);
 }
 
-void Shader::set1b(const char* name, bool b) {
+void Shader::set1b(const std::string& name, bool b) {
     UniLoc loc = getUniformLocation(name);
     if (loc == -1) {
         return;
@@ -124,7 +130,7 @@ void Shader::set1b(const char* name, bool b) {
     set1b(loc, b);
 }
 
-void Shader::setMatrixes4f(const char* name, std::vector<Matrix4x4>& mats) {
+void Shader::setMatrixes4f(const std::string& name, std::vector<Matrix4x4>& mats) {
     for (GLuint i = 0; i < mats.size(); ++i){
         UniLoc loc = getUniformLocation((std::string(name) + "[" + std::to_string(i) + "]").c_str());
         if (loc == -1) {
@@ -133,7 +139,7 @@ void Shader::setMatrixes4f(const char* name, std::vector<Matrix4x4>& mats) {
         setMatrix4f(loc, mats[i]);
     }
 }
-void Shader::setMatrix4f(const char* name, const Matrix4x4& mat) {
+void Shader::setMatrix4f(const std::string& name, const Matrix4x4& mat) {
     UniLoc loc = getUniformLocation(name);
     if (loc == -1) {
         return;
@@ -141,7 +147,7 @@ void Shader::setMatrix4f(const char* name, const Matrix4x4& mat) {
     setMatrix4f(loc, mat);
 }
 
-void Shader::setTransform4f(const char* name, Transform4x4 trans) {
+void Shader::setTransform4f(const std::string& name, Transform4x4 trans) {
     UniLoc loc = getUniformLocation(name);
     if (loc == -1) {
         return;
@@ -149,7 +155,7 @@ void Shader::setTransform4f(const char* name, Transform4x4 trans) {
     setTransform4f(loc, trans);
 }
 
-void Shader::set3fArray(const char *name, std::vector<Vector3dF>& arr, int n) {
+void Shader::set3fArray(const std::string& name, std::vector<Vector3dF>& arr, int n) {
 	UniLoc loc = getUniformLocation(name);
 	if (loc == -1) {
 		return;
