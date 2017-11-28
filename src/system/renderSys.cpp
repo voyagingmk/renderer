@@ -195,9 +195,7 @@ namespace renderer {
 			shader = *evt.shader;
 			shader.use();
 		}
-		//printf("RenderSceneEvent \n");
 		MaterialSettingID preSettingID = -1;
-		//int count = 0;
 		for (auto e: renderQueueCom->queue) {
 			Object obj = m_objMgr->get(e.first);
 			BufIdx bufIdx = e.second;
@@ -214,18 +212,11 @@ namespace renderer {
 					shader.use();
 				}
 				m_evtMgr->emit<ActiveMaterialEvent>(settingID, shader);
-				//count = 0;
 			}
-			//else {
-			//	count++;
-				// printf("Object %d bufIdx %d settingID %d count %d\n", (int)e.first, (int)bufIdx, (int)settingID, count);
-			//}
 			m_evtMgr->emit<DrawOneMeshBufferEvent>(meshBuffer);
 			preSettingID = settingID;
 			// m_evtMgr->emit<DeactiveMaterialEvent>(settingID);
 		}
-
-		//printf("RenderSceneEvent done \n");
 	}
 
 	Shader RenderSystem::getShader(MaterialSettingComBase* com) {
