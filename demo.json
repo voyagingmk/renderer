@@ -163,7 +163,7 @@
     ],
     "light": [
         {
-            "type": "DirLight0",
+            "type": "DirLight",
             "shadowType": "vsm",
             "intensity": 1.1,
             "size": 100.0,
@@ -192,7 +192,7 @@
             "shadow": true
         },
         {
-            "type": "SpotLight",
+            "type": "SpotLight0",
             "shadowType": "vsm",
             "intensity": 3.3,
             "near_plane": 35,
@@ -309,7 +309,7 @@
             "shadow": true
         }
     ],
-    "object": [      
+    "object0": [      
         {
             "model": "plane.obj",
             "spatial": [
@@ -327,7 +327,7 @@
             ]
         }
     ],
-    "object9": [      
+    "object": [      
         {
             "model": "sponza.obj",
             "spatial": [

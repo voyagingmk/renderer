@@ -2,7 +2,6 @@
 #include "light.hpp"
 #include "com/geometry.hpp"
 #include "com/color.hpp"
-#include "realtime/texturemgr.hpp"
 
 namespace renderer {
 

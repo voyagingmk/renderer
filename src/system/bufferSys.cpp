@@ -538,14 +538,12 @@ namespace renderer {
 			glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
 			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
-			checkGLError;
 		}
 		else {
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			glBindFramebuffer(GL_READ_FRAMEBUFFER, buf.fboID);
 			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 			glBlitFramebuffer(0, 0, buf.width, buf.height, 0, 0, buf.width, buf.height, GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT, GL_NEAREST);
-			checkGLError;
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
 			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);

@@ -98,7 +98,7 @@ namespace renderer {
 			glTexParameterfv(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_BORDER_COLOR, borderColor);
 			*/
             glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-			checkGLError;
+			CheckGLError;
         }
         return texRef;
     }

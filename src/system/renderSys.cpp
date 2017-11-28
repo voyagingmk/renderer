@@ -217,7 +217,7 @@ namespace renderer {
 			m_evtMgr->emit<DrawMeshBufferEvent>(obj);
 			glDepthFunc(GL_LESS); // set depth function back to default
 								  // glEnable(GL_CULL_FACE);
-			checkGLError;
+			CheckGLError;
 			break;
 		}
 		m_evtMgr->emit<UnuseColorBufferEvent>(colorBufferAliasName);
@@ -400,7 +400,7 @@ namespace renderer {
 		clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
 			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		shader.set1i("begin", 1);
-		checkGLError;
+		CheckGLError;
 		renderQuad();
 		shader.set1i("begin", 0);
 		for (auto obj : m_objMgr->entities<LightTag>()) {
@@ -408,7 +408,7 @@ namespace renderer {
 			renderQuad();
 		}
 		glUseProgram(0);
-		checkGLError;
+		CheckGLError;
 		m_evtMgr->emit<UnuseColorBufferEvent>(colorBufferAliasName);
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);

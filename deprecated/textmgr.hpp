@@ -2,8 +2,6 @@
 #define RENDERER_TEXTMGR_HPP
 #include "glutils.hpp"
 #include "../com/glcommon.hpp"
-#include "texturemgr.hpp"
-#include "shadermgr.hpp"
 #include "../com/color.hpp"
 #include "sdf.hpp"
 #include <ft2build.h>

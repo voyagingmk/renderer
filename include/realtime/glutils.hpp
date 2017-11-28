@@ -4,7 +4,7 @@
 #include "base.hpp"
 
 #ifdef USE_GL
-static bool checkGLError(const char* file, int line) {
+static bool CheckGLError(const char* file, int line) {
 	GLenum err = glGetError();
 	if (err != GL_NO_ERROR) {
         const GLubyte* errString = gluErrorString(err);
@@ -16,7 +16,7 @@ static bool checkGLError(const char* file, int line) {
 	return true;
 }
 
-#define CheckGLError checkGLError(__FILE__, __LINE__);
+#define CheckGLError CheckGLError(__FILE__, __LINE__);
 
 #endif
 

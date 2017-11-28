@@ -3,7 +3,6 @@
 #include "com/geometry.hpp"
 #include "com/color.hpp"
 #include "ray.hpp"
-#include "realtime/shadermgr.hpp"
 
 namespace renderer {
     void MaterialSetting::uploadToShader(Shader *shader) {

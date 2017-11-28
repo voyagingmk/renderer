@@ -10,31 +10,7 @@
     <ClCompile Include="D:\workplace\github\renderer\src\intersect_result.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="D:\workplace\github\renderer\src\light.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="D:\workplace\github\renderer\src\material.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="D:\workplace\github\renderer\src\parser.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="D:\workplace\github\renderer\src\ray.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="D:\workplace\github\renderer\src\raytracer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="D:\workplace\github\renderer\src\realtime\buffermgr.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="D:\workplace\github\renderer\src\realtime\context.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="D:\workplace\github\renderer\src\realtime\shadermgr.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="D:\workplace\github\renderer\src\realtime\texturemgr.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="D:\workplace\github\renderer\src\shape.cpp">
@@ -77,7 +53,6 @@
     <ClCompile Include="..\src\com\transform.cpp" />
     <ClCompile Include="..\src\main.cpp" />
     <ClCompile Include="..\src\main_ecs.cpp" />
-    <ClCompile Include="..\src\renderQueue.cpp" />
     <ClCompile Include="..\src\system\bufferSys.cpp" />
     <ClCompile Include="..\src\system\cameraSys.cpp" />
     <ClCompile Include="..\src\system\configSys.cpp" />
@@ -160,24 +135,13 @@
     <ClInclude Include="..\include\event\winEvent.hpp" />
     <ClInclude Include="..\include\film.hpp" />
     <ClInclude Include="..\include\intersect_result.hpp" />
-    <ClInclude Include="..\include\light.hpp" />
     <ClInclude Include="..\include\main_ecs.hpp" />
-    <ClInclude Include="..\include\main_raytrace.hpp" />
     <ClInclude Include="..\include\main_realtime.hpp" />
-    <ClInclude Include="..\include\material.hpp" />
-    <ClInclude Include="..\include\parser.hpp" />
     <ClInclude Include="..\include\ray.hpp" />
-    <ClInclude Include="..\include\raytracer.hpp" />
-    <ClInclude Include="..\include\realtime\buffermgr.hpp" />
-    <ClInclude Include="..\include\realtime\context.hpp" />
     <ClInclude Include="..\include\realtime\glutils.hpp" />
     <ClInclude Include="..\include\realtime\importer.hpp" />
     <ClInclude Include="..\include\realtime\model.hpp" />
     <ClInclude Include="..\include\realtime\renderer.hpp" />
-    <ClInclude Include="..\include\realtime\shadermgr.hpp" />
-    <ClInclude Include="..\include\realtime\textmgr.hpp" />
-    <ClInclude Include="..\include\realtime\texturemgr.hpp" />
-    <ClInclude Include="..\include\renderQueue.hpp" />
     <ClInclude Include="..\include\sdf.hpp" />
     <ClInclude Include="..\include\shape.hpp" />
     <ClInclude Include="..\include\shapes\bvh.hpp" />
