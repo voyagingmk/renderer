@@ -71,7 +71,7 @@ namespace renderer {
 		
 		// TODO: only update shadow map of dynamic lights
 		updateShadowMapPass("main", objCamera);
-		CheckGLError;
+		
 
 		//renderColorBuffer("lightDepth7", 1024, 1024, true, true);
 		//SDL_GL_SwapWindow(context->win);
@@ -82,7 +82,7 @@ namespace renderer {
 
 		// lighting pass
 		deferredLightingPass(curSceneBuf, objCamera, "main", context->width, context->height);
-		CheckGLError;
+		
 
 		evtMgr.emit<UseColorBufferEvent>(anotherSceneBuf);
 		renderColorBuffer(curSceneBuf, context->width, context->height, true, true);
@@ -93,7 +93,7 @@ namespace renderer {
 
 		evtMgr.emit<UseColorBufferEvent>(curSceneBuf);
 		// skybox pass
-		CheckGLError;
+		
 		renderSkybox("", objCamera, screenViewport);
 		renderLightObjects("", objCamera, screenViewport);
 		evtMgr.emit<UnuseColorBufferEvent>(curSceneBuf);
@@ -113,13 +113,14 @@ namespace renderer {
 			swap(curSceneBuf, anotherSceneBuf);
 		}
 		renderColorBuffer(curSceneBuf, context->width, context->height, noGamma, noToneMapping);
-		CheckGLError;
+		
 
 		// renderColorBuffer("ssaoBlur", context->width, context->height, true, true);
 		// renderGBufferDebug("main", context->width, context->height);
 
 		m_evtMgr->emit<DrawUIEvent>();
 		SDL_GL_SwapWindow(context->win);
+		CheckGLError;
 	}
 
 	void RenderSystem::receive(const CameraMoveEvent &evt) {
@@ -146,7 +147,7 @@ namespace renderer {
     }
     
 	void RenderSystem::receive(const RenderSceneEvent &evt) {
-		CheckGLError;
+		
 		auto matSetCom = m_objMgr->getSingletonComponent<MaterialSet>();
 		glEnable(GL_DEPTH_TEST);
         setViewport(evt.viewport);
@@ -164,11 +165,11 @@ namespace renderer {
              ReceiveLightTag,
              MeshBuffersCom>()) {
 			auto matCom = obj.component<MaterialCom>();
-			CheckGLError; 
+			 
 			m_evtMgr->emit<UploadCameraToShaderEvent>(evt.objCamera, shader);
-			CheckGLError; 
+			 
 			m_evtMgr->emit<UploadMatrixToShaderEvent>(obj, shader);
-			CheckGLError; 
+			 
 			auto meshBufferCom = obj.component<MeshBuffersCom>();
 			for (auto meshBuffer: meshBufferCom->buffers) {
 				auto settingID = matCom->settingIDs[meshBuffer.matIdx];	
@@ -181,10 +182,10 @@ namespace renderer {
 				m_evtMgr->emit<DrawOneMeshBufferEvent>(meshBuffer);
 				m_evtMgr->emit<DeactiveMaterialEvent>(settingID);
 			}
-			CheckGLError;
-			CheckGLError;
+			
+			
 		}
-		CheckGLError;
+		
 	}
 
 	Shader RenderSystem::getShader(MaterialSettingComBase* com) {
@@ -217,7 +218,7 @@ namespace renderer {
 			m_evtMgr->emit<DrawMeshBufferEvent>(obj);
 			glDepthFunc(GL_LESS); // set depth function back to default
 								  // glEnable(GL_CULL_FACE);
-			CheckGLError;
+			
 			break;
 		}
 		m_evtMgr->emit<UnuseColorBufferEvent>(colorBufferAliasName);
@@ -243,9 +244,9 @@ namespace renderer {
             generateSampleKernel(ssaoKernel);
         }
         shader.set3fArray("samples", ssaoKernel);
-        CheckGLError;
+        
 		renderQuad();
-        CheckGLError;
+        
 		m_evtMgr->emit<UnuseColorBufferEvent>(ssaoBuffer);
 	}
 
@@ -259,7 +260,7 @@ namespace renderer {
 		Shader blurShader = getShader("blur");
 		blurShader.use();
 		m_evtMgr->emit<ActiveTextureByIDEvent>(blurShader, "ssaoInput", 0, buf.tex.texID);
-		CheckGLError;
+		
 		renderQuad();
 		m_evtMgr->emit<UnuseColorBufferEvent>(ssaoBlurBuffer);
 	}
@@ -277,7 +278,7 @@ namespace renderer {
 		shader.use();
 		m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "img", 0, inputBuf.tex.texID);
 		m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "ssao", 1, ssoaBuf.tex.texID);
-		CheckGLError;
+		
 		renderQuad();
 		m_evtMgr->emit<UnuseColorBufferEvent>(outputBuffer);
 	}
@@ -300,14 +301,14 @@ namespace renderer {
 			}
 			ColorBufferRef& shadowBuf = colorBufferCom->dict[bufAliasname];
 			m_evtMgr->emit<UseColorBufferEvent>(bufAliasname);
-			CheckGLError;
+			
 			Shader pointShadowDepthShader = getShader("pointShadowDepth");
 			pointShadowDepthShader.use();
 			pointShadowDepthShader.setMatrixes4f("lightPVs", transCom->lightPVs);
 			pointShadowDepthShader.set1f("far_plane", transCom->f);
 			pointShadowDepthShader.set3f("lightPos", obj.component<SpatialData>()->pos);
 			pointShadowDepthShader.set1f("normalOffset", gSettingCom->get1f("normalOffset", 0.0f));
-			CheckGLError;
+			
 			m_evtMgr->emit<RenderSceneEvent>(
 				objCamera,
 				std::make_tuple(0, 0, shadowBuf.width, shadowBuf.height),
@@ -315,7 +316,7 @@ namespace renderer {
 				GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT,
 				&pointShadowDepthShader);
 			m_evtMgr->emit<UnuseColorBufferEvent>(bufAliasname);
-			CheckGLError;
+			
 		}
 		glCullFace(GL_BACK);
 		glDisable(GL_CULL_FACE);
@@ -329,7 +330,7 @@ namespace renderer {
 			}
 			ColorBufferRef& shadowBuf = colorBufferCom->dict[bufAliasname];
 			m_evtMgr->emit<UseColorBufferEvent>(bufAliasname);
-			CheckGLError;
+			
 			auto shadowMapSettingCom = m_objMgr->getSingletonComponent<ShadowMapSetting>();
 			auto shaderName = shadowMapSettingCom->shaderSetting[LightType::Dir][lightCommon->shadowType];
 			Shader depthShader = getShader(shaderName);
@@ -337,7 +338,7 @@ namespace renderer {
 			depthShader.setMatrix4f("lightPV", transCom->lightPV);
 			auto lightPV = transCom->lightPV;
 			// dirLightShadowShader.set3f("lightPos", obj.component<SpatialData>()->pos);
-			CheckGLError;
+			
 			m_evtMgr->emit<RenderSceneEvent>(
 				objCamera,
 				std::make_tuple(0, 0, shadowBuf.width, shadowBuf.height),
@@ -356,7 +357,7 @@ namespace renderer {
 			}
 			ColorBufferRef& shadowBuf = colorBufferCom->dict[bufAliasname];
 			m_evtMgr->emit<UseColorBufferEvent>(bufAliasname);
-			CheckGLError;
+			
 
 			auto shadowMapSettingCom = m_objMgr->getSingletonComponent<ShadowMapSetting>();
 			auto shaderName = shadowMapSettingCom->shaderSetting[LightType::Dir][lightCommon->shadowType];
@@ -365,7 +366,7 @@ namespace renderer {
 			depthShader.setMatrix4f("lightPV", transCom->lightPV);
 			auto lightPV = transCom->lightPV;
 			// dirLightShadowShader.set3f("lightPos", obj.component<SpatialData>()->pos);
-			CheckGLError;
+			
 			m_evtMgr->emit<RenderSceneEvent>(
 				objCamera,
 				std::make_tuple(0, 0, shadowBuf.width, shadowBuf.height),
@@ -400,7 +401,7 @@ namespace renderer {
 		clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
 			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		shader.set1i("begin", 1);
-		CheckGLError;
+		
 		renderQuad();
 		shader.set1i("begin", 0);
 		for (auto obj : m_objMgr->entities<LightTag>()) {
@@ -408,7 +409,7 @@ namespace renderer {
 			renderQuad();
 		}
 		glUseProgram(0);
-		CheckGLError;
+		
 		m_evtMgr->emit<UnuseColorBufferEvent>(colorBufferAliasName);
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);
@@ -486,11 +487,11 @@ namespace renderer {
 			Meshes, PointLightCom, SpatialData,
 			MeshBuffersCom>()) {
 			m_evtMgr->emit<UploadCameraToShaderEvent>(objCamera, lightShader);
-			CheckGLError;
+			
 			m_evtMgr->emit<UploadMatrixToShaderEvent>(lightObj, lightShader);
-			CheckGLError;
+			
 			m_evtMgr->emit<DrawMeshBufferEvent>(lightObj);
-			CheckGLError;
+			
 		}
 		m_evtMgr->emit<UnuseColorBufferEvent>(colorBufferAliasName);
 	}

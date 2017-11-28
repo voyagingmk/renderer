@@ -36,14 +36,14 @@ namespace renderer {
             return;
         }
         com->alias2HDL[evt.aliasname] = spHDL;
-		CheckGLError;
+		
 		if (evt.textures.size() > 0) {
 			Shader shader(spHDL);
 			shader.use();
 			for (auto it = evt.textures.begin(); it != evt.textures.end(); it++) {
 				printf("set texture pos: %s, %d\n", it->first.c_str(), it->second);
 				shader.set1i(it->first.c_str(), it->second);
-				CheckGLError;
+				
 			}
 		}
         printf("ShaderSystem load %s\n", evt.aliasname.c_str());
@@ -52,11 +52,8 @@ namespace renderer {
 	void ShaderSystem::receive(const UploadMatrixToShaderEvent& evt) {
 		auto com = evt.obj.component<SpatialData>();
 		Shader& shader = const_cast<Shader&>(evt.shader);
-        CheckGLError;
 		shader.setMatrix4f("model", com->o2w.m);
-        CheckGLError;
-        shader.setMatrix4f("normalMat", com->o2w.mInv.transpose());
-        CheckGLError;
+        shader.setMatrix4f("normalMat", com->o2w.mInv.transpose());   
 	}
 
 	void ShaderSystem::receive(const UploadCameraToShaderEvent& evt) {
@@ -85,9 +82,9 @@ namespace renderer {
         for (auto pair : shaderHDLSet) {
             ShaderHDL shaderHDL = pair.second;
             glAttachShader(hdl, shaderHDL);
-            CheckGLError;
+            
         }
-        CheckGLError;
+        
         glLinkProgram(hdl);
         GLint success;
         glGetProgramiv(hdl, GL_LINK_STATUS, &success);
@@ -137,7 +134,7 @@ namespace renderer {
         }
         glShaderSource(shaderHDL, 1, &src, NULL);
         glCompileShader(shaderHDL);
-        CheckGLError;
+        
         // Check for compile time errors
         GLint success;
         glGetShaderiv(shaderHDL, GL_COMPILE_STATUS, &success);

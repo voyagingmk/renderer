@@ -66,7 +66,7 @@ namespace renderer {
 			glDrawElements(GL_TRIANGLES, meshBuffer.triangles * 3, GL_UNSIGNED_INT, 0);
 		}
 		glBindVertexArray(0);
-		CheckGLError;
+		
 	}
 
     void BufferSystem::receive(const CreateDpethBufferEvent& evt) {
@@ -107,9 +107,7 @@ namespace renderer {
         if (it == com->dict.end()) {
 			return;
 		}
-		CheckGLError;
 		UseFrameBuffer(it->second);
-		CheckGLError;
 	}
 
 	void BufferSystem::receive(const UnuseColorBufferEvent& evt) {
@@ -211,7 +209,6 @@ namespace renderer {
 		// glVertexAttribDivisor(6, 1);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
-		CheckGLError;
 	}
 
 	MeshBufferRef BufferSystem::CreateMeshBuffer(const OneMesh& mesh) {
@@ -245,7 +242,6 @@ namespace renderer {
 		glBindBuffer(GL_ARRAY_BUFFER, 0); // Note that this is allowed, the call to glVertexAttribPointer registered VBO as the currently bound vertex buffer object so afterwards we can safely unbind
 
 		glBindVertexArray(0); // Unbind VAO (it's always a good thing to unbind any buffer/array to prevent strange bugs), remember: do NOT unbind the EBO, keep it bound to this VAO
-		CheckGLError;
 
 		meshBuffer.vao = VAO;
 		meshBuffer.vbo = VBO;

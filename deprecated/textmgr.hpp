@@ -101,7 +101,7 @@ public:
         glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), 0);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
-        CheckGLError;
+        
     }
     
     void test(char c, int pen_x, int pen_y, const size_t width, const size_t height) {
@@ -230,7 +230,7 @@ public:
         shader.setMatrix4f("projection", projection);
         glActiveTexture(GL_TEXTURE0);
         glBindVertexArray(VAO);
-        CheckGLError;
+        
         for (auto c:text) {
             FT_ULong k = static_cast<FT_ULong>(c);
             if(characters.find(k) == characters.end()) {
@@ -266,7 +266,7 @@ public:
         }
         glBindVertexArray(0);
         glBindTexture(GL_TEXTURE_2D, 0);
-        CheckGLError;
+        
     }
 };
     
