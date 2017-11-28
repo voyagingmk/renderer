@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "com/spatialData.hpp"
 #include "system/shaderSys.hpp"
-#include "realtime/glutils.hpp"
+#include "utils/glutils.hpp"
 #include "com/cameraCom.hpp"
 
 using namespace std;

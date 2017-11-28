@@ -393,7 +393,9 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="..\src\com\bbox.cpp" />
     <ClCompile Include="..\src\com\color.cpp" />
     <ClCompile Include="..\src\com\geometry.cpp" />
+    <ClCompile Include="..\src\com\intersect_result.cpp" />
     <ClCompile Include="..\src\com\matrix.cpp" />
+    <ClCompile Include="..\src\com\ray.cpp" />
     <ClCompile Include="..\src\com\shaderCom.cpp">
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)</ObjectFileName>
     </ClCompile>
@@ -415,16 +417,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="..\src\system\uiSys.cpp" />
     <ClCompile Include="..\src\utils\defines.cpp" />
     <ClCompile Include="..\src\utils\profiler.cpp" />
-    <ClCompile Include="D:\workplace\github\renderer\src\camera.cpp" />
     <ClCompile Include="D:\workplace\github\renderer\src\film.cpp" />
-    <ClCompile Include="D:\workplace\github\renderer\src\intersect_result.cpp" />
-    <ClCompile Include="D:\workplace\github\renderer\src\ray.cpp" />
-    <ClCompile Include="D:\workplace\github\renderer\src\shape.cpp" />
-    <ClCompile Include="D:\workplace\github\renderer\src\shapes\bvh.cpp" />
-    <ClCompile Include="D:\workplace\github\renderer\src\shapes\mesh.cpp" />
-    <ClCompile Include="D:\workplace\github\renderer\src\shapes\plane.cpp" />
-    <ClCompile Include="D:\workplace\github\renderer\src\shapes\sphere.cpp" />
-    <ClCompile Include="D:\workplace\github\renderer\src\shapes\union.cpp" />
     <ClCompile Include="D:\workplace\github\renderer\external\GL\gl3w.c">
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsC</CompileAs>
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsC</CompileAs>
@@ -459,7 +452,6 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="..\include\com\lightCom.hpp" />
     <ClInclude Include="..\include\com\materialCom.hpp" />
     <ClInclude Include="..\include\com\matrix.hpp" />
-    <ClInclude Include="..\include\com\mesh.hpp" />
     <ClInclude Include="..\include\com\meshes.hpp" />
     <ClInclude Include="..\include\com\miscCom.hpp" />
     <ClInclude Include="..\include\com\quaternion.hpp" />
@@ -499,12 +491,6 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="..\include\realtime\model.hpp" />
     <ClInclude Include="..\include\realtime\renderer.hpp" />
     <ClInclude Include="..\include\sdf.hpp" />
-    <ClInclude Include="..\include\shape.hpp" />
-    <ClInclude Include="..\include\shapes\bvh.hpp" />
-    <ClInclude Include="..\include\shapes\mesh.hpp" />
-    <ClInclude Include="..\include\shapes\plane.hpp" />
-    <ClInclude Include="..\include\shapes\sphere.hpp" />
-    <ClInclude Include="..\include\shapes\union.hpp" />
     <ClInclude Include="..\include\system\bufferSys.hpp" />
     <ClInclude Include="..\include\system\cameraSys.hpp" />
     <ClInclude Include="..\include\system\configSys.hpp" />

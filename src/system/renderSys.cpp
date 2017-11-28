@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "realtime/glutils.hpp"
+#include "utils/glutils.hpp"
 #include "system/renderSys.hpp"
 #include "com/sdlContext.hpp"
 #include "com/meshes.hpp"

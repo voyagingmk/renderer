@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "system/textureSys.hpp"
-#include "realtime/glutils.hpp"
+#include "utils/glutils.hpp"
 #include "utils/helper.hpp"
 #include "com/glcommon.hpp"
 

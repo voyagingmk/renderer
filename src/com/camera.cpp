@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "camera.hpp"
 #include "com/geometry.hpp"
-#include "ray.hpp"
+#include "com/ray.hpp"
 
 namespace renderer {
 

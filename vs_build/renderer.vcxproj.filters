@@ -1,34 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="D:\workplace\github\renderer\src\camera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="D:\workplace\github\renderer\src\film.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="D:\workplace\github\renderer\src\intersect_result.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="D:\workplace\github\renderer\src\ray.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="D:\workplace\github\renderer\src\shape.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="D:\workplace\github\renderer\src\shapes\bvh.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="D:\workplace\github\renderer\src\shapes\mesh.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="D:\workplace\github\renderer\src\shapes\plane.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="D:\workplace\github\renderer\src\shapes\sphere.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="D:\workplace\github\renderer\src\shapes\union.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="D:\workplace\github\renderer\external\GL\gl3w.c">
@@ -71,6 +44,12 @@
     <ClCompile Include="..\src\com\matrix.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\com\ray.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\com\intersect_result.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="D:\workplace\github\renderer\CMakeLists.txt" />
@@ -103,7 +82,6 @@
     <ClInclude Include="..\include\com\lightCom.hpp" />
     <ClInclude Include="..\include\com\materialCom.hpp" />
     <ClInclude Include="..\include\com\matrix.hpp" />
-    <ClInclude Include="..\include\com\mesh.hpp" />
     <ClInclude Include="..\include\com\meshes.hpp" />
     <ClInclude Include="..\include\com\miscCom.hpp" />
     <ClInclude Include="..\include\com\quaternion.hpp" />
@@ -143,12 +121,6 @@
     <ClInclude Include="..\include\realtime\model.hpp" />
     <ClInclude Include="..\include\realtime\renderer.hpp" />
     <ClInclude Include="..\include\sdf.hpp" />
-    <ClInclude Include="..\include\shape.hpp" />
-    <ClInclude Include="..\include\shapes\bvh.hpp" />
-    <ClInclude Include="..\include\shapes\mesh.hpp" />
-    <ClInclude Include="..\include\shapes\plane.hpp" />
-    <ClInclude Include="..\include\shapes\sphere.hpp" />
-    <ClInclude Include="..\include\shapes\union.hpp" />
     <ClInclude Include="..\include\system\bufferSys.hpp" />
     <ClInclude Include="..\include\system\cameraSys.hpp" />
     <ClInclude Include="..\include\system\configSys.hpp" />
