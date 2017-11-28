@@ -361,6 +361,11 @@ namespace renderer {
 			// aiProcess_CalcTangentSpace |
 			aiProcess_Triangulate |
 			aiProcess_JoinIdenticalVertices |
+			aiProcess_PreTransformVertices |
+			aiProcess_RemoveRedundantMaterials |
+			aiProcess_GenSmoothNormals |
+			aiProcess_OptimizeMeshes |
+			aiProcess_OptimizeGraph |
 			aiProcess_SortByPType);
 		// If the import failed, report it
 		if (!scene)
