@@ -165,12 +165,12 @@
         {
             "type": "DirLight",
             "shadowType": "vsm",
-            "intensity": 1.1,
-            "size": 100.0,
+            "intensity": 4.1,
+            "size": 1000.0,
             "near_plane": 0.0001,
-            "far_plane": 200.0,
+            "far_plane": 2400.0,
             "spatial": [
-                [-50.0,  50.0, 0.0],
+                [856.0,  1629.0, -75.0],
                 [1, 1, 1],
                 [1, 0, 0, 0]
             ],
@@ -194,15 +194,16 @@
         {
             "type": "SpotLight0",
             "shadowType": "vsm",
-            "intensity": 3.3,
-            "near_plane": 35,
+            "intensity": 22.3,
+            "near_plane": 500,
             "far_plane": 10000,
             "spatial": [
-                [-50.0,  50.0, 0.0],
+                [856.0,  1629.0, -75.0],
                 [1, 1, 1],
                 [1, 0, 0, 0]
             ],
-            "direction": [1.0, -1.0, 0.0],
+            "target": [0.0, 0.0, 0.0],
+            "direction0": [1.0, 0.0, 0.0],
             "cutOff": 12.5,
             "outerCutOff": 25.5,
             "ambient": [

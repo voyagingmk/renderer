@@ -109,10 +109,12 @@ namespace renderer {
 		// TODO: only update shadow map of dynamic lights
 		updateShadowMapPass("main", objCamera);
 		
-
-		//renderColorBuffer("lightDepth7", 1024, 1024, true, true);
-		//SDL_GL_SwapWindow(context->win);
-		//return;
+		if (gSettingCom->getValue("debugShadow")) {
+			renderColorBuffer("lightDepth6", 1024, 1024, true, true);
+			m_evtMgr->emit<DrawUIEvent>();
+			SDL_GL_SwapWindow(context->win);
+			return;
+		}
 
 		std::string curSceneBuf = "pingBuf";
 		std::string anotherSceneBuf = "pongBuf";

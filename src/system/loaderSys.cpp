@@ -222,21 +222,28 @@ namespace renderer {
 				transCom->f = far_plane;
 				m_evtMgr->emit<EnableLightShadowEvent>(obj);
 			} else if (type == "SpotLight") {
-				auto direction = lightInfo["direction"];
 				float cutOff = lightInfo["cutOff"];
 				float near_plane = lightInfo["near_plane"];
 				float far_plane = lightInfo["far_plane"];
 				float outerCutOff = lightInfo["outerCutOff"];
-				Vector3dF dir = Vector3dF{ (float)direction[0], (float)direction[1], (float)direction[2] };
-				obj.addComponent<SpotLightCom>(
-					dir.Normalize(), DegreeF(cutOff).ToRadian(), DegreeF(outerCutOff).ToRadian());
-				auto spatial = lightInfo["spatial"];
 				auto transCom = obj.addComponent<SpotLightTransform>();
 				transCom->aspect = 1.0f;
 				transCom->fovy = 90.0f;
 				transCom->n = near_plane;
 				transCom->f = far_plane;
-				loadSpatialData(obj, spatial);
+				loadSpatialData(obj, lightInfo["spatial"]);
+				auto spatialData = obj.component<SpatialData>();
+				Vector3dF dir(1.0f, 0.0f, 0.0f);
+				if (!lightInfo["direction"].is_null()) {
+					auto direction = lightInfo["direction"];
+					dir = Vector3dF{ (float)direction[0], (float)direction[1], (float)direction[2] };
+				}
+				else if (!lightInfo["target"].is_null()) {
+					auto target = lightInfo["target"];
+					dir = Vector3dF{ (float)target[0], (float)target[1], (float)target[2] } - spatialData->pos;
+				}
+				obj.addComponent<SpotLightCom>(
+					dir.Normalize(), DegreeF(cutOff).ToRadian(), DegreeF(outerCutOff).ToRadian());
 				m_evtMgr->emit<EnableLightShadowEvent>(obj);
             } else {
                 obj.destroy();
