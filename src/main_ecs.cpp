@@ -54,28 +54,10 @@ void MainECS::update(float dt) {
 	m_systemMgr.updateAll(dt);
 }
 
-class TT {
-public:
-    TT() { printf("TT ctor \n"); }
-    ~TT() { printf("TT dtor \n"); }
-};
-
-
 
 
 int ecsMain(int argc, char *argv[])
 {
-    QuaternionF p;
-    
-    p.FromEulerAngles(DegreeF(90.0f), DegreeF(0.0f), DegreeF(0.0f));
-    p.debug();
-    p.FromEulerAngles(DegreeF(0.0f), DegreeF(90.0f), DegreeF(0.0f));
-    p.debug();
-    p.FromEulerAngles(DegreeF(0.0f), DegreeF(0.0f), DegreeF(90.0f));
-    p.debug();
-    p.FromEulerAngles(DegreeF(0.0f), DegreeF(0.0f), DegreeF(0.0f));
-    p.debug();
-    
 	MainECS ecsObj;
 	ecsObj.setup();
 	int interval = 10;

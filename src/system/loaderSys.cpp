@@ -52,6 +52,7 @@ namespace renderer {
         obj.addComponent<MaterialSet>();
 		obj.addComponent<GBufferDictCom>();
 		obj.addComponent<ColorBufferDictCom>();
+		obj.addComponent<InstanceBufferDictCom>();
 		obj.addComponent<RenderQueueCom>();
         auto shadowMapSetting = obj.addComponent<ShadowMapSetting>();
         shadowMapSetting->shaderSetting = {

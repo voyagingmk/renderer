@@ -53,20 +53,30 @@ namespace renderer {
 		}
 	}
 
+	void BufferSystem::receive(const EnabledMeshBufferInstanceEvent& evt) {
+		Object obj = evt.obj;
+		auto com = obj.component<MeshBuffersCom>();
+		for (auto meshBuffer : com->buffers) {
+			EnabledMeshBufferInstance(meshBuffer, evt.insBuf);
+		}
+	}
+
+
 	void BufferSystem::receive(const DrawOneMeshBufferEvent& evt) {
 		drawMeshBuffer(evt.buf);
 	}
 
-	void BufferSystem::drawMeshBuffer(const MeshBufferRef& meshBuffer) {
-		glBindVertexArray(meshBuffer.vao);
-		if (meshBuffer.noIndices) {
-			glDrawArrays(GL_TRIANGLES, 0, meshBuffer.triangles * 3);
+	void BufferSystem::receive(const CreateInstanceBufferEvent& evt) {
+		auto com = m_objMgr->getSingletonComponent<InstanceBufferDictCom>();
+		if (com->dict.find(std::string(evt.aliasName)) != com->dict.end()) {
+			return;
 		}
-		else {
-			glDrawElements(GL_TRIANGLES, meshBuffer.triangles * 3, GL_UNSIGNED_INT, 0);
-		}
-		glBindVertexArray(0);
-		
+		InstanceBufferRef buf;
+		glGenBuffers(1, &buf.bufID);
+		glBindBuffer(GL_ARRAY_BUFFER, buf.bufID);
+		glBufferData(GL_ARRAY_BUFFER, evt.instanceNum * evt.perBytes, evt.data, GL_STATIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		com->dict[std::string(evt.aliasName)] = buf;
 	}
 
     void BufferSystem::receive(const CreateDpethBufferEvent& evt) {
@@ -174,6 +184,28 @@ namespace renderer {
 		CopyFrameBufferDepth(buf1, buf2);
 	}
 
+	void BufferSystem::drawMeshBuffer(const MeshBufferRef& buf) {
+		glBindVertexArray(buf.vao);
+		if (buf.instanced) {
+			if (buf.noIndices) {
+				glDrawArraysInstanced(GL_TRIANGLES, 0, buf.triangles * 3, buf.insBuf.instanceNum);
+			}
+			else {
+				glDrawElementsInstanced(GL_TRIANGLES, buf.triangles * 3, GL_UNSIGNED_INT, 0, buf.insBuf.instanceNum);
+			}
+		}
+		else {
+			if (buf.noIndices) {
+				glDrawArrays(GL_TRIANGLES, 0, buf.triangles * 3);
+			}
+			else {
+				glDrawElements(GL_TRIANGLES, buf.triangles * 3, GL_UNSIGNED_INT, 0);
+			}
+		}
+		glBindVertexArray(0);
+
+	}
+
 	void BufferSystem::DestroyFrameBuffer(FrameBufferBase& buf) {
 		glDeleteFramebuffers(1, &buf.fboID);
 	}
@@ -186,7 +218,6 @@ namespace renderer {
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 	
-
 	void BufferSystem::CreateInstanceBuffer(MeshBufferRef& buf, size_t insNum, void* data) {
 		glBindVertexArray(buf.vao);
 		glGenBuffers(1, &buf.vboIns);
@@ -208,6 +239,27 @@ namespace renderer {
 		// glVertexAttribPointer(6, 3, GL_FLOAT, GL_FALSE, sizeof(Vector3dF), (GLvoid*)(6 * sizeof(GLfloat)));
 		// glVertexAttribDivisor(6, 1);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+	}
+
+	void BufferSystem::EnabledMeshBufferInstance(MeshBufferRef& buf, InstanceBufferRef& insBuf) {
+		buf.instanced = true;
+		buf.insBuf = insBuf;
+		glBindVertexArray(buf.vao);
+		// set attribute pointers for matrix (4 times vec4)
+		glEnableVertexAttribArray(3);
+		glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4), (void*)0);
+		glEnableVertexAttribArray(4);
+		glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4), (void*)(sizeof(Matrix4x4)));
+		glEnableVertexAttribArray(5);
+		glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4), (void*)(2 * sizeof(Matrix4x4)));
+		glEnableVertexAttribArray(6);
+		glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4), (void*)(3 * sizeof(Matrix4x4)));
+
+		glVertexAttribDivisor(3, 1);
+		glVertexAttribDivisor(4, 1);
+		glVertexAttribDivisor(5, 1);
+		glVertexAttribDivisor(6, 1);
 		glBindVertexArray(0);
 	}
 
@@ -343,7 +395,6 @@ namespace renderer {
         return buf;
     }
 
-    
     
 	ColorBufferRef BufferSystem::CreateColorBuffer(
             size_t width, size_t height,

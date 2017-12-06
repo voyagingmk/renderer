@@ -32,6 +32,17 @@ namespace renderer {
 		ecs::Object obj;
 	};
 
+	class EnabledMeshBufferInstanceEvent : public ecs::Event<EnabledMeshBufferInstanceEvent> {
+	public:
+		EnabledMeshBufferInstanceEvent(ecs::Object obj, InstanceBufferRef insBuf) :
+			obj(obj),
+			insBuf(insBuf)
+		{}
+		ecs::Object obj;
+		InstanceBufferRef insBuf;
+	};
+	
+
 
     class DrawOneMeshBufferEvent : public ecs::Event<DrawOneMeshBufferEvent> {
     public:
@@ -130,7 +141,22 @@ namespace renderer {
 		const char * aliasName;
 	};
 
-    
+	class CreateInstanceBufferEvent : public ecs::Event<CreateInstanceBufferEvent> {
+	public:
+		CreateInstanceBufferEvent(size_t instanceNum, 
+			size_t perBytes,
+			void* data,
+			const char* aliasName):
+			instanceNum(instanceNum),
+			perBytes(perBytes),
+			data(data),
+			aliasName(aliasName)
+		{}
+		size_t instanceNum;
+		size_t perBytes;
+		void* data;
+		const char* aliasName;
+	};
 
     class CreateGBufferEvent : public ecs::Event<CreateGBufferEvent> {
     public:

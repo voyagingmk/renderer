@@ -9,10 +9,12 @@ namespace renderer {
     typedef GLuint TexID; // texture buffer
     typedef GLuint FboID; // frame buffer object 
     typedef GLuint RboID; // render buffer object
+	typedef GLuint InstanceBufID; // instance buffer object
     #else
     typedef uint32_t TexID;
     typedef uint32_t FboID;
     typedef uint32_t RboID;
+	typedef uint32_t InstanceBufID;
     #endif
 
     enum class TexType {
@@ -83,9 +85,16 @@ namespace renderer {
 		TexID pbrTexID;
 	};
 
+	struct InstanceBufferRef {
+		InstanceBufferRef():
+			bufID(0),
+			instanceNum(1)
+		{}
+		InstanceBufID bufID;
+		uint32_t instanceNum;
+	};
 
 	struct MeshBufferRef {
-	public:
 		MeshBufferRef():
 			triangles(0),
 			vao(0),
@@ -93,6 +102,7 @@ namespace renderer {
 			ebo(0),
 			vboIns(0), 
 			matIdx(0),
+			instanced(false),
 			noIndices(false)
 		{}
 		size_t triangles;
@@ -100,9 +110,10 @@ namespace renderer {
 		BufferID vbo;
 		BufferID ebo;
 		BufferID vboIns;
-		unsigned int matIdx;
+		uint32_t matIdx;
+		InstanceBufferRef insBuf;
+		bool instanced;
 		bool noIndices;
-
 	};
 
 
@@ -116,6 +127,8 @@ namespace renderer {
 
 
 	typedef std::map<std::string, GBufferRef> GBufferDict;
+	typedef std::map<std::string, ColorBufferRef> ColorBufferDict;
+	typedef std::map<std::string, InstanceBufferRef> InstanceBufferDict;
 
 	typedef std::vector<GBufferRef> GBuffers;
 
@@ -123,11 +136,12 @@ namespace renderer {
 		GBufferDict dict;
 	};
 
-
-	typedef std::map<std::string, ColorBufferRef> ColorBufferDict;
-
 	struct ColorBufferDictCom {
 		ColorBufferDict dict;
+	};
+
+	struct InstanceBufferDictCom {
+		InstanceBufferDict dict;
 	};
 }
 

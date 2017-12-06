@@ -84,7 +84,7 @@ namespace renderer {
 		auto aliasname = "lightDepth" + std::to_string(evt.obj.ID());
         m_evtMgr->emit<DestroyColorBufferEvent>(aliasname.c_str());
         auto lightCommon = evt.obj.component<LightCommon>();
-        size_t shadowMapSize = 1024;
+        size_t shadowMapSize = 2048;
 		if (evt.obj.hasComponent<PointLightCom>()) {
             if (lightCommon->shadowType == ShadowType::Standard) {
                 m_evtMgr->emit<CreateDpethBufferEvent>(

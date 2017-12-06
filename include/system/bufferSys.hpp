@@ -26,6 +26,8 @@ namespace renderer {
 
 		void receive(const DrawMeshBufferEvent& evt);
 
+		void receive(const EnabledMeshBufferInstanceEvent& evt);
+
 		void receive(const DrawOneMeshBufferEvent& evt);
 
 		void receive(const AddColorBufferEvent& evt);
@@ -50,6 +52,8 @@ namespace renderer {
 
 		void receive(const CopyGBufferDepth2ColorBufferEvent& evt);
 
+		void receive(const CreateInstanceBufferEvent& evt);
+
 	private:
 		void drawMeshBuffer(const MeshBufferRef& meshBuffer);
 
@@ -64,6 +68,8 @@ namespace renderer {
 		void CreateInstanceBuffer(MeshBufferRef& buf, size_t insNum, void* data);
 
 		MeshBufferRef CreateMeshBuffer(const OneMesh& mesh);
+
+		void EnabledMeshBufferInstance(MeshBufferRef& buf, InstanceBufferRef& insBuf);
 
 		MeshBufferRef CreateSkyboxBuffer();
 		
