@@ -310,7 +310,7 @@
             "shadow": true
         }
     ],
-    "object0": [      
+    "object": [      
         {
             "model": "plane.obj",
             "spatial": [
@@ -328,7 +328,7 @@
             ]
         }
     ],
-    "object": [      
+    "object0": [      
         {
             "model": "sponza.obj",
             "spatial": [

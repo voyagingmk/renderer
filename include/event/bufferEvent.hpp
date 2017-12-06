@@ -34,12 +34,12 @@ namespace renderer {
 
 	class EnabledMeshBufferInstanceEvent : public ecs::Event<EnabledMeshBufferInstanceEvent> {
 	public:
-		EnabledMeshBufferInstanceEvent(ecs::Object obj, InstanceBufferRef insBuf) :
+		EnabledMeshBufferInstanceEvent(ecs::Object obj, const char* aliasName) :
 			obj(obj),
-			insBuf(insBuf)
+			aliasName(aliasName)
 		{}
 		ecs::Object obj;
-		InstanceBufferRef insBuf;
+		const char* aliasName;
 	};
 	
 
@@ -79,7 +79,6 @@ namespace renderer {
 		const char* texAliasname;
     };
     
-
 	class CreateColorBufferEvent : public ecs::Event<CreateColorBufferEvent> {
 	public:
 		CreateColorBufferEvent(size_t width, size_t height,

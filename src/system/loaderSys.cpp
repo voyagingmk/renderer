@@ -256,6 +256,7 @@ namespace renderer {
 	}
 
 	void LoaderSystem::loadSceneObjects(const json &config) {
+
 		for (auto objInfo : config["object"])
 		{
 			Object obj = m_objMgr->create();
@@ -264,6 +265,34 @@ namespace renderer {
 			loadSpatialData(obj, spatial);
 			loadMesh(config, obj, filename);
 			m_evtMgr->emit<CreateMeshBufferEvent>(obj);
+
+			const size_t instanceNum = 3;
+			Matrix4x4 modelMatrices[instanceNum];
+			for (unsigned int i = 0; i < instanceNum; i++)
+			{
+				Matrix4x4 model;
+				float x = i * 100;
+				float y = 0;
+				float z = 0;
+				model = model * Translate<Matrix4x4>(Vector3dF(x, y, z));
+				// 2. scale: Scale between 0.05 and 0.25f
+				float scale = (rand() % 20) / 100.0f + 0.05;
+				model = model * Scale<Matrix4x4>(Vector3dF(scale, scale, scale));
+				// 3. rotation: add random rotation around a (semi)randomly picked rotation axis vector
+				float rotAngle = (rand() % 360);
+				model = model * Rotate<Matrix4x4>(rotAngle, Vector3dF(0.4f, 0.6f, 0.8f));
+
+				// 4. now add to list of matrices
+				modelMatrices[i] = model;
+			}
+
+			m_evtMgr->emit<CreateInstanceBufferEvent>(instanceNum,
+				sizeof(Matrix4x4),
+				&modelMatrices,
+				"teapotIns");
+
+			m_evtMgr->emit<EnabledMeshBufferInstanceEvent>(obj, "teapotIns");
+
             obj.addComponent<ReceiveLightTag>();
 			obj.addComponent<RenderQueueTag>();
             obj.addComponent<MotionCom>();

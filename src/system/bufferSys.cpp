@@ -56,9 +56,14 @@ namespace renderer {
 	void BufferSystem::receive(const EnabledMeshBufferInstanceEvent& evt) {
 		Object obj = evt.obj;
 		auto com = obj.component<MeshBuffersCom>();
-		glBindBuffer(GL_ARRAY_BUFFER, evt.insBuf.bufID);
+		auto comBufferDict = m_objMgr->getSingletonComponent<InstanceBufferDictCom>();
+		auto it = comBufferDict->dict.find(std::string(evt.aliasName));
+		if (it != comBufferDict->dict.end()) {
+			return;
+		}
+		glBindBuffer(GL_ARRAY_BUFFER, it->second.bufID);
 		for (auto meshBuffer : com->buffers) {
-			EnabledMeshBufferInstance(meshBuffer, evt.insBuf);
+			EnabledMeshBufferInstance(meshBuffer, it->second);
 		}
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
