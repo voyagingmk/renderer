@@ -69,7 +69,7 @@ namespace renderer {
 
 		MeshBufferRef CreateMeshBuffer(const OneMesh& mesh);
 
-		void EnabledMeshBufferInstance(MeshBufferRef& buf, InstanceBufferRef& insBuf);
+		void EnabledMeshBufferInstance(MeshBufferRef& buf, const InstanceBufferRef& insBuf);
 
 		MeshBufferRef CreateSkyboxBuffer();
 		

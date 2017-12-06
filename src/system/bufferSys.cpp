@@ -56,9 +56,11 @@ namespace renderer {
 	void BufferSystem::receive(const EnabledMeshBufferInstanceEvent& evt) {
 		Object obj = evt.obj;
 		auto com = obj.component<MeshBuffersCom>();
+		glBindBuffer(GL_ARRAY_BUFFER, evt.insBuf.bufID);
 		for (auto meshBuffer : com->buffers) {
 			EnabledMeshBufferInstance(meshBuffer, evt.insBuf);
 		}
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 
 
@@ -242,7 +244,7 @@ namespace renderer {
 		glBindVertexArray(0);
 	}
 
-	void BufferSystem::EnabledMeshBufferInstance(MeshBufferRef& buf, InstanceBufferRef& insBuf) {
+	void BufferSystem::EnabledMeshBufferInstance(MeshBufferRef& buf, const InstanceBufferRef& insBuf) {
 		buf.instanced = true;
 		buf.insBuf = insBuf;
 		glBindVertexArray(buf.vao);
