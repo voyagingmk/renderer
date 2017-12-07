@@ -29,6 +29,14 @@ namespace renderer {
             }
             std::vector<OneMesh> meshes;
     };
+
+	struct MeshesRef {
+		MeshesRef(ecs::ObjectID id):
+			objID(id)
+		{}
+		ecs::ObjectID objID;
+
+	};
 };
 
 #endif

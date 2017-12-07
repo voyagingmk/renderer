@@ -26,46 +26,7 @@ namespace renderer {
 		printf("RenderSystem init\n");
 		evtMgr.on<RenderSceneEvent>(*this);
 		evtMgr.on<CameraMoveEvent>(*this);
-		evtMgr.on<ComponentAddedEvent<RenderQueueTag>>(*this);
-		evtMgr.on<ComponentRemovedEvent<RenderQueueTag>>(*this);
 	}
-
-	void RenderSystem::receive(const ComponentAddedEvent<RenderQueueTag> &evt) {
-		updateRenderQueue();
-	}
-	
-	void RenderSystem::receive(const ComponentRemovedEvent<RenderQueueTag> &evt) {
-		updateRenderQueue();
-	}
-
-	void RenderSystem::updateRenderQueue() {
-		auto queueCom = m_objMgr->getSingletonComponent<RenderQueueCom>();
-		RenderQueue& queue = queueCom->queue;
-		queue.clear();
-		// collect all ID
-		for (const Object obj : m_objMgr->entities<RenderQueueTag>()) {
-			auto meshBufferCom = obj.component<MeshBuffersCom>();
-			for (BufIdx idx = 0; idx < meshBufferCom->buffers.size(); idx++) {
-				queue.push_back(std::make_pair(obj.ID(), idx));
-			}
-		}
-		// sort by materialID
-		std::sort(queue.begin(), queue.end(), [&](std::pair<ObjectID, BufIdx> a, std::pair<ObjectID, BufIdx> b) -> bool {
-			Object aObj = Object(m_objMgr, a.first);
-			Object bObj = Object(m_objMgr, b.first);
-			auto aCom = aObj.component<MeshBuffersCom>();
-			auto aMatCom = aObj.component<MaterialCom>();
-			auto bCom = bObj.component<MeshBuffersCom>();
-			auto bMatCom = bObj.component<MaterialCom>();
-			auto aBuf = aCom->buffers[a.second];
-			auto bBuf = bCom->buffers[b.second];
-			auto aSettingID = aMatCom->settingIDs[aBuf.matIdx];
-			auto bSettingID = bMatCom->settingIDs[bBuf.matIdx];
-			return (aSettingID < bSettingID);
-		});
-	}
-
-
 	// renderpipe loop, could move to another system
 	void RenderSystem::update(ObjectManager &objMgr, EventManager &evtMgr, float dt) {
 		auto context = objMgr.getSingletonComponent<SDLContext>();
@@ -187,7 +148,7 @@ namespace renderer {
     
 	void RenderSystem::receive(const RenderSceneEvent &evt) {
 		auto matSetCom = m_objMgr->getSingletonComponent<MaterialSet>();
-		auto renderQueueCom = m_objMgr->getSingletonComponent<RenderQueueCom>();
+		auto renderQueueCom = m_objMgr->getSingletonComponent<StaticRenderQueueCom>();
 		glEnable(GL_DEPTH_TEST);
         setViewport(evt.viewport);
         clearView(evt.clearColor, evt.clearBits);
@@ -239,7 +200,7 @@ namespace renderer {
 	void RenderSystem::renderSkybox(std::string colorBufferAliasName, Object objCamera, Viewport viewport) {
 		m_evtMgr->emit<UseColorBufferEvent>(colorBufferAliasName);
 		setViewport(viewport);
-		for (const Object obj : m_objMgr->entities<GlobalSkyboxTag>()) {
+		for (const Object objSkybox : m_objMgr->entities<GlobalSkyboxTag>()) {
 			// glDisable(GL_CULL_FACE);
 			// draw skybox as last
 			glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
@@ -247,7 +208,9 @@ namespace renderer {
 			skyboxShader.use();
 			m_evtMgr->emit<UploadCameraToShaderEvent>(objCamera, skyboxShader);
 			m_evtMgr->emit<ActiveTextureEvent>(skyboxShader, "skybox", 0, "alps");
-			m_evtMgr->emit<DrawMeshBufferEvent>(obj);
+			auto objID = objSkybox.component<MeshesRef>()->objID;
+			auto objMeshes = m_objMgr->get(objID);
+			m_evtMgr->emit<DrawMeshBufferEvent>(objMeshes);
 			glDepthFunc(GL_LESS); // set depth function back to default
 								  // glEnable(GL_CULL_FACE);
 			
@@ -516,13 +479,12 @@ namespace renderer {
 		lightShader.use();
 		// TODO: sort by material
 		for (auto lightObj : m_objMgr->entities<
-			Meshes, PointLightCom, SpatialData,
-			MeshBuffersCom>()) {
-			m_evtMgr->emit<UploadCameraToShaderEvent>(objCamera, lightShader);
-			
+			MeshesRef, PointLightCom, SpatialData>()) {
+			m_evtMgr->emit<UploadCameraToShaderEvent>(objCamera, lightShader);	
 			m_evtMgr->emit<UploadMatrixToShaderEvent>(lightObj, lightShader);
-			
-			m_evtMgr->emit<DrawMeshBufferEvent>(lightObj);
+			auto objID = lightObj.component<MeshesRef>()->objID;
+			auto objMeshes = m_objMgr->get(objID);
+			m_evtMgr->emit<DrawMeshBufferEvent>(objMeshes);
 			
 		}
 		m_evtMgr->emit<UnuseColorBufferEvent>(colorBufferAliasName);

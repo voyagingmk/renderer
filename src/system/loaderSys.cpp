@@ -45,7 +45,8 @@ namespace renderer {
 
 		Object obj = m_objMgr->create(); // singleTon, manage kinds of resources
 		obj.addComponent<RenderMode>();
-		obj.addComponent<RenderQueueCom>();
+		obj.addComponent<StaticRenderQueueCom>();
+		obj.addComponent<DynamicRenderQueueCom>();
 		obj.addComponent<KeyState>();
         obj.addComponent<TextureDict>();
         obj.addComponent<ShaderProgramSet>();
@@ -53,7 +54,8 @@ namespace renderer {
 		obj.addComponent<GBufferDictCom>();
 		obj.addComponent<ColorBufferDictCom>();
 		obj.addComponent<InstanceBufferDictCom>();
-		obj.addComponent<RenderQueueCom>();
+		obj.addComponent<MeshObjectDictCom>();
+		
         auto shadowMapSetting = obj.addComponent<ShadowMapSetting>();
         shadowMapSetting->shaderSetting = {
             { LightType::Dir, {
@@ -81,13 +83,15 @@ namespace renderer {
 		gSettingCom->setValue("enableToneMapping", json(true));
 		gSettingCom->setValue("enableGamma", json(true));
 		gSettingCom->setValue("debugShadow", json(false));
-		
 
+		CreateGlobalQuadObject();
+		loadSkyboxMeshes();
 
 		Object objCamera = m_objMgr->create();
 		auto com = objCamera.addComponent<PerspectiveCameraView>(45.0f, (float)winWidth / (float)winHeight, 0.1f, 10000.0f);
         com->eye = Vector3dF(-36.0, 34.0f, 31.0f);
         com->SetFrontVector({30.0f, -15.0f, -30.0f});
+
         loadTextures(assetsDir + texSubDir, config);
 		loadSkyboxes(assetsDir + skyboxSubDir, config);
         loadShaders(assetsDir + shaderSubDir, config);
@@ -128,13 +132,14 @@ namespace renderer {
         m_evtMgr->emit<CreateGBufferEvent>(winWidth, winHeight, "main");
         
         m_evtMgr->emit<CreateNoiseTextureEvent>("ssaoNoise");
-      
-		CreateGlobalQuadObject();
 
+		m_evtMgr->emit<StaticBatchEvent>();
+      
 	}
 
 	void LoaderSystem::CreateGlobalQuadObject() {
 		Object objQuad = m_objMgr->create();
+		Object objQuadMeshes = m_objMgr->create();
 		std::vector<OneMesh> meshes;
 		OneMesh mesh;
 		Vertex v;
@@ -154,9 +159,10 @@ namespace renderer {
 			0, 1, 2,
 			0, 2, 3 };
 		meshes.push_back(mesh);
-		objQuad.addComponent<Meshes>(meshes);
-		m_evtMgr->emit<CreateMeshBufferEvent>(objQuad);
-		objQuad.addComponent<GlobalQuadTag>();
+		objQuadMeshes.addComponent<Meshes>(meshes);
+		m_evtMgr->emit<CreateMeshBufferEvent>(objQuadMeshes);
+		objQuad.addComponent<MeshesRef>(objQuadMeshes.ID());
+		objQuadMeshes.addComponent<GlobalQuadTag>();
 	}
 
 	void LoaderSystem::loadLights(const json &config) {
@@ -259,43 +265,30 @@ namespace renderer {
 
 		for (auto objInfo : config["object"])
 		{
-			Object obj = m_objMgr->create();
+			Object objScene = m_objMgr->create();
 			std::string filename = objInfo["model"];
 			auto spatial = objInfo["spatial"];
-			loadSpatialData(obj, spatial);
-			loadMesh(config, obj, filename);
-			m_evtMgr->emit<CreateMeshBufferEvent>(obj);
+			loadSpatialData(objScene, spatial);
+			Object objMeshes = loadMeshes(config, filename);
+			objScene.addComponent<MeshesRef>(objMeshes.ID());
+			/*m_evtMgr->emit<CreateInstanceBufferEvent>(instanceNum,
+				sizeof(Matrix4x4Value),
+				&modelMatrices,
+				"teapotIns");*/
 
-			const size_t instanceNum = 3;
-			Matrix4x4 modelMatrices[instanceNum];
-			for (unsigned int i = 0; i < instanceNum; i++)
-			{
-				Matrix4x4 model;
-				float x = i * 100;
-				float y = 0;
-				float z = 0;
-				model = model * Translate<Matrix4x4>(Vector3dF(x, y, z));
-				// 2. scale: Scale between 0.05 and 0.25f
-				float scale = (rand() % 20) / 100.0f + 0.05;
-				model = model * Scale<Matrix4x4>(Vector3dF(scale, scale, scale));
-				// 3. rotation: add random rotation around a (semi)randomly picked rotation axis vector
-				float rotAngle = (rand() % 360);
-				model = model * Rotate<Matrix4x4>(rotAngle, Vector3dF(0.4f, 0.6f, 0.8f));
+			//m_evtMgr->emit<EnabledMeshBufferInstanceEvent>(objScene, "teapotIns");
 
-				// 4. now add to list of matrices
-				modelMatrices[i] = model;
+			objScene.addComponent<ReceiveLightTag>();
+			objScene.addComponent<RenderQueueTag>();
+
+			if (objInfo["static"].is_boolean() && bool(objInfo["static"]) == true) {
+				objScene.addComponent<StaticObjTag>();
+			}
+			else {
+				objScene.addComponent<DynamicObjTag>();
 			}
 
-			m_evtMgr->emit<CreateInstanceBufferEvent>(instanceNum,
-				sizeof(Matrix4x4),
-				&modelMatrices,
-				"teapotIns");
-
-			m_evtMgr->emit<EnabledMeshBufferInstanceEvent>(obj, "teapotIns");
-
-            obj.addComponent<ReceiveLightTag>();
-			obj.addComponent<RenderQueueTag>();
-            obj.addComponent<MotionCom>();
+			objScene.addComponent<MotionCom>();
 			{
 				ActionData data;
 				data.repeat = 1;
@@ -303,7 +296,7 @@ namespace renderer {
 				//data.actions.push_back(std::make_shared<MoveByAction>(0.5f, Vector3dF(1.0f, 0.0f, 0.0f)));
 				data.actions.push_back(std::make_shared<RotateByAction>(1.0f, DegreeF(0.0f), DegreeF(90.0f), DegreeF(90.0f)));
 				data.actions.push_back(std::make_shared<RotateByAction>(1.0f, DegreeF(0.0f), DegreeF(90.0f), DegreeF(90.0f), true));
-				// m_evtMgr->emit<AddActionEvent>(obj, "rotate", data);
+				// m_evtMgr->emit<AddActionEvent>(objScene, "rotate", data);
 			}
 			{
 				ActionData data;
@@ -312,7 +305,7 @@ namespace renderer {
 				//data.actions.push_back(std::make_shared<MoveByAction>(0.5f, Vector3dF(1.0f, 0.0f, 0.0f)));
 				data.actions.push_back(std::make_shared<MoveByAction>(1.0f, Vector3dF{ 3.0f, 0.0f, 0.0f }));
 				data.actions.push_back(std::make_shared<MoveByAction>(1.0f, Vector3dF{ -3.0f, 0.0f, 0.0f }));
-				//m_evtMgr->emit<AddActionEvent>(obj, "move", data);
+				//m_evtMgr->emit<AddActionEvent>(objScene, "move", data);
 			}
 		}
 	}
@@ -331,11 +324,13 @@ namespace renderer {
 
 	void LoaderSystem::loadSkyboxes(string skyboxSubDir, const json &config)
 	{
+		auto meshObjectDictCom = m_objMgr->getSingletonComponent<MeshObjectDictCom>();
 		auto cubemaps = config["skyboxes"];
 		for (auto it = cubemaps.begin(); it != cubemaps.end(); it++)
 		{
 			Object objSkybox = m_objMgr->create();
-			m_evtMgr->emit<CreateSkyboxBufferEvent>(objSkybox);
+			Object objMeshes = m_objMgr->get(meshObjectDictCom->dict[std::string("skybox")]);
+			objSkybox.addComponent<MeshesRef>(objMeshes.ID());
 
 			string aliasname = it.key();
 			json& data = it.value();
@@ -388,9 +383,13 @@ namespace renderer {
         }
     }
 
-	void LoaderSystem::loadMesh(const json &config, Object obj, const std::string &filename)
+	Object LoaderSystem::loadMeshes(const json &config, const std::string &filename)
 	{
-		ComponentHandle<Meshes> comMeshes = obj.addComponent<Meshes>();
+		auto com = m_objMgr->getSingletonComponent<MeshObjectDictCom>();
+		auto it = com->dict.find(filename);
+		if (it != com->dict.end()) {
+			return m_objMgr->get(it->second);
+		}
 		Assimp::Importer importer;
 		string assetsDir = config["assetsDir"];
 		string modelsDir = config["modelsDir"];
@@ -408,8 +407,11 @@ namespace renderer {
 		if (!scene)
 		{
 			cout << importer.GetErrorString() << endl;
-			return;
+			return Object();
 		}
+		Object obj = m_objMgr->create();
+		ComponentHandle<Meshes> comMeshes = obj.addComponent<Meshes>();
+		com->dict[filename] = obj.ID();
 		for (int i = 0; i < scene->mNumMeshes; i++)
 		{
 			aiMesh* aimesh = scene->mMeshes[i];
@@ -486,6 +488,20 @@ namespace renderer {
 		std::cout << "[LoaderSystem] loadMesh:" << filename  << ", numMaterials:" << scene->mNumMaterials << std::endl;
 		string texSubDir = config["texSubDir"];
 		m_evtMgr->emit<LoadAiMaterialEvent>(obj, scene->mNumMaterials, scene->mMaterials, assetsDir + texSubDir);
+		m_evtMgr->emit<CreateMeshBufferEvent>(obj);
+	}
+
+	Object LoaderSystem::loadSkyboxMeshes() {
+		auto meshObjectDictCom = m_objMgr->getSingletonComponent<MeshObjectDictCom>();
+		std::string name = "skybox";
+		auto it = meshObjectDictCom->dict.find(name);
+		if (it != meshObjectDictCom->dict.end()) {
+			return m_objMgr->get(it->second);
+		}
+		Object obj = m_objMgr->create();
+		m_evtMgr->emit<CreateSkyboxBufferEvent>(obj);
+		meshObjectDictCom->dict[name] = obj.ID();
+		return obj;
 	}
 
 	void LoaderSystem::loadSpatialData(Object obj, const json &spatial) {

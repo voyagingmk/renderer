@@ -313,6 +313,7 @@
     "object": [      
         {
             "model": "plane.obj",
+            "static": true,
             "spatial": [
                 [0, 0, 0],
                 [100, 100, 100],
@@ -321,8 +322,36 @@
         },
         {
             "model": "teapot.obj",
+            "static": true,
             "spatial": [
                 [0, 0, 0],
+                [2, 2, 2],
+                [0, 0, 0]
+            ]
+        },
+        {
+            "model": "teapot.obj",
+            "static": true,
+            "spatial": [
+                [20, 0, 0],
+                [2, 2, 2],
+                [0, 0, 0]
+            ]
+        },
+        {
+            "model": "teapot.obj",
+            "static": true,
+            "spatial": [
+                [0, 0, 0],
+                [2, 2, 2],
+                [0, 0, 0]
+            ]
+        },
+        {
+            "model": "teapot.obj",
+            "static": true,
+            "spatial": [
+                [20, 0, 0],
                 [2, 2, 2],
                 [0, 0, 0]
             ]

@@ -118,6 +118,9 @@
     <ClCompile Include="D:\workplace\github\renderer\external\GL\gl3w.c">
       <Filter>External</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\system\batchSys.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="D:\workplace\github\renderer\CMakeLists.txt" />
@@ -367,6 +370,9 @@
     </ClInclude>
     <ClInclude Include="..\external\SOIL\stbi_DDS_aug_c.h">
       <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\system\batchSys.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

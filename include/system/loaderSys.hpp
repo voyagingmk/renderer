@@ -37,7 +37,9 @@ namespace renderer {
         
         void loadMaterials(const json &config);
 
-		void loadMesh(const json &config, Object obj, const std::string &filename);
+		Object loadMeshes(const json &config, const std::string &filename);
+
+		Object loadSkyboxMeshes();
 
 	private:
 		void loadSpatialData(Object obj, const json &config);

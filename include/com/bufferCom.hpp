@@ -126,11 +126,16 @@ namespace renderer {
 	};
 
 
+	typedef std::map<std::string, ecs::ObjectID> MeshObjectDict;
 	typedef std::map<std::string, GBufferRef> GBufferDict;
 	typedef std::map<std::string, ColorBufferRef> ColorBufferDict;
 	typedef std::map<std::string, InstanceBufferRef> InstanceBufferDict;
 
 	typedef std::vector<GBufferRef> GBuffers;
+
+	struct MeshObjectDictCom {
+		MeshObjectDict dict;
+	};
 
 	struct GBufferDictCom {
 		GBufferDict dict;

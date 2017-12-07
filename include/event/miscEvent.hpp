@@ -22,6 +22,11 @@ namespace renderer {
 		{}
 		const ecs::Object obj;
 	};
+
+	class StaticBatchEvent : public ecs::Event<StaticBatchEvent> {
+	public:
+		StaticBatchEvent() {}
+	};
 	
     
 };

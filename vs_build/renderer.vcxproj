@@ -402,6 +402,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="..\src\com\transform.cpp" />
     <ClCompile Include="..\src\main.cpp" />
     <ClCompile Include="..\src\main_ecs.cpp" />
+    <ClCompile Include="..\src\system\batchSys.cpp" />
     <ClCompile Include="..\src\system\bufferSys.cpp" />
     <ClCompile Include="..\src\system\cameraSys.cpp" />
     <ClCompile Include="..\src\system\configSys.cpp" />
@@ -491,6 +492,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="..\include\realtime\model.hpp" />
     <ClInclude Include="..\include\realtime\renderer.hpp" />
     <ClInclude Include="..\include\sdf.hpp" />
+    <ClInclude Include="..\include\system\batchSys.hpp" />
     <ClInclude Include="..\include\system\bufferSys.hpp" />
     <ClInclude Include="..\include\system\cameraSys.hpp" />
     <ClInclude Include="..\include\system\configSys.hpp" />

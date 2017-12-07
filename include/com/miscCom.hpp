@@ -26,13 +26,20 @@ namespace renderer {
 
 	struct RenderQueueTag : public TagComBase {};
 
+	struct StaticObjTag : public TagComBase {};
+
+	struct DynamicObjTag : public TagComBase {};
+
 	typedef int BufIdx;
 	typedef std::vector<std::pair<ecs::ObjectID, BufIdx>> RenderQueue;
 
-	struct RenderQueueCom {
+	struct StaticRenderQueueCom {
 		RenderQueue queue;
 	};
 
+	struct DynamicRenderQueueCom {
+		RenderQueue queue;
+	};
 
 	struct GlobalSettingCom {
 		std::map<std::string, nlohmann::json> params;

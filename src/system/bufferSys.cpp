@@ -25,6 +25,9 @@ namespace renderer {
 		evtMgr.on<UseGBufferEvent>(*this); 
 		evtMgr.on<UnuseGBufferEvent>(*this);
 		evtMgr.on<CopyGBufferDepth2ColorBufferEvent>(*this);
+		evtMgr.on<CreateInstanceBufferEvent>(*this);
+		evtMgr.on<EnabledMeshBufferInstanceEvent>(*this);
+		
 	}
 
 	void BufferSystem::update(ObjectManager &objMgr, EventManager &evtMgr, float dt) {
@@ -58,7 +61,7 @@ namespace renderer {
 		auto com = obj.component<MeshBuffersCom>();
 		auto comBufferDict = m_objMgr->getSingletonComponent<InstanceBufferDictCom>();
 		auto it = comBufferDict->dict.find(std::string(evt.aliasName));
-		if (it != comBufferDict->dict.end()) {
+		if (it == comBufferDict->dict.end()) {
 			return;
 		}
 		glBindBuffer(GL_ARRAY_BUFFER, it->second.bufID);
@@ -75,9 +78,6 @@ namespace renderer {
 
 	void BufferSystem::receive(const CreateInstanceBufferEvent& evt) {
 		auto com = m_objMgr->getSingletonComponent<InstanceBufferDictCom>();
-		if (com->dict.find(std::string(evt.aliasName)) != com->dict.end()) {
-			return;
-		}
 		InstanceBufferRef buf;
 		glGenBuffers(1, &buf.bufID);
 		glBindBuffer(GL_ARRAY_BUFFER, buf.bufID);
@@ -255,13 +255,13 @@ namespace renderer {
 		glBindVertexArray(buf.vao);
 		// set attribute pointers for matrix (4 times vec4)
 		glEnableVertexAttribArray(3);
-		glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4), (void*)0);
+		glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4Value), (void*)0);
 		glEnableVertexAttribArray(4);
-		glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4), (void*)(sizeof(Matrix4x4)));
+		glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4Value), (void*)(sizeof(Matrix4x4Value)));
 		glEnableVertexAttribArray(5);
-		glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4), (void*)(2 * sizeof(Matrix4x4)));
+		glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4Value), (void*)(2 * sizeof(Matrix4x4Value)));
 		glEnableVertexAttribArray(6);
-		glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4), (void*)(3 * sizeof(Matrix4x4)));
+		glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4Value), (void*)(3 * sizeof(Matrix4x4Value)));
 
 		glVertexAttribDivisor(3, 1);
 		glVertexAttribDivisor(4, 1);
