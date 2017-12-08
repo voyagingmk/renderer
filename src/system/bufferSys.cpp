@@ -37,7 +37,7 @@ namespace renderer {
 	void BufferSystem::receive(const CreateMeshBufferEvent &evt) {
 		Object obj = evt.obj;
 		auto com = obj.addComponent<MeshBuffersCom>();
-		for (const OneMesh& mesh : obj.component<Meshes>()->meshes) {
+		for (const SubMesh& mesh : obj.component<Mesh>()->meshes) {
 			com->buffers.push_back(CreateMeshBuffer(mesh));
 		}
 	}
@@ -270,7 +270,7 @@ namespace renderer {
 		glBindVertexArray(0);
 	}
 
-	MeshBufferRef BufferSystem::CreateMeshBuffer(const OneMesh& mesh) {
+	MeshBufferRef BufferSystem::CreateMeshBuffer(const SubMesh& mesh) {
 		GLuint VBO, VAO, EBO;
 		MeshBufferRef meshBuffer;
 		meshBuffer.matIdx = mesh.matIdx;

@@ -5,7 +5,7 @@
 #include "com/shader.hpp"
 #include "com/spatialData.hpp"
 #include "com/cameraCom.hpp"
-#include "com/meshes.hpp"
+#include "com/mesh.hpp"
 #include "com/lightCom.hpp"
 #include "com/materialCom.hpp"
 #include "com/sdlContext.hpp"
@@ -85,7 +85,7 @@ namespace renderer {
 		gSettingCom->setValue("debugShadow", json(false));
 
 		CreateGlobalQuadObject();
-		loadSkyboxMeshes();
+		loadSkyboxMesh();
 
 		Object objCamera = m_objMgr->create();
 		auto com = objCamera.addComponent<PerspectiveCameraView>(45.0f, (float)winWidth / (float)winHeight, 0.1f, 10000.0f);
@@ -139,9 +139,9 @@ namespace renderer {
 
 	void LoaderSystem::CreateGlobalQuadObject() {
 		Object objQuad = m_objMgr->create();
-		Object objQuadMeshes = m_objMgr->create();
-		std::vector<OneMesh> meshes;
-		OneMesh mesh;
+		Object objQuadMesh = m_objMgr->create();
+		std::vector<SubMesh> meshes;
+		SubMesh mesh;
 		Vertex v;
 		v.position = { -1.0f, 1.0f, 0.0f }; // Left Top
 		v.texCoords = { 0.0f, 1.0f };
@@ -159,10 +159,10 @@ namespace renderer {
 			0, 1, 2,
 			0, 2, 3 };
 		meshes.push_back(mesh);
-		objQuadMeshes.addComponent<Meshes>(meshes);
-		m_evtMgr->emit<CreateMeshBufferEvent>(objQuadMeshes);
-		objQuad.addComponent<MeshesRef>(objQuadMeshes.ID());
-		objQuadMeshes.addComponent<GlobalQuadTag>();
+		objQuadMesh.addComponent<Mesh>(meshes);
+		m_evtMgr->emit<CreateMeshBufferEvent>(objQuadMesh);
+		objQuad.addComponent<MeshRef>(objQuadMesh.ID());
+		objQuadMesh.addComponent<GlobalQuadTag>();
 	}
 
 	void LoaderSystem::loadLights(const json &config) {
@@ -196,8 +196,8 @@ namespace renderer {
 					lightInfo["linear"],
 					lightInfo["quadratic"],
 					1024);
-				auto com = obj.addComponent<Meshes>();
-				generateOuterBoxMeshes(*com);
+				auto com = obj.addComponent<Mesh>();
+				generateOuterBoxMesh(*com);
 				m_evtMgr->emit<CreateMeshBufferEvent>(obj);
 				m_evtMgr->emit<EnableLightShadowEvent>(obj);
 				obj.addComponent<MotionCom>();
@@ -269,8 +269,8 @@ namespace renderer {
 			std::string filename = objInfo["model"];
 			auto spatial = objInfo["spatial"];
 			loadSpatialData(objScene, spatial);
-			Object objMeshes = loadMeshes(config, filename);
-			objScene.addComponent<MeshesRef>(objMeshes.ID());
+			Object objMesh = loadMesh(config, filename);
+			objScene.addComponent<MeshRef>(objMesh.ID());
 			/*m_evtMgr->emit<CreateInstanceBufferEvent>(instanceNum,
 				sizeof(Matrix4x4Value),
 				&modelMatrices,
@@ -329,8 +329,8 @@ namespace renderer {
 		for (auto it = cubemaps.begin(); it != cubemaps.end(); it++)
 		{
 			Object objSkybox = m_objMgr->create();
-			Object objMeshes = m_objMgr->get(meshObjectDictCom->dict[std::string("skybox")]);
-			objSkybox.addComponent<MeshesRef>(objMeshes.ID());
+			Object objMesh = m_objMgr->get(meshObjectDictCom->dict[std::string("skybox")]);
+			objSkybox.addComponent<MeshRef>(objMesh.ID());
 
 			string aliasname = it.key();
 			json& data = it.value();
@@ -383,7 +383,7 @@ namespace renderer {
         }
     }
 
-	Object LoaderSystem::loadMeshes(const json &config, const std::string &filename)
+	Object LoaderSystem::loadMesh(const json &config, const std::string &filename)
 	{
 		auto com = m_objMgr->getSingletonComponent<MeshObjectDictCom>();
 		auto it = com->dict.find(filename);
@@ -410,7 +410,7 @@ namespace renderer {
 			return Object();
 		}
 		Object obj = m_objMgr->create();
-		ComponentHandle<Meshes> comMeshes = obj.addComponent<Meshes>();
+		ComponentHandle<Mesh> comMeshes = obj.addComponent<Mesh>();
 		com->dict[filename] = obj.ID();
 		for (int i = 0; i < scene->mNumMeshes; i++)
 		{
@@ -418,8 +418,8 @@ namespace renderer {
 			if (aimesh->mNumVertices <= 0) {
 				continue;
 			}
-			comMeshes->meshes.push_back(OneMesh());
-			OneMesh& mesh = comMeshes->meshes[comMeshes->meshes.size() - 1];
+			comMeshes->meshes.push_back(SubMesh());
+			SubMesh& mesh = comMeshes->meshes[comMeshes->meshes.size() - 1];
 			mesh.matIdx = aimesh->mMaterialIndex;
 			std::cout << "[LoaderSystem] matIdx:" << mesh.matIdx << std::endl;
 			for (uint32_t i = 0; i < aimesh->mNumVertices; i++)
@@ -491,7 +491,7 @@ namespace renderer {
 		m_evtMgr->emit<CreateMeshBufferEvent>(obj);
 	}
 
-	Object LoaderSystem::loadSkyboxMeshes() {
+	Object LoaderSystem::loadSkyboxMesh() {
 		auto meshObjectDictCom = m_objMgr->getSingletonComponent<MeshObjectDictCom>();
 		std::string name = "skybox";
 		auto it = meshObjectDictCom->dict.find(name);

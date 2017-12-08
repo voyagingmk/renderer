@@ -3,7 +3,7 @@
 
 #include "base.hpp"
 #include "ecs/ecs.hpp"
-#include "com/meshes.hpp"
+#include "com/mesh.hpp"
 #include "com/bufferCom.hpp"
 #include "event/bufferEvent.hpp"
 
@@ -67,7 +67,7 @@ namespace renderer {
             
 		void CreateInstanceBuffer(MeshBufferRef& buf, size_t insNum, void* data);
 
-		MeshBufferRef CreateMeshBuffer(const OneMesh& mesh);
+		MeshBufferRef CreateMeshBuffer(const SubMesh& mesh);
 
 		void EnabledMeshBufferInstance(MeshBufferRef& buf, const InstanceBufferRef& insBuf);
 

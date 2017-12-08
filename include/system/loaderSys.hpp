@@ -3,7 +3,7 @@
 
 #include "base.hpp"
 #include "ecs/ecs.hpp"
-#include "com/meshes.hpp"
+#include "com/mesh.hpp"
 #include "event/winEvent.hpp"
 #include "event/miscEvent.hpp"
 
@@ -37,9 +37,9 @@ namespace renderer {
         
         void loadMaterials(const json &config);
 
-		Object loadMeshes(const json &config, const std::string &filename);
+		Object loadMesh(const json &config, const std::string &filename);
 
-		Object loadSkyboxMeshes();
+		Object loadSkyboxMesh();
 
 	private:
 		void loadSpatialData(Object obj, const json &config);

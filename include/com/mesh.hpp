@@ -3,10 +3,10 @@
 
 #include "base.hpp"
 #include "vertex.hpp"
-#include "shape.hpp"
-#include "geometry.hpp"
+
 
 namespace renderer {
+  	/*
 	class Mesh;
 	
 	class Triangle : public Shape {
@@ -44,7 +44,38 @@ namespace renderer {
 		void initVertexNormals();
 		virtual BBox Bound() const override;
 		virtual BBox WorldBound() const override;
-	};
+	};*/
+    class SubMesh {
+        public:
+			SubMesh():
+				matIdx(0)
+			{}
+            Vertices vertices;
+		    UIntArray indexes;
+			unsigned int matIdx;
+    };
 
-}
-#endif // RENDERER_PLANE_HPP
+    class Mesh {
+        public:
+			Mesh() {}
+            ~Mesh() {
+                meshes.clear();
+            }
+			Mesh(std::vector<SubMesh>& m)
+            {
+                std::copy(m.begin(), m.end(),
+                   std::back_inserter(meshes));
+            }
+            std::vector<SubMesh> meshes;
+    };
+
+	struct MeshRef {
+		MeshRef(ecs::ObjectID id):
+			objID(id)
+		{}
+		ecs::ObjectID objID;
+
+	};
+};
+
+#endif

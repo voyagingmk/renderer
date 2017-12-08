@@ -4,7 +4,7 @@
 #include "base.hpp"
 #include "ecs/ecs.hpp"
 #include "com/color.hpp"
-#include "com/meshes.hpp"
+#include "com/mesh.hpp"
 
 namespace renderer{
 
@@ -65,7 +65,7 @@ namespace renderer{
 		}
 	}
     
-    static void generateNormals(OneMesh& mesh, bool reverse = false) {
+    static void generateNormals(SubMesh& mesh, bool reverse = false) {
         // printf("generateNormals %d\n", mesh.indexes.size() / 3);
         for (int tri_idx = 0, tri_num = mesh.indexes.size() / 3; tri_idx < tri_num; tri_idx += 1) {
             int vIdxes[3];
@@ -95,9 +95,9 @@ namespace renderer{
         }
     }
     
-    static void generateOuterBoxMeshes(Meshes& m) {
-        m.meshes.push_back(OneMesh());
-        OneMesh& mesh = m.meshes[m.meshes.size() - 1];
+    static void generateOuterBoxMesh(Mesh& m) {
+        m.meshes.push_back(SubMesh());
+        SubMesh& mesh = m.meshes[m.meshes.size() - 1];
         mesh.vertices = Vertices{
             Vertex({-0.5, -0.5, 0.5}), // 左下
             Vertex({ 0.5, -0.5, 0.5}), // 右下

@@ -2,7 +2,7 @@
 #include "utils/glutils.hpp"
 #include "system/renderSys.hpp"
 #include "com/sdlContext.hpp"
-#include "com/meshes.hpp"
+#include "com/mesh.hpp"
 #include "com/cameraCom.hpp"
 #include "com/bufferCom.hpp"
 #include "com/lightCom.hpp"
@@ -208,9 +208,9 @@ namespace renderer {
 			skyboxShader.use();
 			m_evtMgr->emit<UploadCameraToShaderEvent>(objCamera, skyboxShader);
 			m_evtMgr->emit<ActiveTextureEvent>(skyboxShader, "skybox", 0, "alps");
-			auto objID = objSkybox.component<MeshesRef>()->objID;
-			auto objMeshes = m_objMgr->get(objID);
-			m_evtMgr->emit<DrawMeshBufferEvent>(objMeshes);
+			auto objID = objSkybox.component<MeshRef>()->objID;
+			auto objMesh = m_objMgr->get(objID);
+			m_evtMgr->emit<DrawMeshBufferEvent>(objMesh);
 			glDepthFunc(GL_LESS); // set depth function back to default
 								  // glEnable(GL_CULL_FACE);
 			
@@ -479,12 +479,12 @@ namespace renderer {
 		lightShader.use();
 		// TODO: sort by material
 		for (auto lightObj : m_objMgr->entities<
-			MeshesRef, PointLightCom, SpatialData>()) {
+			MeshRef, PointLightCom, SpatialData>()) {
 			m_evtMgr->emit<UploadCameraToShaderEvent>(objCamera, lightShader);	
 			m_evtMgr->emit<UploadMatrixToShaderEvent>(lightObj, lightShader);
-			auto objID = lightObj.component<MeshesRef>()->objID;
-			auto objMeshes = m_objMgr->get(objID);
-			m_evtMgr->emit<DrawMeshBufferEvent>(objMeshes);
+			auto objID = lightObj.component<MeshRef>()->objID;
+			auto objMesh = m_objMgr->get(objID);
+			m_evtMgr->emit<DrawMeshBufferEvent>(objMesh);
 			
 		}
 		m_evtMgr->emit<UnuseColorBufferEvent>(colorBufferAliasName);
