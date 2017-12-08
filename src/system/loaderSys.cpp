@@ -401,7 +401,9 @@ namespace renderer {
 			aiProcess_RemoveRedundantMaterials |
 			aiProcess_GenSmoothNormals |
 			aiProcess_OptimizeMeshes |
-			aiProcess_OptimizeGraph |
+#if !defined(__APPLE__)
+            aiProcess_OptimizeGraph | // not suppoted on Mac OS
+#endif
 			aiProcess_SortByPType);
 		// If the import failed, report it
 		if (!scene)
