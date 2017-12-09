@@ -22,8 +22,6 @@ namespace renderer {
 
 	void MaterialSystem::receive(const LoadAiMaterialEvent &evt) {
 		auto com = m_objMgr->getSingletonComponent<MaterialSet>();
-		Object obj = evt.obj;
-		ComponentHandle<MaterialCom> matCom = obj.addComponent<MaterialCom>();
 		for (unsigned int i = 0; i < evt.matNum; i++) {
 			const aiMaterial* pMaterial = evt.mMaterials[i];
 			/*
@@ -33,8 +31,8 @@ namespace renderer {
 				std::cout << "mat count: " << pMaterial->GetTextureCount(aiTextureType(t)) <<
 					", type: " << t << ", name: "<< name.data <<std::endl;
 			}*/
-			MaterialSettingID id = ++com->idCount;
-			MaterialSettingComBase* setting = new MaterialPBRSettingCom("", 0.4, 0.5);
+			MaterialSettingID id = com->newSettingID();
+			MaterialSettingBase* setting = new MaterialPBRSettingCom("", 0.4, 0.5);
 			if (pMaterial->GetTextureCount(aiTextureType_DIFFUSE) > 0) {
 				aiString Path;
 				if (pMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS) {
@@ -72,15 +70,15 @@ namespace renderer {
                     std::cout << "MaterialSystem: maskMap [" << fileName << "] loaded" << std::endl;
                 }
             }
-			com->settings.insert({ id, setting });
-			matCom->settingIDs.push_back(id);
+			com->settingDict.insert({ id, setting });
+			evt.settingIDs.push_back(id);
 		}
 	}
 
 	void MaterialSystem::receive(const LoadMaterialEvent &evt) {
         auto com = m_objMgr->getSingletonComponent<MaterialSet>();
-		MaterialSettingID id = ++com->idCount;
-        MaterialSettingComBase* setting;
+		MaterialSettingID id = com->newSettingID();
+        MaterialSettingBase* setting;
         if (evt.matInfo["type"] == "Phong") {
             setting = new MaterialPhongSettingCom(evt.matInfo["shaderName"],
                 parseColor(evt.matInfo["ambient"]),
@@ -93,7 +91,7 @@ namespace renderer {
                 evt.matInfo["roughness"],
                 evt.matInfo["metallic"]);
         }
-        com->settings.insert({ id, setting });
+        com->settingDict.insert({ id, setting });
 		com->alias2id.insert({ evt.matInfo["alias"], id });
 		for (std::string tex : evt.matInfo["textures"]) {
 			setting->texList.insert({ std::string("default"), tex });
@@ -102,11 +100,11 @@ namespace renderer {
 
 	void MaterialSystem::receive(const ActiveMaterialEvent &evt) {
         auto com = m_objMgr->getSingletonComponent<MaterialSet>();
-        MaterialSettingComBase* setting = com->settings[evt.settingID];
+        MaterialSettingBase* setting = com->settingDict[evt.settingID];
 		activeMaterial(const_cast<Shader&>(evt.shader), setting);
 	}
 
-	void MaterialSystem::activeMaterial(Shader& shader, MaterialSettingComBase* setting) {
+	void MaterialSystem::activeMaterial(Shader& shader, MaterialSettingBase* setting) {
         if (setting->type() == MaterialType::Phong) {
             MaterialPhongSettingCom* com = dynamic_cast<MaterialPhongSettingCom*>(setting);
             shader.set3f("material.ambient", com->ambient);
@@ -139,7 +137,7 @@ namespace renderer {
 
 	void MaterialSystem::receive(const DeactiveMaterialEvent &evt) {
         auto com = m_objMgr->getSingletonComponent<MaterialSet>();
-        MaterialSettingComBase* setting = com->settings[evt.settingID];
+        MaterialSettingBase* setting = com->settingDict[evt.settingID];
         uint32_t idx = 0;
 		for (auto texInfo: setting->texList) {
 			m_evtMgr->emit<DeactiveTextureEvent>(idx++);

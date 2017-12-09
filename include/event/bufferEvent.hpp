@@ -4,32 +4,46 @@
 #include "base.hpp"
 #include "ecs/ecs.hpp"
 #include "com/bufferCom.hpp"
+#include "com/mesh.hpp"
 
 namespace renderer {
 
 	
 	class CreateMeshBufferEvent: public ecs::Event<CreateMeshBufferEvent> {
 	public:
-		CreateMeshBufferEvent(ecs::Object obj) :
-			obj(obj)
+		CreateMeshBufferEvent(MeshID meshID) :
+			meshID(meshID),
+			meshName("")
 		{}
-		ecs::Object obj;
+		CreateMeshBufferEvent(std::string meshName) :
+			meshID(0),
+			meshName(meshName)
+		{}
+		std::string meshName;
+		MeshID meshID;
 	};
 
 	class CreateSkyboxBufferEvent : public ecs::Event<CreateSkyboxBufferEvent> {
 	public:
-		CreateSkyboxBufferEvent(ecs::Object obj) :
-			obj(obj)
+		CreateSkyboxBufferEvent(MeshID meshID) :
+			meshID(meshID)
 		{}
-		ecs::Object obj;
+		MeshID meshID;
 	};
 
 	class DrawMeshBufferEvent : public ecs::Event<DrawMeshBufferEvent> {
 	public:
-		DrawMeshBufferEvent(ecs::Object obj) :
-			obj(obj)
+		DrawMeshBufferEvent(MeshID meshID, SubMeshIdx subMeshIdx) :
+			meshID(meshID),
+			subMeshIdx(subMeshIdx)
 		{}
-		ecs::Object obj;
+		DrawMeshBufferEvent(std::string meshName, SubMeshIdx subMeshIdx) :
+			meshName(meshName),
+			subMeshIdx(subMeshIdx)
+		{}
+		std::string meshName;
+		MeshID meshID;
+		SubMeshIdx subMeshIdx;
 	};
 
 	class EnabledMeshBufferInstanceEvent : public ecs::Event<EnabledMeshBufferInstanceEvent> {

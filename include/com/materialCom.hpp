@@ -14,12 +14,12 @@ namespace renderer {
         Phong
     };
     
-    class MaterialSettingComBase {
+    class MaterialSettingBase {
     public:
-        MaterialSettingComBase(std::string shd):
+        MaterialSettingBase(std::string shd):
             shaderName(shd)
         {}
-        virtual ~MaterialSettingComBase() {}
+        virtual ~MaterialSettingBase() {}
         virtual MaterialType type() {
             return MaterialType::Unknown;
         }
@@ -28,10 +28,10 @@ namespace renderer {
         
     };
     
-    class MaterialPhongSettingCom: public MaterialSettingComBase {
+    class MaterialPhongSettingCom: public MaterialSettingBase {
     public:
 		MaterialPhongSettingCom():
-            MaterialSettingComBase(""),
+            MaterialSettingBase(""),
             ambient(Color::White),
 			diffuse(Color::White),
 			specular(Color::White),
@@ -42,7 +42,7 @@ namespace renderer {
             std::string shd,
 			Color a, Color d, Color s,
 			float r, float sh):
-         MaterialSettingComBase(shd),
+         MaterialSettingBase(shd),
          ambient(a),
          diffuse(d),
          specular(s),
@@ -60,10 +60,10 @@ namespace renderer {
     };
     
     
-    class MaterialPBRSettingCom: public MaterialSettingComBase {
+    class MaterialPBRSettingCom: public MaterialSettingBase {
     public:
         MaterialPBRSettingCom(std::string shd, float r, float m):
-            MaterialSettingComBase(shd),
+            MaterialSettingBase(shd),
             roughness(r),
             metallic(m)
         {}
@@ -77,15 +77,13 @@ namespace renderer {
 	class MaterialSet {
 	public:
 		MaterialSet():
-			idCount(0) {}
-        std::map<MaterialSettingID, MaterialSettingComBase*> settings;
+            idCount(0) {}
+        MaterialSettingID newSettingID() {
+			return ++idCount;
+        }
+        std::map<MaterialSettingID, MaterialSettingBase*> settingDict;
 		std::map< MaterialSettingAlias, MaterialSettingID> alias2id;
 		MaterialSettingID idCount;
-    };
-
-    class MaterialCom {
-	public:
-		std::vector<MaterialSettingID> settingIDs;
     };
         
 };

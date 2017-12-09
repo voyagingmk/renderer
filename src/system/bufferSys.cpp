@@ -35,28 +35,32 @@ namespace renderer {
 	}
 
 	void BufferSystem::receive(const CreateMeshBufferEvent &evt) {
-		Object obj = evt.obj;
-		auto com = obj.addComponent<MeshBuffersCom>();
-		for (const SubMesh& mesh : obj.component<Mesh>()->meshes) {
-			com->buffers.push_back(CreateMeshBuffer(mesh));
+		auto meshSet = m_objMgr->getSingletonComponent<MeshSet>();
+		auto meshBuffersSet = m_objMgr->getSingletonComponent<MeshBuffersSet>();
+		MeshID meshID = evt.meshID || meshSet->alias2id[evt.meshName];
+		Mesh& mesh = meshSet->meshDict[meshID];
+		meshBuffersSet->buffersDict.insert({meshID, MeshBufferRefs()});
+		MeshBufferRefs& buffers = meshBuffersSet->buffersDict[meshID];
+		for (const SubMesh& mesh : mesh.meshes) {
+			buffers.push_back(CreateMeshBuffer(mesh));
 		}
 	}
 
 	void BufferSystem::receive(const CreateSkyboxBufferEvent &evt) {
-		Object obj = evt.obj;
-		auto com = obj.addComponent<MeshBuffersCom>();
-		com->buffers.push_back(CreateSkyboxBuffer());
+		CreateSkyboxBuffer(evt.meshID);
 	}
 	
 	void BufferSystem::receive(const DrawMeshBufferEvent& evt) {
-		Object obj = evt.obj;
-		auto com = obj.component<MeshBuffersCom>();
-		for (auto meshBuffer : com->buffers) {
-			drawMeshBuffer(meshBuffer);
-		}
+		auto meshSet = m_objMgr->getSingletonComponent<MeshSet>();
+		auto meshBuffersSet = m_objMgr->getSingletonComponent<MeshBuffersSet>();
+		MeshID meshID = evt.meshID || meshSet->alias2id[evt.meshName];
+		auto bufferRefs = meshBuffersSet->buffersDict[meshID];
+		MeshBufferRef& bufferRef = bufferRefs[evt.subMeshIdx];
+		drawMeshBuffer(bufferRef);
 	}
 
 	void BufferSystem::receive(const EnabledMeshBufferInstanceEvent& evt) {
+		/*
 		Object obj = evt.obj;
 		auto com = obj.component<MeshBuffersCom>();
 		auto comBufferDict = m_objMgr->getSingletonComponent<InstanceBufferDictCom>();
@@ -69,6 +73,7 @@ namespace renderer {
 			EnabledMeshBufferInstance(meshBuffer, it->second);
 		}
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		*/
 	}
 
 
@@ -270,20 +275,20 @@ namespace renderer {
 		glBindVertexArray(0);
 	}
 
-	MeshBufferRef BufferSystem::CreateMeshBuffer(const SubMesh& mesh) {
+	MeshBufferRef BufferSystem::CreateMeshBuffer(const SubMesh& subMesh) {
 		GLuint VBO, VAO, EBO;
 		MeshBufferRef meshBuffer;
-		meshBuffer.matIdx = mesh.matIdx;
+		meshBuffer.settingID = subMesh.settingID;
 		glGenVertexArrays(1, &VAO);
 		glGenBuffers(1, &VBO);
 		glGenBuffers(1, &EBO);
 		// Bind the Vertex Array Object first, then bind and set vertex buffer(s) and attribute pointer(s).
 		glBindVertexArray(VAO);
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		glBufferData(GL_ARRAY_BUFFER, mesh.vertices.size() * sizeof(Vertex), &mesh.vertices[0], GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, subMesh.vertices.size() * sizeof(Vertex), &subMesh.vertices[0], GL_STATIC_DRAW);
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh.indexes.size() * sizeof(unsigned int), &mesh.indexes[0], GL_STATIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, subMesh.indexes.size() * sizeof(unsigned int), &subMesh.indexes[0], GL_STATIC_DRAW);
 
 		// Position attribute
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)0);
@@ -306,66 +311,29 @@ namespace renderer {
 		meshBuffer.vbo = VBO;
 		meshBuffer.ebo = EBO;
 		assert(VAO > 0 && VBO > 0 && EBO > 0);
-		meshBuffer.triangles = mesh.indexes.size() / 3;
+		meshBuffer.triangles = subMesh.indexes.size() / 3;
 		//bufferDict[aliasname] = meshBuffer;
 		return meshBuffer;
 	}
 
-	MeshBufferRef BufferSystem::CreateSkyboxBuffer() {
+	MeshBufferRef BufferSystem::CreateSkyboxBuffer(MeshID meshID) {
+		auto meshBuffersSet = m_objMgr->getSingletonComponent<MeshBuffersSet>();
+		auto meshSet = m_objMgr->getSingletonComponent<MeshSet>();
+		Mesh& mesh = meshSet->meshDict[meshID];
+		SubMesh& subMesh = mesh.meshes[0];
 		MeshBufferRef meshBuffer;
-		float skyboxVertices[] = {
-			// positions          
-			-1.0f,  1.0f, -1.0f,
-			-1.0f, -1.0f, -1.0f,
-			1.0f, -1.0f, -1.0f,
-			1.0f, -1.0f, -1.0f,
-			1.0f,  1.0f, -1.0f,
-			-1.0f,  1.0f, -1.0f,
-
-			-1.0f, -1.0f,  1.0f,
-			-1.0f, -1.0f, -1.0f,
-			-1.0f,  1.0f, -1.0f,
-			-1.0f,  1.0f, -1.0f,
-			-1.0f,  1.0f,  1.0f,
-			-1.0f, -1.0f,  1.0f,
-
-			1.0f, -1.0f, -1.0f,
-			1.0f, -1.0f,  1.0f,
-			1.0f,  1.0f,  1.0f,
-			1.0f,  1.0f,  1.0f,
-			1.0f,  1.0f, -1.0f,
-			1.0f, -1.0f, -1.0f,
-
-			-1.0f, -1.0f,  1.0f,
-			-1.0f,  1.0f,  1.0f,
-			1.0f,  1.0f,  1.0f,
-			1.0f,  1.0f,  1.0f,
-			1.0f, -1.0f,  1.0f,
-			-1.0f, -1.0f,  1.0f,
-
-			-1.0f,  1.0f, -1.0f,
-			1.0f,  1.0f, -1.0f,
-			1.0f,  1.0f,  1.0f,
-			1.0f,  1.0f,  1.0f,
-			-1.0f,  1.0f,  1.0f,
-			-1.0f,  1.0f, -1.0f,
-
-			-1.0f, -1.0f, -1.0f,
-			-1.0f, -1.0f,  1.0f,
-			1.0f, -1.0f, -1.0f,
-			1.0f, -1.0f, -1.0f,
-			-1.0f, -1.0f,  1.0f,
-			1.0f, -1.0f,  1.0f
-		};
 		glGenVertexArrays(1, &meshBuffer.vao);
 		glGenBuffers(1, &meshBuffer.vbo);
 		glBindVertexArray(meshBuffer.vao);
 		glBindBuffer(GL_ARRAY_BUFFER, meshBuffer.vbo);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, subMesh.vertices.size() * sizeof(Vertex), &subMesh.vertices[0], GL_STATIC_DRAW);
 		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
+		glBindVertexArray(0); 
+		glBindBuffer(GL_ARRAY_BUFFER, 0); 
 		meshBuffer.noIndices = true;
 		meshBuffer.triangles = 12;
+		meshBuffersSet->buffersDict[meshID] = { meshBuffer };
 		return meshBuffer;
 	}
     

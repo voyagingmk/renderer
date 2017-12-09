@@ -3,6 +3,7 @@
 
 #include "base.hpp"
 #include "vertex.hpp"
+#include "materialCom.hpp"
 
 
 namespace renderer {
@@ -48,11 +49,11 @@ namespace renderer {
     class SubMesh {
         public:
 			SubMesh():
-				matIdx(0)
+				settingID(0)
 			{}
             Vertices vertices;
 		    UIntArray indexes;
-			unsigned int matIdx;
+			MaterialSettingID settingID;
     };
 
     class Mesh {
@@ -69,12 +70,37 @@ namespace renderer {
             std::vector<SubMesh> meshes;
     };
 
-	struct MeshRef {
-		MeshRef(ecs::ObjectID id):
-			objID(id)
-		{}
-		ecs::ObjectID objID;
 
+	typedef size_t MeshID;
+	typedef size_t SubMeshIdx;
+
+	class MeshSet {
+	public:
+		MeshSet() :
+			idCount(0) {}
+		MeshID newMeshID() { return ++idCount; }
+		Mesh& newMesh(std::string name, MeshID& meshID) {
+			meshID = newMeshID();
+			meshDict.insert({ meshID, Mesh() });
+			alias2id[name] = meshID;
+			return meshDict[meshID];
+		}
+		std::map<MeshID, Mesh> meshDict;
+		std::map<std::string, MeshID> alias2id;
+		MeshID idCount;
+	};
+	
+	struct MeshRef {
+		MeshRef(MeshID id) :
+			meshID(id),
+			meshName("")
+		{}
+		MeshRef(std::string meshName) :
+			meshID(0),
+			meshName(meshName)
+		{}
+		MeshID meshID;
+		std::string meshName;
 	};
 };
 

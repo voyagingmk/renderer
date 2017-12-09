@@ -51,10 +51,11 @@ namespace renderer {
         obj.addComponent<TextureDict>();
         obj.addComponent<ShaderProgramSet>();
         obj.addComponent<MaterialSet>();
+		obj.addComponent<MeshSet>();
+		obj.addComponent<MeshBuffersSet>();
 		obj.addComponent<GBufferDictCom>();
 		obj.addComponent<ColorBufferDictCom>();
 		obj.addComponent<InstanceBufferDictCom>();
-		obj.addComponent<MeshObjectDictCom>();
 		
         auto shadowMapSetting = obj.addComponent<ShadowMapSetting>();
         shadowMapSetting->shaderSetting = {
@@ -138,34 +139,36 @@ namespace renderer {
 	}
 
 	void LoaderSystem::CreateGlobalQuadObject() {
-		Object objQuad = m_objMgr->create();
-		Object objQuadMesh = m_objMgr->create();
-		std::vector<SubMesh> meshes;
-		SubMesh mesh;
+		auto meshSetCom = m_objMgr->getSingletonComponent<MeshSet>();
+		MeshID meshID;
+		Mesh& mesh = meshSetCom->newMesh("quad", meshID);
+		mesh.meshes.emplace_back();
+		SubMesh& subMesh = mesh.meshes[0];
 		Vertex v;
 		v.position = { -1.0f, 1.0f, 0.0f }; // Left Top
 		v.texCoords = { 0.0f, 1.0f };
-		mesh.vertices.push_back(v);
+		subMesh.vertices.push_back(v);
 		v.position = { -1.0f, -1.0f, 0.0f }; // Left Bottom
 		v.texCoords = { 0.0f, 0.0f };
-		mesh.vertices.push_back(v);
+		subMesh.vertices.push_back(v);
 		v.position = { 1.0f, -1.0f, 0.0f }; // Right Bottom
 		v.texCoords = { 1.0f, 0.0f };
-		mesh.vertices.push_back(v);
+		subMesh.vertices.push_back(v);
 		v.position = { 1.0f, 1.0f, 0.0f }; // Right Top
 		v.texCoords = { 1.0f, 1.0f };
-		mesh.vertices.push_back(v);
-		mesh.indexes = {
+		subMesh.vertices.push_back(v);
+		subMesh.indexes = {
 			0, 1, 2,
 			0, 2, 3 };
-		meshes.push_back(mesh);
-		objQuadMesh.addComponent<Mesh>(meshes);
-		m_evtMgr->emit<CreateMeshBufferEvent>(objQuadMesh);
-		objQuad.addComponent<MeshRef>(objQuadMesh.ID());
-		objQuadMesh.addComponent<GlobalQuadTag>();
+		m_evtMgr->emit<CreateMeshBufferEvent>(meshID);
 	}
 
 	void LoaderSystem::loadLights(const json &config) {
+		auto meshSetCom = m_objMgr->getSingletonComponent<MeshSet>();
+		MeshID meshID;
+		Mesh& mesh = meshSetCom->newMesh("light", meshID);
+		generateOuterBoxMesh(mesh);
+		m_evtMgr->emit<CreateMeshBufferEvent>(meshID);
 		int count = 0;
 		for (auto lightInfo : config["light"])
 		{
@@ -196,9 +199,7 @@ namespace renderer {
 					lightInfo["linear"],
 					lightInfo["quadratic"],
 					1024);
-				auto com = obj.addComponent<Mesh>();
-				generateOuterBoxMesh(*com);
-				m_evtMgr->emit<CreateMeshBufferEvent>(obj);
+				obj.addComponent<MeshRef>("light");
 				m_evtMgr->emit<EnableLightShadowEvent>(obj);
 				obj.addComponent<MotionCom>();
 
@@ -269,8 +270,8 @@ namespace renderer {
 			std::string filename = objInfo["model"];
 			auto spatial = objInfo["spatial"];
 			loadSpatialData(objScene, spatial);
-			Object objMesh = loadMesh(config, filename);
-			objScene.addComponent<MeshRef>(objMesh.ID());
+			MeshID meshID = loadMesh(config, filename);
+			objScene.addComponent<MeshRef>(meshID);
 			/*m_evtMgr->emit<CreateInstanceBufferEvent>(instanceNum,
 				sizeof(Matrix4x4Value),
 				&modelMatrices,
@@ -324,13 +325,11 @@ namespace renderer {
 
 	void LoaderSystem::loadSkyboxes(string skyboxSubDir, const json &config)
 	{
-		auto meshObjectDictCom = m_objMgr->getSingletonComponent<MeshObjectDictCom>();
 		auto cubemaps = config["skyboxes"];
 		for (auto it = cubemaps.begin(); it != cubemaps.end(); it++)
 		{
 			Object objSkybox = m_objMgr->create();
-			Object objMesh = m_objMgr->get(meshObjectDictCom->dict[std::string("skybox")]);
-			objSkybox.addComponent<MeshRef>(objMesh.ID());
+			objSkybox.addComponent<MeshRef>("skybox");
 
 			string aliasname = it.key();
 			json& data = it.value();
@@ -341,8 +340,6 @@ namespace renderer {
 			}
 			size_t channels = data["channels"];
 			m_evtMgr->emit<LoadCubemapEvent>(skyboxSubDir, filenames, aliasname, channels);
-
-			objSkybox.addComponent<SkyboxCom>(aliasname);
 			objSkybox.addComponent<GlobalSkyboxTag>();
 		}
 	}
@@ -383,13 +380,15 @@ namespace renderer {
         }
     }
 
-	Object LoaderSystem::loadMesh(const json &config, const std::string &filename)
+	MeshID LoaderSystem::loadMesh(const json &config, const std::string &filename)
 	{
-		auto com = m_objMgr->getSingletonComponent<MeshObjectDictCom>();
-		auto it = com->dict.find(filename);
-		if (it != com->dict.end()) {
-			return m_objMgr->get(it->second);
+		auto meshSetCom = m_objMgr->getSingletonComponent<MeshSet>();
+		auto it = meshSetCom->alias2id.find(filename);
+		if (it != meshSetCom->alias2id.end()) {
+			return it->second;
 		}
+		MeshID meshID;
+		Mesh& mesh = meshSetCom->newMesh(filename, meshID);
 		Assimp::Importer importer;
 		string assetsDir = config["assetsDir"];
 		string modelsDir = config["modelsDir"];
@@ -409,21 +408,24 @@ namespace renderer {
 		if (!scene)
 		{
 			cout << importer.GetErrorString() << endl;
-			return Object();
+			return 0;
 		}
-		Object obj = m_objMgr->create();
-		ComponentHandle<Mesh> comMeshes = obj.addComponent<Mesh>();
-		com->dict[filename] = obj.ID();
+		std::vector<MaterialSettingID> settingIDs;
+		string texSubDir = config["texSubDir"];
+		m_evtMgr->emit<LoadAiMaterialEvent>(scene->mNumMaterials,
+			scene->mMaterials, 
+			assetsDir + texSubDir,
+			settingIDs);
 		for (int i = 0; i < scene->mNumMeshes; i++)
 		{
 			aiMesh* aimesh = scene->mMeshes[i];
 			if (aimesh->mNumVertices <= 0) {
 				continue;
 			}
-			comMeshes->meshes.push_back(SubMesh());
-			SubMesh& mesh = comMeshes->meshes[comMeshes->meshes.size() - 1];
-			mesh.matIdx = aimesh->mMaterialIndex;
-			std::cout << "[LoaderSystem] matIdx:" << mesh.matIdx << std::endl;
+			mesh.meshes.emplace_back();
+			SubMesh& subMesh = *std::next(mesh.meshes.end(), -1);
+			subMesh.settingID = settingIDs[aimesh->mMaterialIndex];
+			std::cout << "[LoaderSystem] subMesh settingID:" << subMesh.settingID << std::endl;
 			for (uint32_t i = 0; i < aimesh->mNumVertices; i++)
 			{
 				Vertex v;
@@ -456,7 +458,7 @@ namespace renderer {
 				} else {
 					v.texCoords = Vector2dF(0.0f, 0.0f);
 				}
-				mesh.vertices.push_back(v);
+				subMesh.vertices.push_back(v);
 			}
 			for (GLuint i = 0; i < aimesh->mNumFaces; i++)
 			{
@@ -466,13 +468,13 @@ namespace renderer {
 				uint32_t idx1 = face.mIndices[1];
 				uint32_t idx2 = face.mIndices[2]; 
 				
-				mesh.indexes.push_back(idx0);
-				mesh.indexes.push_back(idx1);
-				mesh.indexes.push_back(idx2);
+				subMesh.indexes.push_back(idx0);
+				subMesh.indexes.push_back(idx1);
+				subMesh.indexes.push_back(idx2);
 
-				Vertex& v1 = mesh.vertices[idx0];
-				Vertex& v2 = mesh.vertices[idx1];
-				Vertex& v3 = mesh.vertices[idx2];
+				Vertex& v1 = subMesh.vertices[idx0];
+				Vertex& v2 = subMesh.vertices[idx1];
+				Vertex& v3 = subMesh.vertices[idx2];
 
 				Vector3dF edge1 = v2.position - v1.position;
 				Vector3dF edge2 = v3.position - v1.position;
@@ -488,22 +490,21 @@ namespace renderer {
 			}
 		}
 		std::cout << "[LoaderSystem] loadMesh:" << filename  << ", numMaterials:" << scene->mNumMaterials << std::endl;
-		string texSubDir = config["texSubDir"];
-		m_evtMgr->emit<LoadAiMaterialEvent>(obj, scene->mNumMaterials, scene->mMaterials, assetsDir + texSubDir);
-		m_evtMgr->emit<CreateMeshBufferEvent>(obj);
+		m_evtMgr->emit<CreateMeshBufferEvent>(meshID);
+		return meshID;
 	}
 
-	Object LoaderSystem::loadSkyboxMesh() {
-		auto meshObjectDictCom = m_objMgr->getSingletonComponent<MeshObjectDictCom>();
+	void LoaderSystem::loadSkyboxMesh() {
+		auto meshSetCom = m_objMgr->getSingletonComponent<MeshSet>();
 		std::string name = "skybox";
-		auto it = meshObjectDictCom->dict.find(name);
-		if (it != meshObjectDictCom->dict.end()) {
-			return m_objMgr->get(it->second);
+		auto it = meshSetCom->alias2id.find(name);
+		if (it != meshSetCom->alias2id.end()) {
+			return;
 		}
-		Object obj = m_objMgr->create();
-		m_evtMgr->emit<CreateSkyboxBufferEvent>(obj);
-		meshObjectDictCom->dict[name] = obj.ID();
-		return obj;
+		MeshID meshID;
+		Mesh& mesh = meshSetCom->newMesh(name, meshID);
+		generateSkyBoxMesh(mesh);
+		m_evtMgr->emit<CreateSkyboxBufferEvent>(meshID);
 	}
 
 	void LoaderSystem::loadSpatialData(Object obj, const json &spatial) {

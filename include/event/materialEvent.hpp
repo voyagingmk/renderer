@@ -14,16 +14,18 @@ namespace renderer {
 	
 	class LoadAiMaterialEvent : public ecs::Event<LoadAiMaterialEvent> {
 	public:
-		LoadAiMaterialEvent(Object obj, int matNum, aiMaterial** mMaterials, const std::string& texDir) :
-			obj(obj),
+		LoadAiMaterialEvent(int matNum, aiMaterial** mMaterials,
+			const std::string& texDir,
+			std::vector<MaterialSettingID>& settingIDs) :
 			matNum(matNum),
 			mMaterials(mMaterials),
-			texDir(texDir)
+			texDir(texDir),
+			settingIDs(settingIDs)
 		{}
-		Object obj;
 		int matNum;
 		aiMaterial** mMaterials;
 		const std::string& texDir;
+		std::vector<MaterialSettingID>& settingIDs;
 	};
 
 	class LoadMaterialEvent : public ecs::Event<LoadMaterialEvent> {

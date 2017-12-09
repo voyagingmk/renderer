@@ -96,8 +96,8 @@ namespace renderer{
     }
     
     static void generateOuterBoxMesh(Mesh& m) {
-        m.meshes.push_back(SubMesh());
-        SubMesh& mesh = m.meshes[m.meshes.size() - 1];
+        m.meshes.emplace_back();
+        SubMesh& mesh = *std::next(m.meshes.end(), -1);
         mesh.vertices = Vertices{
             Vertex({-0.5, -0.5, 0.5}), // 左下
             Vertex({ 0.5, -0.5, 0.5}), // 右下
@@ -126,5 +126,52 @@ namespace renderer{
         generateNormals(mesh, true);
     }
 
+    static void generateSkyBoxMesh(Mesh& m) {
+        m.meshes.emplace_back();
+        SubMesh& mesh = *std::next(m.meshes.end(), -1);
+        mesh.vertices = Vertices{
+            Vertex({ -1.0f,  1.0f, -1.0f }),
+            Vertex({ -1.0f, -1.0f, -1.0f }),
+            Vertex({ 1.0f, -1.0f, -1.0f }),
+            Vertex({ 1.0f, -1.0f, -1.0f }),
+            Vertex({ 1.0f,  1.0f, -1.0f }),
+            Vertex({ -1.0f,  1.0f, -1.0f }),
+
+			Vertex({ -1.0f, -1.0f,  1.0f }),
+			Vertex({ -1.0f, -1.0f, -1.0f }),
+			Vertex({ -1.0f,  1.0f, -1.0f }),
+			Vertex({ -1.0f,  1.0f, -1.0f }),
+			Vertex({ -1.0f,  1.0f,  1.0f }),
+			Vertex({ -1.0f, -1.0f,  1.0f }),
+
+			Vertex({ 1.0f, -1.0f, -1.0f }),
+			Vertex({ 1.0f, -1.0f,  1.0f }),
+			Vertex({ 1.0f,  1.0f,  1.0f }),
+			Vertex({ 1.0f,  1.0f,  1.0f }),
+			Vertex({ 1.0f,  1.0f, -1.0f }),
+			Vertex({ 1.0f, -1.0f, -1.0f }),
+
+			Vertex({ -1.0f, -1.0f,  1.0f }),
+			Vertex({ -1.0f,  1.0f,  1.0f }),
+			Vertex({ 1.0f,  1.0f,  1.0f }),
+			Vertex({ 1.0f,  1.0f,  1.0f }),
+			Vertex({ 1.0f, -1.0f,  1.0f }),
+			Vertex({ -1.0f, -1.0f,  1.0f }),
+
+			Vertex({ -1.0f,  1.0f, -1.0f }),
+			Vertex({ 1.0f,  1.0f, -1.0f }),
+			Vertex({ 1.0f,  1.0f,  1.0f }),
+			Vertex({ 1.0f,  1.0f,  1.0f }),
+			Vertex({ -1.0f,  1.0f,  1.0f }),
+			Vertex({ -1.0f,  1.0f, -1.0f }),
+
+			Vertex({ -1.0f, -1.0f, -1.0f }),
+			Vertex({ -1.0f, -1.0f,  1.0f }),
+			Vertex({ 1.0f, -1.0f, -1.0f }),
+			Vertex({ 1.0f, -1.0f, -1.0f }),
+			Vertex({ -1.0f, -1.0f,  1.0f }),
+			Vertex({ 1.0f, -1.0f,  1.0f })
+        };
+    }
 }
 #endif

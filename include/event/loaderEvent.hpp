@@ -6,7 +6,7 @@
 
 namespace renderer {
     
-	class LoadFinishEvent: public ecs::Event<CreateMeshBufferEvent> {
+	class LoadFinishEvent: public ecs::Event<LoadFinishEvent> {
 	public:
 		LoadFinishEvent(ecs::Object obj) :
 			obj(obj)

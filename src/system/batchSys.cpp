@@ -32,6 +32,7 @@ namespace renderer {
 	}
 
 	void BatchSystem::updateStaticRenderQueue() {
+		/*
 		auto queueCom = m_objMgr->getSingletonComponent<StaticRenderQueueCom>();
 		RenderQueue& queue = queueCom->queue;
 		queue.clear();
@@ -40,18 +41,17 @@ namespace renderer {
             objBatch.destroy();
         }
 		// collect all ID
-        /*
-         objBatch-> [subMesh: MatID]: [objScene1, objScene2, ...]
-         */
+       //  objBatch-> [subMesh: MatID]: [objScene1, objScene2, ...]
+        
         // [ [objScene, objMesh, subMeshBufferIdx] ]
 		for (const Object objScene : m_objMgr->entities<MaterialCom, RenderQueueTag, StaticObjTag>()) {
-			/*auto meshBufferCom = obj.component<MeshBuffersCom>();
-			for (BufIdx idx = 0; idx < meshBufferCom->buffers.size(); idx++) {
-				queue.push_back(std::make_pair(obj.ID(), idx));
-			}*/
+			//auto meshBufferCom = obj.component<MeshBuffersCom>();
+			//for (BufIdx idx = 0; idx < meshBufferCom->buffers.size(); idx++) {
+			//	queue.push_back(std::make_pair(obj.ID(), idx));
+			//}
             auto matCom = objScene.component<MaterialCom>();
             matCom->settingIDs;
-            auto objMesh = m_objMgr->get(objScene.component<MeshRef>()->objID);
+            auto meshID = objScene.component<MeshRef>()->meshID;
             auto meshBufferCom = objMesh.component<MeshBuffersCom>();
             for (BufIdx idx = 0; idx < meshBufferCom->buffers.size(); idx++) {
                 queue.push_back(std::make_pair(obj.ID(), idx));
@@ -70,7 +70,7 @@ namespace renderer {
 			auto aSettingID = aMatCom->settingIDs[aBuf.matIdx];
 			auto bSettingID = bMatCom->settingIDs[bBuf.matIdx];
 			return aSettingID < bSettingID;
-		});
+		});*/
 	}
 
 	void BatchSystem::updateDynamicRenderQueue() {

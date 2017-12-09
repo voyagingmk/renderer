@@ -27,7 +27,7 @@ namespace renderer {
 
 		void receive(const DeactiveMaterialEvent &evt);
 
-		void activeMaterial(Shader& shader, MaterialSettingComBase* setting);
+		void activeMaterial(Shader& shader, MaterialSettingBase* setting);
 	};
 };
 

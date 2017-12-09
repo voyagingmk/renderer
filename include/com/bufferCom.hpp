@@ -2,6 +2,8 @@
 #define RENDERER_COM_BUFFER_HPP
 
 #include "base.hpp"
+#include "mesh.hpp"
+#include "materialCom.hpp"
 
 namespace renderer {
     
@@ -101,7 +103,7 @@ namespace renderer {
 			vbo(0),
 			ebo(0),
 			vboIns(0), 
-			matIdx(0),
+			settingID(0),
 			instanced(false),
 			noIndices(false)
 		{}
@@ -110,32 +112,26 @@ namespace renderer {
 		BufferID vbo;
 		BufferID ebo;
 		BufferID vboIns;
-		uint32_t matIdx;
+		MaterialSettingID settingID;
 		InstanceBufferRef insBuf;
 		bool instanced;
 		bool noIndices;
 	};
 
 
-	typedef std::map<std::string, MeshBufferRef> MeshBufferDict;
-
 	typedef std::vector<MeshBufferRef> MeshBufferRefs;
+	typedef std::map<MeshID, MeshBufferRefs> MeshBuffersDict;
 
-	struct MeshBuffersCom {
-		MeshBufferRefs buffers;
+
+	struct MeshBuffersSet {
+		MeshBuffersDict buffersDict;
 	};
 
-
-	typedef std::map<std::string, ecs::ObjectID> MeshObjectDict;
 	typedef std::map<std::string, GBufferRef> GBufferDict;
 	typedef std::map<std::string, ColorBufferRef> ColorBufferDict;
 	typedef std::map<std::string, InstanceBufferRef> InstanceBufferDict;
 
 	typedef std::vector<GBufferRef> GBuffers;
-
-	struct MeshObjectDictCom {
-		MeshObjectDict dict;
-	};
 
 	struct GBufferDictCom {
 		GBufferDict dict;

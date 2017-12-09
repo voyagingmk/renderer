@@ -251,9 +251,6 @@
     <ClInclude Include="..\include\utils\MemoryPool.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\com\meshes.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\com\miscCom.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -372,6 +369,9 @@
       <Filter>External</Filter>
     </ClInclude>
     <ClInclude Include="..\include\system\batchSys.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\com\mesh.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

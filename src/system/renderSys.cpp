@@ -159,6 +159,7 @@ namespace renderer {
 			shader.use();
 		}
 		MaterialSettingID preSettingID = -1;
+		/*
 		for (auto e: renderQueueCom->queue) {
 			Object obj = m_objMgr->get(e.first);
 			BufIdx bufIdx = e.second;
@@ -169,7 +170,7 @@ namespace renderer {
 			auto meshBuffer = meshBufferCom->buffers[bufIdx];
 			auto settingID = matCom->settingIDs[meshBuffer.matIdx];	
 			if (preSettingID != settingID) {
-				auto setting = matSetCom->settings[settingID];
+				auto setting = matSetCom->settingDict[settingID];
 				if (evt.shader == nullptr) {
 					shader = getShader(setting);
 					shader.use();
@@ -179,10 +180,10 @@ namespace renderer {
 			m_evtMgr->emit<DrawOneMeshBufferEvent>(meshBuffer);
 			preSettingID = settingID;
 			// m_evtMgr->emit<DeactiveMaterialEvent>(settingID);
-		}
+		}*/
 	}
 
-	Shader RenderSystem::getShader(MaterialSettingComBase* com) {
+	Shader RenderSystem::getShader(MaterialSettingBase* com) {
 		return getShader(com->shaderName);
 	}
 
@@ -192,9 +193,7 @@ namespace renderer {
 	}
 
     void RenderSystem::renderQuad() {
-        for (auto obj : m_objMgr->entities<GlobalQuadTag>()) {
-			m_evtMgr->emit<DrawMeshBufferEvent>(obj);
-		}
+		m_evtMgr->emit<DrawMeshBufferEvent>("quad", 0);
 	}
     
 	void RenderSystem::renderSkybox(std::string colorBufferAliasName, Object objCamera, Viewport viewport) {
@@ -208,9 +207,8 @@ namespace renderer {
 			skyboxShader.use();
 			m_evtMgr->emit<UploadCameraToShaderEvent>(objCamera, skyboxShader);
 			m_evtMgr->emit<ActiveTextureEvent>(skyboxShader, "skybox", 0, "alps");
-			auto objID = objSkybox.component<MeshRef>()->objID;
-			auto objMesh = m_objMgr->get(objID);
-			m_evtMgr->emit<DrawMeshBufferEvent>(objMesh);
+			auto meshName = objSkybox.component<MeshRef>()->meshName;
+			m_evtMgr->emit<DrawMeshBufferEvent>(meshName, 0);
 			glDepthFunc(GL_LESS); // set depth function back to default
 								  // glEnable(GL_CULL_FACE);
 			
@@ -482,9 +480,8 @@ namespace renderer {
 			MeshRef, PointLightCom, SpatialData>()) {
 			m_evtMgr->emit<UploadCameraToShaderEvent>(objCamera, lightShader);	
 			m_evtMgr->emit<UploadMatrixToShaderEvent>(lightObj, lightShader);
-			auto objID = lightObj.component<MeshRef>()->objID;
-			auto objMesh = m_objMgr->get(objID);
-			m_evtMgr->emit<DrawMeshBufferEvent>(objMesh);
+			auto meshID = lightObj.component<MeshRef>()->meshID;
+			m_evtMgr->emit<DrawMeshBufferEvent>(meshID, 0);
 			
 		}
 		m_evtMgr->emit<UnuseColorBufferEvent>(colorBufferAliasName);

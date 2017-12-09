@@ -453,7 +453,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="..\include\com\lightCom.hpp" />
     <ClInclude Include="..\include\com\materialCom.hpp" />
     <ClInclude Include="..\include\com\matrix.hpp" />
-    <ClInclude Include="..\include\com\meshes.hpp" />
+    <ClInclude Include="..\include\com\mesh.hpp" />
     <ClInclude Include="..\include\com\miscCom.hpp" />
     <ClInclude Include="..\include\com\quaternion.hpp" />
     <ClInclude Include="..\include\com\renderMode.hpp" />
