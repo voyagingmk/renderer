@@ -31,13 +31,19 @@ namespace renderer {
 	class Matrix final {
 	public:
 		T * data;
+        bool managed = true;
 		typedef typename T::ValueType V;
 		typedef MxN<V, T::col, T::row> TransT;
 	public:
 		Matrix() {
 			data = GetPool<T>()->newElement(T());
 		}
-		
+        
+        Matrix(T* d) {
+            data = d;
+            managed = false;
+        }
+        
 		Matrix(std::initializer_list<V> values) {
 			data = GetPool<T>()->newElement(T(std::forward<std::initializer_list<V>>(values)));
 		}
@@ -52,10 +58,9 @@ namespace renderer {
 			m.data = nullptr;
 		}	
 		virtual ~Matrix() {
-			if (!data)
+			if (!data || !managed)
 				return;
-			auto pool = GetPool<T>();
-			pool->deleteElement(data);
+			GetPool<T>()->deleteElement(data);
 		}
         
         bool validate() const {

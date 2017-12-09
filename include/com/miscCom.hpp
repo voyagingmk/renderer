@@ -3,6 +3,7 @@
 
 #include "base.hpp"
 #include "ecs/setting.hpp"
+#include "com/matrix.hpp"
 
 namespace renderer {
     
@@ -30,8 +31,13 @@ namespace renderer {
 
 	struct DynamicObjTag : public TagComBase {};
 
+    struct StaticBatchObjTag : public TagComBase {};
+    
+    struct DynamicBatchObjTag : public TagComBase {};
+
+    
 	typedef int BufIdx;
-	typedef std::vector<std::pair<ecs::ObjectID, BufIdx>> RenderQueue;
+	typedef std::vector<std::tuple<ecs::ObjectID, ecs::ObjectID, BufIdx>> RenderQueue;
 
 	struct StaticRenderQueueCom {
 		RenderQueue queue;
@@ -40,6 +46,16 @@ namespace renderer {
 	struct DynamicRenderQueueCom {
 		RenderQueue queue;
 	};
+    
+    // 记录这个batch管理的obj和用于draw instance的信息
+    // 没个batch的材质ID一致、SubMesh一致
+    struct BatchCom {
+        MaterialSettingID settingID;
+        uint32_t subMeshIdx;
+        // 长度一致
+        std::vector<ecs::ObjectID> objIDList;
+        std::vector<Matrix4x4Value> modelMatrixes;
+    };
 
 	struct GlobalSettingCom {
 		std::map<std::string, nlohmann::json> params;

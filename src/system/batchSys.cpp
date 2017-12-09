@@ -2,6 +2,7 @@
 #include "system/batchSys.hpp"
 #include "com/bufferCom.hpp"
 #include "com/materialCom.hpp"
+#include "com/mesh.hpp"
 
 using json = nlohmann::json;
 using namespace std;
@@ -34,12 +35,27 @@ namespace renderer {
 		auto queueCom = m_objMgr->getSingletonComponent<StaticRenderQueueCom>();
 		RenderQueue& queue = queueCom->queue;
 		queue.clear();
+        auto objBatchList = m_objMgr->entities<StaticBatchObjTag>();
+        for(auto objBatch: objBatchList) {
+            objBatch.destroy();
+        }
 		// collect all ID
-		for (const Object obj : m_objMgr->entities<RenderQueueTag>()) {
-			auto meshBufferCom = obj.component<MeshBuffersCom>();
+        /*
+         objBatch-> [subMesh: MatID]: [objScene1, objScene2, ...]
+         */
+        // [ [objScene, objMesh, subMeshBufferIdx] ]
+		for (const Object objScene : m_objMgr->entities<MaterialCom, RenderQueueTag, StaticObjTag>()) {
+			/*auto meshBufferCom = obj.component<MeshBuffersCom>();
 			for (BufIdx idx = 0; idx < meshBufferCom->buffers.size(); idx++) {
 				queue.push_back(std::make_pair(obj.ID(), idx));
-			}
+			}*/
+            auto matCom = objScene.component<MaterialCom>();
+            matCom->settingIDs;
+            auto objMesh = m_objMgr->get(objScene.component<MeshRef>()->objID);
+            auto meshBufferCom = objMesh.component<MeshBuffersCom>();
+            for (BufIdx idx = 0; idx < meshBufferCom->buffers.size(); idx++) {
+                queue.push_back(std::make_pair(obj.ID(), idx));
+            }
 		}
 		// sort by materialID
 		std::sort(queue.begin(), queue.end(), [&](std::pair<ObjectID, BufIdx> a, std::pair<ObjectID, BufIdx> b) -> bool {
