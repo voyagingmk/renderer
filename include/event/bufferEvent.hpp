@@ -35,9 +35,11 @@ namespace renderer {
 	public:
 		DrawMeshBufferEvent(MeshID meshID, SubMeshIdx subMeshIdx) :
 			meshID(meshID),
+			meshName(""),
 			subMeshIdx(subMeshIdx)
 		{}
 		DrawMeshBufferEvent(std::string meshName, SubMeshIdx subMeshIdx) :
+			meshID(0),
 			meshName(meshName),
 			subMeshIdx(subMeshIdx)
 		{}

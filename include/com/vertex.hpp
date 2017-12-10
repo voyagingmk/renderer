@@ -11,8 +11,7 @@ namespace renderer {
         Vertex(Vector3dF p = Vector3dF(0, 0, 0),
 				Normal3dF n = Normal3dF(0, 0, 0),
 				Vector2dF t = Vector2dF(0, 0),
-				Vector3dF ta = Vector3dF(0, 0, 0),
-				Vector3dF bta = Vector3dF(0, 0, 0)):
+				Vector3dF ta = Vector3dF(0, 0, 0)):
             position(p),
             normal(n),
             texCoords(t),

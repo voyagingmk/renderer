@@ -138,10 +138,29 @@ namespace renderer {
       
 	}
 
+	void LoaderSystem::loadSkyboxMesh() {
+		auto meshSetCom = m_objMgr->getSingletonComponent<MeshSet>();
+		std::string name = "skybox";
+		auto it = meshSetCom->alias2id.find(name);
+		if (it != meshSetCom->alias2id.end()) {
+			return;
+		}
+		MeshID meshID;
+		Mesh& mesh = meshSetCom->newMesh(name, meshID);
+		generateSkyBoxMesh(mesh);
+		m_evtMgr->emit<CreateSkyboxBufferEvent>(meshID);
+		printf("create skybox mesh, ID:%d\n", meshID);
+	}
+
 	void LoaderSystem::CreateGlobalQuadObject() {
 		auto meshSetCom = m_objMgr->getSingletonComponent<MeshSet>();
 		MeshID meshID;
-		Mesh& mesh = meshSetCom->newMesh("quad", meshID);
+		std::string name = "quad";
+		auto it = meshSetCom->alias2id.find(name);
+		if (it != meshSetCom->alias2id.end()) {
+			return;
+		}
+		Mesh& mesh = meshSetCom->newMesh(name, meshID);
 		mesh.meshes.emplace_back();
 		SubMesh& subMesh = mesh.meshes[0];
 		Vertex v;
@@ -161,6 +180,7 @@ namespace renderer {
 			0, 1, 2,
 			0, 2, 3 };
 		m_evtMgr->emit<CreateMeshBufferEvent>(meshID);
+		printf("create quad mesh, ID:%d\n", meshID);
 	}
 
 	void LoaderSystem::loadLights(const json &config) {
@@ -423,7 +443,7 @@ namespace renderer {
 				continue;
 			}
 			mesh.meshes.emplace_back();
-			SubMesh& subMesh = *std::next(mesh.meshes.end(), -1);
+			SubMesh& subMesh = *std::prev(mesh.meshes.end());
 			subMesh.settingID = settingIDs[aimesh->mMaterialIndex];
 			std::cout << "[LoaderSystem] subMesh settingID:" << subMesh.settingID << std::endl;
 			for (uint32_t i = 0; i < aimesh->mNumVertices; i++)
@@ -492,19 +512,6 @@ namespace renderer {
 		std::cout << "[LoaderSystem] loadMesh:" << filename  << ", numMaterials:" << scene->mNumMaterials << std::endl;
 		m_evtMgr->emit<CreateMeshBufferEvent>(meshID);
 		return meshID;
-	}
-
-	void LoaderSystem::loadSkyboxMesh() {
-		auto meshSetCom = m_objMgr->getSingletonComponent<MeshSet>();
-		std::string name = "skybox";
-		auto it = meshSetCom->alias2id.find(name);
-		if (it != meshSetCom->alias2id.end()) {
-			return;
-		}
-		MeshID meshID;
-		Mesh& mesh = meshSetCom->newMesh(name, meshID);
-		generateSkyBoxMesh(mesh);
-		m_evtMgr->emit<CreateSkyboxBufferEvent>(meshID);
 	}
 
 	void LoaderSystem::loadSpatialData(Object obj, const json &spatial) {

@@ -71,7 +71,7 @@ namespace renderer {
 
 		void EnabledMeshBufferInstance(MeshBufferRef& buf, const InstanceBufferRef& insBuf);
 
-		MeshBufferRef CreateSkyboxBuffer(MeshID meshID);
+		void CreateSkyboxBuffer(MeshID meshID);
 		
 		ColorBufferRef CreateColorBuffer(
             size_t width, size_t height,

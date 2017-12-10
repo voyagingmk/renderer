@@ -56,7 +56,11 @@ namespace renderer {
 			&gBufferShader);
 		evtMgr.emit<UnuseGBufferEvent>("main");
 		// glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
+		
+		//renderGBufferDebug("main", context->width, context->height);
+		//m_evtMgr->emit<DrawUIEvent>();
+		//SDL_GL_SwapWindow(context->win);
+		//return;
 		if (gSettingCom->get1b("enableSSAO")) {
 			// ssao pass
 			// only need G-Buffer
@@ -147,6 +151,7 @@ namespace renderer {
     }
     
 	void RenderSystem::receive(const RenderSceneEvent &evt) {
+		auto meshSet = m_objMgr->getSingletonComponent<MeshSet>();
 		auto matSetCom = m_objMgr->getSingletonComponent<MaterialSet>();
 		auto renderQueueCom = m_objMgr->getSingletonComponent<StaticRenderQueueCom>();
 		glEnable(GL_DEPTH_TEST);
@@ -159,6 +164,18 @@ namespace renderer {
 			shader.use();
 		}
 		MaterialSettingID preSettingID = -1;
+		for (auto obj : m_objMgr->entities<MeshRef, StaticObjTag>()) {
+			auto meshRef = obj.component<MeshRef>();
+			m_evtMgr->emit<UploadCameraToShaderEvent>(evt.objCamera, shader);
+			m_evtMgr->emit<UploadMatrixToShaderEvent>(obj, shader);
+			auto meshID = meshRef->meshID;
+			Mesh& mesh = meshSet->meshDict[meshID];
+			for (uint32_t subMeshIdx = 0; subMeshIdx < mesh.meshes.size(); subMeshIdx++) {
+				SubMesh& subMesh = mesh.meshes[subMeshIdx];
+				m_evtMgr->emit<ActiveMaterialEvent>(subMesh.settingID, shader);
+				m_evtMgr->emit<DrawMeshBufferEvent>(meshID, subMeshIdx);
+			}
+		}
 		/*
 		for (auto e: renderQueueCom->queue) {
 			Object obj = m_objMgr->get(e.first);

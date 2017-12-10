@@ -37,7 +37,7 @@ namespace renderer {
 	void BufferSystem::receive(const CreateMeshBufferEvent &evt) {
 		auto meshSet = m_objMgr->getSingletonComponent<MeshSet>();
 		auto meshBuffersSet = m_objMgr->getSingletonComponent<MeshBuffersSet>();
-		MeshID meshID = evt.meshID || meshSet->alias2id[evt.meshName];
+		MeshID meshID = evt.meshID | meshSet->alias2id[evt.meshName];
 		Mesh& mesh = meshSet->meshDict[meshID];
 		meshBuffersSet->buffersDict.insert({meshID, MeshBufferRefs()});
 		MeshBufferRefs& buffers = meshBuffersSet->buffersDict[meshID];
@@ -53,7 +53,7 @@ namespace renderer {
 	void BufferSystem::receive(const DrawMeshBufferEvent& evt) {
 		auto meshSet = m_objMgr->getSingletonComponent<MeshSet>();
 		auto meshBuffersSet = m_objMgr->getSingletonComponent<MeshBuffersSet>();
-		MeshID meshID = evt.meshID || meshSet->alias2id[evt.meshName];
+		MeshID meshID = evt.meshID | meshSet->alias2id[evt.meshName];
 		auto bufferRefs = meshBuffersSet->buffersDict[meshID];
 		MeshBufferRef& bufferRef = bufferRefs[evt.subMeshIdx];
 		drawMeshBuffer(bufferRef);
@@ -229,14 +229,14 @@ namespace renderer {
 	void BufferSystem::UnuseFrameBuffer(FrameBufferBase& buf) {
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
-	
+
 	void BufferSystem::CreateInstanceBuffer(MeshBufferRef& buf, size_t insNum, void* data) {
 		glBindVertexArray(buf.vao);
 		glGenBuffers(1, &buf.vboIns);
 		glBindBuffer(GL_ARRAY_BUFFER, buf.vboIns);
 		// TODO  instance offset info struct
 		glBufferData(GL_ARRAY_BUFFER, sizeof(Vector3dF) * insNum, data, GL_STATIC_DRAW);
-		
+
 		// position list
 		glEnableVertexAttribArray(4);
 		glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vector3dF), (void*)0);
@@ -316,25 +316,27 @@ namespace renderer {
 		return meshBuffer;
 	}
 
-	MeshBufferRef BufferSystem::CreateSkyboxBuffer(MeshID meshID) {
+	void BufferSystem::CreateSkyboxBuffer(MeshID meshID) {
 		auto meshBuffersSet = m_objMgr->getSingletonComponent<MeshBuffersSet>();
 		auto meshSet = m_objMgr->getSingletonComponent<MeshSet>();
+		if (meshBuffersSet->buffersDict.find(meshID) != meshBuffersSet->buffersDict.end()) {
+			return;
+		}
 		Mesh& mesh = meshSet->meshDict[meshID];
 		SubMesh& subMesh = mesh.meshes[0];
 		MeshBufferRef meshBuffer;
 		glGenVertexArrays(1, &meshBuffer.vao);
-		glGenBuffers(1, &meshBuffer.vbo);
 		glBindVertexArray(meshBuffer.vao);
+		glGenBuffers(1, &meshBuffer.vbo);
 		glBindBuffer(GL_ARRAY_BUFFER, meshBuffer.vbo);
 		glBufferData(GL_ARRAY_BUFFER, subMesh.vertices.size() * sizeof(Vertex), &subMesh.vertices[0], GL_STATIC_DRAW);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)0);
 		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
-		glBindVertexArray(0); 
 		glBindBuffer(GL_ARRAY_BUFFER, 0); 
+		glBindVertexArray(0);
 		meshBuffer.noIndices = true;
 		meshBuffer.triangles = 12;
 		meshBuffersSet->buffersDict[meshID] = { meshBuffer };
-		return meshBuffer;
 	}
     
     ColorBufferRef BufferSystem::CreateDepthFrameBuffer(DepthTexType dtType, std::string texAliasname, size_t width) {

@@ -97,7 +97,7 @@ namespace renderer{
     
     static void generateOuterBoxMesh(Mesh& m) {
         m.meshes.emplace_back();
-        SubMesh& mesh = *std::next(m.meshes.end(), -1);
+        SubMesh& mesh = *std::prev(m.meshes.end());
         mesh.vertices = Vertices{
             Vertex({-0.5, -0.5, 0.5}), // 左下
             Vertex({ 0.5, -0.5, 0.5}), // 右下
@@ -128,9 +128,9 @@ namespace renderer{
 
     static void generateSkyBoxMesh(Mesh& m) {
         m.meshes.emplace_back();
-        SubMesh& mesh = *std::next(m.meshes.end(), -1);
+        SubMesh& mesh = *std::prev(m.meshes.end());
         mesh.vertices = Vertices{
-            Vertex({ -1.0f,  1.0f, -1.0f }),
+			Vertex({ -1.0f,  1.0f, -1.0f }),
             Vertex({ -1.0f, -1.0f, -1.0f }),
             Vertex({ 1.0f, -1.0f, -1.0f }),
             Vertex({ 1.0f, -1.0f, -1.0f }),
