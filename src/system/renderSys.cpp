@@ -75,7 +75,7 @@ namespace renderer {
 		updateShadowMapPass("main", objCamera);
 		
 		if (gSettingCom->getValue("debugShadow")) {
-			renderColorBuffer("lightDepth6", 1024, 1024, true, true);
+			renderColorBuffer("lightDepth10", 1024, 1024, true, true);
 			m_evtMgr->emit<DrawUIEvent>();
 			SDL_GL_SwapWindow(context->win);
 			return;
