@@ -46,6 +46,13 @@ namespace renderer {
 		virtual BBox Bound() const override;
 		virtual BBox WorldBound() const override;
 	};*/
+
+
+	typedef size_t MeshID;
+	typedef size_t SubMeshIdx;
+
+	// SubMesh没有自己的transform
+	// 只是Mesh的一个part
     class SubMesh {
         public:
 			SubMesh():
@@ -53,9 +60,12 @@ namespace renderer {
 			{}
             Vertices vertices;
 		    UIntArray indexes;
-			MaterialSettingID settingID;
+			MaterialSettingID settingID; // default
     };
 
+	// SubMesh集合
+	// 处理场景管理，不需要深入到SubMesh
+	// 处理渲染队列，需要深入SubMesh，因为不同SubMesh材质不一样
     class Mesh {
         public:
 			Mesh() {}
@@ -70,9 +80,22 @@ namespace renderer {
             std::vector<SubMesh> meshes;
     };
 
-
-	typedef size_t MeshID;
-	typedef size_t SubMeshIdx;
+	// 场景可渲染物体，必须加MeshRef
+	// 通过MeshRef从而可以实现Mesh共用
+	// MeshRef还可以对Mesh做自定义设置，如SubMesh材质绑定
+	struct MeshRef {
+		MeshRef(MeshID id) :
+			meshID(id),
+			meshName("")
+		{}
+		MeshRef(std::string meshName) :
+			meshID(0),
+			meshName(meshName)
+		{}
+		MeshID meshID;
+		std::string meshName;
+		std::map<SubMeshIdx, MaterialSettingID> settingIDs;
+	};
 
 	class MeshSet {
 	public:
@@ -85,22 +108,13 @@ namespace renderer {
 			alias2id[name] = meshID;
 			return meshDict[meshID];
 		}
+		Mesh& getMesh(MeshRef& ref) {
+			MeshID meshID = ref.meshID | alias2id[ref.meshName];
+			return meshDict[ref.meshID];
+		}
 		std::map<MeshID, Mesh> meshDict;
 		std::map<std::string, MeshID> alias2id;
 		MeshID idCount;
-	};
-	
-	struct MeshRef {
-		MeshRef(MeshID id) :
-			meshID(id),
-			meshName("")
-		{}
-		MeshRef(std::string meshName) :
-			meshID(0),
-			meshName(meshName)
-		{}
-		MeshID meshID;
-		std::string meshName;
 	};
 };
 

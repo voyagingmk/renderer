@@ -26,9 +26,7 @@ namespace renderer {
 
 		void receive(const DrawMeshBufferEvent& evt);
 
-		void receive(const EnabledMeshBufferInstanceEvent& evt);
-
-		void receive(const DrawOneMeshBufferEvent& evt);
+		void receive(const DrawSubMeshBufferEvent& evt);
 
 		void receive(const AddColorBufferEvent& evt);
         
@@ -54,6 +52,14 @@ namespace renderer {
 
 		void receive(const CreateInstanceBufferEvent& evt);
 
+		void receive(const DestroyInstanceBufferEvent& evt);
+
+		void receive(const UpdateInstanceBufferEvent& evt);
+
+		void receive(const BindInstanceBufferEvent& evt);
+
+		void receive(const UnbindInstanceBufferEvent& evt);
+
 	private:
 		void drawMeshBuffer(const MeshBufferRef& meshBuffer);
 
@@ -69,7 +75,9 @@ namespace renderer {
 
 		MeshBufferRef CreateMeshBuffer(const SubMesh& mesh);
 
-		void EnabledMeshBufferInstance(MeshBufferRef& buf, const InstanceBufferRef& insBuf);
+		void BindMeshBufferInstance(MeshBufferRef& buf, const InstanceBufferRef& insBuf);
+		
+		void UnbindMeshBufferInstance(MeshBufferRef& buf);
 
 		void CreateSkyboxBuffer(MeshID meshID);
 		

@@ -10,18 +10,6 @@
     <ClCompile Include="..\src\utils\profiler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\system\renderSys.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\com\shaderCom.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\system\textureSys.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\system\uiSys.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\external\SOIL\image_DXT.c">
       <Filter>External</Filter>
     </ClCompile>
@@ -120,6 +108,18 @@
     </ClCompile>
     <ClCompile Include="..\src\com\transform.cpp">
       <Filter>Source Files\com</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\system\renderSys.cpp">
+      <Filter>Source Files\system</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\system\textureSys.cpp">
+      <Filter>Source Files\system</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\com\shaderCom.cpp">
+      <Filter>Source Files\com</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\system\uiSys.cpp">
+      <Filter>Source Files\system</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

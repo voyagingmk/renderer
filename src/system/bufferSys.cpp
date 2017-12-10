@@ -13,7 +13,7 @@ namespace renderer {
 		evtMgr.on<CreateMeshBufferEvent>(*this);
 		evtMgr.on<CreateSkyboxBufferEvent>(*this);
 		evtMgr.on<DrawMeshBufferEvent>(*this);
-		evtMgr.on<DrawOneMeshBufferEvent>(*this);
+		evtMgr.on<DrawSubMeshBufferEvent>(*this);
         evtMgr.on<CreateDpethBufferEvent>(*this);
         evtMgr.on<CreateColorBufferEvent>(*this);
         evtMgr.on<DestroyColorBufferEvent>(*this);
@@ -26,8 +26,10 @@ namespace renderer {
 		evtMgr.on<UnuseGBufferEvent>(*this);
 		evtMgr.on<CopyGBufferDepth2ColorBufferEvent>(*this);
 		evtMgr.on<CreateInstanceBufferEvent>(*this);
-		evtMgr.on<EnabledMeshBufferInstanceEvent>(*this);
-		
+		evtMgr.on<DestroyInstanceBufferEvent>(*this);
+		evtMgr.on<UpdateInstanceBufferEvent>(*this);
+		evtMgr.on<BindInstanceBufferEvent>(*this);
+		evtMgr.on<UnbindInstanceBufferEvent>(*this);
 	}
 
 	void BufferSystem::update(ObjectManager &objMgr, EventManager &evtMgr, float dt) {
@@ -59,36 +61,69 @@ namespace renderer {
 		drawMeshBuffer(bufferRef);
 	}
 
-	void BufferSystem::receive(const EnabledMeshBufferInstanceEvent& evt) {
-		/*
-		Object obj = evt.obj;
-		auto com = obj.component<MeshBuffersCom>();
-		auto comBufferDict = m_objMgr->getSingletonComponent<InstanceBufferDictCom>();
-		auto it = comBufferDict->dict.find(std::string(evt.aliasName));
-		if (it == comBufferDict->dict.end()) {
+	void BufferSystem::receive(const BindInstanceBufferEvent& evt) {
+		auto InsBufferDict = m_objMgr->getSingletonComponent<InstanceBufferDictCom>();
+		auto meshBuffersSet = m_objMgr->getSingletonComponent<MeshBuffersSet>();
+		auto it = InsBufferDict->dict.find(std::string(evt.insBufferName));
+		if (it == InsBufferDict->dict.end()) {
 			return;
 		}
-		glBindBuffer(GL_ARRAY_BUFFER, it->second.bufID);
-		for (auto meshBuffer : com->buffers) {
-			EnabledMeshBufferInstance(meshBuffer, it->second);
+		auto it2 = meshBuffersSet->buffersDict.find(evt.meshID);
+		if (it2 == meshBuffersSet->buffersDict.end()) {
+			return;
 		}
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		*/
+		MeshBufferRefs& refs = it2->second;
+		BindMeshBufferInstance(refs[evt.subMeshIdx], it->second);
+	}
+
+	void BufferSystem::receive(const UnbindInstanceBufferEvent& evt) {
+		auto InsBufferDict = m_objMgr->getSingletonComponent<InstanceBufferDictCom>();
+		auto meshBuffersSet = m_objMgr->getSingletonComponent<MeshBuffersSet>();
+		auto it = meshBuffersSet->buffersDict.find(evt.meshID);
+		if (it == meshBuffersSet->buffersDict.end()) {
+			return;
+		}
+		MeshBufferRefs& refs = it->second;
+		UnbindMeshBufferInstance(refs[evt.subMeshIdx]);
 	}
 
 
-	void BufferSystem::receive(const DrawOneMeshBufferEvent& evt) {
+	void BufferSystem::receive(const DrawSubMeshBufferEvent& evt) {
 		drawMeshBuffer(evt.buf);
 	}
 
 	void BufferSystem::receive(const CreateInstanceBufferEvent& evt) {
 		auto com = m_objMgr->getSingletonComponent<InstanceBufferDictCom>();
+		auto it = com->dict.find(evt.aliasName);
+		if (it != com->dict.end()) {
+			return;
+		}
 		InstanceBufferRef buf;
 		glGenBuffers(1, &buf.bufID);
+		com->dict[std::string(evt.aliasName)] = buf;
+	}
+
+
+	void BufferSystem::receive(const DestroyInstanceBufferEvent& evt) {
+		auto com = m_objMgr->getSingletonComponent<InstanceBufferDictCom>();
+		auto it = com->dict.find(evt.aliasName);
+		if (it == com->dict.end()) {
+			return;
+		}
+		InstanceBufferRef& buf = it->second;
+		glDeleteBuffers(1, &buf.bufID);
+	}
+
+	void BufferSystem::receive(const UpdateInstanceBufferEvent& evt) {
+		auto com = m_objMgr->getSingletonComponent<InstanceBufferDictCom>();
+		auto it = com->dict.find(evt.aliasName);
+		if (it == com->dict.end()) {
+			return;
+		}
+		InstanceBufferRef& buf = it->second;
 		glBindBuffer(GL_ARRAY_BUFFER, buf.bufID);
 		glBufferData(GL_ARRAY_BUFFER, evt.instanceNum * evt.perBytes, evt.data, GL_STATIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		com->dict[std::string(evt.aliasName)] = buf;
 	}
 
     void BufferSystem::receive(const CreateDpethBufferEvent& evt) {
@@ -254,25 +289,37 @@ namespace renderer {
 		glBindVertexArray(0);
 	}
 
-	void BufferSystem::EnabledMeshBufferInstance(MeshBufferRef& buf, const InstanceBufferRef& insBuf) {
+	void BufferSystem::BindMeshBufferInstance(MeshBufferRef& buf, const InstanceBufferRef& insBuf) {
 		buf.instanced = true;
 		buf.insBuf = insBuf;
 		glBindVertexArray(buf.vao);
-		// set attribute pointers for matrix (4 times vec4)
-		glEnableVertexAttribArray(3);
-		glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4Value), (void*)0);
-		glEnableVertexAttribArray(4);
-		glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4Value), (void*)(sizeof(Matrix4x4Value)));
-		glEnableVertexAttribArray(5);
-		glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4Value), (void*)(2 * sizeof(Matrix4x4Value)));
-		glEnableVertexAttribArray(6);
-		glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4Value), (void*)(3 * sizeof(Matrix4x4Value)));
+		glBindBuffer(GL_ARRAY_BUFFER, insBuf.bufID);
 
-		glVertexAttribDivisor(3, 1);
+		// set attribute pointers for model matrix (4 times vec4)
+		// used for instance drawing
+		glEnableVertexAttribArray(4);
+		glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4Value), (void*)0);
+		glEnableVertexAttribArray(5);
+		glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4Value), (void*)(sizeof(Matrix4x4Value)));
+		glEnableVertexAttribArray(6);
+		glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4Value), (void*)(2 * sizeof(Matrix4x4Value)));
+		glEnableVertexAttribArray(7);
+		glVertexAttribPointer(7, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4Value), (void*)(3 * sizeof(Matrix4x4Value)));
+
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+
 		glVertexAttribDivisor(4, 1);
 		glVertexAttribDivisor(5, 1);
 		glVertexAttribDivisor(6, 1);
+		glVertexAttribDivisor(7, 1);
+
 		glBindVertexArray(0);
+	}
+
+	void BufferSystem::UnbindMeshBufferInstance(MeshBufferRef& buf) {
+		buf.instanced = false;
+		buf.insBuf.bufID = 0;
+		buf.insBuf.instanceNum = 1;
 	}
 
 	MeshBufferRef BufferSystem::CreateMeshBuffer(const SubMesh& subMesh) {
@@ -371,8 +418,7 @@ namespace renderer {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         return buf;
     }
-
-    
+ 
 	ColorBufferRef BufferSystem::CreateColorBuffer(
             size_t width, size_t height,
             int innerFormat, int format, int dataType,

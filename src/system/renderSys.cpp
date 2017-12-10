@@ -194,7 +194,7 @@ namespace renderer {
 				}
 				m_evtMgr->emit<ActiveMaterialEvent>(settingID, shader);
 			}
-			m_evtMgr->emit<DrawOneMeshBufferEvent>(meshBuffer);
+			m_evtMgr->emit<DrawSubMeshBufferEvent>(meshBuffer);
 			preSettingID = settingID;
 			// m_evtMgr->emit<DeactiveMaterialEvent>(settingID);
 		}*/

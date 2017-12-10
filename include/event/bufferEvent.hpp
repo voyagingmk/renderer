@@ -48,21 +48,32 @@ namespace renderer {
 		SubMeshIdx subMeshIdx;
 	};
 
-	class EnabledMeshBufferInstanceEvent : public ecs::Event<EnabledMeshBufferInstanceEvent> {
+	class BindInstanceBufferEvent : public ecs::Event<BindInstanceBufferEvent> {
 	public:
-		EnabledMeshBufferInstanceEvent(ecs::Object obj, const char* aliasName) :
-			obj(obj),
-			aliasName(aliasName)
+		BindInstanceBufferEvent(MeshID meshID, SubMeshIdx subMeshIdx, std::string insBufferName) :
+			meshID(meshID),
+			subMeshIdx(subMeshIdx),
+			insBufferName(insBufferName)
 		{}
-		ecs::Object obj;
-		const char* aliasName;
+		MeshID meshID;
+		SubMeshIdx subMeshIdx;
+		std::string insBufferName;
 	};
-	
+
+	class UnbindInstanceBufferEvent : public ecs::Event<UnbindInstanceBufferEvent> {
+	public:
+		UnbindInstanceBufferEvent(MeshID meshID, SubMeshIdx subMeshIdx) :
+			meshID(meshID),
+			subMeshIdx(subMeshIdx)
+		{}
+		MeshID meshID;
+		SubMeshIdx subMeshIdx;
+	};
 
 
-    class DrawOneMeshBufferEvent : public ecs::Event<DrawOneMeshBufferEvent> {
+    class DrawSubMeshBufferEvent : public ecs::Event<DrawSubMeshBufferEvent> {
     public:
-		DrawOneMeshBufferEvent(MeshBufferRef& buf):
+		DrawSubMeshBufferEvent(MeshBufferRef& buf):
 			buf(buf)
         {}
 		MeshBufferRef buf;
@@ -158,19 +169,35 @@ namespace renderer {
 
 	class CreateInstanceBufferEvent : public ecs::Event<CreateInstanceBufferEvent> {
 	public:
-		CreateInstanceBufferEvent(size_t instanceNum, 
-			size_t perBytes,
-			void* data,
-			const char* aliasName):
-			instanceNum(instanceNum),
-			perBytes(perBytes),
-			data(data),
+		CreateInstanceBufferEvent(std::string aliasName):
 			aliasName(aliasName)
 		{}
+		std::string aliasName;
+	};
+
+	class DestroyInstanceBufferEvent : public ecs::Event<DestroyInstanceBufferEvent> {
+	public:
+		DestroyInstanceBufferEvent(std::string aliasName) :
+			aliasName(aliasName)
+		{}
+		std::string aliasName;
+	};
+
+	class UpdateInstanceBufferEvent : public ecs::Event<UpdateInstanceBufferEvent> {
+	public:
+		UpdateInstanceBufferEvent(std::string aliasName,
+			size_t instanceNum,
+			size_t perBytes,
+			void* data) :
+			aliasName(aliasName),
+			instanceNum(instanceNum),
+			perBytes(perBytes),
+			data(data)
+		{}
+		std::string aliasName;
 		size_t instanceNum;
 		size_t perBytes;
 		void* data;
-		const char* aliasName;
 	};
 
     class CreateGBufferEvent : public ecs::Event<CreateGBufferEvent> {

@@ -297,7 +297,7 @@ namespace renderer {
 				&modelMatrices,
 				"teapotIns");*/
 
-			//m_evtMgr->emit<EnabledMeshBufferInstanceEvent>(objScene, "teapotIns");
+			//m_evtMgr->emit<BindInstanceBufferEvent>(objScene, "teapotIns");
 
 			objScene.addComponent<ReceiveLightTag>();
 			objScene.addComponent<RenderQueueTag>();

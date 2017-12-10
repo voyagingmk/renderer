@@ -65,6 +65,8 @@ objScene: 多个sceneObj可引用同一个objMeshes
 2个黄杯子可以合并成一个drawcall（instance)
 drawcall从8个变成4个
 
+默认
+
 objBatch：将多个同材质、同SubMesh的objScene合并，并创建matrix数组用来存各个objScene的modelMat
 batch流程：
 1.找出所有要渲染的staic obj，拆出一系列SubMesh、SetttingID(同SubMesh对应的材质不一定一样）, 根据MeshID分类:
