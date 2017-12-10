@@ -483,14 +483,11 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="..\include\event\textureEvent.hpp" />
     <ClInclude Include="..\include\event\winEvent.hpp" />
     <ClInclude Include="..\include\film.hpp" />
-    <ClInclude Include="..\include\intersect_result.hpp" />
     <ClInclude Include="..\include\main_ecs.hpp" />
     <ClInclude Include="..\include\main_realtime.hpp" />
-    <ClInclude Include="..\include\ray.hpp" />
     <ClInclude Include="..\include\realtime\glutils.hpp" />
     <ClInclude Include="..\include\realtime\importer.hpp" />
     <ClInclude Include="..\include\realtime\model.hpp" />
-    <ClInclude Include="..\include\realtime\renderer.hpp" />
     <ClInclude Include="..\include\sdf.hpp" />
     <ClInclude Include="..\include\system\batchSys.hpp" />
     <ClInclude Include="..\include\system\bufferSys.hpp" />
@@ -504,8 +501,8 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="..\include\system\renderSys.hpp" />
     <ClInclude Include="..\include\system\shaderSys.hpp" />
     <ClInclude Include="..\include\system\spatialSys.hpp" />
+    <ClInclude Include="..\include\system\statSys.hpp" />
     <ClInclude Include="..\include\system\textureSys.hpp" />
-    <ClInclude Include="..\include\transform.hpp" />
     <ClInclude Include="..\include\utils\defines.hpp" />
     <ClInclude Include="..\include\utils\draw.hpp" />
     <ClInclude Include="..\include\utils\error.hpp" />

@@ -342,7 +342,7 @@
             "model": "teapot.obj",
             "static": true,
             "spatial": [
-                [0, 0, 0],
+                [0, 0, 20],
                 [2, 2, 2],
                 [0, 0, 0]
             ]
@@ -351,7 +351,7 @@
             "model": "teapot.obj",
             "static": true,
             "spatial": [
-                [20, 0, 0],
+                [20, 0, 20],
                 [2, 2, 2],
                 [0, 0, 0]
             ]
