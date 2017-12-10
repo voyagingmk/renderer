@@ -7,11 +7,12 @@ namespace renderer {
 
 
 	void StatSystem::init(ObjectManager &objMgr, EventManager &evtMgr) {
-		printf("StatSystem init\n"); 
-    }
-    
+		printf("StatSystem init\n");
+	}
+
 
 	void StatSystem::update(ObjectManager &objMgr, EventManager &evtMgr, float dt) {
 
 	}
-    
+
+};

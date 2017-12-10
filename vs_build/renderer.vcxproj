@@ -414,6 +414,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="..\src\system\renderSys.cpp" />
     <ClCompile Include="..\src\system\shaderSys.cpp" />
     <ClCompile Include="..\src\system\spatialSys.cpp" />
+    <ClCompile Include="..\src\system\statSys.cpp" />
     <ClCompile Include="..\src\system\textureSys.cpp" />
     <ClCompile Include="..\src\system\uiSys.cpp" />
     <ClCompile Include="..\src\utils\defines.cpp" />

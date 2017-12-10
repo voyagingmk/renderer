@@ -15,6 +15,7 @@
 #include "system/uiSys.hpp"
 #include "system/lightSys.hpp"
 #include "system/batchSys.hpp"
+#include "system/statSys.hpp"
 
 using namespace ecs;
 using namespace renderer;
@@ -36,7 +37,9 @@ MainECS::MainECS() {
 
 void MainECS::setup() {
 	m_systemMgr.add<UISystem>();
+	m_systemMgr.add<StatSystem>();
     m_systemMgr.add<EnvSystem>();
+	m_systemMgr.add<BatchSystem>();
 	m_systemMgr.add<LightSystem>();
     m_systemMgr.add<TextureSystem>();
     m_systemMgr.add<ShaderSystem>();
@@ -48,7 +51,6 @@ void MainECS::setup() {
     m_systemMgr.add<MotionSystem>();
 	m_systemMgr.add<LoaderSystem>();
 	m_systemMgr.add<ConfigSystem>();
-	m_systemMgr.add<BatchSystem>();
 	m_systemMgr.init();
 }
 

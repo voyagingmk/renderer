@@ -61,9 +61,6 @@
     <ClCompile Include="..\src\system\envSys.cpp">
       <Filter>Source Files\system</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\main_ecs.cpp">
-      <Filter>Source Files\ecs</Filter>
-    </ClCompile>
     <ClCompile Include="..\include\ecs\object_manager.cpp">
       <Filter>Source Files\ecs</Filter>
     </ClCompile>
@@ -119,6 +116,12 @@
       <Filter>Source Files\com</Filter>
     </ClCompile>
     <ClCompile Include="..\src\system\uiSys.cpp">
+      <Filter>Source Files\system</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\main_ecs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\system\statSys.cpp">
       <Filter>Source Files\system</Filter>
     </ClCompile>
   </ItemGroup>
