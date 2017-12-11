@@ -103,7 +103,6 @@ namespace renderer {
 			vbo(0),
 			ebo(0),
 			vboIns(0), 
-			settingID(0),
 			instanced(false),
 			noIndices(false)
 		{}
@@ -112,7 +111,6 @@ namespace renderer {
 		BufferID vbo;
 		BufferID ebo;
 		BufferID vboIns;
-		MaterialSettingID settingID;
 		InstanceBufferRef insBuf;
 		bool instanced;
 		bool noIndices;

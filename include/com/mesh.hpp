@@ -51,38 +51,26 @@ namespace renderer {
 	typedef size_t MeshID;
 	typedef size_t SubMeshIdx;
 
-	// SubMeshÃ»ÓĞ×Ô¼ºµÄtransform
-	// Ö»ÊÇMeshµÄÒ»¸öpart
+	// SubMeshæ²¡æœ‰è‡ªå·±çš„transform
+	// åªæ˜¯Meshçš„ä¸€ä¸ªpart
     class SubMesh {
         public:
-			SubMesh():
-				settingID(0)
-			{}
             Vertices vertices;
 		    UIntArray indexes;
-			MaterialSettingID settingID; // default
     };
 
-	// SubMesh¼¯ºÏ
-	// ´¦Àí³¡¾°¹ÜÀí£¬²»ĞèÒªÉîÈëµ½SubMesh
-	// ´¦ÀíäÖÈ¾¶ÓÁĞ£¬ĞèÒªÉîÈëSubMesh£¬ÒòÎª²»Í¬SubMesh²ÄÖÊ²»Ò»Ñù
+	// SubMeshé›†åˆ
+	// å¤„ç†åœºæ™¯ç®¡ç†ï¼Œä¸éœ€è¦æ·±å…¥åˆ°SubMesh
+	// å¤„ç†æ¸²æŸ“é˜Ÿåˆ—ï¼Œéœ€è¦æ·±å…¥SubMeshï¼Œå› ä¸ºä¸åŒSubMeshæè´¨ä¸ä¸€æ ·
     class Mesh {
         public:
-			Mesh() {}
-            ~Mesh() {
-                meshes.clear();
-            }
-			Mesh(std::vector<SubMesh>& m)
-            {
-                std::copy(m.begin(), m.end(),
-                   std::back_inserter(meshes));
-            }
             std::vector<SubMesh> meshes;
+			std::vector<MaterialSettingID> settingIDs;
     };
 
-	// ³¡¾°¿ÉäÖÈ¾ÎïÌå£¬±ØĞë¼ÓMeshRef
-	// Í¨¹ıMeshRef´Ó¶ø¿ÉÒÔÊµÏÖMesh¹²ÓÃ
-	// MeshRef»¹¿ÉÒÔ¶ÔMesh×ö×Ô¶¨ÒåÉèÖÃ£¬ÈçSubMesh²ÄÖÊ°ó¶¨
+	// åœºæ™¯å¯æ¸²æŸ“ç‰©ä½“ï¼Œå¿…é¡»åŠ MeshRef
+	// é€šè¿‡MeshRefä»è€Œå¯ä»¥å®ç°Meshå…±ç”¨
+	// MeshRefè¿˜å¯ä»¥å¯¹Meshåšè‡ªå®šä¹‰è®¾ç½®ï¼Œå¦‚SubMeshæè´¨ç»‘å®š
 	struct MeshRef {
 		MeshRef(MeshID id) :
 			meshID(id),
@@ -94,7 +82,7 @@ namespace renderer {
 		{}
 		MeshID meshID;
 		std::string meshName;
-		std::map<SubMeshIdx, MaterialSettingID> settingIDs;
+		std::map<SubMeshIdx, MaterialSettingID> customSettingIDDict;
 	};
 
 	class MeshSet {
@@ -111,7 +99,10 @@ namespace renderer {
 		Mesh& getMesh(MeshRef& ref) {
 			MeshID meshID = ref.meshID | alias2id[ref.meshName];
 			return meshDict[ref.meshID];
-		}
+        }
+        Mesh& getMesh(MeshID meshID) {
+            return meshDict[meshID];
+        }
 		std::map<MeshID, Mesh> meshDict;
 		std::map<std::string, MeshID> alias2id;
 		MeshID idCount;

@@ -325,7 +325,6 @@ namespace renderer {
 	MeshBufferRef BufferSystem::CreateMeshBuffer(const SubMesh& subMesh) {
 		GLuint VBO, VAO, EBO;
 		MeshBufferRef meshBuffer;
-		meshBuffer.settingID = subMesh.settingID;
 		glGenVertexArrays(1, &VAO);
 		glGenBuffers(1, &VBO);
 		glGenBuffers(1, &EBO);

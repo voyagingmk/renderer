@@ -444,8 +444,7 @@ namespace renderer {
 			}
 			mesh.meshes.emplace_back();
 			SubMesh& subMesh = *std::prev(mesh.meshes.end());
-			subMesh.settingID = settingIDs[aimesh->mMaterialIndex];
-			std::cout << "[LoaderSystem] subMesh settingID:" << subMesh.settingID << std::endl;
+			mesh.settingIDs.push_back(settingIDs[aimesh->mMaterialIndex]);
 			for (uint32_t i = 0; i < aimesh->mNumVertices; i++)
 			{
 				Vertex v;

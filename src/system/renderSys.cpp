@@ -172,7 +172,8 @@ namespace renderer {
 			Mesh& mesh = meshSet->meshDict[meshID];
 			for (uint32_t subMeshIdx = 0; subMeshIdx < mesh.meshes.size(); subMeshIdx++) {
 				SubMesh& subMesh = mesh.meshes[subMeshIdx];
-				m_evtMgr->emit<ActiveMaterialEvent>(subMesh.settingID, shader);
+				auto settingID = mesh.settingIDs[subMeshIdx];
+				m_evtMgr->emit<ActiveMaterialEvent>(settingID, shader);
 				m_evtMgr->emit<DrawMeshBufferEvent>(meshID, subMeshIdx);
 			}
 		}

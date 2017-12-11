@@ -42,31 +42,56 @@ namespace renderer {
         for(auto objBatch: objBatchList) {
             objBatch.destroy();
         }
-		// ËùÎ½batchÊÇÖ¸°ÑÍ¬²ÄÖÊ¡¢Í¬MeshIDµÄobjÒ»ÆğäÖÈ¾
-		// ¹Ø¼üµã1£ºdraw instance ±ØĞëÊÇÍ¬²ÄÖÊ£¬ËùÒÔ²»Í¬²ÄÖÊµÄobj²»ÄÜ·Åµ½instanceÀïÒ»ÆğäÖÈ¾
-		// ¹Ø¼üµã2£ºÍ¬MeshµÄ¸÷¸öSubMesh¿ÉÒÔ¹²ÓÃinstance buffer£¬ÒòÎª¸÷¸öSubMeshµÄmodel matrixÒ»Ñù
-		// ¹Ø¼üµã3£ºÍ¬MeshIDµÄobj²Å¿ÉÄÜ×é³Éinstance£¬ËùÒÔÏÈ¸ù¾İMeshID·ÖÀà
-		// ¹Ø¼üµã4£º²»Í¬MeshID£¬µ«²ÄÖÊIDÏàÍ¬£¬ÊÇÎŞ·¨batchµÄ
-
-		// ²½Öè:
-		// 1.¸ù¾İMeshID¶ÔËùÓĞÒªäÖÈ¾µÄobj×ö·ÖÀà£»
-		// 2.±éÀúÍ¬MeshIDµÄobj£º
-		//     ±éÀúËùÓĞSubMesh£¬¸ù¾İmatID·ÖÀà£º
-		//		  °ÑobjID·Å½ø batch(MeshID, subMeshIdx, matID): objIDs 
-		// 3.¶ÔÓÚÃ¿Ò»¸öbatch(MeshID, matID)
-		//     ·¢ÉäCreateInstanceBufferEvent
-		//     Éú³ÉÒ»¸öobjBatch£¬°Ñbatch(MeshID, subMeshIdx, matID): objIDsĞÅÏ¢·Å½øÕâ¸öobj
-		//     °Ñinstance buffer¼ÇÂ¼½øÕâ¸öobj
-		
-		// äÖÈ¾£º
-		// 1.±éÀúËùÓĞobjBatch£¬¶ÁÈ¡batch(MeshID, subMeshIdx, matID)
-		// 2.ÓÃmeshIDD, subMeshIdx£¬ÕÒµ½SubMeshµÄMeshBufferRef
-		// 3.¸ù¾İmatIDÉèÖÃ²ÄÖÊ
-		// 4.·¢ÉäBindInstanceBufferEvent(meshIDD, subMeshIdx, insBufferName)
-		// 5.´ËÊ±¾Í×¼±¸ºÃÁËinstance drawµÄÌõ¼ş£¬²îÉèÖÃinstanceµÄmodel matrix
-		// 6.±éÀúbatchedµÄobjIDs£¬Éú³Émodel matrixÊı×é, ·¢ÉäUpdateInstanceBufferEvent
-		// 7.·¢ÉäDrawSubMeshBufferEvent
-		// 8.·¢ÉäUnbindInstanceBufferEvent(meshIDD, subMeshIdx, insBufferName)
+		// æ‰€è°“batchæ˜¯æŒ‡æŠŠåŒæè´¨ã€åŒMeshIDçš„objä¸€èµ·æ¸²æŸ“
+		// å…³é”®ç‚¹1ï¼šdraw instance å¿…é¡»æ˜¯åŒæè´¨ï¼Œæ‰€ä»¥ä¸åŒæè´¨çš„SubMeshä¸èƒ½æ”¾åˆ°instanceé‡Œä¸€èµ·æ¸²æŸ“
+		// å…³é”®ç‚¹2ï¼šåŒMeshçš„å„ä¸ªSubMeshå¯ä»¥å…±ç”¨instance bufferï¼Œå› ä¸ºå„ä¸ªSubMeshçš„model matrixä¸€æ ·
+		// å…³é”®ç‚¹3ï¼šåŒMeshIDçš„objæ‰å¯èƒ½ç»„æˆinstanceï¼Œæ‰€ä»¥å…ˆæ ¹æ®MeshIDåˆ†ç±»
+		// å…³é”®ç‚¹4ï¼šä¸åŒMeshIDï¼Œä½†æè´¨IDç›¸åŒï¼Œæ˜¯æ— æ³•batchçš„
+        
+		// æ­¥éª¤:
+		// 1.æ ¹æ®MeshIDå¯¹æ‰€æœ‰è¦æ¸²æŸ“çš„objåšåˆ†ç±»ï¼›
+		// 2.éå†åŒMeshIDçš„objï¼š
+		//     éå†æ‰€æœ‰SubMeshï¼Œæ ¹æ®matIDåˆ†ç±»ï¼š
+		//		  æŠŠobjIDæ”¾è¿› batch(MeshID, subMeshIdx, matID): objIDs
+		// 3.å¯¹äºæ¯ä¸€ä¸ªbatchKey
+		//     å‘å°„CreateInstanceBufferEvent
+		//     ç”Ÿæˆä¸€ä¸ªobjBatchï¼ŒæŠŠbatch(MeshID, subMeshIdx, matID): objIDsä¿¡æ¯æ”¾è¿›è¿™ä¸ªobj
+		//     æŠŠinstance bufferè®°å½•è¿›è¿™ä¸ªobj
+        
+        std::map<MeshID, std::vector<ObjectID>> meshID2ObjIDs;
+        std::map<std::tuple<MeshID, SubMeshIdx, MaterialSettingID>, std::vector<ObjectID>> batchKey2ObjIDs;
+        for (const Object objScene : m_objMgr->entities<MeshRef, RenderQueueTag, StaticObjTag>()) {
+            auto meshRef = objScene.component<MeshRef>();
+            auto it = meshID2ObjIDs.find(meshRef->meshID);
+            if (it == meshID2ObjIDs.end()) {
+                meshID2ObjIDs.insert({meshRef->meshID, {}});
+            }
+            std::vector<ObjectID>& objIDs = meshID2ObjIDs[meshRef->meshID];
+            objIDs.push_back(objScene.ID());
+        }
+        for (auto it: meshID2ObjIDs) {
+            MeshID meshID = it.first;
+            Mesh& mesh = meshSet->getMesh(meshID);
+            for (SubMeshIdx idx = 0; idx < mesh.meshes.size(); idx++) {
+                MaterialSettingID settingID = mesh.settingIDs[idx];
+                // meshID2ObjIDs
+                auto key = std::make_tuple(meshID, idx, settingID);
+                if (batchKey2ObjIDs.find(key) == batchKey2ObjIDs.end()){
+                    batchKey2ObjIDs.insert({key, {}});
+                }
+                // std::vector<ObjectID>& objIDs =  batchKey2ObjIDs[key];
+                // objIDs.push_back()
+            }
+        }
+		// æ¸²æŸ“ï¼š
+		// 1.éå†æ‰€æœ‰objBatchï¼Œè¯»å–batch(MeshID, subMeshIdx, matID)
+		// 2.ç”¨meshIDD, subMeshIdxï¼Œæ‰¾åˆ°SubMeshçš„MeshBufferRef
+		// 3.æ ¹æ®matIDè®¾ç½®æè´¨
+		// 4.å‘å°„BindInstanceBufferEvent(meshIDD, subMeshIdx, insBufferName)
+		// 5.æ­¤æ—¶å°±å‡†å¤‡å¥½äº†instance drawçš„æ¡ä»¶ï¼Œå·®è®¾ç½®instanceçš„model matrix
+		// 6.éå†batchedçš„objIDsï¼Œç”Ÿæˆmodel matrixæ•°ç»„, å‘å°„UpdateInstanceBufferEvent
+		// 7.å‘å°„DrawSubMeshBufferEvent
+		// 8.å‘å°„UnbindInstanceBufferEvent(meshIDD, subMeshIdx, insBufferName)
 
 		// collect all ID
        //  objBatch-> [subMesh: MatID]: [objScene1, objScene2, ...]
