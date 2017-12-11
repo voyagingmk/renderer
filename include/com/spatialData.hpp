@@ -2,6 +2,7 @@
 #define RENDERER_COM_SPATIALDATA_HPP
 
 #include "base.hpp"
+#include "ecs/setting.hpp"
 #include "geometry.hpp"
 #include "quaternion.hpp"
 #include "transform.hpp"
@@ -19,6 +20,11 @@ namespace renderer {
         Vector3dF scale;
         QuaternionF orientation;
         Transform4x4 o2w;
+	};
+
+	struct SceneGraphNode {
+		ecs::ObjectID parent;
+		std::vector<ecs::ObjectID> children;
 	};
 
 }

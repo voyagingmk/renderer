@@ -412,6 +412,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="..\src\system\materialSys.cpp" />
     <ClCompile Include="..\src\system\motionSys.cpp" />
     <ClCompile Include="..\src\system\renderSys.cpp" />
+    <ClCompile Include="..\src\system\sceneGraphSys.cpp" />
     <ClCompile Include="..\src\system\shaderSys.cpp" />
     <ClCompile Include="..\src\system\spatialSys.cpp" />
     <ClCompile Include="..\src\system\statSys.cpp" />
@@ -442,7 +443,6 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="..\external\SOIL\stbi_DDS_aug_c.h" />
     <ClInclude Include="..\external\SOIL\stb_image_aug.h" />
     <ClInclude Include="..\include\base.hpp" />
-    <ClInclude Include="..\include\camera.hpp" />
     <ClInclude Include="..\include\catch.hpp" />
     <ClInclude Include="..\include\com\bbox.hpp" />
     <ClInclude Include="..\include\com\bufferCom.hpp" />
@@ -500,6 +500,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="..\include\system\materialSys.hpp" />
     <ClInclude Include="..\include\system\motionSys.hpp" />
     <ClInclude Include="..\include\system\renderSys.hpp" />
+    <ClInclude Include="..\include\system\sceneGraphSys.hpp" />
     <ClInclude Include="..\include\system\shaderSys.hpp" />
     <ClInclude Include="..\include\system\spatialSys.hpp" />
     <ClInclude Include="..\include\system\statSys.hpp" />

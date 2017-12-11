@@ -21,13 +21,13 @@ namespace renderer {
 		
 		void receive(const LoadConfigEvent &evt);
 
-		void CreateGlobalQuadObject();
+	private:
 
-		void CreateGLobalSkyboxObject();
+		void CreateGlobalQuadObject();
 
 		void loadLights(const json &config);
 
-		void loadSceneObjects(const json &config);
+		Object loadSceneObjects(const json &, const json &);
 
 		void loadTextures(std::string texDir, const json &config);
 
@@ -41,7 +41,6 @@ namespace renderer {
 
 		void loadSkyboxMesh();
 
-	private:
 		void loadSpatialData(Object obj, const json &config);
 
 	};

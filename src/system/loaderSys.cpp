@@ -97,8 +97,9 @@ namespace renderer {
 		loadSkyboxes(assetsDir + skyboxSubDir, config);
         loadShaders(assetsDir + shaderSubDir, config);
         loadMaterials(config);
-		loadSceneObjects(config); 
 		loadLights(config);
+		Object rootObj = loadSceneObjects(config, config["sceneRoot"]);
+		rootObj.addComponent<RootNodeTag>();
 
 		m_evtMgr->emit<CreateColorBufferEvent>(
 			winWidth, winHeight,
@@ -282,54 +283,54 @@ namespace renderer {
 		}
 	}
 
-	void LoaderSystem::loadSceneObjects(const json &config) {
-
-		for (auto objInfo : config["object"])
-		{
-			Object objScene = m_objMgr->create();
+	Object LoaderSystem::loadSceneObjects(const json &config, const json &objInfo) {
+		Object objScene = m_objMgr->create();
+		auto sgNode = objScene.addComponent<SceneGraphNode>();
+		auto spatial = objInfo["spatial"];
+		loadSpatialData(objScene, spatial);
+		bool hasModel = objInfo["model"].is_string();
+		if (hasModel) {
 			std::string filename = objInfo["model"];
-			auto spatial = objInfo["spatial"];
-			loadSpatialData(objScene, spatial);
 			MeshID meshID = loadMesh(config, filename);
 			objScene.addComponent<MeshRef>(meshID);
-			/*m_evtMgr->emit<CreateInstanceBufferEvent>(instanceNum,
-				sizeof(Matrix4x4Value),
-				&modelMatrices,
-				"teapotIns");*/
-
-			//m_evtMgr->emit<BindInstanceBufferEvent>(objScene, "teapotIns");
-
 			objScene.addComponent<ReceiveLightTag>();
 			objScene.addComponent<RenderQueueTag>();
-
-			if (objInfo["static"].is_boolean() && bool(objInfo["static"]) == true) {
-				objScene.addComponent<StaticObjTag>();
-			}
-			else {
-				objScene.addComponent<DynamicObjTag>();
-			}
-
-			objScene.addComponent<MotionCom>();
-			{
-				ActionData data;
-				data.repeat = 1;
-				//data.actions.push_back(std::make_shared<MoveByAction>(0.5f, Vector3dF(-1.0f, 0.0f, 0.0f)));
-				//data.actions.push_back(std::make_shared<MoveByAction>(0.5f, Vector3dF(1.0f, 0.0f, 0.0f)));
-				data.actions.push_back(std::make_shared<RotateByAction>(1.0f, DegreeF(0.0f), DegreeF(90.0f), DegreeF(90.0f)));
-				data.actions.push_back(std::make_shared<RotateByAction>(1.0f, DegreeF(0.0f), DegreeF(90.0f), DegreeF(90.0f), true));
-				// m_evtMgr->emit<AddActionEvent>(objScene, "rotate", data);
-			}
-			{
-				ActionData data;
-				data.repeat = -1;
-				//data.actions.push_back(std::make_shared<MoveByAction>(0.5f, Vector3dF(-1.0f, 0.0f, 0.0f)));
-				//data.actions.push_back(std::make_shared<MoveByAction>(0.5f, Vector3dF(1.0f, 0.0f, 0.0f)));
-				data.actions.push_back(std::make_shared<MoveByAction>(1.0f, Vector3dF{ 3.0f, 0.0f, 0.0f }));
-				data.actions.push_back(std::make_shared<MoveByAction>(1.0f, Vector3dF{ -3.0f, 0.0f, 0.0f }));
-				//m_evtMgr->emit<AddActionEvent>(objScene, "move", data);
-			}
 		}
+		if (objInfo["static"].is_boolean() && bool(objInfo["static"]) == true) {
+			objScene.addComponent<StaticObjTag>();
+		}
+		else {
+			objScene.addComponent<DynamicObjTag>();
+		}
+		for (auto childObjInfo : objInfo["children"])
+		{
+			Object childObj = loadSceneObjects(config, childObjInfo);
+			sgNode->children.push_back(childObj.ID());
+		}
+
+		return objScene;
 	}
+
+	/*
+	objScene.addComponent<MotionCom>();
+	{
+		ActionData data;
+		data.repeat = 1;
+		//data.actions.push_back(std::make_shared<MoveByAction>(0.5f, Vector3dF(-1.0f, 0.0f, 0.0f)));
+		//data.actions.push_back(std::make_shared<MoveByAction>(0.5f, Vector3dF(1.0f, 0.0f, 0.0f)));
+		data.actions.push_back(std::make_shared<RotateByAction>(1.0f, DegreeF(0.0f), DegreeF(90.0f), DegreeF(90.0f)));
+		data.actions.push_back(std::make_shared<RotateByAction>(1.0f, DegreeF(0.0f), DegreeF(90.0f), DegreeF(90.0f), true));
+		// m_evtMgr->emit<AddActionEvent>(objScene, "rotate", data);
+	}
+	{
+		ActionData data;
+		data.repeat = -1;
+		//data.actions.push_back(std::make_shared<MoveByAction>(0.5f, Vector3dF(-1.0f, 0.0f, 0.0f)));
+		//data.actions.push_back(std::make_shared<MoveByAction>(0.5f, Vector3dF(1.0f, 0.0f, 0.0f)));
+		data.actions.push_back(std::make_shared<MoveByAction>(1.0f, Vector3dF{ 3.0f, 0.0f, 0.0f }));
+		data.actions.push_back(std::make_shared<MoveByAction>(1.0f, Vector3dF{ -3.0f, 0.0f, 0.0f }));
+		//m_evtMgr->emit<AddActionEvent>(objScene, "move", data);
+	}*/
 
 	void LoaderSystem::loadTextures(string texDir, const json &config)
 	{

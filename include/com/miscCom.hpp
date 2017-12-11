@@ -27,6 +27,8 @@ namespace renderer {
     
     struct DynamicBatchObjTag : public TagComBase {};
 
+	struct RootNodeTag : public TagComBase {};
+
     
 	typedef int BufIdx;
 	typedef std::vector<std::tuple<ecs::ObjectID, ecs::ObjectID, BufIdx>> RenderQueue;

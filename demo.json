@@ -310,53 +310,70 @@
             "shadow": true
         }
     ],
-    "object": [      
-        {
-            "model": "plane.obj",
-            "static": true,
-            "spatial": [
-                [0, 0, 0],
-                [100, 100, 100],
-                [0, 0, 0]
-            ]
-        },
-        {
-            "model": "teapot.obj",
-            "static": true,
-            "spatial": [
-                [0, 0, 0],
-                [2, 2, 2],
-                [0, 0, 0]
-            ]
-        },
-        {
-            "model": "teapot.obj",
-            "static": true,
-            "spatial": [
-                [20, 0, 0],
-                [2, 2, 2],
-                [0, 0, 0]
-            ]
-        },
-        {
-            "model": "teapot.obj",
-            "static": true,
-            "spatial": [
-                [0, 0, 20],
-                [2, 2, 2],
-                [0, 0, 0]
-            ]
-        },
-        {
-            "model": "teapot.obj",
-            "static": true,
-            "spatial": [
-                [20, 0, 20],
-                [2, 2, 2],
-                [0, 0, 0]
-            ]
-        }
-    ],
+    "sceneRoot": {  
+        "spatial": [
+            [0, 0, 0],
+            [1, 1, 1],
+            [0, 0, 0]
+        ],
+        "children": [
+            {
+                "model": "plane.obj",
+                "static": true,
+                "spatial": [
+                    [0, 0, 0],
+                    [100, 100, 100],
+                    [0, 0, 0]
+                ]
+            },
+            {
+                "static": true,
+                "spatial": [
+                    [0, 0, 0],
+                    [1, 1, 1],
+                    [0, 0, 0]
+                ],
+                "children": [
+                    {
+                        "model": "teapot.obj",
+                        "static": true,
+                        "spatial": [
+                            [0, 0, 0],
+                            [2, 2, 2],
+                            [0, 0, 0]
+                        ]
+                    },
+                    {
+                        "model": "teapot.obj",
+                        "static": true,
+                        "spatial": [
+                            [20, 0, 0],
+                            [2, 2, 2],
+                            [0, 0, 0]
+                        ]
+                    },
+                    {
+                        "model": "teapot.obj",
+                        "static": true,
+                        "spatial": [
+                            [0, 0, 20],
+                            [2, 2, 2],
+                            [0, 0, 0]
+                        ]
+                    },
+                    {
+                        "model": "teapot.obj",
+                        "static": true,
+                        "spatial": [
+                            [20, 0, 20],
+                            [2, 2, 2],
+                            [0, 0, 0]
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
     "object0": [      
         {
             "model": "sponza.obj",

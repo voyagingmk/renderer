@@ -124,6 +124,9 @@
     <ClCompile Include="..\src\system\statSys.cpp">
       <Filter>Source Files\system</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\system\sceneGraphSys.cpp">
+      <Filter>Source Files\system</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="D:\workplace\github\renderer\CMakeLists.txt" />
@@ -238,9 +241,6 @@
     </ClInclude>
     <ClInclude Include="..\include\event\bufferEvent.hpp">
       <Filter>Header Files\event</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\camera.hpp">
-      <Filter>Header Files\com</Filter>
     </ClInclude>
     <ClInclude Include="..\include\com\cameraCom.hpp">
       <Filter>Header Files\com</Filter>
@@ -388,6 +388,9 @@
     </ClInclude>
     <ClInclude Include="..\include\ecs\manager.hpp">
       <Filter>Header Files\ecs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\system\sceneGraphSys.hpp">
+      <Filter>Header Files\system</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
