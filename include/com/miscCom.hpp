@@ -5,6 +5,7 @@
 #include "ecs/setting.hpp"
 #include "com/matrix.hpp"
 #include "com/materialCom.hpp"
+#include "com/mesh.hpp"
 
 namespace renderer {
     
@@ -42,10 +43,10 @@ namespace renderer {
     // 每个batch的材质ID一致、SubMesh一致
     struct BatchInfoCom {
         MaterialSettingID settingID;
-		ecs::ObjectID meshObjID; // 找到目标mesh
-		uint32_t subMeshIdx; // 找到目标Mesh的SubMesh
+		MeshID meshID;
+		SubMeshIdx subMeshIdx;
         // 长度一致
-        std::vector<ecs::ObjectID> objIDList;
+        std::vector<ecs::ObjectID> objIDs;
         std::vector<Matrix4x4Value> modelMatrixes;
     };
 

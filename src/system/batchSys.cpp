@@ -47,13 +47,13 @@ namespace renderer {
 		// 关键点2：同Mesh的各个SubMesh可以共用instance buffer，因为各个SubMesh的model matrix一样
 		// 关键点3：同MeshID的obj才可能组成instance，所以先根据MeshID分类
 		// 关键点4：不同MeshID，但材质ID相同，是无法batch的
-        
+        // 假设MeshRef没有自定义SubMesh材质，那么同MeshID的objs，只需要创建一个instance buffer，
+        // 有多少个SubMesh，就需要多少个drawCall，这些drawcall共用这个instance buffer
 		// 步骤:
-		// 1.根据MeshID对所有要渲染的obj做分类；
-		// 2.遍历同MeshID的obj：
-		//     遍历所有SubMesh，根据matID分类：
+		// 1.遍历待渲染的obj：
+		//     遍历所有obj的SubMesh，并求出matID：
 		//		  把objID放进 batch(MeshID, subMeshIdx, matID): objIDs
-		// 3.对于每一个batchKey
+		// 2.对于每一个batchKey
 		//     发射CreateInstanceBufferEvent
 		//     生成一个objBatch，把batch(MeshID, subMeshIdx, matID): objIDs信息放进这个obj
 		//     把instance buffer记录进这个obj
@@ -62,26 +62,37 @@ namespace renderer {
         std::map<std::tuple<MeshID, SubMeshIdx, MaterialSettingID>, std::vector<ObjectID>> batchKey2ObjIDs;
         for (const Object objScene : m_objMgr->entities<MeshRef, RenderQueueTag, StaticObjTag>()) {
             auto meshRef = objScene.component<MeshRef>();
-            auto it = meshID2ObjIDs.find(meshRef->meshID);
-            if (it == meshID2ObjIDs.end()) {
-                meshID2ObjIDs.insert({meshRef->meshID, {}});
-            }
-            std::vector<ObjectID>& objIDs = meshID2ObjIDs[meshRef->meshID];
-            objIDs.push_back(objScene.ID());
-        }
-        for (auto it: meshID2ObjIDs) {
-            MeshID meshID = it.first;
+            MeshID meshID = meshRef->meshID;
             Mesh& mesh = meshSet->getMesh(meshID);
             for (SubMeshIdx idx = 0; idx < mesh.meshes.size(); idx++) {
                 MaterialSettingID settingID = mesh.settingIDs[idx];
+                if (meshRef->customSettingIDDict[idx]) {
+                    settingID = meshRef->customSettingIDDict[idx];
+                }
                 // meshID2ObjIDs
                 auto key = std::make_tuple(meshID, idx, settingID);
-                if (batchKey2ObjIDs.find(key) == batchKey2ObjIDs.end()){
+                if (batchKey2ObjIDs.find(key) == batchKey2ObjIDs.end()) {
                     batchKey2ObjIDs.insert({key, {}});
                 }
-                // std::vector<ObjectID>& objIDs =  batchKey2ObjIDs[key];
-                // objIDs.push_back()
+                std::vector<ObjectID>& objIDs = batchKey2ObjIDs[key];
+                objIDs.push_back(objScene.ID());
             }
+        }
+        for (auto it: batchKey2ObjIDs) {
+            auto key = it.first;
+            auto objIDs = it.second;
+            auto objBatch = m_objMgr->create();
+            auto batchInfoCom = objBatch.addComponent<BatchInfoCom>();
+            MeshID meshID;
+            SubMeshIdx subMeshIdx;
+            MaterialSettingID settingID;
+            std::tie(meshID, subMeshIdx, settingID) = key;
+            batchInfoCom->meshID = meshID;
+            batchInfoCom->settingID = settingID;
+            batchInfoCom->subMeshIdx = subMeshIdx;
+            batchInfoCom->objIDs = objIDs;
+            batchInfoCom->modelMatrixes.resize(objIDs.size());
+            // 把obj的mdel矩阵填进去
         }
 		// 渲染：
 		// 1.遍历所有objBatch，读取batch(MeshID, subMeshIdx, matID)
@@ -93,17 +104,6 @@ namespace renderer {
 		// 7.发射DrawSubMeshBufferEvent
 		// 8.发射UnbindInstanceBufferEvent(meshIDD, subMeshIdx, insBufferName)
 
-		// collect all ID
-       //  objBatch-> [subMesh: MatID]: [objScene1, objScene2, ...]
-        
-        // [ [objScene, objMesh, subMeshBufferIdx] ]
-		for (const Object objScene : m_objMgr->entities<MeshRef, RenderQueueTag, StaticObjTag>()) {
-			auto meshRef = objScene.component<MeshRef>();
-			Mesh& mesh = meshSet->getMesh(*meshRef.get());
-            for (BufIdx subMeshIdx = 0; subMeshIdx < mesh.meshes.size(); subMeshIdx++) {
-               // queue.push_back(std::make_pair(obj.ID(), idx));
-            }
-		}
 		// sort by materialID
 		/*
 		std::sort(queue.begin(), queue.end(), [&](std::pair<ObjectID, BufIdx> a, std::pair<ObjectID, BufIdx> b) -> bool {
