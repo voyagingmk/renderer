@@ -33,12 +33,8 @@ namespace renderer {
 
     private:
 		void updateRenderQueue();
-
-        void setViewport(const Viewport& viewport);
         
         void scissorView(const Viewport& viewport);
-        
-        void clearView(const Color clearColor, const uint32_t clearBits);
         
 		void renderQuad();
 

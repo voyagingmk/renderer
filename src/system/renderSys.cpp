@@ -24,7 +24,6 @@ using namespace std;
 namespace renderer {
 	void RenderSystem::init(ObjectManager &objMgr, EventManager &evtMgr) {
 		printf("RenderSystem init\n");
-		evtMgr.on<RenderSceneEvent>(*this);
 		evtMgr.on<CameraMoveEvent>(*this);
 	}
 	// renderpipe loop, could move to another system
@@ -130,13 +129,7 @@ namespace renderer {
 	void RenderSystem::receive(const CameraMoveEvent &evt) {
 
 	}
-    
-    void RenderSystem::setViewport(const Viewport& viewport) {
-        glViewport(std::get<0>(viewport),
-                   std::get<1>(viewport),
-                   std::get<2>(viewport),
-                   std::get<3>(viewport));
-    }
+
     
     void RenderSystem::scissorView(const Viewport& viewport) {
         glScissor(std::get<0>(viewport),
@@ -144,62 +137,6 @@ namespace renderer {
                    std::get<2>(viewport),
                    std::get<3>(viewport));
     }
-    
-    void RenderSystem::clearView(const Color clearColor, const uint32_t clearBits) {
-        glClearColor(clearColor.r(), clearColor.g(), clearColor.b(), clearColor.a());
-        glClear(clearBits);
-    }
-    
-	void RenderSystem::receive(const RenderSceneEvent &evt) {
-		auto meshSet = m_objMgr->getSingletonComponent<MeshSet>();
-		auto matSetCom = m_objMgr->getSingletonComponent<MaterialSet>();
-		auto renderQueueCom = m_objMgr->getSingletonComponent<StaticRenderQueueCom>();
-		glEnable(GL_DEPTH_TEST);
-        setViewport(evt.viewport);
-        clearView(evt.clearColor, evt.clearBits);
-		Shader shader;
-
-		if (evt.shader != nullptr) {
-			shader = *evt.shader;
-			shader.use();
-		}
-		MaterialSettingID preSettingID = -1;
-		for (auto obj : m_objMgr->entities<MeshRef, StaticObjTag>()) {
-			auto meshRef = obj.component<MeshRef>();
-			m_evtMgr->emit<UploadCameraToShaderEvent>(evt.objCamera, shader);
-			m_evtMgr->emit<UploadMatrixToShaderEvent>(obj, shader);
-			auto meshID = meshRef->meshID;
-			Mesh& mesh = meshSet->meshDict[meshID];
-			for (uint32_t subMeshIdx = 0; subMeshIdx < mesh.meshes.size(); subMeshIdx++) {
-				SubMesh& subMesh = mesh.meshes[subMeshIdx];
-				auto settingID = mesh.settingIDs[subMeshIdx];
-				m_evtMgr->emit<ActiveMaterialEvent>(settingID, shader);
-				m_evtMgr->emit<DrawMeshBufferEvent>(meshID, subMeshIdx);
-			}
-		}
-		/*
-		for (auto e: renderQueueCom->queue) {
-			Object obj = m_objMgr->get(e.first);
-			BufIdx bufIdx = e.second;
-			auto matCom = obj.component<MaterialCom>();		 
-			m_evtMgr->emit<UploadCameraToShaderEvent>(evt.objCamera, shader);	 
-			m_evtMgr->emit<UploadMatrixToShaderEvent>(obj, shader);
-			auto meshBufferCom = obj.component<MeshBuffersCom>();
-			auto meshBuffer = meshBufferCom->buffers[bufIdx];
-			auto settingID = matCom->settingIDs[meshBuffer.matIdx];	
-			if (preSettingID != settingID) {
-				auto setting = matSetCom->settingDict[settingID];
-				if (evt.shader == nullptr) {
-					shader = getShader(setting);
-					shader.use();
-				}
-				m_evtMgr->emit<ActiveMaterialEvent>(settingID, shader);
-			}
-			m_evtMgr->emit<DrawSubMeshBufferEvent>(meshBuffer);
-			preSettingID = settingID;
-			// m_evtMgr->emit<DeactiveMaterialEvent>(settingID);
-		}*/
-	}
 
 	Shader RenderSystem::getShader(MaterialSettingBase* com) {
 		return getShader(com->shaderName);

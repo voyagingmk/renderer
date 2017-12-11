@@ -486,7 +486,6 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="..\include\film.hpp" />
     <ClInclude Include="..\include\main_ecs.hpp" />
     <ClInclude Include="..\include\main_realtime.hpp" />
-    <ClInclude Include="..\include\realtime\glutils.hpp" />
     <ClInclude Include="..\include\realtime\importer.hpp" />
     <ClInclude Include="..\include\realtime\model.hpp" />
     <ClInclude Include="..\include\sdf.hpp" />
@@ -508,6 +507,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="..\include\utils\defines.hpp" />
     <ClInclude Include="..\include\utils\draw.hpp" />
     <ClInclude Include="..\include\utils\error.hpp" />
+    <ClInclude Include="..\include\utils\glutils.hpp" />
     <ClInclude Include="..\include\utils\helper.hpp" />
     <ClInclude Include="..\include\utils\MemoryPool.hpp" />
     <ClInclude Include="..\include\utils\profiler.hpp" />
