@@ -17,14 +17,14 @@ namespace renderer {
 
 		void update(ObjectManager &objMgr, EventManager &evtMgr, float dt) override;
 
-		void receive(const StaticBatchEvent& evt);
+		void receive(const UpdateBatchEvent& evt);
 
 		void receive(const ComponentAddedEvent<DynamicObjTag>& evt);
 
 		void receive(const ComponentRemovedEvent<DynamicObjTag> &evt);
 
 	private:
-		void updateStaticRenderQueue();
+		void UpdateBatch(Object objScene, bool recursive);
 
 		void updateDynamicRenderQueue();
 	};

@@ -3,9 +3,16 @@
 #include "com/bufferCom.hpp"
 #include "com/materialCom.hpp"
 #include "com/mesh.hpp"
+#include "com/spatialData.hpp"
 
 using json = nlohmann::json;
 using namespace std;
+
+// 所谓batch是指把同材质、同MeshID的obj一起渲染
+// 关键点1：draw instance 必须是同材质，所以不同材质的SubMesh不能放到instance里一起渲染
+// 关键点2：同Mesh的各个SubMesh可以共用instance buffer，因为各个SubMesh的model matrix一样
+// 关键点3：同MeshID的obj才可能组成instance，所以先根据MeshID分类
+// 关键点4：不同MeshID，但材质ID相同，是无法batch的
 
 namespace renderer {
 
@@ -19,8 +26,8 @@ namespace renderer {
     }
 
 
-	void BatchSystem::receive(const StaticBatchEvent& evt) {
-		updateStaticRenderQueue();
+	void BatchSystem::receive(const UpdateBatchEvent& evt) {
+		UpdateBatch(evt.obj, evt.recursive);
 	}
 
 	void BatchSystem::receive(const ComponentAddedEvent<DynamicObjTag> &evt) {
@@ -31,22 +38,14 @@ namespace renderer {
 		updateDynamicRenderQueue();
 	}
 
-	void BatchSystem::updateStaticRenderQueue() {
+	// 对该场景节点的所有children做batch
+	// batch信息记录在当前节点上
+	// TODO 支持递归
+	// TODO 支持动态batch
+	// TODO 支持修改材质
+	void BatchSystem::UpdateBatch(Object objScene, bool recursive) {
 		auto meshSet = m_objMgr->getSingletonComponent<MeshSet>();
-		auto queueCom = m_objMgr->getSingletonComponent<StaticRenderQueueCom>();
-		RenderQueue& queue = queueCom->queue;
-		queue.clear();
-		std::map<MaterialSettingID,
-			std::map<std::pair<MeshID, SubMeshIdx>, std::vector<ObjectID>>> batchInfo;
-        auto objBatchList = m_objMgr->entities<StaticBatchObjTag>();
-        for(auto objBatch: objBatchList) {
-            objBatch.destroy();
-        }
-		// 所谓batch是指把同材质、同MeshID的obj一起渲染
-		// 关键点1：draw instance 必须是同材质，所以不同材质的SubMesh不能放到instance里一起渲染
-		// 关键点2：同Mesh的各个SubMesh可以共用instance buffer，因为各个SubMesh的model matrix一样
-		// 关键点3：同MeshID的obj才可能组成instance，所以先根据MeshID分类
-		// 关键点4：不同MeshID，但材质ID相同，是无法batch的
+
         // 假设MeshRef没有自定义SubMesh材质，那么同MeshID的objs，只需要创建一个instance buffer，
         // 有多少个SubMesh，就需要多少个drawCall，这些drawcall共用这个instance buffer
 		// 步骤:
@@ -57,9 +56,22 @@ namespace renderer {
 		//     发射CreateInstanceBufferEvent
 		//     生成一个objBatch，把batch(MeshID, subMeshIdx, matID): objIDs信息放进这个obj
 		//     把instance buffer记录进这个obj
-        
+
+		auto sgNode = objScene.component<SceneGraphNode>();
+
         std::map<MeshID, std::vector<ObjectID>> meshID2ObjIDs;
-        std::map<std::tuple<MeshID, SubMeshIdx, MaterialSettingID>, std::vector<ObjectID>> batchKey2ObjIDs;
+		std::map<std::tuple<MeshID, SubMeshIdx, MaterialSettingID>, std::vector<ObjectID>> batchKey2ObjIDs;
+
+		for (auto childObjID : sgNode->children) {
+			Object childObj = m_objMgr->get(childObjID);
+			auto meshRef = objScene.component<MeshRef>();
+			MeshID meshID = meshRef->meshID;
+			if (meshID2ObjIDs.find(meshID) == meshID2ObjIDs.end()) {
+				meshID2ObjIDs.insert({ meshID,{} });
+			}
+			std::vector<ObjectID>& objIDs = meshID2ObjIDs[meshID];
+			objIDs.push_back(objScene.ID());
+		}
         for (const Object objScene : m_objMgr->entities<MeshRef, RenderableTag, StaticObjTag>()) {
             auto meshRef = objScene.component<MeshRef>();
             MeshID meshID = meshRef->meshID;
@@ -69,7 +81,6 @@ namespace renderer {
                 if (meshRef->customSettingIDDict[idx]) {
                     settingID = meshRef->customSettingIDDict[idx];
                 }
-                // meshID2ObjIDs
                 auto key = std::make_tuple(meshID, idx, settingID);
                 if (batchKey2ObjIDs.find(key) == batchKey2ObjIDs.end()) {
                     batchKey2ObjIDs.insert({key, {}});

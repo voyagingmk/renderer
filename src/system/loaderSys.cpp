@@ -135,7 +135,7 @@ namespace renderer {
         
         m_evtMgr->emit<CreateNoiseTextureEvent>("ssaoNoise");
 
-		m_evtMgr->emit<StaticBatchEvent>();
+		m_evtMgr->emit<UpdateBatchEvent>(rootObj, true);
       
 	}
 

@@ -23,9 +23,14 @@ namespace renderer {
 		const ecs::Object obj;
 	};
 
-	class StaticBatchEvent : public ecs::Event<StaticBatchEvent> {
+	class UpdateBatchEvent : public ecs::Event<UpdateBatchEvent> {
 	public:
-		StaticBatchEvent() {}
+		UpdateBatchEvent(const ecs::Object obj, bool recursive) :
+			obj(obj),
+			recursive(recursive)
+		{}
+		const ecs::Object obj;
+		bool recursive;
 	};
 	
     
