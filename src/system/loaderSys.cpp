@@ -294,7 +294,7 @@ namespace renderer {
 			MeshID meshID = loadMesh(config, filename);
 			objScene.addComponent<MeshRef>(meshID);
 			objScene.addComponent<ReceiveLightTag>();
-			objScene.addComponent<RenderQueueTag>();
+			objScene.addComponent<RenderableTag>();
 		}
 		if (objInfo["static"].is_boolean() && bool(objInfo["static"]) == true) {
 			objScene.addComponent<StaticObjTag>();

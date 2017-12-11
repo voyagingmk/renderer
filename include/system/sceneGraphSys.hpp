@@ -17,6 +17,10 @@ namespace renderer {
 
 		void receive(const RenderSceneEvent &evt);
 
+	private:
+
+		void RenderNode(Object obj, Shader shader);
+
 	};
 
 };

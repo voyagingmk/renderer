@@ -60,7 +60,7 @@ namespace renderer {
         
         std::map<MeshID, std::vector<ObjectID>> meshID2ObjIDs;
         std::map<std::tuple<MeshID, SubMeshIdx, MaterialSettingID>, std::vector<ObjectID>> batchKey2ObjIDs;
-        for (const Object objScene : m_objMgr->entities<MeshRef, RenderQueueTag, StaticObjTag>()) {
+        for (const Object objScene : m_objMgr->entities<MeshRef, RenderableTag, StaticObjTag>()) {
             auto meshRef = objScene.component<MeshRef>();
             MeshID meshID = meshRef->meshID;
             Mesh& mesh = meshSet->getMesh(meshID);

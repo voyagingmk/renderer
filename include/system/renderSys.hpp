@@ -27,10 +27,6 @@ namespace renderer {
 
 		void receive(const CameraMoveEvent &evt);
 
-		void receive(const ComponentAddedEvent<RenderQueueTag> &evt);
-
-		void receive(const ComponentRemovedEvent<RenderQueueTag> &evt);
-
     private:
 		void updateRenderQueue();
         

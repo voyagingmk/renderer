@@ -4,6 +4,7 @@
 #include "com/sdlContext.hpp"
 #include "com/mesh.hpp"
 #include "com/cameraCom.hpp"
+#include "com/spatialData.hpp"
 #include "com/bufferCom.hpp"
 #include "com/lightCom.hpp"
 #include "com/bufferCom.hpp"
@@ -35,7 +36,6 @@ namespace renderer {
 	void SceneGraphSystem::receive(const RenderSceneEvent &evt) {
 		auto meshSet = m_objMgr->getSingletonComponent<MeshSet>();
 		auto matSetCom = m_objMgr->getSingletonComponent<MaterialSet>();
-		auto renderQueueCom = m_objMgr->getSingletonComponent<StaticRenderQueueCom>();
 		glEnable(GL_DEPTH_TEST);
 		setViewport(evt.viewport);
 		clearView(evt.clearColor, evt.clearBits);
@@ -45,7 +45,13 @@ namespace renderer {
 			shader = *evt.shader;
 			shader.use();
 		}
-		MaterialSettingID preSettingID = -1;
+
+		m_evtMgr->emit<UploadCameraToShaderEvent>(evt.objCamera, shader);
+
+		for (auto obj : m_objMgr->entities<RootNodeTag>()) {
+			RenderNode(obj, shader);
+		}
+		/*
 		for (auto obj : m_objMgr->entities<MeshRef, StaticObjTag>()) {
 			auto meshRef = obj.component<MeshRef>();
 			m_evtMgr->emit<UploadCameraToShaderEvent>(evt.objCamera, shader);
@@ -58,7 +64,7 @@ namespace renderer {
 				m_evtMgr->emit<ActiveMaterialEvent>(settingID, shader);
 				m_evtMgr->emit<DrawMeshBufferEvent>(meshID, subMeshIdx);
 			}
-		}
+		}*/
 		/*
 		for (auto e: renderQueueCom->queue) {
 		Object obj = m_objMgr->get(e.first);
@@ -81,6 +87,30 @@ namespace renderer {
 		preSettingID = settingID;
 		// m_evtMgr->emit<DeactiveMaterialEvent>(settingID);
 		}*/
+	}
+
+	void SceneGraphSystem::RenderNode(Object obj, Shader shader) {
+		auto meshSet = m_objMgr->getSingletonComponent<MeshSet>();
+		auto matSetCom = m_objMgr->getSingletonComponent<MaterialSet>();
+		
+		if (obj.hasComponent<RenderableTag>()) {
+			auto meshRef = obj.component<MeshRef>();
+			m_evtMgr->emit<UploadMatrixToShaderEvent>(obj, shader);
+			auto meshID = meshRef->meshID;
+			Mesh& mesh = meshSet->meshDict[meshID];
+			for (uint32_t subMeshIdx = 0; subMeshIdx < mesh.meshes.size(); subMeshIdx++) {
+				SubMesh& subMesh = mesh.meshes[subMeshIdx];
+				auto settingID = mesh.settingIDs[subMeshIdx];
+				m_evtMgr->emit<ActiveMaterialEvent>(settingID, shader);
+				m_evtMgr->emit<DrawMeshBufferEvent>(meshID, subMeshIdx);
+			}
+		}
+
+		auto sgNode = obj.component<SceneGraphNode>();
+		for (auto childObjID : sgNode->children) {
+			Object childObj = m_objMgr->get(childObjID);
+			RenderNode(childObj, shader);
+		}
 	}
 
 };

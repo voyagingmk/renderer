@@ -17,7 +17,7 @@ namespace renderer {
     
 	struct ReceiveLightTag : public TagComBase {};
 
-	struct RenderQueueTag : public TagComBase {};
+	struct RenderableTag : public TagComBase {};
 
 	struct StaticObjTag : public TagComBase {};
 
