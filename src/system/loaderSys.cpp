@@ -100,6 +100,7 @@ namespace renderer {
 		loadLights(config);
 		Object rootObj = loadSceneObjects(config, config["sceneRoot"]);
 		rootObj.addComponent<RootNodeTag>();
+		m_evtMgr->emit<UpdateBatchEvent>(rootObj, true);
 
 		m_evtMgr->emit<CreateColorBufferEvent>(
 			winWidth, winHeight,
@@ -134,8 +135,6 @@ namespace renderer {
         m_evtMgr->emit<CreateGBufferEvent>(winWidth, winHeight, "main");
         
         m_evtMgr->emit<CreateNoiseTextureEvent>("ssaoNoise");
-
-		m_evtMgr->emit<UpdateBatchEvent>(rootObj, true);
       
 	}
 
@@ -295,6 +294,7 @@ namespace renderer {
 			objScene.addComponent<MeshRef>(meshID);
 			objScene.addComponent<ReceiveLightTag>();
 			objScene.addComponent<RenderableTag>();
+			printf("scene obj with mesh, ID: %d, meshID: %d \n", (int)objScene.ID(), (int)meshID);
 		}
 		if (objInfo["static"].is_boolean() && bool(objInfo["static"]) == true) {
 			objScene.addComponent<StaticObjTag>();

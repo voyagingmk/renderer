@@ -19,11 +19,9 @@ namespace renderer {
 
 	struct RenderableTag : public TagComBase {};
 
-	struct StaticObjTag : public TagComBase {};
+	struct StaticObjTag : public TagComBase {}; // 不能直接渲染，要先batch化
 
 	struct DynamicObjTag : public TagComBase {};
-
-    struct StaticBatchObjTag : public TagComBase {};
     
     struct DynamicBatchObjTag : public TagComBase {};
 
@@ -42,15 +40,17 @@ namespace renderer {
 	};
     
     // 记录这个batch管理的obj和用于instance的信息
-    // 每个batch的材质ID一致、SubMesh一致
     struct BatchInfoCom {
-        MaterialSettingID settingID;
 		MeshID meshID;
-		SubMeshIdx subMeshIdx;
+		std::string bufferName;
         // 长度一致
         std::vector<ecs::ObjectID> objIDs;
         std::vector<Matrix4x4Value> modelMatrixes;
     };
+
+	struct BatchObjectListCom {
+		std::vector<ecs::ObjectID> objIDs;
+	};
 
 	struct GlobalSettingCom {
 		std::map<std::string, nlohmann::json> params;

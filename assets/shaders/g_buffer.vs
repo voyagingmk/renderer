@@ -4,6 +4,7 @@ layout (location = 0) in vec3 position;
 layout (location = 1) in vec3 normal;
 layout (location = 2) in vec2 texCoord;
 layout (location = 3) in vec3 tangent;
+layout (location = 4) in mat4 aModelMat;
 
 // out vec3 ourColor;
 out vec3 FragPos;
@@ -15,12 +16,13 @@ uniform mat4 view;
 uniform mat4 proj;
 uniform mat4 PV;
 
-uniform mat4 model;
-uniform mat4 normalMat;
+uniform mat4 modelMat;
 uniform bool hasNormalMap;
+uniform bool instanced;
 
 void main()
 {
+	mat4 model = instanced ? aModelMat: modelMat;
 	vec4 WorldPos = model * vec4(position, 1.0f);
 	FragPos = (view * WorldPos).xyz;
 	gl_Position = PV * WorldPos;

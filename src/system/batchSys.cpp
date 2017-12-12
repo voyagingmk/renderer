@@ -4,6 +4,7 @@
 #include "com/materialCom.hpp"
 #include "com/mesh.hpp"
 #include "com/spatialData.hpp"
+#include "event/bufferEvent.hpp"
 
 using json = nlohmann::json;
 using namespace std;
@@ -18,6 +19,7 @@ namespace renderer {
 
 	void BatchSystem::init(ObjectManager &objMgr, EventManager &evtMgr) {
 		printf("BatchSystem init\n"); 
+		evtMgr.on<UpdateBatchEvent>(*this);
 
     }
 
@@ -40,7 +42,7 @@ namespace renderer {
 
 	// 对该场景节点的所有children做batch
 	// batch信息记录在当前节点上
-	// TODO 支持递归
+	// TODO 支持层级合并
 	// TODO 支持动态batch
 	// TODO 支持修改材质
 	void BatchSystem::UpdateBatch(Object objScene, bool recursive) {
@@ -50,61 +52,67 @@ namespace renderer {
         // 有多少个SubMesh，就需要多少个drawCall，这些drawcall共用这个instance buffer
 		// 步骤:
 		// 1.遍历待渲染的obj：
-		//     遍历所有obj的SubMesh，并求出matID：
-		//		  把objID放进 batch(MeshID, subMeshIdx, matID): objIDs
+		//		  把objID放进 batch(MeshID): objIDs
 		// 2.对于每一个batchKey
+		//     生成一个objBatch，把objIDs信息放进这个obj
 		//     发射CreateInstanceBufferEvent
-		//     生成一个objBatch，把batch(MeshID, subMeshIdx, matID): objIDs信息放进这个obj
-		//     把instance buffer记录进这个obj
+		//     把instance buffer name记录进这个obj
 
 		auto sgNode = objScene.component<SceneGraphNode>();
 
         std::map<MeshID, std::vector<ObjectID>> meshID2ObjIDs;
-		std::map<std::tuple<MeshID, SubMeshIdx, MaterialSettingID>, std::vector<ObjectID>> batchKey2ObjIDs;
 
 		for (auto childObjID : sgNode->children) {
 			Object childObj = m_objMgr->get(childObjID);
-			auto meshRef = objScene.component<MeshRef>();
+			if (!childObj.hasComponent<StaticObjTag>()) {
+				continue;
+			}
+			if (!childObj.hasComponent<RenderableTag>()) {
+				continue;
+			}
+			auto meshRef = childObj.component<MeshRef>();
 			MeshID meshID = meshRef->meshID;
 			if (meshID2ObjIDs.find(meshID) == meshID2ObjIDs.end()) {
 				meshID2ObjIDs.insert({ meshID,{} });
 			}
 			std::vector<ObjectID>& objIDs = meshID2ObjIDs[meshID];
-			objIDs.push_back(objScene.ID());
+			objIDs.push_back(childObj.ID());
 		}
-        for (const Object objScene : m_objMgr->entities<MeshRef, RenderableTag, StaticObjTag>()) {
-            auto meshRef = objScene.component<MeshRef>();
-            MeshID meshID = meshRef->meshID;
-            Mesh& mesh = meshSet->getMesh(meshID);
-            for (SubMeshIdx idx = 0; idx < mesh.meshes.size(); idx++) {
-                MaterialSettingID settingID = mesh.settingIDs[idx];
-                if (meshRef->customSettingIDDict[idx]) {
-                    settingID = meshRef->customSettingIDDict[idx];
-                }
-                auto key = std::make_tuple(meshID, idx, settingID);
-                if (batchKey2ObjIDs.find(key) == batchKey2ObjIDs.end()) {
-                    batchKey2ObjIDs.insert({key, {}});
-                }
-                std::vector<ObjectID>& objIDs = batchKey2ObjIDs[key];
-                objIDs.push_back(objScene.ID());
-            }
-        }
-        for (auto it: batchKey2ObjIDs) {
-            auto key = it.first;
-            auto objIDs = it.second;
-            auto objBatch = m_objMgr->create();
-            auto batchInfoCom = objBatch.addComponent<BatchInfoCom>();
-            MeshID meshID;
-            SubMeshIdx subMeshIdx;
-            MaterialSettingID settingID;
-            std::tie(meshID, subMeshIdx, settingID) = key;
-            batchInfoCom->meshID = meshID;
-            batchInfoCom->settingID = settingID;
-            batchInfoCom->subMeshIdx = subMeshIdx;
-            batchInfoCom->objIDs = objIDs;
-            batchInfoCom->modelMatrixes.resize(objIDs.size());
-            // 把obj的mdel矩阵填进去
-        }
+		if (meshID2ObjIDs.size() > 0) {
+			auto batchObjectList = objScene.addComponent<BatchObjectListCom>();
+			// TODO 销毁旧的objBatch
+			for (auto it : meshID2ObjIDs) {
+				auto objIDs = it.second;
+				auto objBatch = m_objMgr->create();
+				auto batchInfoCom = objBatch.addComponent<BatchInfoCom>();
+				batchInfoCom->meshID = it.first;
+				batchInfoCom->objIDs = objIDs;
+				batchInfoCom->modelMatrixes.resize(objIDs.size());
+				batchInfoCom->bufferName = "batchNode" + std::to_string(objBatch.ID());
+				// 把obj的mdel矩阵填进去
+				//TODO 单独做一个update事件
+				for (int i = 0; i < objIDs.size(); i++) {
+					auto objID = objIDs[i];
+					auto obj = m_objMgr->get(objID);
+					auto spatialData = obj.component<SpatialData>();
+					batchInfoCom->modelMatrixes[i] = spatialData->o2w.GetMatrix().transpose().dataRef();
+				}
+				auto matList = batchInfoCom->modelMatrixes;
+				batchObjectList->objIDs.push_back(objBatch.ID());
+				m_evtMgr->emit<CreateInstanceBufferEvent>(batchInfoCom->bufferName);
+				m_evtMgr->emit<UpdateInstanceBufferEvent>(batchInfoCom->bufferName,
+					batchInfoCom->modelMatrixes.size(),
+					sizeof(Matrix4x4Value),
+					&batchInfoCom->modelMatrixes[0]);
+			}
+		}
+
+		if (recursive) {
+			for (auto childObjID : sgNode->children) {
+				Object childObj = m_objMgr->get(childObjID);
+				UpdateBatch(childObj, recursive);
+			}
+		}
 		// 渲染：
 		// 1.遍历所有objBatch，读取batch(MeshID, subMeshIdx, matID)
 		// 2.用meshIDD, subMeshIdx，找到SubMesh的MeshBufferRef

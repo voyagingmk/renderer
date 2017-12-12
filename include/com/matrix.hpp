@@ -17,6 +17,9 @@ namespace renderer {
 		MxN() {
 			memset(data, 0, row * col * sizeof(V));
 		}
+		MxN(MxN& other) {
+			memcpy(data, other.data, row * col * sizeof(V));
+		}
 		MxN(std::initializer_list<V> values) {
 			int idx = 0;
 			for (auto& value : values) {
@@ -63,6 +66,14 @@ namespace renderer {
 			GetPool<T>()->deleteElement(data);
 		}
         
+		T* dataPointer() {
+			return data;
+		}
+
+		T& dataRef() {
+			return *data;
+		}
+
         bool validate() const {
             int rowNum = row(), colNum = col();
             for (int i = 0; i < rowNum; i++) {

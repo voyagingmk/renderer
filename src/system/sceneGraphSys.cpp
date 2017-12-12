@@ -93,7 +93,31 @@ namespace renderer {
 		auto meshSet = m_objMgr->getSingletonComponent<MeshSet>();
 		auto matSetCom = m_objMgr->getSingletonComponent<MaterialSet>();
 		
-		if (obj.hasComponent<RenderableTag>()) {
+		if (obj.hasComponent<BatchObjectListCom>()) {
+			auto com = obj.component<BatchObjectListCom>();
+			shader.set1b("instanced", true);
+			auto objIDs = com->objIDs;
+			for (auto objID : com->objIDs) {
+				Object objBatch = m_objMgr->get(objID);
+				auto batchInfoCom = objBatch.component<BatchInfoCom>();
+				Mesh& mesh = meshSet->meshDict[batchInfoCom->meshID];
+				for (uint32_t subMeshIdx = 0; subMeshIdx < mesh.meshes.size(); subMeshIdx++) {
+					auto settingID = mesh.settingIDs[subMeshIdx];
+					m_evtMgr->emit<BindInstanceBufferEvent>(
+						batchInfoCom->meshID,
+						subMeshIdx,
+						batchInfoCom->bufferName);
+					m_evtMgr->emit<ActiveMaterialEvent>(settingID, shader);
+					m_evtMgr->emit<DrawMeshBufferEvent>(batchInfoCom->meshID, subMeshIdx);
+					m_evtMgr->emit<UnbindInstanceBufferEvent>(
+						batchInfoCom->meshID,
+						subMeshIdx);
+				}
+			}
+			shader.set1b("instanced", false);
+		}
+
+		if (obj.hasComponent<RenderableTag>() && obj.hasComponent<DynamicObjTag>()) {
 			auto meshRef = obj.component<MeshRef>();
 			m_evtMgr->emit<UploadMatrixToShaderEvent>(obj, shader);
 			auto meshID = meshRef->meshID;

@@ -7,7 +7,7 @@ out vec3 TexCoord;
 uniform mat4 proj;
 uniform mat4 view;
 uniform mat4 PV;
-uniform mat4 model;
+uniform mat4 modelMat;
 
 void main()
 {

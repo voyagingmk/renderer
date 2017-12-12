@@ -100,9 +100,8 @@ namespace renderer {
 		}
 		InstanceBufferRef buf;
 		glGenBuffers(1, &buf.bufID);
-		com->dict[std::string(evt.aliasName)] = buf;
+		com->dict[evt.aliasName] = buf;
 	}
-
 
 	void BufferSystem::receive(const DestroyInstanceBufferEvent& evt) {
 		auto com = m_objMgr->getSingletonComponent<InstanceBufferDictCom>();
@@ -121,6 +120,7 @@ namespace renderer {
 			return;
 		}
 		InstanceBufferRef& buf = it->second;
+		buf.instanceNum = evt.instanceNum;
 		glBindBuffer(GL_ARRAY_BUFFER, buf.bufID);
 		glBufferData(GL_ARRAY_BUFFER, evt.instanceNum * evt.perBytes, evt.data, GL_STATIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -265,30 +265,6 @@ namespace renderer {
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
-	void BufferSystem::CreateInstanceBuffer(MeshBufferRef& buf, size_t insNum, void* data) {
-		glBindVertexArray(buf.vao);
-		glGenBuffers(1, &buf.vboIns);
-		glBindBuffer(GL_ARRAY_BUFFER, buf.vboIns);
-		// TODO  instance offset info struct
-		glBufferData(GL_ARRAY_BUFFER, sizeof(Vector3dF) * insNum, data, GL_STATIC_DRAW);
-
-		// position list
-		glEnableVertexAttribArray(4);
-		glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vector3dF), (void*)0);
-		glVertexAttribDivisor(4, 1);
-		// TODO
-		// scale list
-		// glEnableVertexAttribArray(5);
-		// glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE, sizeof(Vector3dF), (GLvoid*)(3 * sizeof(GLfloat)));
-		// glVertexAttribDivisor(5, 1);
-		// orienation list
-		// glEnableVertexAttribArray(6);
-		// glVertexAttribPointer(6, 3, GL_FLOAT, GL_FALSE, sizeof(Vector3dF), (GLvoid*)(6 * sizeof(GLfloat)));
-		// glVertexAttribDivisor(6, 1);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindVertexArray(0);
-	}
-
 	void BufferSystem::BindMeshBufferInstance(MeshBufferRef& buf, const InstanceBufferRef& insBuf) {
 		buf.instanced = true;
 		buf.insBuf = insBuf;
@@ -300,11 +276,11 @@ namespace renderer {
 		glEnableVertexAttribArray(4);
 		glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4Value), (void*)0);
 		glEnableVertexAttribArray(5);
-		glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4Value), (void*)(sizeof(Matrix4x4Value)));
+		glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4Value), (void*)(1 * sizeof(Matrix4x4Value) / 4));
 		glEnableVertexAttribArray(6);
-		glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4Value), (void*)(2 * sizeof(Matrix4x4Value)));
+		glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4Value), (void*)(2 * sizeof(Matrix4x4Value) / 4));
 		glEnableVertexAttribArray(7);
-		glVertexAttribPointer(7, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4Value), (void*)(3 * sizeof(Matrix4x4Value)));
+		glVertexAttribPointer(7, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4Value), (void*)(3 * sizeof(Matrix4x4Value) / 4));
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 

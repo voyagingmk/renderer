@@ -12,14 +12,13 @@ uniform mat4 view;
 uniform mat4 proj;
 uniform mat4 PV;
 
-uniform mat4 model;
-uniform mat4 normalMat;
+uniform mat4 modelMat;
 
 void main()
 {
-	mat4 mvp = PV * model;
+	mat4 mvp = PV * modelMat;
 	gl_Position = mvp * vec4(position, 1.0f);
-    FragPos = vec3(model * vec4(position, 1.0f));
-	Normal =  mat3(model) * normal;
+    FragPos = vec3(modelMat * vec4(position, 1.0f));
+	Normal =  mat3(modelMat) * normal;
 	TexCoord = vec2(texCoord.x, 1.0 - texCoord.y);
 }

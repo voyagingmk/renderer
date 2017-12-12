@@ -71,8 +71,6 @@ namespace renderer {
 
         ColorBufferRef CreateDepthFrameBuffer(DepthTexType dtType, std::string texAliasname, size_t width);
             
-		void CreateInstanceBuffer(MeshBufferRef& buf, size_t insNum, void* data);
-
 		MeshBufferRef CreateMeshBuffer(const SubMesh& mesh);
 
 		void BindMeshBufferInstance(MeshBufferRef& buf, const InstanceBufferRef& insBuf);

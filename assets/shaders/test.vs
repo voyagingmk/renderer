@@ -13,17 +13,17 @@ uniform mat4 view;
 uniform mat4 proj;
 uniform mat4 PV;
 
-uniform mat4 model;
+uniform mat4 modelMat;
 uniform mat4 normalMat;
 
 void main()
 {
-	mat4 mvp = PV * model;
-	// mat4 mvp = proj * view * model;
+	mat4 mvp = PV * modelMat;
+	// mat4 mvp = proj * view * modelMat;
 	gl_Position = mvp * vec4(position, 1.0f);
-	FragPos = vec3(model * vec4(position, 1.0f));
+	FragPos = vec3(modelMat * vec4(position, 1.0f));
 	Normal =  mat3(normalMat) * normal;
-	// Normal = mat3(transpose(inverse(model))) * normal;
+	// Normal = mat3(transpose(inverse(modelMat))) * normal;
 	// We swap the y-axis by substracing our coordinates from 1.
 	TexCoord = vec2(texCoord.x, 1.0 - texCoord.y);
 }

@@ -52,8 +52,8 @@ namespace renderer {
 	void ShaderSystem::receive(const UploadMatrixToShaderEvent& evt) {
 		auto com = evt.obj.component<SpatialData>();
 		Shader& shader = const_cast<Shader&>(evt.shader);
-		shader.setMatrix4f("model", com->o2w.m);
-        shader.setMatrix4f("normalMat", com->o2w.mInv.transpose());   
+		shader.setMatrix4f("modelMat", com->o2w.GetMatrix());
+        // shader.setMatrix4f("normalMat", com->o2w.GetInverseMatrix().transpose());   
 	}
 
 	void ShaderSystem::receive(const UploadCameraToShaderEvent& evt) {

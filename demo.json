@@ -39,11 +39,6 @@
             "fs": "main.fs"
         },
         {
-            "alias": "main",
-            "vs": "point_shadow.vs",
-            "fs": "point_shadow.fs"
-        },
-        {
             "alias": "depthMap2",
             "vs": "depthMap.vs",
             "fs": "depthMap.fs"
@@ -319,7 +314,7 @@
         "children": [
             {
                 "model": "plane.obj",
-                "static": true,
+                "static": false,
                 "spatial": [
                     [0, 0, 0],
                     [100, 100, 100],
@@ -348,24 +343,6 @@
                         "static": true,
                         "spatial": [
                             [20, 0, 0],
-                            [2, 2, 2],
-                            [0, 0, 0]
-                        ]
-                    },
-                    {
-                        "model": "teapot.obj",
-                        "static": true,
-                        "spatial": [
-                            [0, 0, 20],
-                            [2, 2, 2],
-                            [0, 0, 0]
-                        ]
-                    },
-                    {
-                        "model": "teapot.obj",
-                        "static": true,
-                        "spatial": [
-                            [20, 0, 20],
                             [2, 2, 2],
                             [0, 0, 0]
                         ]
