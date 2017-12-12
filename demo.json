@@ -161,11 +161,11 @@
             "type": "DirLight",
             "shadowType": "vsm",
             "intensity": 4.1,
-            "size": 1000.0,
+            "size": 71.0,
             "near_plane": 0.0001,
-            "far_plane": 2400.0,
+            "far_plane": 850.0,
             "spatial": [
-                [856.0,  1629.0, -75.0],
+                [123.0,  370.0, 602.0],
                 [1, 1, 1],
                 [1, 0, 0, 0]
             ],
@@ -343,6 +343,24 @@
                         "static": true,
                         "spatial": [
                             [20, 0, 0],
+                            [2, 2, 2],
+                            [0, 0, 0]
+                        ]
+                    },
+                    {
+                        "model": "teapot.obj",
+                        "static": true,
+                        "spatial": [
+                            [0, 0, 20],
+                            [2, 2, 2],
+                            [0, 0, 0]
+                        ]
+                    },
+                    {
+                        "model": "teapot.obj",
+                        "static": true,
+                        "spatial": [
+                            [20, 0, 20],
                             [2, 2, 2],
                             [0, 0, 0]
                         ]
