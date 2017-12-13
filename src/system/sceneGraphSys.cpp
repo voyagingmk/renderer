@@ -97,23 +97,17 @@ namespace renderer {
 			auto com = obj.component<BatchObjectListCom>();
 			shader.set1b("instanced", true);
 			auto objIDs = com->objIDs;
-			for (auto objID : com->objIDs) {
-				Object objBatch = m_objMgr->get(objID);
-				auto batchInfoCom = objBatch.component<BatchInfoCom>();
-				Mesh& mesh = meshSet->meshDict[batchInfoCom->meshID];
-				for (uint32_t subMeshIdx = 0; subMeshIdx < mesh.meshes.size(); subMeshIdx++) {
-					auto settingID = mesh.settingIDs[subMeshIdx];
-					m_evtMgr->emit<BindInstanceBufferEvent>(
-						batchInfoCom->meshID,
-						subMeshIdx,
-						batchInfoCom->bufferName);
-					m_evtMgr->emit<ActiveMaterialEvent>(settingID, shader);
-					m_evtMgr->emit<DrawMeshBufferEvent>(batchInfoCom->meshID, subMeshIdx);
-					m_evtMgr->emit<UnbindInstanceBufferEvent>(
-						batchInfoCom->meshID,
-						subMeshIdx);
-				}
-			}
+			DrawBatchObjs(shader, objIDs);
+			/* z pre-pass way
+			glDepthFunc(GL_LESS);
+			glColorMask(0, 0, 0, 0);
+			DrawBatchObjs(shader, objIDs);
+			glDepthFunc(GL_LEQUAL);
+			glColorMask(1, 1, 1, 1);
+			glDepthMask(GL_FALSE);
+			DrawBatchObjs(shader, objIDs);
+			glDepthMask(GL_TRUE);
+			*/
 			shader.set1b("instanced", false);
 		}
 
@@ -137,4 +131,24 @@ namespace renderer {
 		}
 	}
 
+	void SceneGraphSystem::DrawBatchObjs(Shader shader, std::vector<ecs::ObjectID>& objIDs) {
+		auto meshSet = m_objMgr->getSingletonComponent<MeshSet>();
+		for (auto objID : objIDs) {
+			Object objBatch = m_objMgr->get(objID);
+			auto batchInfoCom = objBatch.component<BatchInfoCom>();
+			Mesh& mesh = meshSet->meshDict[batchInfoCom->meshID];
+			for (uint32_t subMeshIdx = 0; subMeshIdx < mesh.meshes.size(); subMeshIdx++) {
+				auto settingID = mesh.settingIDs[subMeshIdx];
+				m_evtMgr->emit<BindInstanceBufferEvent>(
+					batchInfoCom->meshID,
+					subMeshIdx,
+					batchInfoCom->bufferName);
+				m_evtMgr->emit<ActiveMaterialEvent>(settingID, shader);
+				m_evtMgr->emit<DrawMeshBufferEvent>(batchInfoCom->meshID, subMeshIdx);
+				m_evtMgr->emit<UnbindInstanceBufferEvent>(
+					batchInfoCom->meshID,
+					subMeshIdx);
+			}
+		}
+	}
 };

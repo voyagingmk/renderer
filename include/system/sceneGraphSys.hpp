@@ -19,7 +19,9 @@ namespace renderer {
 
 	private:
 
-		void RenderNode(Object obj, Shader shader);
+		void RenderNode(Object obj, Shader shader); 
+		
+		void DrawBatchObjs(Shader shader, std::vector<ecs::ObjectID>& objIDs);
 
 	};
 
