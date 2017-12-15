@@ -2,6 +2,7 @@
 #define RENDERER_COM_MESH_HPP
 
 #include "base.hpp"
+#include "bbox.hpp"
 #include "vertex.hpp"
 #include "materialCom.hpp"
 
@@ -47,6 +48,22 @@ namespace renderer {
 		virtual BBox WorldBound() const override;
 	};*/
 
+	class Triangle {
+	public:
+		Vertex v0, v1, v2;
+	public:
+		Triangle(Vertex& v0, Vertex& v1, Vertex& v2) :
+			v0(v0),
+			v1(v1),
+			v2(v2)
+		{};
+		BBox Bound() const {
+			const Vector3dF& p0 = v0.position;
+			const Vector3dF& p1 = v1.position;
+			const Vector3dF& p2 = v2.position;
+			return BBox(p0, p1).Union(p2);
+		}
+	};
 
 	typedef size_t MeshID;
 	typedef size_t SubMeshIdx;
@@ -55,8 +72,23 @@ namespace renderer {
 	// 只是Mesh的一个part
     class SubMesh {
         public:
-            Vertices vertices;
+			void InitBound() {
+				if (bbox.IsEmpty()) {
+					for (int tri_idx = 0, tri_num = indexes.size() / 3; tri_idx < tri_num; tri_idx += 1) {
+						uint32_t i0 = indexes[tri_idx * 3];
+						uint32_t i1 = indexes[tri_idx * 3 + 1];
+						uint32_t i2 = indexes[tri_idx * 3 + 2];
+						Triangle tri(vertices[i0], vertices[i1], vertices[i2]);
+						bbox = Union(bbox, tri.Bound());
+					}
+				}
+			}
+			BBox Bound() {
+				return bbox;
+			}
+			Vertices vertices;
 		    UIntArray indexes;
+			BBox bbox;
     };
 
 	// SubMesh集合
@@ -64,8 +96,19 @@ namespace renderer {
 	// 处理渲染队列，需要深入SubMesh，因为不同SubMesh材质不一样
     class Mesh {
         public:
+			void InitBound() {
+				if (bbox.IsEmpty()) {
+					for (SubMesh& subMesh: meshes) {
+						bbox = Union(bbox, subMesh.Bound());
+					}
+				}
+			}
+			BBox Bound() {
+				return bbox;
+			}
             std::vector<SubMesh> meshes;
 			std::vector<MaterialSettingID> settingIDs;
+			BBox bbox;
     };
 
 	// 场景可渲染物体，必须加MeshRef

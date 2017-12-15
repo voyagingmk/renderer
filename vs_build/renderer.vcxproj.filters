@@ -392,5 +392,8 @@
     <ClInclude Include="..\include\utils\glutils.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\com\ray.hpp">
+      <Filter>Header Files\com</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

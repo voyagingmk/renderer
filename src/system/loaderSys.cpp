@@ -20,6 +20,7 @@
 #include "event/bufferEvent.hpp"
 #include "event/actionEvent.hpp"
 #include "event/lightEvent.hpp"
+#include "event/spatialEvent.hpp"
 #include "utils/helper.hpp"
 
 using namespace std;
@@ -90,7 +91,7 @@ namespace renderer {
 
 		Object objCamera = m_objMgr->create();
 		auto com = objCamera.addComponent<PerspectiveCameraView>(45.0f, (float)winWidth / (float)winHeight, 0.1f, 10000.0f);
-        com->eye = Vector3dF(-36.0, 34.0f, 31.0f);
+        com->eye = Vector3dF(1000.0f, 1000.0f, 1000.0f);
         com->SetFrontVector({30.0f, -15.0f, -30.0f});
 
         loadTextures(assetsDir + texSubDir, config);
@@ -304,8 +305,8 @@ namespace renderer {
 		}
 		for (auto childObjInfo : objInfo["children"])
 		{
-			Object childObj = loadSceneObjects(config, childObjInfo);
-			sgNode->children.push_back(childObj.ID());
+				Object childObj = loadSceneObjects(config, childObjInfo);
+				sgNode->children.push_back(childObj.ID());
 		}
 
 		return objScene;
@@ -508,7 +509,9 @@ namespace renderer {
 				tangent = tangent.Normalize();
 				v1.tangent = v2.tangent = v3.tangent = tangent;
 			}
+			subMesh.InitBound();
 		}
+		mesh.InitBound();
 		std::cout << "[LoaderSystem] loadMesh:" << filename  << ", numMaterials:" << scene->mNumMaterials << std::endl;
 		m_evtMgr->emit<CreateMeshBufferEvent>(meshID);
 		return meshID;
