@@ -49,8 +49,8 @@ namespace renderer {
 	struct LinearBVHNode {
 		BBox bounds;
 		union {
-			int primitivesOffset;   // leaf
-			int secondChildOffset;  // interior
+			uint32_t primitivesOffset;   // leaf
+			uint32_t secondChildOffset;  // interior
 		};
 		uint16_t nPrimitives;  // 0 -> interior node
 		Axis axis;          // interior node: xyz

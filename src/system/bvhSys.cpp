@@ -87,6 +87,9 @@ namespace renderer {
 	}
 
 	void BVHSystem::receive(const CreateBVHEvent &evt) {
+		Object objScene = evt.objScene;
+		ComponentHandle<BVHAccel> bvhAccel = objScene.addComponent<BVHAccel>();
+
 		std::vector<ObjectID> prims;
 		std::function<void(Object objScene)> filterFunc;
 		filterFunc = [&](Object objScene) {
@@ -100,18 +103,54 @@ namespace renderer {
 				filterFunc(childObj);
 			}
 		}; 
-		filterFunc(evt.objScene);
-		CreateBVHAccel(prims,"", 0);
+		filterFunc(objScene);
+		CreateBVHAccel(bvhAccel, prims,"", 0);
+
+		/*
+		LinearBVHNode *nodes = bvhAccel->nodes;
+		if (!nodes) return;
+		bool hit = false;
+		int toVisitOffset = 0, currentNodeIndex = 0;
+		int nodesToVisit[64];
+		while (true) {
+			const LinearBVHNode *node = &nodes[currentNodeIndex];
+			// Check ray against BVH node
+			if (true) {
+				if (node->nPrimitives > 0) {
+					// Intersect ray with primitives in leaf BVH node
+					for (int i = 0; i < node->nPrimitives; ++i)
+						if (true)
+							hit = true;
+					if (toVisitOffset == 0) break;
+					currentNodeIndex = nodesToVisit[--toVisitOffset];
+				}
+				else {
+					// Put far BVH node on _nodesToVisit_ stack, advance to near
+					// node
+					if (true) {
+						nodesToVisit[toVisitOffset++] = currentNodeIndex + 1;
+						currentNodeIndex = node->secondChildOffset;
+					}
+					else {
+						nodesToVisit[toVisitOffset++] = node->secondChildOffset;
+						currentNodeIndex = currentNodeIndex + 1;
+					}
+				}
+			}
+			else {
+				if (toVisitOffset == 0) break;
+				currentNodeIndex = nodesToVisit[--toVisitOffset];
+			}
+		}*/
 	}
 
 	// BVHAccel Method Definitions
-	std::shared_ptr<BVHAccel> BVHSystem::CreateBVHAccel(const std::vector<ObjectID> &p,
+	void BVHSystem::CreateBVHAccel(ComponentHandle<BVHAccel> bvhAccel, const std::vector<ObjectID> &p,
 		int maxPrimsInNode, BVHAccel::SplitMethod splitMethod) {
-		std::shared_ptr<BVHAccel> bvhAccel = std::make_shared<BVHAccel>();
 		bvhAccel->maxPrimsInNode = std::min(255, maxPrimsInNode);
 		bvhAccel->splitMethod = splitMethod;
 		bvhAccel->primitives = p;
-		if (bvhAccel->primitives.size() == 0) return nullptr;
+		if (bvhAccel->primitives.size() == 0) return;
 		// Build BVH from _primitives_
 
 		auto meshSet = m_objMgr->getSingletonComponent<MeshSet>();
@@ -148,12 +187,11 @@ namespace renderer {
 		int offset = 0;
 		flattenBVHTree(bvhAccel, root, &offset);
 		Assert(offset == totalNodes);
-		return bvhAccel;
 	}
 
 
 	BVHBuildNode *BVHSystem::recursiveBuild(
-		std::shared_ptr<BVHAccel> bvhAccel, 
+		ComponentHandle<BVHAccel> bvhAccel, 
 		std::vector<BVHPrimitiveInfo> &primitiveInfo, 
 		int start,
 		int end, 
@@ -393,7 +431,7 @@ namespace renderer {
 		*/
 	}
 
-	BVHBuildNode *BVHSystem::emitLBVH(std::shared_ptr<BVHAccel> bvhAccel,
+	BVHBuildNode *BVHSystem::emitLBVH(ComponentHandle<BVHAccel> bvhAccel,
 		BVHBuildNode *&buildNodes,
 		const std::vector<BVHPrimitiveInfo> &primitiveInfo,
 		MortonPrimitive *mortonPrims, int nPrimitives, int *totalNodes,
@@ -553,7 +591,7 @@ namespace renderer {
 		return node;
 	}
 
-	int BVHSystem::flattenBVHTree(std::shared_ptr<BVHAccel> bvhAccel, BVHBuildNode *node, int *offset) {
+	int BVHSystem::flattenBVHTree(ComponentHandle<BVHAccel> bvhAccel, BVHBuildNode *node, int *offset) {
 		LinearBVHNode *linearNode = &bvhAccel->nodes[*offset];
 		linearNode->bounds = node->bounds;
 		int myOffset = (*offset)++;
@@ -575,7 +613,7 @@ namespace renderer {
 	}
 
 
-	std::shared_ptr<BVHAccel> BVHSystem::CreateBVHAccel(
+	void BVHSystem::CreateBVHAccel(ComponentHandle<BVHAccel> bvhAccel,
 		const std::vector<ObjectID> &prims, std::string splitMethodName, int maxPrimsInNode) {
 		if (splitMethodName == "") {
 			splitMethodName = "sah";
@@ -597,7 +635,7 @@ namespace renderer {
 				splitMethodName.c_str());
 			splitMethod = BVHAccel::SplitMethod::SAH;
 		}
-		return CreateBVHAccel(prims, maxPrimsInNode, splitMethod);
+		CreateBVHAccel(bvhAccel, prims, maxPrimsInNode, splitMethod);
 	}
 
 };

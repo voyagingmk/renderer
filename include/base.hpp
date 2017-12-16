@@ -72,7 +72,7 @@ namespace renderer {
 	class Color;
 	class Ray;
 
-	enum class Axis {
+	enum class Axis: uint8_t {
 		x = 0,
 		y = 1,
 		z = 2

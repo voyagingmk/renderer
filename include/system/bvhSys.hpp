@@ -22,14 +22,15 @@ namespace renderer {
 
 	private:
 
-		std::shared_ptr<BVHAccel> CreateBVHAccel(
+		void CreateBVHAccel(ComponentHandle<BVHAccel>,
 			const std::vector<ObjectID> &prims, std::string splitMethodName, int maxPrimsInNode);
 
-		std::shared_ptr<BVHAccel> CreateBVHAccel(const std::vector<ObjectID> &p,
+		void CreateBVHAccel(ComponentHandle<BVHAccel>, 
+			const std::vector<ObjectID> &p,
 			int maxPrimsInNode = 1,
 			BVHAccel::SplitMethod splitMethod = BVHAccel::SplitMethod::SAH);
 
-		BVHBuildNode *recursiveBuild(std::shared_ptr<BVHAccel> bvhAccel, std::vector<BVHPrimitiveInfo> &primitiveInfo,
+		BVHBuildNode *recursiveBuild(ComponentHandle<BVHAccel> bvhAccel, std::vector<BVHPrimitiveInfo> &primitiveInfo,
 			int start, int end, int *totalNodes,
 			std::vector<ObjectID> &orderedPrims);
 
@@ -37,7 +38,7 @@ namespace renderer {
 			int *totalNodes,
 			std::vector<ObjectID> &orderedPrims) const;
 
-		BVHBuildNode *emitLBVH(std::shared_ptr<BVHAccel> bvhAccel,
+		BVHBuildNode *emitLBVH(ComponentHandle<BVHAccel> bvhAccel,
 			BVHBuildNode *&buildNodes,
 			const std::vector<BVHPrimitiveInfo> &primitiveInfo,
 			MortonPrimitive *mortonPrims, int nPrimitives, int *totalNodes,
@@ -47,7 +48,7 @@ namespace renderer {
 		BVHBuildNode *buildUpperSAH(std::vector<BVHBuildNode *> &treeletRoots,
 			int start, int end, int *totalNodes) const;
 
-		int flattenBVHTree(std::shared_ptr<BVHAccel> bvhAccel, BVHBuildNode *node, int *offset);
+		int flattenBVHTree(ComponentHandle<BVHAccel> bvhAccel, BVHBuildNode *node, int *offset);
 	};
 };
 
