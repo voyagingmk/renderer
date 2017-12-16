@@ -99,9 +99,10 @@ namespace renderer {
         loadShaders(assetsDir + shaderSubDir, config);
         loadMaterials(config);
 		loadLights(config);
-		Object rootObj = loadSceneObjects(config, config["sceneRoot"]);
-		rootObj.addComponent<RootNodeTag>();
-		m_evtMgr->emit<UpdateBatchEvent>(rootObj, true);
+		Object objRoot = loadSceneObjects(config, config["sceneRoot"]);
+		objRoot.addComponent<RootNodeTag>();
+		m_evtMgr->emit<UpdateBatchEvent>(objRoot, true);
+		m_evtMgr->emit<CreateBVHEvent>(objRoot);
 
 		m_evtMgr->emit<CreateColorBufferEvent>(
 			winWidth, winHeight,

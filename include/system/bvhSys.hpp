@@ -4,6 +4,7 @@
 #include "base.hpp"
 #include "ecs/ecs.hpp"
 #include "com/bvh.hpp"
+#include "event/miscEvent.hpp"
 
 
 using namespace ecs;
@@ -16,6 +17,8 @@ namespace renderer {
 		void init(ObjectManager &objMgr, EventManager &evtMgr);
 
 		void update(ObjectManager &objMgr, EventManager &evtMgr, float dt) override;
+
+		void receive(const CreateBVHEvent& evt);
 
 	private:
 

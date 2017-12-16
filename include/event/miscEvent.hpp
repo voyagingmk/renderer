@@ -33,7 +33,13 @@ namespace renderer {
 		bool recursive;
 	};
 	
-    
+	class CreateBVHEvent : public ecs::Event<CreateBVHEvent> {
+	public:
+		CreateBVHEvent(ecs::Object objScene) :
+			objScene(objScene)
+		{}
+		ecs::Object objScene;
+	};
 };
 
 #endif
