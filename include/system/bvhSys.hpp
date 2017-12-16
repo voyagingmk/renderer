@@ -20,25 +20,25 @@ namespace renderer {
 	private:
 
 		std::shared_ptr<BVHAccel> CreateBVHAccel(
-			const std::vector<std::shared_ptr<MeshRef>> &prims, std::string splitMethodName, int maxPrimsInNode);
+			const std::vector<ObjectID> &prims, std::string splitMethodName, int maxPrimsInNode);
 
-		std::shared_ptr<BVHAccel> CreateBVHAccel(const std::vector<std::shared_ptr<MeshRef>> &p,
+		std::shared_ptr<BVHAccel> CreateBVHAccel(const std::vector<ObjectID> &p,
 			int maxPrimsInNode = 1,
 			BVHAccel::SplitMethod splitMethod = BVHAccel::SplitMethod::SAH);
 
 		BVHBuildNode *recursiveBuild(std::shared_ptr<BVHAccel> bvhAccel, std::vector<BVHPrimitiveInfo> &primitiveInfo,
 			int start, int end, int *totalNodes,
-			std::vector<std::shared_ptr<MeshRef>> &orderedPrims);
+			std::vector<ObjectID> &orderedPrims);
 
 		BVHBuildNode *HLBVHBuild(const std::vector<BVHPrimitiveInfo> &primitiveInfo,
 			int *totalNodes,
-			std::vector<std::shared_ptr<MeshRef>> &orderedPrims) const;
+			std::vector<ObjectID> &orderedPrims) const;
 
 		BVHBuildNode *emitLBVH(std::shared_ptr<BVHAccel> bvhAccel,
 			BVHBuildNode *&buildNodes,
 			const std::vector<BVHPrimitiveInfo> &primitiveInfo,
 			MortonPrimitive *mortonPrims, int nPrimitives, int *totalNodes,
-			std::vector<std::shared_ptr<MeshRef>> &orderedPrims,
+			std::vector<ObjectID> &orderedPrims,
 			std::atomic<int> *orderedPrimsOffset, int bitIndex) const;
 
 		BVHBuildNode *buildUpperSAH(std::vector<BVHBuildNode *> &treeletRoots,

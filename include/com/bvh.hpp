@@ -3,6 +3,7 @@
 
 
 #include "base.hpp"
+#include "ecs/ecs.hpp"
 #include "mesh.hpp"
 #include <atomic>
 
@@ -67,7 +68,7 @@ namespace renderer {
 		// BVHAccel Private Data
 		int maxPrimsInNode;
 		SplitMethod splitMethod;
-		std::vector<std::shared_ptr<MeshRef>> primitives;
+		std::vector<ecs::ObjectID> primitives;
 		LinearBVHNode *nodes = nullptr;
 	};
 
