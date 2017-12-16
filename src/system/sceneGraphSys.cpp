@@ -49,7 +49,8 @@ namespace renderer {
 		m_evtMgr->emit<UploadCameraToShaderEvent>(evt.objCamera, shader);
 
 		for (auto obj : m_objMgr->entities<RootNodeTag>()) {
-			RenderNode(obj, shader);
+			Transform4x4 identity(Matrix4x4::newIdentity());
+			RenderNode(obj, shader, identity);
 		}
 		/*
 		for (auto obj : m_objMgr->entities<MeshRef, StaticObjTag>()) {
@@ -89,9 +90,11 @@ namespace renderer {
 		}*/
 	}
 
-	void SceneGraphSystem::RenderNode(Object obj, Shader shader) {
+	void SceneGraphSystem::RenderNode(Object obj, Shader shader, Transform4x4 trans) {
 		auto meshSet = m_objMgr->getSingletonComponent<MeshSet>();
 		auto matSetCom = m_objMgr->getSingletonComponent<MaterialSet>();
+
+		m_evtMgr->emit<UploadMatrixToShaderEvent>(obj, shader, trans.GetMatrix());
 		
 		if (obj.hasComponent<BatchObjectListCom>()) {
 			auto com = obj.component<BatchObjectListCom>();
@@ -113,7 +116,6 @@ namespace renderer {
 
 		if (obj.hasComponent<RenderableTag>() && obj.hasComponent<DynamicObjTag>()) {
 			auto meshRef = obj.component<MeshRef>();
-			m_evtMgr->emit<UploadMatrixToShaderEvent>(obj, shader);
 			auto meshID = meshRef->meshID;
 			Mesh& mesh = meshSet->meshDict[meshID];
 			for (uint32_t subMeshIdx = 0; subMeshIdx < mesh.meshes.size(); subMeshIdx++) {
@@ -124,10 +126,12 @@ namespace renderer {
 			}
 		}
 
+		auto spatialData = obj.component<SpatialData>();
+		trans = trans * spatialData->o2w;
 		auto sgNode = obj.component<SceneGraphNode>();
 		for (auto childObjID : sgNode->children) {
 			Object childObj = m_objMgr->get(childObjID);
-			RenderNode(childObj, shader);
+			RenderNode(childObj, shader, trans);
 		}
 	}
 

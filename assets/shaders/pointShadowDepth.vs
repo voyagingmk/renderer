@@ -12,7 +12,7 @@ uniform bool instanced;
 
 void main()
 {
-	mat4 model = instanced ? aModelMat: modelMat;
+	mat4 model = instanced ? aModelMat * modelMat: modelMat;
     mat3 normalMatrix = transpose(inverse(mat3(model)));
     vec3 N = normalMatrix * normalize(normal);
     vec3 L = normalize(lightPos - position);

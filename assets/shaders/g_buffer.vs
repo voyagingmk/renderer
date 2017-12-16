@@ -22,7 +22,7 @@ uniform bool instanced;
 
 void main()
 {
-	mat4 model = instanced ? aModelMat: modelMat;
+	mat4 model = instanced ? aModelMat * modelMat: modelMat;
 	vec4 WorldPos = model * vec4(position, 1.0f);
 	FragPos = (view * WorldPos).xyz;
 	gl_Position = PV * WorldPos;

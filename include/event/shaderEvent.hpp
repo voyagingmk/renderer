@@ -4,6 +4,7 @@
 #include "base.hpp"
 #include "ecs/ecs.hpp"
 #include "com/shader.hpp"
+#include "com/matrix.hpp"
 
 namespace renderer {
 
@@ -31,10 +32,17 @@ namespace renderer {
 		public:
 			UploadMatrixToShaderEvent(ecs::Object obj, Shader shader):
 				obj(obj),
-				shader(shader)
+				shader(shader),
+				mat(Matrix4x4::newIdentity())
+			{}
+			UploadMatrixToShaderEvent(ecs::Object obj, Shader shader, const Matrix4x4& mat):
+				obj(obj),
+				shader(shader),
+				mat(mat)
 			{}
 			ecs::Object obj;
 			Shader shader;
+			const Matrix4x4& mat;
 	};
 
 	class UploadCameraToShaderEvent : public ecs::Event<UploadCameraToShaderEvent> {

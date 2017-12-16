@@ -4,6 +4,7 @@
 #include "base.hpp"
 #include "ecs/ecs.hpp"
 #include "event/renderEvent.hpp"
+#include "com/transform.hpp"
 
 using namespace ecs;
 
@@ -19,7 +20,7 @@ namespace renderer {
 
 	private:
 
-		void RenderNode(Object obj, Shader shader); 
+		void RenderNode(Object obj, Shader shader, Transform4x4 trans);
 		
 		void DrawBatchObjs(Shader shader, std::vector<ecs::ObjectID>& objIDs);
 

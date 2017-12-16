@@ -11,6 +11,6 @@ uniform bool instanced;
 
 void main()
 {
-	mat4 model = instanced ? aModelMat: modelMat;
+	mat4 model = instanced ? aModelMat * modelMat: modelMat;
     gl_Position = lightPV * model * vec4(position, 1.0);
 }

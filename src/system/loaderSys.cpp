@@ -303,10 +303,31 @@ namespace renderer {
 		else {
 			objScene.addComponent<DynamicObjTag>();
 		}
+		objScene.addComponent<MotionCom>();
+		/*
+		{
+			ActionData data;
+			data.repeat = -1;
+			//data.actions.push_back(std::make_shared<MoveByAction>(0.5f, Vector3dF(-1.0f, 0.0f, 0.0f)));
+			//data.actions.push_back(std::make_shared<MoveByAction>(0.5f, Vector3dF(1.0f, 0.0f, 0.0f)));
+			data.actions.push_back(std::make_shared<RotateByAction>(1.0f, DegreeF(0.0f), DegreeF(90.0f), DegreeF(90.0f)));
+			data.actions.push_back(std::make_shared<RotateByAction>(1.0f, DegreeF(0.0f), DegreeF(90.0f), DegreeF(90.0f), true));
+			m_evtMgr->emit<AddActionEvent>(objScene, "rotate", data);
+		}
+		*/
 		for (auto childObjInfo : objInfo["children"])
 		{
+			for (int i = 0; i < 100; i++) {
 				Object childObj = loadSceneObjects(config, childObjInfo);
 				sgNode->children.push_back(childObj.ID());
+				auto spatialData = childObj.component<SpatialData>();
+				spatialData->pos = {
+					randomFloat() * 1000.0f,
+					randomFloat() * 1000.0f,
+					randomFloat() * 1000.0f
+				};
+				m_evtMgr->emit<UpdateSpatialDataEvent>(childObj);
+			}
 		}
 
 		return objScene;
