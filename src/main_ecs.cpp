@@ -17,6 +17,7 @@
 #include "system/batchSys.hpp"
 #include "system/statSys.hpp"
 #include "system/sceneGraphSys.hpp"
+#include "system/bvhSys.hpp"
 
 
 using namespace ecs;
@@ -42,6 +43,7 @@ void MainECS::setup() {
 	m_systemMgr.add<StatSystem>();
     m_systemMgr.add<EnvSystem>();
 	m_systemMgr.add<BatchSystem>();
+	m_systemMgr.add<BVHSystem>();
 	m_systemMgr.add<SceneGraphSystem>();
 	m_systemMgr.add<LightSystem>();
     m_systemMgr.add<TextureSystem>();

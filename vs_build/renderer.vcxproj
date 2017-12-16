@@ -385,6 +385,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="..\external\SOIL\image_helper.c" />
     <ClCompile Include="..\external\SOIL\SOIL.c" />
     <ClCompile Include="..\external\SOIL\stb_image_aug.c" />
+    <ClCompile Include="..\include\com\bvh.cpp" />
     <ClCompile Include="..\include\ecs\event.cpp" />
     <ClCompile Include="..\include\ecs\object.cpp" />
     <ClCompile Include="..\include\ecs\object_manager.cpp" />
@@ -404,6 +405,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="..\src\main_ecs.cpp" />
     <ClCompile Include="..\src\system\batchSys.cpp" />
     <ClCompile Include="..\src\system\bufferSys.cpp" />
+    <ClCompile Include="..\src\system\bvhSys.cpp" />
     <ClCompile Include="..\src\system\cameraSys.cpp" />
     <ClCompile Include="..\src\system\configSys.cpp" />
     <ClCompile Include="..\src\system\envSys.cpp" />
@@ -446,6 +448,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="..\include\catch.hpp" />
     <ClInclude Include="..\include\com\bbox.hpp" />
     <ClInclude Include="..\include\com\bufferCom.hpp" />
+    <ClInclude Include="..\include\com\bvh.hpp" />
     <ClInclude Include="..\include\com\cameraCom.hpp" />
     <ClInclude Include="..\include\com\color.hpp" />
     <ClInclude Include="..\include\com\geometry.hpp" />
@@ -492,6 +495,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="..\include\sdf.hpp" />
     <ClInclude Include="..\include\system\batchSys.hpp" />
     <ClInclude Include="..\include\system\bufferSys.hpp" />
+    <ClInclude Include="..\include\system\bvhSys.hpp" />
     <ClInclude Include="..\include\system\cameraSys.hpp" />
     <ClInclude Include="..\include\system\configSys.hpp" />
     <ClInclude Include="..\include\system\envSys.hpp" />
