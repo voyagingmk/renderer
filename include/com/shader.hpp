@@ -79,6 +79,9 @@ namespace renderer
     typedef std::map<std::string, ShaderProgramHDL> ShaderProgramAlias;
 
     struct ShaderProgramSet {
+		Shader getShader(std::string shaderName) {
+			return Shader(alias2HDL[shaderName], spHDL2locCache);
+		}
         ShaderProgramAlias alias2HDL;
         SPHDLList spHDLs;
 		SPHDL2UniformLocCache spHDL2locCache;

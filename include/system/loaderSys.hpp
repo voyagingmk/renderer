@@ -41,6 +41,8 @@ namespace renderer {
 
 		void loadSkyboxMesh();
 
+		void loadBoxMesh();
+
 		void loadSpatialData(Object obj, const json &config);
 
 	};

@@ -88,6 +88,7 @@ namespace renderer {
 
 		CreateGlobalQuadObject();
 		loadSkyboxMesh();
+		loadBoxMesh();
 
 		Object objCamera = m_objMgr->create();
 		auto com = objCamera.addComponent<PerspectiveCameraView>(45.0f, (float)winWidth / (float)winHeight, 0.1f, 10000.0f);
@@ -102,7 +103,7 @@ namespace renderer {
 		Object objRoot = loadSceneObjects(config, config["sceneRoot"]);
 		objRoot.addComponent<RootNodeTag>();
 		m_evtMgr->emit<UpdateBatchEvent>(objRoot, true);
-		m_evtMgr->emit<CreateBVHEvent>(objRoot);
+		m_evtMgr->emit<CreateBVHEvent>(objRoot, objRoot);
 
 		m_evtMgr->emit<CreateColorBufferEvent>(
 			winWidth, winHeight,
@@ -154,6 +155,14 @@ namespace renderer {
 		printf("create skybox mesh, ID:%d\n", meshID);
 	}
 
+	void LoaderSystem::loadBoxMesh() {
+		auto meshSetCom = m_objMgr->getSingletonComponent<MeshSet>();
+		MeshID meshID;
+		Mesh& mesh = meshSetCom->newMesh("box", meshID);
+		generateOuterBoxMesh(mesh);
+		m_evtMgr->emit<CreateMeshBufferEvent>(meshID);
+	}
+
 	void LoaderSystem::CreateGlobalQuadObject() {
 		auto meshSetCom = m_objMgr->getSingletonComponent<MeshSet>();
 		MeshID meshID;
@@ -186,11 +195,6 @@ namespace renderer {
 	}
 
 	void LoaderSystem::loadLights(const json &config) {
-		auto meshSetCom = m_objMgr->getSingletonComponent<MeshSet>();
-		MeshID meshID;
-		Mesh& mesh = meshSetCom->newMesh("light", meshID);
-		generateOuterBoxMesh(mesh);
-		m_evtMgr->emit<CreateMeshBufferEvent>(meshID);
 		int count = 0;
 		for (auto lightInfo : config["light"])
 		{
@@ -221,7 +225,7 @@ namespace renderer {
 					lightInfo["linear"],
 					lightInfo["quadratic"],
 					1024);
-				obj.addComponent<MeshRef>("light");
+				obj.addComponent<MeshRef>("box");
 				m_evtMgr->emit<EnableLightShadowEvent>(obj);
 				obj.addComponent<MotionCom>();
 
@@ -318,7 +322,7 @@ namespace renderer {
 		*/
 		for (auto childObjInfo : objInfo["children"])
 		{
-			for (int i = 0; i < 100; i++) {
+			for (int i = 0; i < 20; i++) {
 				Object childObj = loadSceneObjects(config, childObjInfo);
 				sgNode->children.push_back(childObj.ID());
 				auto spatialData = childObj.component<SpatialData>();

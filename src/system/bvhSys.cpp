@@ -2,6 +2,9 @@
 #include "system/bvhSys.hpp"
 #include "com/geometry.hpp"
 #include "com/spatialData.hpp"
+#include "com/shader.hpp"
+#include "event/shaderEvent.hpp"
+#include "event/bufferEvent.hpp"
 
 using namespace std;
 
@@ -80,15 +83,94 @@ namespace renderer {
 	void BVHSystem::init(ObjectManager &objMgr, EventManager &evtMgr) {
 		printf("BVHSystem init\n");
 		evtMgr.on<CreateBVHEvent>(*this);
+		evtMgr.on<DebugDrawBVHEvent>(*this);
 	}
 
 	void BVHSystem::update(ObjectManager &objMgr, EventManager &evtMgr, float dt) {
 
 	}
 
+	void BVHSystem::receive(const DebugDrawBVHEvent &evt) {
+		auto bvhAccel = evt.objBVH.component<BVHAccel>();
+		auto meshSet = m_objMgr->getSingletonComponent<MeshSet>();
+		auto matSetCom = m_objMgr->getSingletonComponent<MaterialSet>();
+		auto spSetCom = m_objMgr->getSingletonComponent<ShaderProgramSet>();
+		Shader shader = spSetCom->getShader("wireframe");
+		shader.use();
+		m_evtMgr->emit<UploadCameraToShaderEvent>(evt.objCamera, shader);
+		LinearBVHNode *nodes = bvhAccel->nodes;
+		int toVisitOffset = 0, currentNodeIndex = 0;
+		int nodesToVisit[64];
+		// Turn on wireframe mode
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		while (true) {
+			const LinearBVHNode *node = &nodes[currentNodeIndex];
+			if (node->nPrimitives > 0) {
+				// draw bounds
+				auto worldBound = node->bounds;
+				auto pos = (worldBound.pMax + worldBound.pMin) * 0.5f;
+				auto len = worldBound.pMax - worldBound.pMin;
+				Matrix4x4 T = Translate<Matrix4x4>(pos);
+				Matrix4x4 S = Scale<Matrix4x4>(len);
+				shader.setMatrix4f("modelMat", T * S);
+				m_evtMgr->emit<DrawMeshBufferEvent>("box", 0);
+				
+				//for (int i = 0; i < node->nPrimitives; ++i) {
+				//	auto objID = bvhAccel->primitives[node->primitivesOffset + i];
+				//}
+				if (toVisitOffset == 0) break;
+				currentNodeIndex = nodesToVisit[--toVisitOffset];
+			} else {
+				nodesToVisit[toVisitOffset++] = currentNodeIndex + 1;
+				// currentNodeIndex = node->secondChildOffset;
+				nodesToVisit[toVisitOffset++] = node->secondChildOffset;
+				currentNodeIndex = currentNodeIndex + 1;
+			}
+		};
+		// Turn off wireframe mode
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		/*
+		LinearBVHNode *nodes = bvhAccel->nodes;
+		if (!nodes) return;
+		bool hit = false;
+		int toVisitOffset = 0, currentNodeIndex = 0;
+		int nodesToVisit[64];
+		while (true) {
+		const LinearBVHNode *node = &nodes[currentNodeIndex];
+		// Check ray against BVH node
+		if (true) {
+		if (node->nPrimitives > 0) {
+		// Intersect ray with primitives in leaf BVH node
+		for (int i = 0; i < node->nPrimitives; ++i)
+		if (true)
+		hit = true;
+		if (toVisitOffset == 0) break;
+		currentNodeIndex = nodesToVisit[--toVisitOffset];
+		}
+		else {
+		// Put far BVH node on _nodesToVisit_ stack, advance to near
+		// node
+		if (true) {
+		nodesToVisit[toVisitOffset++] = currentNodeIndex + 1;
+		currentNodeIndex = node->secondChildOffset;
+		}
+		else {
+		nodesToVisit[toVisitOffset++] = node->secondChildOffset;
+		currentNodeIndex = currentNodeIndex + 1;
+		}
+		}
+		}
+		else {
+		if (toVisitOffset == 0) break;
+		currentNodeIndex = nodesToVisit[--toVisitOffset];
+		}
+		}*/
+	}
+
 	void BVHSystem::receive(const CreateBVHEvent &evt) {
 		Object objScene = evt.objScene;
-		ComponentHandle<BVHAccel> bvhAccel = objScene.addComponent<BVHAccel>();
+		Object objBVH = evt.objBVH;
+		auto bvhAccel = objBVH.addComponent<BVHAccel>();
 
 		std::vector<ObjectID> prims;
 		std::function<void(Object objScene)> filterFunc;
@@ -105,43 +187,6 @@ namespace renderer {
 		}; 
 		filterFunc(objScene);
 		CreateBVHAccel(bvhAccel, prims,"", 0);
-
-		/*
-		LinearBVHNode *nodes = bvhAccel->nodes;
-		if (!nodes) return;
-		bool hit = false;
-		int toVisitOffset = 0, currentNodeIndex = 0;
-		int nodesToVisit[64];
-		while (true) {
-			const LinearBVHNode *node = &nodes[currentNodeIndex];
-			// Check ray against BVH node
-			if (true) {
-				if (node->nPrimitives > 0) {
-					// Intersect ray with primitives in leaf BVH node
-					for (int i = 0; i < node->nPrimitives; ++i)
-						if (true)
-							hit = true;
-					if (toVisitOffset == 0) break;
-					currentNodeIndex = nodesToVisit[--toVisitOffset];
-				}
-				else {
-					// Put far BVH node on _nodesToVisit_ stack, advance to near
-					// node
-					if (true) {
-						nodesToVisit[toVisitOffset++] = currentNodeIndex + 1;
-						currentNodeIndex = node->secondChildOffset;
-					}
-					else {
-						nodesToVisit[toVisitOffset++] = node->secondChildOffset;
-						currentNodeIndex = currentNodeIndex + 1;
-					}
-				}
-			}
-			else {
-				if (toVisitOffset == 0) break;
-				currentNodeIndex = nodesToVisit[--toVisitOffset];
-			}
-		}*/
 	}
 
 	// BVHAccel Method Definitions

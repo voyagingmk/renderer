@@ -6,6 +6,7 @@
 #include "com/cameraCom.hpp"
 #include "com/bufferCom.hpp"
 #include "com/lightCom.hpp"
+#include "com/bvh.hpp"
 #include "system/spatialSys.hpp"
 #include "event/materialEvent.hpp"
 #include "event/shaderEvent.hpp"
@@ -96,9 +97,13 @@ namespace renderer {
 
 		evtMgr.emit<UseColorBufferEvent>(curSceneBuf);
 		// skybox pass
-		
 		renderSkybox("", objCamera, screenViewport);
+		// light obj （debug)
 		renderLightObjects("", objCamera, screenViewport);
+		// bvh （debug)
+		for (auto objBVH : m_objMgr->entities<BVHAccel>()) {
+			m_evtMgr->emit<DebugDrawBVHEvent>(objCamera, objBVH);
+		}
 		evtMgr.emit<UnuseColorBufferEvent>(curSceneBuf);
 		
 		if (gSettingCom->get1b("enableSSAO")) {
@@ -120,6 +125,7 @@ namespace renderer {
 
 		// renderColorBuffer("ssaoBlur", context->width, context->height, true, true);
 		// renderGBufferDebug("main", context->width, context->height);
+
 
 		m_evtMgr->emit<DrawUIEvent>();
 		SDL_GL_SwapWindow(context->win);
@@ -144,7 +150,7 @@ namespace renderer {
 
 	Shader RenderSystem::getShader(std::string shaderName) {
 		auto spSetCom = m_objMgr->getSingletonComponent<ShaderProgramSet>();
-		return Shader(spSetCom->alias2HDL[shaderName], spSetCom->spHDL2locCache);
+		return spSetCom->getShader(shaderName);
 	}
 
     void RenderSystem::renderQuad() {
@@ -436,8 +442,7 @@ namespace renderer {
 			m_evtMgr->emit<UploadCameraToShaderEvent>(objCamera, lightShader);	
 			m_evtMgr->emit<UploadMatrixToShaderEvent>(lightObj, lightShader);
 			auto meshID = lightObj.component<MeshRef>()->meshID;
-			m_evtMgr->emit<DrawMeshBufferEvent>(meshID, 0);
-			
+			m_evtMgr->emit<DrawMeshBufferEvent>(meshID, 0);		
 		}
 		m_evtMgr->emit<UnuseColorBufferEvent>(colorBufferAliasName);
 	}

@@ -35,11 +35,24 @@ namespace renderer {
 	
 	class CreateBVHEvent : public ecs::Event<CreateBVHEvent> {
 	public:
-		CreateBVHEvent(ecs::Object objScene) :
-			objScene(objScene)
+		CreateBVHEvent(ecs::Object objScene, ecs::Object objBVH) :
+			objScene(objScene),
+			objBVH(objBVH)
 		{}
 		ecs::Object objScene;
+		ecs::Object objBVH;
 	};
+
+	class DebugDrawBVHEvent : public ecs::Event<DebugDrawBVHEvent> {
+	public:
+		DebugDrawBVHEvent(ecs::Object objCamera, ecs::Object objBVH) :
+			objCamera(objCamera),
+			objBVH(objBVH)
+		{}
+		ecs::Object objCamera;
+		ecs::Object objBVH;
+	};
+	
 };
 
 #endif

@@ -130,6 +130,11 @@
                 "depthCubeMap": 4,
                 "depthMap": 5
             }
+        },
+        {
+            "alias": "wireframe",
+            "vs": "wireframe.vs",
+            "fs": "wireframe.fs"
         }
         
     ],
@@ -311,17 +316,17 @@
             [1, 1, 1],
             [0, 0, 0]
         ],
-                "children": [
-                    {
-                        "model": "teapot.obj",
-                        "static": true,
-                        "spatial": [
-                            [0, 0, 0],
-                            [5, 5, 5],
-                            [0, 0, 0]
-                        ]
-                    }
+        "children": [
+            {
+                "model": "teapot.obj",
+                "static": true,
+                "spatial": [
+                    [0, 0, 0],
+                    [10, 10, 10],
+                    [0, 0, 0]
                 ]
+            }
+        ]
     },
     "object0": [      
         {
