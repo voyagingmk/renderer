@@ -198,7 +198,7 @@ namespace renderer {
 			}
 		}; 
 		filterFunc(objScene);
-		CreateBVHAccel(bvhAccel, prims,"equal", 0);
+		CreateBVHAccel(bvhAccel, prims, "", 0);
 	}
 
 	// BVHAccel Method Definitions
