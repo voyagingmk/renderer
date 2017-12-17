@@ -5,6 +5,7 @@
 #include "com/shader.hpp"
 #include "event/shaderEvent.hpp"
 #include "event/bufferEvent.hpp"
+#include "com/miscCom.hpp"
 
 using namespace std;
 
@@ -101,8 +102,11 @@ namespace renderer {
 		LinearBVHNode *nodes = bvhAccel->nodes;
 		int toVisitOffset = 0, currentNodeIndex = 0;
 		int nodesToVisit[64];
+		int nodesDepth[64];
+		nodesDepth[0] = 0;
 		// Turn on wireframe mode
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		int depth = 0;
 		while (true) {
 			const LinearBVHNode *node = &nodes[currentNodeIndex];
 			// draw bounds
@@ -112,17 +116,25 @@ namespace renderer {
 			Matrix4x4 T = Translate<Matrix4x4>(pos);
 			Matrix4x4 S = Scale<Matrix4x4>(len);
 			shader.setMatrix4f("modelMat", T * S);
-			m_evtMgr->emit<DrawMeshBufferEvent>("box", 0);
-
+			shader.set3f("wireColor", Vector3dF{ 1.0f, 1.0f, 1.0f} * ( 0.2f + (float)depth / 20.0f));
+			auto gSettingCom = m_objMgr->getSingletonComponent<GlobalSettingCom>();
+			int d = gSettingCom->getValue("bvhDepth");
+			if (d == depth) {
+				m_evtMgr->emit<DrawMeshBufferEvent>("box", 0);
+			}
 			if (node->nPrimitives > 0) {
 				//for (int i = 0; i < node->nPrimitives; ++i) {
 				//	auto objID = bvhAccel->primitives[node->primitivesOffset + i];
 				//}
 				if (toVisitOffset == 0) break;
 				currentNodeIndex = nodesToVisit[--toVisitOffset];
+				depth = nodesDepth[toVisitOffset];
 			} else {
+				depth++;
+				nodesDepth[toVisitOffset] = depth;
 				nodesToVisit[toVisitOffset++] = currentNodeIndex + 1;
 				// currentNodeIndex = node->secondChildOffset;
+				nodesDepth[toVisitOffset] = depth;
 				nodesToVisit[toVisitOffset++] = node->secondChildOffset;
 				currentNodeIndex = currentNodeIndex + 1;
 			}
@@ -186,7 +198,7 @@ namespace renderer {
 			}
 		}; 
 		filterFunc(objScene);
-		CreateBVHAccel(bvhAccel, prims,"", 0);
+		CreateBVHAccel(bvhAccel, prims,"equal", 0);
 	}
 
 	// BVHAccel Method Definitions

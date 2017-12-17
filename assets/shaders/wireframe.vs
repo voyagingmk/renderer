@@ -4,7 +4,6 @@ layout (location = 0) in vec3 position;
 layout (location = 4) in mat4 aModelMat;
 
 uniform mat4 PV;
-
 uniform mat4 modelMat;
 uniform bool instanced;
 

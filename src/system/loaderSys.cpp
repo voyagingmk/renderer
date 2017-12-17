@@ -85,6 +85,7 @@ namespace renderer {
 		gSettingCom->setValue("enableToneMapping", json(true));
 		gSettingCom->setValue("enableGamma", json(true));
 		gSettingCom->setValue("debugShadow", json(false));
+		gSettingCom->setValue("bvhDepth", 0);
 
 		CreateGlobalQuadObject();
 		loadSkyboxMesh();
@@ -92,7 +93,7 @@ namespace renderer {
 
 		Object objCamera = m_objMgr->create();
 		auto com = objCamera.addComponent<PerspectiveCameraView>(45.0f, (float)winWidth / (float)winHeight, 0.1f, 10000.0f);
-        com->eye = Vector3dF(1000.0f, 1000.0f, 1000.0f);
+        com->eye = Vector3dF(156.0f, 116.0f, 143.0f);
         com->SetFrontVector({30.0f, -15.0f, -30.0f});
 
         loadTextures(assetsDir + texSubDir, config);
@@ -159,7 +160,8 @@ namespace renderer {
 		auto meshSetCom = m_objMgr->getSingletonComponent<MeshSet>();
 		MeshID meshID;
 		Mesh& mesh = meshSetCom->newMesh("box", meshID);
-		generateOuterBoxMesh(mesh);
+		generateQuadBoxMesh(mesh, true);
+		mesh.meshes[0].meshType = MeshType::Lines;
 		m_evtMgr->emit<CreateMeshBufferEvent>(meshID);
 	}
 
@@ -327,9 +329,9 @@ namespace renderer {
 				sgNode->children.push_back(childObj.ID());
 				auto spatialData = childObj.component<SpatialData>();
 				spatialData->pos = {
-					randomFloat() * 1000.0f,
-					randomFloat() * 1000.0f,
-					randomFloat() * 1000.0f
+					randomFloat() * 100.0f,
+					randomFloat() * 100.0f,
+					randomFloat() * 100.0f
 				};
 				m_evtMgr->emit<UpdateSpatialDataEvent>(childObj);
 			}

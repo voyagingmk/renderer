@@ -232,21 +232,36 @@ namespace renderer {
 	}
 
 	void BufferSystem::drawMeshBuffer(const MeshBufferRef& buf) {
+		GLenum mode = 0;
+		switch (buf.meshType) {
+			case MeshType::Tri: 
+			{	mode = GL_TRIANGLES;
+				break;
+			}
+			case MeshType::Lines:
+			{
+				mode = GL_LINES;
+				break;
+			}
+		}
+		if (!mode) {
+			return;
+		}
 		glBindVertexArray(buf.vao);
 		if (buf.instanced) {
 			if (buf.noIndices) {
-				glDrawArraysInstanced(GL_TRIANGLES, 0, buf.count, buf.insBuf.instanceNum);
+				glDrawArraysInstanced(mode, 0, buf.count, buf.insBuf.instanceNum);
 			}
 			else {
-				glDrawElementsInstanced(GL_TRIANGLES, buf.count, GL_UNSIGNED_INT, 0, buf.insBuf.instanceNum);
+				glDrawElementsInstanced(mode, buf.count, GL_UNSIGNED_INT, 0, buf.insBuf.instanceNum);
 			}
 		}
 		else {
 			if (buf.noIndices) {
-				glDrawArrays(GL_TRIANGLES, 0, buf.count);
+				glDrawArrays(mode, 0, buf.count);
 			}
 			else {
-				glDrawElements(GL_TRIANGLES, buf.count, GL_UNSIGNED_INT, 0);
+				glDrawElements(mode, buf.count, GL_UNSIGNED_INT, 0);
 			}
 		}
 		glBindVertexArray(0);
@@ -301,6 +316,7 @@ namespace renderer {
 	MeshBufferRef BufferSystem::CreateMeshBuffer(const SubMesh& subMesh) {
 		GLuint VBO, VAO, EBO;
 		MeshBufferRef meshBuffer;
+		meshBuffer.meshType = subMesh.meshType;
 		glGenVertexArrays(1, &VAO);
 		glGenBuffers(1, &VBO);
 		glGenBuffers(1, &EBO);

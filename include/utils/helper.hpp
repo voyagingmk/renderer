@@ -94,8 +94,33 @@ namespace renderer{
             }
         }
     }
-    
-    static void generateOuterBoxMesh(Mesh& m) {
+
+	static void generateQuadBoxMesh(Mesh& m, bool reverse = false) {
+		m.meshes.emplace_back();
+		SubMesh& mesh = *std::prev(m.meshes.end());
+		mesh.vertices = Vertices{
+			Vertex({ -0.5, -0.5, 0.5 }), // 左下
+			Vertex({ 0.5, -0.5, 0.5 }),  // 右下
+			Vertex({ 0.5,  0.5, 0.5 }),  // 右上
+			Vertex({ -0.5,  0.5, 0.5 }), // 左上
+
+			Vertex({ -0.5, -0.5,-0.5 }), // 左下-后
+			Vertex({ 0.5, -0.5,-0.5 }),  // 右下-后
+			Vertex({ 0.5,  0.5,-0.5 }),  // 右上-后
+			Vertex({ -0.5,  0.5,-0.5 })  // 左上-后
+		};
+		mesh.indexes = {
+			0, 1, 1, 2, 2, 3, 3, 0, // front
+			1, 5, 5, 6, 6, 2, 2, 1, // right
+			5, 4, 4, 7, 7, 6, 6, 5, // back
+			4, 0, 0, 3, 3, 7, 7, 4, // left
+			3, 2, 2, 6, 6, 7, 7, 3, // top
+			4, 5, 5, 1, 1, 0, 0, 4, // bottom
+		};
+		generateNormals(mesh, reverse);
+	}
+
+    static void generateTriBoxMesh(Mesh& m, bool reverse = false) {
         m.meshes.emplace_back();
         SubMesh& mesh = *std::prev(m.meshes.end());
         mesh.vertices = Vertices{
@@ -123,7 +148,7 @@ namespace renderer{
             6, 0, 4,
             4, 0, 2
         };
-        generateNormals(mesh, true);
+        generateNormals(mesh, reverse);
     }
 
     static void generateSkyBoxMesh(Mesh& m) {

@@ -148,7 +148,7 @@ namespace renderer {
 	}
 	static float randomFloat(){
 		static std::mt19937 eng(time(0));
-		static std::uniform_real_distribution<float> fraction_dist;
+		static std::uniform_real_distribution<float> fraction_dist(0.0f, 1.0f);
 		return fraction_dist(eng);
 	}
 

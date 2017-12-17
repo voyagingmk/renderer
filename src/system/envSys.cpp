@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "system/envSys.hpp"
+#include "com/miscCom.hpp"
 
 using namespace std;
 
@@ -162,6 +163,25 @@ namespace renderer {
 			{
 				// depth map
 				renderMode->mode = RenderModeEnum::DepthMap;
+				break;
+			}
+			case SDLK_PLUS:
+			case SDLK_EQUALS:
+			{
+				auto gSettingCom = m_objMgr->getSingletonComponent<GlobalSettingCom>();
+				int d = gSettingCom->getValue("bvhDepth");
+				d++;
+				gSettingCom->setValue("bvhDepth", d);
+				printf("bvhDepth %d\n", d);
+				break;
+			}
+			case SDLK_MINUS:
+			{
+				auto gSettingCom = m_objMgr->getSingletonComponent<GlobalSettingCom>();
+				int d = gSettingCom->getValue("bvhDepth");
+				d--;
+				gSettingCom->setValue("bvhDepth", d);
+				printf("bvhDepth %d\n", d);
 				break;
 			}
 			default:

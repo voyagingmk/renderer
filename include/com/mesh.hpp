@@ -68,6 +68,11 @@ namespace renderer {
 	typedef size_t MeshID;
 	typedef size_t SubMeshIdx;
 
+	enum class MeshType {
+		Tri = 0,
+		Lines = 1
+	};
+
 	// SubMesh没有自己的transform
 	// 只是Mesh的一个part
     class SubMesh {
@@ -89,6 +94,7 @@ namespace renderer {
 			Vertices vertices;
 		    UIntArray indexes;
 			BBox bbox;
+			MeshType meshType = MeshType::Tri;
     };
 
 	// SubMesh集合

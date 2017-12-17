@@ -114,6 +114,7 @@ namespace renderer {
 		InstanceBufferRef insBuf;
 		bool instanced;
 		bool noIndices;
+		MeshType meshType = MeshType::Tri;
 	};
 
 
