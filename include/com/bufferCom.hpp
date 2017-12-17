@@ -98,7 +98,7 @@ namespace renderer {
 
 	struct MeshBufferRef {
 		MeshBufferRef():
-			triangles(0),
+			count(0),
 			vao(0),
 			vbo(0),
 			ebo(0),
@@ -106,7 +106,7 @@ namespace renderer {
 			instanced(false),
 			noIndices(false)
 		{}
-		size_t triangles;
+		size_t count; // count of vertices or indices
 		BufferID vao;
 		BufferID vbo;
 		BufferID ebo;

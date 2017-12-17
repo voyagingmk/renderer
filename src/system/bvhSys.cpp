@@ -105,16 +105,16 @@ namespace renderer {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		while (true) {
 			const LinearBVHNode *node = &nodes[currentNodeIndex];
+			// draw bounds
+			auto worldBound = node->bounds;
+			auto pos = (worldBound.pMax + worldBound.pMin) * 0.5f;
+			auto len = worldBound.pMax - worldBound.pMin;
+			Matrix4x4 T = Translate<Matrix4x4>(pos);
+			Matrix4x4 S = Scale<Matrix4x4>(len);
+			shader.setMatrix4f("modelMat", T * S);
+			m_evtMgr->emit<DrawMeshBufferEvent>("box", 0);
+
 			if (node->nPrimitives > 0) {
-				// draw bounds
-				auto worldBound = node->bounds;
-				auto pos = (worldBound.pMax + worldBound.pMin) * 0.5f;
-				auto len = worldBound.pMax - worldBound.pMin;
-				Matrix4x4 T = Translate<Matrix4x4>(pos);
-				Matrix4x4 S = Scale<Matrix4x4>(len);
-				shader.setMatrix4f("modelMat", T * S);
-				m_evtMgr->emit<DrawMeshBufferEvent>("box", 0);
-				
 				//for (int i = 0; i < node->nPrimitives; ++i) {
 				//	auto objID = bvhAccel->primitives[node->primitivesOffset + i];
 				//}

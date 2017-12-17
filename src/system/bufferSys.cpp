@@ -235,18 +235,18 @@ namespace renderer {
 		glBindVertexArray(buf.vao);
 		if (buf.instanced) {
 			if (buf.noIndices) {
-				glDrawArraysInstanced(GL_TRIANGLES, 0, buf.triangles * 3, buf.insBuf.instanceNum);
+				glDrawArraysInstanced(GL_TRIANGLES, 0, buf.count, buf.insBuf.instanceNum);
 			}
 			else {
-				glDrawElementsInstanced(GL_TRIANGLES, buf.triangles * 3, GL_UNSIGNED_INT, 0, buf.insBuf.instanceNum);
+				glDrawElementsInstanced(GL_TRIANGLES, buf.count, GL_UNSIGNED_INT, 0, buf.insBuf.instanceNum);
 			}
 		}
 		else {
 			if (buf.noIndices) {
-				glDrawArrays(GL_TRIANGLES, 0, buf.triangles * 3);
+				glDrawArrays(GL_TRIANGLES, 0, buf.count);
 			}
 			else {
-				glDrawElements(GL_TRIANGLES, buf.triangles * 3, GL_UNSIGNED_INT, 0);
+				glDrawElements(GL_TRIANGLES, buf.count, GL_UNSIGNED_INT, 0);
 			}
 		}
 		glBindVertexArray(0);
@@ -333,7 +333,7 @@ namespace renderer {
 		meshBuffer.vbo = VBO;
 		meshBuffer.ebo = EBO;
 		assert(VAO > 0 && VBO > 0 && EBO > 0);
-		meshBuffer.triangles = subMesh.indexes.size() / 3;
+		meshBuffer.count = subMesh.indexes.size();
 		//bufferDict[aliasname] = meshBuffer;
 		return meshBuffer;
 	}
@@ -357,7 +357,7 @@ namespace renderer {
 		glBindBuffer(GL_ARRAY_BUFFER, 0); 
 		glBindVertexArray(0);
 		meshBuffer.noIndices = true;
-		meshBuffer.triangles = 12;
+		meshBuffer.count = 12 * 3;
 		meshBuffersSet->buffersDict[meshID] = { meshBuffer };
 	}
     
