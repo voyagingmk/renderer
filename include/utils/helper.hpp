@@ -95,7 +95,7 @@ namespace renderer{
         }
     }
 
-	static void generateQuadBoxMesh(Mesh& m, bool reverse = false) {
+	static void generateWireframeBoxMesh(Mesh& m) {
 		m.meshes.emplace_back();
 		SubMesh& mesh = *std::prev(m.meshes.end());
 		mesh.vertices = Vertices{
@@ -117,7 +117,6 @@ namespace renderer{
 			3, 2, 2, 6, 6, 7, 7, 3, // top
 			4, 5, 5, 1, 1, 0, 0, 4, // bottom
 		};
-		generateNormals(mesh, reverse);
 	}
 
     static void generateTriBoxMesh(Mesh& m, bool reverse = false) {

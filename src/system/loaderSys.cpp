@@ -89,7 +89,8 @@ namespace renderer {
 
 		CreateGlobalQuadObject();
 		loadSkyboxMesh();
-		loadBoxMesh();
+		loadWireframeBoxMesh();
+		loadOuterBoxMesh();
 
 		Object objCamera = m_objMgr->create();
 		auto com = objCamera.addComponent<PerspectiveCameraView>(45.0f, (float)winWidth / (float)winHeight, 0.1f, 10000.0f);
@@ -156,15 +157,22 @@ namespace renderer {
 		printf("create skybox mesh, ID:%d\n", meshID);
 	}
 
-	void LoaderSystem::loadBoxMesh() {
+	void LoaderSystem::loadWireframeBoxMesh() {
 		auto meshSetCom = m_objMgr->getSingletonComponent<MeshSet>();
 		MeshID meshID;
-		Mesh& mesh = meshSetCom->newMesh("box", meshID);
-		generateQuadBoxMesh(mesh, true);
+		Mesh& mesh = meshSetCom->newMesh("wfbox", meshID);
+		generateWireframeBoxMesh(mesh);
 		mesh.meshes[0].meshType = MeshType::Lines;
 		m_evtMgr->emit<CreateMeshBufferEvent>(meshID);
 	}
 
+	void LoaderSystem::loadOuterBoxMesh() {
+		auto meshSetCom = m_objMgr->getSingletonComponent<MeshSet>();
+		MeshID meshID;
+		Mesh& mesh = meshSetCom->newMesh("outerbox", meshID);
+		generateTriBoxMesh(mesh, true);
+		m_evtMgr->emit<CreateMeshBufferEvent>(meshID);
+	}
 	void LoaderSystem::CreateGlobalQuadObject() {
 		auto meshSetCom = m_objMgr->getSingletonComponent<MeshSet>();
 		MeshID meshID;
@@ -227,7 +235,7 @@ namespace renderer {
 					lightInfo["linear"],
 					lightInfo["quadratic"],
 					1024);
-				obj.addComponent<MeshRef>("box");
+				obj.addComponent<MeshRef>("outerbox");
 				m_evtMgr->emit<EnableLightShadowEvent>(obj);
 				obj.addComponent<MotionCom>();
 
@@ -330,7 +338,7 @@ namespace renderer {
 				auto spatialData = childObj.component<SpatialData>();
 				spatialData->pos = {
 					randomFloat() * 100.0f,
-					randomFloat() * 100.0f,
+					0.0f,
 					randomFloat() * 100.0f
 				};
 				m_evtMgr->emit<UpdateSpatialDataEvent>(childObj);

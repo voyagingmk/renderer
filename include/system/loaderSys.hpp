@@ -41,7 +41,9 @@ namespace renderer {
 
 		void loadSkyboxMesh();
 
-		void loadBoxMesh();
+		void loadWireframeBoxMesh();
+
+		void loadOuterBoxMesh();
 
 		void loadSpatialData(Object obj, const json &config);
 

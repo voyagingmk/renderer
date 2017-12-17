@@ -120,7 +120,7 @@ namespace renderer {
 			auto gSettingCom = m_objMgr->getSingletonComponent<GlobalSettingCom>();
 			int d = gSettingCom->getValue("bvhDepth");
 			if (d == depth) {
-				m_evtMgr->emit<DrawMeshBufferEvent>("box", 0);
+				m_evtMgr->emit<DrawMeshBufferEvent>("wfbox", 0);
 			}
 			if (node->nPrimitives > 0) {
 				//for (int i = 0; i < node->nPrimitives; ++i) {
