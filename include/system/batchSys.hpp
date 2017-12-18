@@ -13,7 +13,7 @@ namespace renderer {
 	class BatchSystem : public System<BatchSystem>, public Receiver<BatchSystem>
 	{
 	public:
-		void init(ObjectManager &objMgr, EventManager &evtMgr);
+		void init(ObjectManager &objMgr, EventManager &evtMgr) override;
 
 		void update(ObjectManager &objMgr, EventManager &evtMgr, float dt) override;
 

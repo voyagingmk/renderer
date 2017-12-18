@@ -17,9 +17,6 @@ namespace renderer {
 		MxN() {
 			memset(data, 0, row * col * sizeof(V));
 		}
-		MxN(MxN& other) {
-			memcpy(data, other.data, row * col * sizeof(V));
-		}
 		MxN(std::initializer_list<V> values) {
 			int idx = 0;
 			for (auto& value : values) {
@@ -39,7 +36,7 @@ namespace renderer {
 		typedef MxN<V, T::col, T::row> TransT;
 	public:
 		Matrix() {
-			data = GetPool<T>()->newElement(T());
+			data = GetPool<T>()->newElement();
 		}
         
         Matrix(T* d) {
@@ -52,7 +49,7 @@ namespace renderer {
 		}
 
 		Matrix(const Matrix<T>& m) {
-			data = GetPool<T>()->newElement(T()); 
+			data = GetPool<T>()->newElement(); 
 			*this = m;
 		}
 

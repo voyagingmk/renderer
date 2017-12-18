@@ -46,8 +46,6 @@ namespace renderer {
 	// TODO 支持动态batch
 	// TODO 支持修改材质
 	void BatchSystem::UpdateBatch(Object objScene, bool recursive) {
-		auto meshSet = m_objMgr->getSingletonComponent<MeshSet>();
-
         // 假设MeshRef没有自定义SubMesh材质，那么同MeshID的objs，只需要创建一个instance buffer，
         // 有多少个SubMesh，就需要多少个drawCall，这些drawcall共用这个instance buffer
 		// 步骤:
