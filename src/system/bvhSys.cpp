@@ -201,7 +201,7 @@ namespace renderer {
 		CreateBVHAccel(bvhAccel, prims, "", 0);
 	}
 
-	// BVHAccel Method Definitions
+
 	void BVHSystem::CreateBVHAccel(ComponentHandle<BVHAccel> bvhAccel, const std::vector<ObjectID> &p,
 		int maxPrimsInNode, BVHAccel::SplitMethod splitMethod) {
 		bvhAccel->maxPrimsInNode = std::min(255, maxPrimsInNode);

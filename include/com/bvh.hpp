@@ -5,7 +5,6 @@
 #include "base.hpp"
 #include "ecs/ecs.hpp"
 #include "mesh.hpp"
-#include <atomic>
 
 namespace renderer {
 	struct BVHBuildNode {

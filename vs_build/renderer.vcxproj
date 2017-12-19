@@ -385,13 +385,13 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="..\external\SOIL\image_helper.c" />
     <ClCompile Include="..\external\SOIL\SOIL.c" />
     <ClCompile Include="..\external\SOIL\stb_image_aug.c" />
-    <ClCompile Include="..\include\com\bvh.cpp" />
     <ClCompile Include="..\include\ecs\event.cpp" />
     <ClCompile Include="..\include\ecs\object.cpp" />
     <ClCompile Include="..\include\ecs\object_manager.cpp" />
     <ClCompile Include="..\include\ecs\system.cpp" />
     <ClCompile Include="..\include\ecs\test.cpp" />
     <ClCompile Include="..\src\com\bbox.cpp" />
+    <ClCompile Include="..\src\com\bvh.cpp" />
     <ClCompile Include="..\src\com\color.cpp" />
     <ClCompile Include="..\src\com\geometry.cpp" />
     <ClCompile Include="..\src\com\intersect_result.cpp" />
@@ -409,6 +409,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="..\src\system\cameraSys.cpp" />
     <ClCompile Include="..\src\system\configSys.cpp" />
     <ClCompile Include="..\src\system\envSys.cpp" />
+    <ClCompile Include="..\src\system\kdtreeSys.cpp" />
     <ClCompile Include="..\src\system\lightSys.cpp" />
     <ClCompile Include="..\src\system\loaderSys.cpp" />
     <ClCompile Include="..\src\system\materialSys.cpp" />
@@ -453,6 +454,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="..\include\com\color.hpp" />
     <ClInclude Include="..\include\com\geometry.hpp" />
     <ClInclude Include="..\include\com\glcommon.hpp" />
+    <ClInclude Include="..\include\com\kdtree.hpp" />
     <ClInclude Include="..\include\com\keyState.hpp" />
     <ClInclude Include="..\include\com\lightCom.hpp" />
     <ClInclude Include="..\include\com\materialCom.hpp" />
@@ -499,6 +501,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="..\include\system\cameraSys.hpp" />
     <ClInclude Include="..\include\system\configSys.hpp" />
     <ClInclude Include="..\include\system\envSys.hpp" />
+    <ClInclude Include="..\include\system\kdtreeSys.hpp" />
     <ClInclude Include="..\include\system\lightSys.hpp" />
     <ClInclude Include="..\include\system\loaderSys.hpp" />
     <ClInclude Include="..\include\system\materialSys.hpp" />

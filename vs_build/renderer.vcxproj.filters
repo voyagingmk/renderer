@@ -127,11 +127,14 @@
     <ClCompile Include="..\src\system\sceneGraphSys.cpp">
       <Filter>Source Files\system</Filter>
     </ClCompile>
-    <ClCompile Include="..\include\com\bvh.cpp">
-      <Filter>Source Files\com</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\system\bvhSys.cpp">
       <Filter>Source Files\system</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\system\kdtreeSys.cpp">
+      <Filter>Source Files\system</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\com\bvh.cpp">
+      <Filter>Source Files\com</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -406,6 +409,12 @@
     </ClInclude>
     <ClInclude Include="..\include\system\bvhSys.hpp">
       <Filter>Header Files\system</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\system\kdtreeSys.hpp">
+      <Filter>Header Files\system</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\com\kdtree.hpp">
+      <Filter>Header Files\com</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -5,6 +5,7 @@
 #include "ecs/ecs.hpp"
 #include "com/bvh.hpp"
 #include "event/miscEvent.hpp"
+#include <atomic>
 
 
 using namespace ecs;

@@ -52,7 +52,27 @@ namespace renderer {
 		ecs::Object objCamera;
 		ecs::Object objBVH;
 	};
-	
+
+	class CreateKdTreeEvent : public ecs::Event<CreateKdTreeEvent> {
+	public:
+		CreateKdTreeEvent(ecs::Object objScene, ecs::Object objKdTree) :
+			objScene(objScene),
+			objKdTree(objKdTree)
+		{}
+		ecs::Object objScene;
+		ecs::Object objKdTree;
+	};
+
+	class DebugDrawKdTreeEvent : public ecs::Event<DebugDrawKdTreeEvent> {
+	public:
+		DebugDrawKdTreeEvent(ecs::Object objCamera, ecs::Object objKdTree) :
+			objCamera(objCamera),
+			objKdTree(objKdTree)
+		{}
+		ecs::Object objCamera;
+		ecs::Object objKdTree;
+	};
+
 };
 
 #endif

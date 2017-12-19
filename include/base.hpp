@@ -35,6 +35,9 @@
 
 #define FLOAT_MAX (std::numeric_limits<float>::max())
 
+static constexpr float MaxFloat = std::numeric_limits<float>::max();
+static constexpr float Infinity = std::numeric_limits<float>::infinity();
+
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
@@ -180,6 +183,17 @@ namespace renderer {
 	inline float Degrees(float radian) {
 		return (180.f / (float)M_PI) * radian;
 	}
+
+	inline int Log2Int(uint32_t v) {
+#if defined(_MSC_VER)
+		unsigned long lz = 0;
+		if (_BitScanReverse(&lz, v)) return lz;
+		return 0;
+#else
+		return 31 - __builtin_clz(v);
+#endif
+	}
+
     template<typename T>
     class Radian;
     template<typename T>
