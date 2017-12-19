@@ -30,6 +30,22 @@ namespace renderer {
 		Object objKdTree = evt.objKdTree;
 		auto bvhAccel = objKdTree.addComponent<KdTreeAccel>();
 
+		std::vector<ObjectID> prims;
+		std::function<void(Object objScene)> filterFunc;
+		filterFunc = [&](Object objScene) {
+			if (objScene.hasComponent<SpatialData>() && objScene.hasComponent<MeshRef>()) {
+				ObjectID objID = objScene.ID();
+				prims.push_back(objID);
+			}
+			auto sgNode = objScene.component<SceneGraphNode>();
+			for (auto childObjID : sgNode->children) {
+				Object childObj = m_objMgr->get(childObjID);
+				filterFunc(childObj);
+			}
+		};
+		filterFunc(objScene);
+
+		CreateKdTreeAccel(bvhAccel, prims, {});
 	}
 
 	// KdTreeAccel Method Definitions

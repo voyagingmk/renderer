@@ -106,6 +106,8 @@ namespace renderer {
 		objRoot.addComponent<RootNodeTag>();
 		m_evtMgr->emit<UpdateBatchEvent>(objRoot, true);
 		m_evtMgr->emit<CreateBVHEvent>(objRoot, objRoot);
+		m_evtMgr->emit<CreateKdTreeEvent>(objRoot, objRoot);
+		
 
 		m_evtMgr->emit<CreateColorBufferEvent>(
 			winWidth, winHeight,
