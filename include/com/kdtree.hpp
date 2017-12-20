@@ -18,19 +18,19 @@ namespace renderer {
 			aboveChild |= (ac << 2);
 		}
 		float SplitPos() const { return split; }
-		int nPrimitives() const { return nPrims >> 2; }
+		int numObjs() const { return nObjs >> 2; }
 		int SplitAxis() const { return flags & 3; }
 		bool IsLeaf() const { return (flags & 3) == 3; }
 		int AboveChild() const { return aboveChild >> 2; }
 		union {
 			float split;                 // Interior
-			int onePrimitive;            // Leaf
-			int primitiveIndicesOffset;  // Leaf
+			int oneObj;            // Leaf
+			int objIndicesOffset;  // Leaf
 		};
 
 		union {
 			int flags;       // Both
-			int nPrims;      // Leaf
+			int nObjs;      // Leaf
 			int aboveChild;  // Interior
 		};
 	};
@@ -54,10 +54,10 @@ namespace renderer {
 	};
 
 	struct KdTreeAccel {
-		int isectCost, traversalCost, maxPrims;
+		int isectCost, traversalCost, maxObjs;
 		float emptyBonus;
-		std::vector<ecs::ObjectID> primitives;
-		std::vector<int> primitiveIndices;
+		std::vector<ecs::ObjectID> objs;
+		std::vector<int> objIndices;
 		KdAccelNode *nodes;
 		int nAllocedNodes, nextFreeNode;
 		BBox bounds;

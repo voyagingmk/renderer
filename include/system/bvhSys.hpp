@@ -26,30 +26,32 @@ namespace renderer {
 	private:
 
 		void CreateBVHAccel(ComponentHandle<BVHAccel>,
-			const std::vector<ObjectID> &prims, std::string splitMethodName, int maxPrimsInNode);
+			const std::vector<ObjectID> &objs, std::string splitMethodName, int maxObjsInNode);
 
 		void CreateBVHAccel(ComponentHandle<BVHAccel>, 
 			const std::vector<ObjectID> &p,
-			int maxPrimsInNode = 1,
+			int maxObjsInNode = 1,
 			BVHAccel::SplitMethod splitMethod = BVHAccel::SplitMethod::SAH);
 
-		BVHBuildNode *recursiveBuild(ComponentHandle<BVHAccel> bvhAccel, std::vector<BVHPrimitiveInfo> &primitiveInfo,
+		BVHBuildNode *recursiveBuild(ComponentHandle<BVHAccel> bvhAccel, std::vector<BVHObjInfo> &objInfo,
 			int start, int end, int *totalNodes,
-			std::vector<ObjectID> &orderedPrims);
+			std::vector<ObjectID> &orderedObjs);
 
-		BVHBuildNode *HLBVHBuild(const std::vector<BVHPrimitiveInfo> &primitiveInfo,
+		BVHBuildNode *HLBVHBuild(const std::vector<BVHObjInfo> &objInfo,
 			int *totalNodes,
-			std::vector<ObjectID> &orderedPrims) const;
+			std::vector<ObjectID> &orderedObjs);
 
 		BVHBuildNode *emitLBVH(ComponentHandle<BVHAccel> bvhAccel,
 			BVHBuildNode *&buildNodes,
-			const std::vector<BVHPrimitiveInfo> &primitiveInfo,
-			MortonPrimitive *mortonPrims, int nPrimitives, int *totalNodes,
-			std::vector<ObjectID> &orderedPrims,
-			std::atomic<int> *orderedPrimsOffset, int bitIndex) const;
+			const std::vector<BVHObjInfo> &objInfo,
+			MortonObj *mortonObjs, int nObjs, int *totalNodes,
+			std::vector<ObjectID> &orderedObjs,
+			std::atomic<int> *orderedObjsOffset, int bitIndex);
 
 		BVHBuildNode *buildUpperSAH(std::vector<BVHBuildNode *> &treeletRoots,
-			int start, int end, int *totalNodes) const;
+			int start, int end, int *totalNodes);
+
+		void optimize(ComponentHandle<BVHAccel> bvhAccel);
 
 		int flattenBVHTree(ComponentHandle<BVHAccel> bvhAccel, BVHBuildNode *node, int *offset);
 	};

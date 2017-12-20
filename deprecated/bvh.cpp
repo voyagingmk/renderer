@@ -92,11 +92,11 @@ namespace renderer {
 				}
 			}
 
-			// Either create leaf or split primitives at selected SAH
+			// Either create leaf or split objs at selected SAH
 			// bucket
 			float leafCost = count;
-			int maxPrimsInNode = 4;
-			if (count > maxPrimsInNode || minCost < leafCost) {
+			int maxObjsInNode = 4;
+			if (count > maxObjsInNode || minCost < leafCost) {
 				BVHShapeInfo *pmid = std::partition(
 					&shapeInfos[start], &shapeInfos[end - 1] + 1,
 					[=](const BVHShapeInfo& pi) {

@@ -17,7 +17,7 @@
         "**/*.xml": true,
         "**/library/**": true,
         "*/local/": true,
-        "tiancai/": true,
+        "external/": true,
         "*/temp/": true,
         "robot/": true
     },

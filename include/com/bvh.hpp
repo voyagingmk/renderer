@@ -10,7 +10,7 @@ namespace renderer {
 	struct BVHBuildNode {
 		void InitLeaf(int first, int n, const BBox &b) {
 			firstPrimOffset = first;
-			nPrimitives = n;
+			nObjs = n;
 			bounds = b;
 			children[0] = children[1] = nullptr;
 		}
@@ -19,28 +19,28 @@ namespace renderer {
 			children[1] = c1;
 			bounds = Union(c0->bounds, c1->bounds);
 			splitAxis = axis;
-			nPrimitives = 0;
+			nObjs = 0;
 		}
 		BBox bounds;
 		BVHBuildNode *children[2];
 		Axis splitAxis;
-		int firstPrimOffset, nPrimitives;
+		int firstPrimOffset, nObjs;
 	};
 	struct LBVHTreelet {
-		int startIndex, nPrimitives;
+		int startIndex, nObjs;
 		BVHBuildNode *buildNodes;
 	};
 
 
 
 	// BVHAccel Local Declarations
-	struct BVHPrimitiveInfo {
-		BVHPrimitiveInfo() {}
-		BVHPrimitiveInfo(size_t primitiveNumber, const BBox &bounds)
-			: primitiveNumber(primitiveNumber),
+	struct BVHObjInfo {
+		BVHObjInfo() {}
+		BVHObjInfo(size_t objNumber, const BBox &bounds)
+			: objNumber(objNumber),
 			bounds(bounds),
 			centroid(.5f * bounds.pMin + .5f * bounds.pMax) {}
-		size_t primitiveNumber;
+		size_t objNumber;
 		BBox bounds;
 		Vector3dF centroid;
 	};
@@ -48,10 +48,10 @@ namespace renderer {
 	struct LinearBVHNode {
 		BBox bounds;
 		union {
-			uint32_t primitivesOffset;   // leaf
+			uint32_t objsOffset;   // leaf
 			uint32_t secondChildOffset;  // interior
 		};
-		uint16_t nPrimitives;  // 0 -> interior node
+		uint16_t nObjs;  // 0 -> interior node
 		Axis axis;          // interior node: xyz
 		uint8_t pad[1];        // ensure 32 byte total size
 	};
@@ -65,14 +65,14 @@ namespace renderer {
 		~BVHAccel();
 
 		// BVHAccel Private Data
-		int maxPrimsInNode;
+		int maxObjsInNode;
 		SplitMethod splitMethod;
-		std::vector<ecs::ObjectID> primitives;
+		std::vector<ecs::ObjectID> objs;
 		LinearBVHNode *nodes = nullptr;
 	};
 
-	struct MortonPrimitive {
-		int primitiveIndex;
+	struct MortonObj {
+		int objIndex;
 		uint32_t mortonCode;
 	};
 

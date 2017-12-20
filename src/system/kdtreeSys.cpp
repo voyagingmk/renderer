@@ -30,12 +30,12 @@ namespace renderer {
 		Object objKdTree = evt.objKdTree;
 		auto bvhAccel = objKdTree.addComponent<KdTreeAccel>();
 
-		std::vector<ObjectID> prims;
+		std::vector<ObjectID> objs;
 		std::function<void(Object objScene)> filterFunc;
 		filterFunc = [&](Object objScene) {
 			if (objScene.hasComponent<SpatialData>() && objScene.hasComponent<MeshRef>()) {
 				ObjectID objID = objScene.ID();
-				prims.push_back(objID);
+				objs.push_back(objID);
 			}
 			auto sgNode = objScene.component<SceneGraphNode>();
 			for (auto childObjID : sgNode->children) {
@@ -45,29 +45,29 @@ namespace renderer {
 		};
 		filterFunc(objScene);
 
-		CreateKdTreeAccel(bvhAccel, prims, {});
+		CreateKdTreeAccel(bvhAccel, objs, {});
 	}
 
 	// KdTreeAccel Method Definitions
 	void KdTreeSystem::CreateKdTreeAccel(ComponentHandle<KdTreeAccel> kdTreeAccel, const std::vector<ObjectID> &p,
 		int isectCost, int traversalCost, float emptyBonus,
-		int maxPrims, int maxDepth) {
+		int maxObjs, int maxDepth) {
 		auto meshSet = m_objMgr->getSingletonComponent<MeshSet>();
 
 		kdTreeAccel->isectCost = isectCost;
 		kdTreeAccel->traversalCost = traversalCost;
-		kdTreeAccel->maxPrims = maxPrims;
+		kdTreeAccel->maxObjs = maxObjs;
 		kdTreeAccel->emptyBonus = emptyBonus;
-		kdTreeAccel->primitives = p;
+		kdTreeAccel->objs = p;
 		// Build kd-tree for accelerator
 		kdTreeAccel->nextFreeNode = kdTreeAccel->nAllocedNodes = 0;
 		if (maxDepth <= 0)
-			maxDepth = std::round(8 + 1.3f * Log2Int(kdTreeAccel->primitives.size()));
+			maxDepth = std::round(8 + 1.3f * Log2Int(kdTreeAccel->objs.size()));
 
 		// Compute bounds for kd-tree construction
 		std::vector<BBox> primBounds;
-		primBounds.reserve(kdTreeAccel->primitives.size());
-		for (const ObjectID &objID : kdTreeAccel->primitives) {
+		primBounds.reserve(kdTreeAccel->objs.size());
+		for (const ObjectID &objID : kdTreeAccel->objs) {
 			Object obj = m_objMgr->get(objID);
 			auto meshRef = obj.component<MeshRef>();
 			auto spatialData = obj.component<SpatialData>();
@@ -81,40 +81,40 @@ namespace renderer {
 		// Allocate working memory for kd-tree construction
 		std::unique_ptr<BoundEdge[]> edges[3];
 		for (int i = 0; i < 3; ++i)
-			edges[i].reset(new BoundEdge[2 * kdTreeAccel->primitives.size()]);
-		std::unique_ptr<int[]> prims0(new int[kdTreeAccel->primitives.size()]);
-		std::unique_ptr<int[]> prims1(new int[(maxDepth + 1) * kdTreeAccel->primitives.size()]);
+			edges[i].reset(new BoundEdge[2 * kdTreeAccel->objs.size()]);
+		std::unique_ptr<int[]> objs0(new int[kdTreeAccel->objs.size()]);
+		std::unique_ptr<int[]> objs1(new int[(maxDepth + 1) * kdTreeAccel->objs.size()]);
 
 		// Initialize _primNums_ for kd-tree construction
-		std::unique_ptr<int[]> primNums(new int[kdTreeAccel->primitives.size()]);
-		for (size_t i = 0; i < kdTreeAccel->primitives.size(); ++i) primNums[i] = i;
+		std::unique_ptr<int[]> primNums(new int[kdTreeAccel->objs.size()]);
+		for (size_t i = 0; i < kdTreeAccel->objs.size(); ++i) primNums[i] = i;
 
 		// Start recursive construction of kd-tree
-		BuildTree(kdTreeAccel, 0, kdTreeAccel->bounds, primBounds, primNums.get(), kdTreeAccel->primitives.size(),
-			maxDepth, edges, prims0.get(), prims1.get());
+		BuildTree(kdTreeAccel, 0, kdTreeAccel->bounds, primBounds, primNums.get(), kdTreeAccel->objs.size(),
+			maxDepth, edges, objs0.get(), objs1.get());
 	}
 
 	void KdTreeSystem::InitLeaf(KdAccelNode* node, int *primNums, int np,
-		std::vector<int> *primitiveIndices) {
+		std::vector<int> *objIndices) {
 		node->flags = 3;
-		node->nPrims |= (np << 2);
-		// Store primitive ids for leaf node
+		node->nObjs |= (np << 2);
+		// Store obj ids for leaf node
 		if (np == 0)
-			node->onePrimitive = 0;
+			node->oneObj = 0;
 		else if (np == 1)
-			node->onePrimitive = primNums[0];
+			node->oneObj = primNums[0];
 		else {
-			node->primitiveIndicesOffset = primitiveIndices->size();
-			for (int i = 0; i < np; ++i) primitiveIndices->push_back(primNums[i]);
+			node->objIndicesOffset = objIndices->size();
+			for (int i = 0; i < np; ++i) objIndices->push_back(primNums[i]);
 		}
 	}
 
 
 	void KdTreeSystem::BuildTree(ComponentHandle<KdTreeAccel> bvhAccel, int nodeNum, const BBox &nodeBounds,
 		const std::vector<BBox> &allPrimBounds,
-		int *primNums, int nPrimitives, int depth,
+		int *primNums, int nObjs, int depth,
 		const std::unique_ptr<BoundEdge[]> edges[3],
-		int *prims0, int *prims1, int badRefines) {
+		int *objs0, int *objs1, int badRefines) {
 		assert(nodeNum == bvhAccel->nextFreeNode);
 		// Get next free node from _nodes_ array
 		if (bvhAccel->nextFreeNode == bvhAccel->nAllocedNodes) {
@@ -130,8 +130,8 @@ namespace renderer {
 		++bvhAccel->nextFreeNode;
 
 		// Initialize leaf node if termination criteria met
-		if (nPrimitives <= bvhAccel->maxPrims || depth == 0) {
-			InitLeaf(&bvhAccel->nodes[nodeNum], primNums, nPrimitives, &bvhAccel->primitiveIndices);
+		if (nObjs <= bvhAccel->maxObjs || depth == 0) {
+			InitLeaf(&bvhAccel->nodes[nodeNum], primNums, nObjs, &bvhAccel->objIndices);
 			return;
 		}
 
@@ -140,7 +140,7 @@ namespace renderer {
 		// Choose split axis position for interior node
 		int bestAxis = -1, bestOffset = -1;
 		float bestCost = Infinity;
-		float oldCost = bvhAccel->isectCost * float(nPrimitives);
+		float oldCost = bvhAccel->isectCost * float(nObjs);
 		float totalSA = nodeBounds.SurfaceArea();
 		float invTotalSA = 1 / totalSA;
 		Vector3dF d = nodeBounds.pMax - nodeBounds.pMin;
@@ -151,7 +151,7 @@ namespace renderer {
 	retrySplit:
 
 		// Initialize edges for _axis_
-		for (int i = 0; i < nPrimitives; ++i) {
+		for (int i = 0; i < nObjs; ++i) {
 			int pn = primNums[i];
 			const BBox &bounds = allPrimBounds[pn];
 			edges[axis][2 * i] = BoundEdge(bounds.pMin[axis], pn, true);
@@ -159,7 +159,7 @@ namespace renderer {
 		}
 
 		// Sort _edges_ for _axis_
-		std::sort(&edges[axis][0], &edges[axis][2 * nPrimitives],
+		std::sort(&edges[axis][0], &edges[axis][2 * nObjs],
 			[](const BoundEdge &e0, const BoundEdge &e1) -> bool {
 			if (e0.t == e1.t)
 				return (int)e0.type < (int)e1.type;
@@ -168,8 +168,8 @@ namespace renderer {
 		});
 
 		// Compute cost of all splits for _axis_ to find best
-		int nBelow = 0, nAbove = nPrimitives;
-		for (int i = 0; i < 2 * nPrimitives; ++i) {
+		int nBelow = 0, nAbove = nObjs;
+		for (int i = 0; i < 2 * nObjs; ++i) {
 			if (edges[axis][i].type == EdgeType::End) --nAbove;
 			float edgeT = edges[axis][i].t;
 			if (edgeT > nodeBounds.pMin[axis] && edgeT < nodeBounds.pMax[axis]) {
@@ -199,7 +199,7 @@ namespace renderer {
 			}
 			if (edges[axis][i].type == EdgeType::Start) ++nBelow;
 		}
-		assert(nBelow == nPrimitives && nAbove == 0);
+		assert(nBelow == nObjs && nAbove == 0);
 
 		// Create leaf if no good splits were found
 		if (bestAxis == -1 && retries < 2) {
@@ -208,44 +208,44 @@ namespace renderer {
 			goto retrySplit;
 		}
 		if (bestCost > oldCost) ++badRefines;
-		if ((bestCost > 4 * oldCost && nPrimitives < 16) || bestAxis == -1 ||
+		if ((bestCost > 4 * oldCost && nObjs < 16) || bestAxis == -1 ||
 			badRefines == 3) {
-			InitLeaf(&bvhAccel->nodes[nodeNum], primNums, nPrimitives, &bvhAccel->primitiveIndices);
+			InitLeaf(&bvhAccel->nodes[nodeNum], primNums, nObjs, &bvhAccel->objIndices);
 			return;
 		}
 
-		// Classify primitives with respect to split
+		// Classify objs with respect to split
 		int n0 = 0, n1 = 0;
 		for (int i = 0; i < bestOffset; ++i)
 			if (edges[bestAxis][i].type == EdgeType::Start)
-				prims0[n0++] = edges[bestAxis][i].primNum;
-		for (int i = bestOffset + 1; i < 2 * nPrimitives; ++i)
+				objs0[n0++] = edges[bestAxis][i].primNum;
+		for (int i = bestOffset + 1; i < 2 * nObjs; ++i)
 			if (edges[bestAxis][i].type == EdgeType::End)
-				prims1[n1++] = edges[bestAxis][i].primNum;
+				objs1[n1++] = edges[bestAxis][i].primNum;
 
 		// Recursively initialize children nodes
 		float tSplit = edges[bestAxis][bestOffset].t;
 		BBox bounds0 = nodeBounds, bounds1 = nodeBounds;
 		bounds0.pMax[bestAxis] = bounds1.pMin[bestAxis] = tSplit;
-		BuildTree(bvhAccel, nodeNum + 1, bounds0, allPrimBounds, prims0, n0, depth - 1, edges,
-			prims0, prims1 + nPrimitives, badRefines);
+		BuildTree(bvhAccel, nodeNum + 1, bounds0, allPrimBounds, objs0, n0, depth - 1, edges,
+			objs0, objs1 + nObjs, badRefines);
 		int aboveChild = bvhAccel->nextFreeNode;
 		bvhAccel->nodes[nodeNum].InitInterior(bestAxis, aboveChild, tSplit);
-		BuildTree(bvhAccel, aboveChild, bounds1, allPrimBounds, prims1, n1, depth - 1, edges,
-			prims0, prims1 + nPrimitives, badRefines);
+		BuildTree(bvhAccel, aboveChild, bounds1, allPrimBounds, objs1, n1, depth - 1, edges,
+			objs0, objs1 + nObjs, badRefines);
 	}
 
 
 	void KdTreeSystem::CreateKdTreeAccel(
 		ComponentHandle<KdTreeAccel> bvhAccel,
-		const std::vector<ObjectID> &prims, const json &config) {
+		const std::vector<ObjectID> &objs, const json &config) {
 		int isectCost = config["intersectcost"] || 80;
 		int travCost = config["traversalcost"] || 1;
 		float emptyBonus = config["emptybonus"] || 0.5f;
-		int maxPrims = config["maxprims"] || 1;
+		int maxObjs = config["maxobjs"] || 1;
 		int maxDepth = config["maxdepth"] || -1;
-		return CreateKdTreeAccel(bvhAccel, prims, isectCost, travCost, emptyBonus,
-			maxPrims, maxDepth);
+		return CreateKdTreeAccel(bvhAccel, objs, isectCost, travCost, emptyBonus,
+			maxObjs, maxDepth);
 	}
 
 };
