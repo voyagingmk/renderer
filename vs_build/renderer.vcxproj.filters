@@ -127,9 +127,6 @@
     <ClCompile Include="..\src\system\kdtreeSys.cpp">
       <Filter>Source Files\system</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\com\bvh.cpp">
-      <Filter>Source Files\com</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\utils\defines.cpp">
       <Filter>Source Files\utils</Filter>
     </ClCompile>
@@ -137,6 +134,9 @@
       <Filter>Source Files\utils</Filter>
     </ClCompile>
     <ClCompile Include="..\src\utils\parallel.cpp">
+      <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\utils\memory.cpp">
       <Filter>Source Files\utils</Filter>
     </ClCompile>
   </ItemGroup>
@@ -426,6 +426,9 @@
       <Filter>Header Files\utils</Filter>
     </ClInclude>
     <ClInclude Include="..\include\utils\profiler.hpp">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\utils\memory.hpp">
       <Filter>Header Files\utils</Filter>
     </ClInclude>
   </ItemGroup>

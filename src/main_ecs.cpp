@@ -69,6 +69,7 @@ void MainECS::update(float dt) {
 
 int ecsMain(int argc, char *argv[])
 {
+	std::cout << "default max_align_t:" << alignof(std::max_align_t) << std::endl;
 	MainECS ecsObj;
 	ecsObj.setup();
 	int interval = 10;

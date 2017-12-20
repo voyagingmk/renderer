@@ -391,7 +391,6 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="..\include\ecs\system.cpp" />
     <ClCompile Include="..\include\ecs\test.cpp" />
     <ClCompile Include="..\src\com\bbox.cpp" />
-    <ClCompile Include="..\src\com\bvh.cpp" />
     <ClCompile Include="..\src\com\color.cpp" />
     <ClCompile Include="..\src\com\geometry.cpp" />
     <ClCompile Include="..\src\com\intersect_result.cpp" />
@@ -422,6 +421,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="..\src\system\textureSys.cpp" />
     <ClCompile Include="..\src\system\uiSys.cpp" />
     <ClCompile Include="..\src\utils\defines.cpp" />
+    <ClCompile Include="..\src\utils\memory.cpp" />
     <ClCompile Include="..\src\utils\parallel.cpp" />
     <ClCompile Include="..\src\utils\profiler.cpp" />
     <ClCompile Include="D:\workplace\github\renderer\src\film.cpp" />
@@ -518,6 +518,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="..\include\utils\error.hpp" />
     <ClInclude Include="..\include\utils\glutils.hpp" />
     <ClInclude Include="..\include\utils\helper.hpp" />
+    <ClInclude Include="..\include\utils\memory.hpp" />
     <ClInclude Include="..\include\utils\MemoryPool.hpp" />
     <ClInclude Include="..\include\utils\parallel.hpp" />
     <ClInclude Include="..\include\utils\profiler.hpp" />

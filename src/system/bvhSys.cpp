@@ -7,6 +7,7 @@
 #include "event/bufferEvent.hpp"
 #include "com/miscCom.hpp"
 #include "utils/parallel.hpp"
+#include "utils/memory.hpp"
 
 
 using namespace std;

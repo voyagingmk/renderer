@@ -48,8 +48,9 @@ namespace renderer {
 	public:
 		// BVHAccel Public Types
 		enum class SplitMethod { SAH, HLBVH, Middle, EqualCounts };
-		BBox WorldBound() const;
-		~BVHAccel();
+		BBox WorldBound() const {
+			return nodes ? nodes[0].bounds : BBox();
+		}
 
 		// BVHAccel Private Data
 		int maxObjsInNode;

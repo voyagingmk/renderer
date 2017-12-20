@@ -6,6 +6,7 @@
 #include "event/shaderEvent.hpp"
 #include "event/bufferEvent.hpp"
 #include "com/miscCom.hpp"
+#include "utils/memory.hpp"
 
 using namespace std;
 
