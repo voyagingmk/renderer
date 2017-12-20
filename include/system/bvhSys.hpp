@@ -2,6 +2,7 @@
 #define RENDERER_SYSTEM_BVH_HPP
 
 #include "base.hpp"
+#include "utils/memory.hpp"
 #include "ecs/ecs.hpp"
 #include "com/bvh.hpp"
 #include "event/miscEvent.hpp"
@@ -35,11 +36,11 @@ namespace renderer {
 			int maxObjsInNode = 1,
 			BVHAccel::SplitMethod splitMethod = BVHAccel::SplitMethod::SAH);
 
-		BVHBuildNode *recursiveBuild(ComponentHandle<BVHAccel> bvhAccel, std::vector<BVHObjInfo> &objInfo,
+		BVHBuildNode *recursiveBuild(ComponentHandle<BVHAccel> bvhAccel, MemoryArena &arena, std::vector<BVHObjInfo> &objInfo,
 			int start, int end, int *totalNodes,
 			std::vector<ObjectID> &orderedObjs);
 
-		BVHBuildNode *HLBVHBuild(ComponentHandle<BVHAccel> bvhAccel, const std::vector<BVHObjInfo> &objInfo,
+		BVHBuildNode *HLBVHBuild(ComponentHandle<BVHAccel> bvhAccel, MemoryArena &arena, const std::vector<BVHObjInfo> &objInfo,
 			int *totalNodes,
 			std::vector<ObjectID> &orderedObjs);
 
@@ -50,7 +51,7 @@ namespace renderer {
 			std::vector<ObjectID> &orderedObjs,
 			std::atomic<int> *orderedObjsOffset, int bitIndex);
 
-		BVHBuildNode *buildUpperSAH(std::vector<BVHBuildNode *> &treeletRoots,
+		BVHBuildNode *buildUpperSAH(MemoryArena &arena, std::vector<BVHBuildNode *> &treeletRoots,
 			int start, int end, int *totalNodes);
 
 		void optimize(ComponentHandle<BVHAccel> bvhAccel);

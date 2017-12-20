@@ -7,8 +7,6 @@
 #include "event/bufferEvent.hpp"
 #include "com/miscCom.hpp"
 #include "utils/parallel.hpp"
-#include "utils/memory.hpp"
-
 
 using namespace std;
 
@@ -238,14 +236,15 @@ namespace renderer {
 			objInfo[i] = { i, worldBound };
 		}
 
+		MemoryArena arena(1024 * 1024);
 		int totalNodes = 0;
 		std::vector<ObjectID> orderedObjs;
 		orderedObjs.reserve(bvhAccel->objs.size());
 		BVHBuildNode *root;
 		if (splitMethod == BVHAccel::SplitMethod::HLBVH)
-			root = HLBVHBuild(bvhAccel, objInfo, &totalNodes, orderedObjs);
+			root = HLBVHBuild(bvhAccel, arena, objInfo, &totalNodes, orderedObjs);
 		else
-			root = recursiveBuild(bvhAccel, objInfo, 0, bvhAccel->objs.size(),
+			root = recursiveBuild(bvhAccel, arena, objInfo, 0, bvhAccel->objs.size(),
 				&totalNodes, orderedObjs);
 		bvhAccel->objs.swap(orderedObjs);
 		Info("BVH created with %d nodes for %d objs (%.2f MB)", totalNodes,
@@ -262,13 +261,14 @@ namespace renderer {
 
 	BVHBuildNode *BVHSystem::recursiveBuild(
 		ComponentHandle<BVHAccel> bvhAccel, 
+		MemoryArena &arena,
 		std::vector<BVHObjInfo> &objInfo, 
 		int start,
 		int end, 
 		int *totalNodes,
 		std::vector<ObjectID> &orderedObjs) {
 		Assert(start != end);
-		BVHBuildNode *node = GetPool<BVHBuildNode>()->newElement();
+		BVHBuildNode *node = arena.Alloc<BVHBuildNode>();
 		(*totalNodes)++;
 		// Compute bounds of all objs in BVH node
 		BBox bounds;
@@ -424,9 +424,9 @@ namespace renderer {
 				}
 				}
 				InitInterior(node, dim,
-					recursiveBuild(bvhAccel, objInfo, start, mid,
+					recursiveBuild(bvhAccel, arena, objInfo, start, mid,
 						totalNodes, orderedObjs),
-					recursiveBuild(bvhAccel, objInfo, mid, end,
+					recursiveBuild(bvhAccel, arena, objInfo, mid, end,
 						totalNodes, orderedObjs));
 			}
 		}
@@ -435,6 +435,7 @@ namespace renderer {
 
 	BVHBuildNode *BVHSystem::HLBVHBuild(
 		ComponentHandle<BVHAccel> bvhAccel,
+		MemoryArena &arena,
 		const std::vector<BVHObjInfo> &objInfo,
 		int *totalNodes,
 		std::vector<ObjectID> &orderedObjs)  {
@@ -471,8 +472,7 @@ namespace renderer {
 				// Add entry to _treeletsToBuild_ for this treelet
 				int nObjs = end - start;
 				int maxBVHNodes = 2 * nObjs;
-				BVHBuildNode *nodes = GetPool<BVHBuildNode>()->newElement();
-				//n = maxBVHNodes, runConstructor = false
+				BVHBuildNode *nodes = arena.Alloc<BVHBuildNode>(maxBVHNodes, false);
 				treeletsToBuild.push_back({ start, nObjs, nodes });
 				start = end;
 			}
@@ -498,7 +498,7 @@ namespace renderer {
 		finishedTreelets.reserve(treeletsToBuild.size());
 		for (LBVHTreelet &treelet : treeletsToBuild)
 			finishedTreelets.push_back(treelet.buildNodes);
-		return buildUpperSAH(finishedTreelets, 0, finishedTreelets.size(),
+		return buildUpperSAH(arena, finishedTreelets, 0, finishedTreelets.size(),
 			totalNodes);
 	}
 
@@ -567,14 +567,14 @@ namespace renderer {
 		}
 	}
 
-	BVHBuildNode *BVHSystem::buildUpperSAH(std::vector<BVHBuildNode *> &treeletRoots,
+	BVHBuildNode *BVHSystem::buildUpperSAH(MemoryArena &arena, std::vector<BVHBuildNode *> &treeletRoots,
 		int start, int end,
 		int *totalNodes) {
 		Assert(start < end);
 		int nNodes = end - start;
 		if (nNodes == 1) return treeletRoots[start];
 		(*totalNodes)++;
-		BVHBuildNode *node = GetPool<BVHBuildNode>()->newElement();
+		BVHBuildNode *node = arena.Alloc<BVHBuildNode>();
 
 		// Compute bounds of all nodes under this HLBVH node
 		BBox bounds;
@@ -657,8 +657,8 @@ namespace renderer {
 		int mid = pmid - &treeletRoots[0];
 		Assert(mid > start && mid < end);
 		InitInterior(node,
-			dim, buildUpperSAH(treeletRoots, start, mid, totalNodes),
-			buildUpperSAH(treeletRoots, mid, end, totalNodes));
+			dim, buildUpperSAH(arena, treeletRoots, start, mid, totalNodes),
+			buildUpperSAH(arena, treeletRoots, mid, end, totalNodes));
 		return node;
 	}
 
