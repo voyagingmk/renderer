@@ -37,19 +37,19 @@ typedef size_t MaterialID;
 typedef std::tuple<size_t, size_t, size_t, size_t> Viewport;
 
 
-#define PBRT_L1_CACHE_LINE_SIZE 64
+#define L1_CACHE_LINE_SIZE 64
 
 
 // Memory Allocation Functions
 static void *AllocAligned(size_t size) {
 #if defined(_MSC_VER)
-	return _aligned_malloc(size, PBRT_L1_CACHE_LINE_SIZE);
+	return _aligned_malloc(size, L1_CACHE_LINE_SIZE);
 #else
 	void *ptr;
-	if (posix_memalign(&ptr, PBRT_L1_CACHE_LINE_SIZE, size) != 0) ptr = nullptr;
+	if (posix_memalign(&ptr, L1_CACHE_LINE_SIZE, size) != 0) ptr = nullptr;
 	return ptr;
 //#else
-//	return memalign(PBRT_L1_CACHE_LINE_SIZE, size);
+//	return memalign(L1_CACHE_LINE_SIZE, size);
 #endif
 }
 

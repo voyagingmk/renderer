@@ -23,6 +23,8 @@ namespace renderer {
 
 		void receive(const CreateBVHEvent& evt);
 
+		void receive(const ComponentRemovedEvent<BVHAccel> &evt);
+
 	private:
 
 		void CreateBVHAccel(ComponentHandle<BVHAccel>,

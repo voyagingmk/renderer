@@ -85,6 +85,7 @@ namespace renderer {
 		printf("BVHSystem init\n");
 		evtMgr.on<CreateBVHEvent>(*this);
 		evtMgr.on<DebugDrawBVHEvent>(*this);
+		evtMgr.on<ComponentRemovedEvent<BVHAccel>>(*this);
 	}
 
 	void BVHSystem::update(ObjectManager &objMgr, EventManager &evtMgr, float dt) {
@@ -178,10 +179,20 @@ namespace renderer {
 		}
 		}*/
 	}
+	
+
+	void BVHSystem::receive(const ComponentRemovedEvent<BVHAccel> &evt) {
+		if (evt.component->nodes) {
+			FreeAligned(evt.component->nodes);
+		}
+	}
 
 	void BVHSystem::receive(const CreateBVHEvent &evt) {
 		Object objScene = evt.objScene;
 		Object objBVH = evt.objBVH;
+		if (objBVH.hasComponent<BVHAccel>()) {
+			return;
+		}
 		auto bvhAccel = objBVH.addComponent<BVHAccel>();
 
 		std::vector<ObjectID> objs;
