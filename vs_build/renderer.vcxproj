@@ -422,6 +422,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="..\src\system\textureSys.cpp" />
     <ClCompile Include="..\src\system\uiSys.cpp" />
     <ClCompile Include="..\src\utils\defines.cpp" />
+    <ClCompile Include="..\src\utils\parallel.cpp" />
     <ClCompile Include="..\src\utils\profiler.cpp" />
     <ClCompile Include="D:\workplace\github\renderer\src\film.cpp" />
     <ClCompile Include="D:\workplace\github\renderer\external\GL\gl3w.c">
@@ -518,6 +519,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="..\include\utils\glutils.hpp" />
     <ClInclude Include="..\include\utils\helper.hpp" />
     <ClInclude Include="..\include\utils\MemoryPool.hpp" />
+    <ClInclude Include="..\include\utils\parallel.hpp" />
     <ClInclude Include="..\include\utils\profiler.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

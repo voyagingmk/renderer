@@ -4,12 +4,6 @@
     <ClCompile Include="..\src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\utils\defines.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\utils\profiler.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\external\SOIL\image_DXT.c">
       <Filter>External</Filter>
     </ClCompile>
@@ -136,6 +130,15 @@
     <ClCompile Include="..\src\com\bvh.cpp">
       <Filter>Source Files\com</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\utils\defines.cpp">
+      <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\utils\profiler.cpp">
+      <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\utils\parallel.cpp">
+      <Filter>Source Files\utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="D:\workplace\github\renderer\CMakeLists.txt" />
@@ -174,6 +177,12 @@
     <Filter Include="Source Files\com">
       <UniqueIdentifier>{3af244df-80f3-4c6b-bcf2-009a372b8827}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\utils">
+      <UniqueIdentifier>{2316832c-6a7c-48c8-9a7c-e1aa54e0f486}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\utils">
+      <UniqueIdentifier>{6af6a880-1926-4827-b987-bdeac696c39e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\base.hpp">
@@ -185,31 +194,13 @@
     <ClInclude Include="..\include\curve.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\utils\draw.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\utils\error.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\film.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\utils\helper.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\include\main_ecs.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\include\main_realtime.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\utils\MemoryPool.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\utils\profiler.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\utils\defines.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\external\SOIL\image_DXT.h">
@@ -398,9 +389,6 @@
     <ClInclude Include="..\include\system\sceneGraphSys.hpp">
       <Filter>Header Files\system</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\utils\glutils.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\com\ray.hpp">
       <Filter>Header Files\com</Filter>
     </ClInclude>
@@ -415,6 +403,30 @@
     </ClInclude>
     <ClInclude Include="..\include\com\kdtree.hpp">
       <Filter>Header Files\com</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\utils\parallel.hpp">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\utils\defines.hpp">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\utils\draw.hpp">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\utils\error.hpp">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\utils\glutils.hpp">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\utils\MemoryPool.hpp">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\utils\helper.hpp">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\utils\profiler.hpp">
+      <Filter>Header Files\utils</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

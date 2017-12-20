@@ -39,7 +39,7 @@ namespace renderer {
 			int start, int end, int *totalNodes,
 			std::vector<ObjectID> &orderedObjs);
 
-		BVHBuildNode *HLBVHBuild(const std::vector<BVHObjInfo> &objInfo,
+		BVHBuildNode *HLBVHBuild(ComponentHandle<BVHAccel> bvhAccel, const std::vector<BVHObjInfo> &objInfo,
 			int *totalNodes,
 			std::vector<ObjectID> &orderedObjs);
 
@@ -56,6 +56,10 @@ namespace renderer {
 		void optimize(ComponentHandle<BVHAccel> bvhAccel);
 
 		int flattenBVHTree(ComponentHandle<BVHAccel> bvhAccel, BVHBuildNode *node, int *offset);
+
+		void InitLeaf(BVHBuildNode * node, int first, int n, const BBox &b);
+		
+		void InitInterior(BVHBuildNode * node, Axis axis, BVHBuildNode *c0, BVHBuildNode *c1);
 	};
 };
 

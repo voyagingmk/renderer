@@ -6,6 +6,8 @@
 #include "event/shaderEvent.hpp"
 #include "event/bufferEvent.hpp"
 #include "com/miscCom.hpp"
+#include "utils/parallel.hpp"
+
 
 using namespace std;
 
@@ -240,7 +242,7 @@ namespace renderer {
 		orderedObjs.reserve(bvhAccel->objs.size());
 		BVHBuildNode *root;
 		if (splitMethod == BVHAccel::SplitMethod::HLBVH)
-			root = HLBVHBuild(objInfo, &totalNodes, orderedObjs);
+			root = HLBVHBuild(bvhAccel, objInfo, &totalNodes, orderedObjs);
 		else
 			root = recursiveBuild(bvhAccel, objInfo, 0, bvhAccel->objs.size(),
 				&totalNodes, orderedObjs);
@@ -265,7 +267,7 @@ namespace renderer {
 		int *totalNodes,
 		std::vector<ObjectID> &orderedObjs) {
 		Assert(start != end);
-		BVHBuildNode *node = GetPool<BVHBuildNode>()->newElement(BVHBuildNode());
+		BVHBuildNode *node = GetPool<BVHBuildNode>()->newElement();
 		(*totalNodes)++;
 		// Compute bounds of all objs in BVH node
 		BBox bounds;
@@ -279,7 +281,7 @@ namespace renderer {
 				int primNum = objInfo[i].objNumber;
 				orderedObjs.push_back(bvhAccel->objs[primNum]);
 			}
-			node->InitLeaf(firstPrimOffset, nObjs, bounds);
+			InitLeaf(node, firstPrimOffset, nObjs, bounds);
 			return node;
 		}
 		else {
@@ -298,7 +300,7 @@ namespace renderer {
 					int primNum = objInfo[i].objNumber;
 					orderedObjs.push_back(bvhAccel->objs[primNum]);
 				}
-				node->InitLeaf(firstPrimOffset, nObjs, bounds);
+				InitLeaf(node, firstPrimOffset, nObjs, bounds);
 				return node;
 			}
 			else {
@@ -413,14 +415,14 @@ namespace renderer {
 								int primNum = objInfo[i].objNumber;
 								orderedObjs.push_back(bvhAccel->objs[primNum]);
 							}
-							node->InitLeaf(firstPrimOffset, nObjs, bounds);
+							InitLeaf(node, firstPrimOffset, nObjs, bounds);
 							return node;
 						}
 					}
 					break;
 				}
 				}
-				node->InitInterior(dim,
+				InitInterior(node, dim,
 					recursiveBuild(bvhAccel, objInfo, start, mid,
 						totalNodes, orderedObjs),
 					recursiveBuild(bvhAccel, objInfo, mid, end,
@@ -430,25 +432,27 @@ namespace renderer {
 		return node;
 	}
 
-	BVHBuildNode *BVHSystem::HLBVHBuild(const std::vector<BVHObjInfo> &objInfo,
+	BVHBuildNode *BVHSystem::HLBVHBuild(
+		ComponentHandle<BVHAccel> bvhAccel,
+		const std::vector<BVHObjInfo> &objInfo,
 		int *totalNodes,
 		std::vector<ObjectID> &orderedObjs)  {
 		return nullptr;
-		/*
+		
 		// Compute bounding box of all obj centroids
 		BBox bounds;
 		for (const BVHObjInfo &pi : objInfo)
-		bounds = Union(bounds, pi.centroid);
+			bounds = Union(bounds, pi.centroid);
 
 		// Compute Morton indices of objs
 		std::vector<MortonObj> mortonObjs(objInfo.size());
 		ParallelFor([&](int i) {
-		// Initialize _mortonObjs[i]_ for _i_th obj
-		constexpr int mortonBits = 10;
-		constexpr int mortonScale = 1 << mortonBits;
-		mortonObjs[i].objIndex = objInfo[i].objNumber;
-		Vector3dF centroidOffset = bounds.Offset(objInfo[i].centroid);
-		mortonObjs[i].mortonCode = EncodeMorton3(centroidOffset * mortonScale);
+			// Initialize _mortonObjs[i]_ for _i_th obj
+			constexpr int mortonBits = 10;
+			constexpr int mortonScale = 1 << mortonBits;
+			mortonObjs[i].objIndex = objInfo[i].objNumber;
+			Vector3dF centroidOffset = bounds.Offset(objInfo[i].centroid);
+			mortonObjs[i].mortonCode = EncodeMorton3(centroidOffset * mortonScale);
 		}, objInfo.size(), 512);
 
 		// Radix sort obj Morton indices
@@ -459,32 +463,32 @@ namespace renderer {
 		// Find intervals of objs for each treelet
 		std::vector<LBVHTreelet> treeletsToBuild;
 		for (int start = 0, end = 1; end <= (int)mortonObjs.size(); ++end) {
-		uint32_t mask = 0b00111111111111000000000000000000;
-		if (end == (int)mortonObjs.size() ||
-		((mortonObjs[start].mortonCode & mask) !=
-		(mortonObjs[end].mortonCode & mask))) {
-		// Add entry to _treeletsToBuild_ for this treelet
-		int nObjs = end - start;
-		int maxBVHNodes = 2 * nObjs;
-		BVHBuildNode *nodes = GetPool<BVHBuildNode>()->newElement(maxBVHNodes, false);
-		treeletsToBuild.push_back({ start, nObjs, nodes });
-		start = end;
-		}
+			uint32_t mask = 0b00111111111111000000000000000000;
+			if (end == (int)mortonObjs.size() ||
+				((mortonObjs[start].mortonCode & mask) !=
+				(mortonObjs[end].mortonCode & mask))) {
+				// Add entry to _treeletsToBuild_ for this treelet
+				int nObjs = end - start;
+				int maxBVHNodes = 2 * nObjs;
+				BVHBuildNode *nodes = GetPool<BVHBuildNode>()->newElement();
+				//n = maxBVHNodes, runConstructor = false
+				treeletsToBuild.push_back({ start, nObjs, nodes });
+				start = end;
+			}
 		}
 
 		// Create LBVHs for treelets in parallel
 		std::atomic<int> atomicTotal(0), orderedObjsOffset(0);
-		orderedObjs.resize(objs.size());
+		orderedObjs.resize(bvhAccel->objs.size());
 		ParallelFor([&](int i) {
-		// Generate _i_th LBVH treelet
-		int nodesCreated = 0;
-		const int firstBitIndex = 29 - 12;
-		LBVHTreelet &tr = treeletsToBuild[i];
-		tr.buildNodes =
-		emitLBVH(tr.buildNodes, objInfo, &mortonObjs[tr.startIndex],
-		tr.nObjs, &nodesCreated, orderedObjs,
-		&orderedObjsOffset, firstBitIndex);
-		atomicTotal += nodesCreated;
+			// Generate _i_th LBVH treelet
+			int nodesCreated = 0;
+			const int firstBitIndex = 29 - 12;
+			LBVHTreelet &tr = treeletsToBuild[i];
+			tr.buildNodes = emitLBVH(bvhAccel, tr.buildNodes, objInfo, &mortonObjs[tr.startIndex],
+				tr.nObjs, &nodesCreated, orderedObjs,
+				&orderedObjsOffset, firstBitIndex);
+			atomicTotal += nodesCreated;
 		}, treeletsToBuild.size());
 		*totalNodes = atomicTotal;
 
@@ -492,10 +496,9 @@ namespace renderer {
 		std::vector<BVHBuildNode *> finishedTreelets;
 		finishedTreelets.reserve(treeletsToBuild.size());
 		for (LBVHTreelet &treelet : treeletsToBuild)
-		finishedTreelets.push_back(treelet.buildNodes);
+			finishedTreelets.push_back(treelet.buildNodes);
 		return buildUpperSAH(finishedTreelets, 0, finishedTreelets.size(),
-		totalNodes);
-		*/
+			totalNodes);
 	}
 
 	BVHBuildNode *BVHSystem::emitLBVH(ComponentHandle<BVHAccel> bvhAccel,
@@ -516,7 +519,7 @@ namespace renderer {
 				orderedObjs[firstPrimOffset + i] = bvhAccel->objs[objIndex];
 				bounds = Union(bounds, objInfo[objIndex].bounds);
 			}
-			node->InitLeaf(firstPrimOffset, nObjs, bounds);
+			InitLeaf(node, firstPrimOffset, nObjs, bounds);
 			return node;
 		}
 		else {
@@ -558,7 +561,7 @@ namespace renderer {
 				nObjs - splitOffset, totalNodes, orderedObjs,
 				orderedObjsOffset, bitIndex - 1) };
 			Axis axis = static_cast<Axis>(bitIndex % 3);
-			node->InitInterior(axis, lbvh[0], lbvh[1]);
+			InitInterior(node, axis, lbvh[0], lbvh[1]);
 			return node;
 		}
 	}
@@ -652,7 +655,7 @@ namespace renderer {
 		});
 		int mid = pmid - &treeletRoots[0];
 		Assert(mid > start && mid < end);
-		node->InitInterior(
+		InitInterior(node,
 			dim, buildUpperSAH(treeletRoots, start, mid, totalNodes),
 			buildUpperSAH(treeletRoots, mid, end, totalNodes));
 		return node;
@@ -719,6 +722,20 @@ namespace renderer {
 			splitMethod = BVHAccel::SplitMethod::SAH;
 		}
 		CreateBVHAccel(bvhAccel, objs, maxObjsInNode, splitMethod);
+	}
+
+	void BVHSystem::InitLeaf(BVHBuildNode * node, int first, int n, const BBox &b) {
+		node->firstPrimOffset = first;
+		node->nObjs = n;
+		node->bounds = b;
+		node->children[0] = node->children[1] = nullptr;
+	}
+	void BVHSystem::InitInterior(BVHBuildNode * node, Axis axis, BVHBuildNode *c0, BVHBuildNode *c1) {
+		node->children[0] = c0;
+		node->children[1] = c1;
+		node->bounds = Union(c0->bounds, c1->bounds);
+		node->splitAxis = axis;
+		node->nObjs = 0;
 	}
 
 };

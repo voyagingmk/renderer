@@ -8,19 +8,6 @@
 
 namespace renderer {
 	struct BVHBuildNode {
-		void InitLeaf(int first, int n, const BBox &b) {
-			firstPrimOffset = first;
-			nObjs = n;
-			bounds = b;
-			children[0] = children[1] = nullptr;
-		}
-		void InitInterior(Axis axis, BVHBuildNode *c0, BVHBuildNode *c1) {
-			children[0] = c0;
-			children[1] = c1;
-			bounds = Union(c0->bounds, c1->bounds);
-			splitAxis = axis;
-			nObjs = 0;
-		}
 		BBox bounds;
 		BVHBuildNode *children[2];
 		Axis splitAxis;
