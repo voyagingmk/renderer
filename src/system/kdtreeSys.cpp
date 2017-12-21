@@ -22,6 +22,7 @@ namespace renderer {
 	void KdTreeSystem::update(ObjectManager &objMgr, EventManager &evtMgr, float dt) {
 
 	}
+    
 	void KdTreeSystem::receive(const DebugDrawKdTreeEvent &evt) {
 
 	}
