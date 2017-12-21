@@ -40,11 +40,11 @@ namespace renderer {
 	struct BoundEdge {
 		// BoundEdge Public Methods
 		BoundEdge() {}
-		BoundEdge(float t, int primNum, bool starting) : t(t), primNum(primNum) {
+		BoundEdge(float t, int objNum, bool starting) : t(t), objNum(objNum) {
 			type = starting ? EdgeType::Start : EdgeType::End;
 		}
 		float t;
-		int primNum;
+		int objNum;
 		EdgeType type;
 	};
 

@@ -26,12 +26,12 @@ namespace renderer {
 			float emptyBonus = 0.5, int maxObjs = 1, int maxDepth = -1);
 
 		void BuildTree(ComponentHandle<KdTreeAccel> bvhAccel, int nodeNum, const BBox &bounds,
-			const std::vector<BBox> &primBounds, int *primNums,
+			const std::vector<BBox> &objBounds, int *objNums,
 			int nobjs, int depth,
 			const std::unique_ptr<BoundEdge[]> edges[3], int *objs0,
 			int *objs1, int badRefines = 0);
 
-		void InitLeaf(KdAccelNode* node, int *primNums, int np,
+		void InitLeaf(KdAccelNode* node, int *objNums, int np,
 			std::vector<int> *objIndices);
 
 		void CreateKdTreeAccel(ComponentHandle<KdTreeAccel>,
