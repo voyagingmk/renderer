@@ -11,7 +11,7 @@ namespace renderer {
 		BBox bounds;
 		BVHBuildNode *children[2];
 		Axis splitAxis;
-		int firstPrimOffset, nObjs;
+		int firstObjOffset, nObjs;
 	};
 	struct LBVHTreelet {
 		int startIndex, nObjs;
