@@ -67,8 +67,8 @@ namespace renderer {
 			maxDepth = std::round(8 + 1.3f * Log2Int(kdTreeAccel->objs.size()));
 
 		// Compute bounds for kd-tree construction
-		std::vector<BBox> primBounds;
-		primBounds.reserve(kdTreeAccel->objs.size());
+		std::vector<BBox> objBounds;
+		objBounds.reserve(kdTreeAccel->objs.size());
 		for (const ObjectID &objID : kdTreeAccel->objs) {
 			Object obj = m_objMgr->get(objID);
 			auto meshRef = obj.component<MeshRef>();
@@ -77,7 +77,7 @@ namespace renderer {
 			auto bound = mesh.Bound();
 			auto worldBound = (spatialData->o2w)(bound);
 			kdTreeAccel->bounds = Union(kdTreeAccel->bounds, worldBound);
-			primBounds.push_back(worldBound);
+			objBounds.push_back(worldBound);
 		}
 
 		// Allocate working memory for kd-tree construction
@@ -87,16 +87,16 @@ namespace renderer {
 		std::unique_ptr<int[]> objs0(new int[kdTreeAccel->objs.size()]);
 		std::unique_ptr<int[]> objs1(new int[(maxDepth + 1) * kdTreeAccel->objs.size()]);
 
-		// Initialize _primNums_ for kd-tree construction
-		std::unique_ptr<int[]> primNums(new int[kdTreeAccel->objs.size()]);
-		for (size_t i = 0; i < kdTreeAccel->objs.size(); ++i) primNums[i] = i;
+		// Initialize _objNums_ for kd-tree construction
+		std::unique_ptr<int[]> objNums(new int[kdTreeAccel->objs.size()]);
+		for (size_t i = 0; i < kdTreeAccel->objs.size(); ++i) objNums[i] = i;
 
 		// Start recursive construction of kd-tree
-		BuildTree(kdTreeAccel, 0, kdTreeAccel->bounds, primBounds, primNums.get(), kdTreeAccel->objs.size(),
+		BuildTree(kdTreeAccel, 0, kdTreeAccel->bounds, objBounds, objNums.get(), kdTreeAccel->objs.size(),
 			maxDepth, edges, objs0.get(), objs1.get());
 	}
 
-	void KdTreeSystem::InitLeaf(KdAccelNode* node, int *primNums, int np,
+	void KdTreeSystem::InitLeaf(KdAccelNode* node, int *objNums, int np,
 		std::vector<int> *objIndices) {
 		node->flags = 3;
 		node->nObjs |= (np << 2);
@@ -104,17 +104,17 @@ namespace renderer {
 		if (np == 0)
 			node->oneObj = 0;
 		else if (np == 1)
-			node->oneObj = primNums[0];
+			node->oneObj = objNums[0];
 		else {
 			node->objIndicesOffset = objIndices->size();
-			for (int i = 0; i < np; ++i) objIndices->push_back(primNums[i]);
+			for (int i = 0; i < np; ++i) objIndices->push_back(objNums[i]);
 		}
 	}
 
 
 	void KdTreeSystem::BuildTree(ComponentHandle<KdTreeAccel> bvhAccel, int nodeNum, const BBox &nodeBounds,
-		const std::vector<BBox> &allPrimBounds,
-		int *primNums, int nObjs, int depth,
+		const std::vector<BBox> &allObjBounds,
+		int *objNums, int nObjs, int depth,
 		const std::unique_ptr<BoundEdge[]> edges[3],
 		int *objs0, int *objs1, int badRefines) {
 		assert(nodeNum == bvhAccel->nextFreeNode);
@@ -133,7 +133,7 @@ namespace renderer {
 
 		// Initialize leaf node if termination criteria met
 		if (nObjs <= bvhAccel->maxObjs || depth == 0) {
-			InitLeaf(&bvhAccel->nodes[nodeNum], primNums, nObjs, &bvhAccel->objIndices);
+			InitLeaf(&bvhAccel->nodes[nodeNum], objNums, nObjs, &bvhAccel->objIndices);
 			return;
 		}
 
@@ -154,8 +154,8 @@ namespace renderer {
 
 		// Initialize edges for _axis_
 		for (int i = 0; i < nObjs; ++i) {
-			int pn = primNums[i];
-			const BBox &bounds = allPrimBounds[pn];
+			int pn = objNums[i];
+			const BBox &bounds = allObjBounds[pn];
 			edges[axis][2 * i] = BoundEdge(bounds.pMin[axis], pn, true);
 			edges[axis][2 * i + 1] = BoundEdge(bounds.pMax[axis], pn, false);
 		}
@@ -212,7 +212,7 @@ namespace renderer {
 		if (bestCost > oldCost) ++badRefines;
 		if ((bestCost > 4 * oldCost && nObjs < 16) || bestAxis == -1 ||
 			badRefines == 3) {
-			InitLeaf(&bvhAccel->nodes[nodeNum], primNums, nObjs, &bvhAccel->objIndices);
+			InitLeaf(&bvhAccel->nodes[nodeNum], objNums, nObjs, &bvhAccel->objIndices);
 			return;
 		}
 
@@ -220,20 +220,20 @@ namespace renderer {
 		int n0 = 0, n1 = 0;
 		for (int i = 0; i < bestOffset; ++i)
 			if (edges[bestAxis][i].type == EdgeType::Start)
-				objs0[n0++] = edges[bestAxis][i].primNum;
+				objs0[n0++] = edges[bestAxis][i].objNum;
 		for (int i = bestOffset + 1; i < 2 * nObjs; ++i)
 			if (edges[bestAxis][i].type == EdgeType::End)
-				objs1[n1++] = edges[bestAxis][i].primNum;
+				objs1[n1++] = edges[bestAxis][i].objNum;
 
 		// Recursively initialize children nodes
 		float tSplit = edges[bestAxis][bestOffset].t;
 		BBox bounds0 = nodeBounds, bounds1 = nodeBounds;
 		bounds0.pMax[bestAxis] = bounds1.pMin[bestAxis] = tSplit;
-		BuildTree(bvhAccel, nodeNum + 1, bounds0, allPrimBounds, objs0, n0, depth - 1, edges,
+		BuildTree(bvhAccel, nodeNum + 1, bounds0, allObjBounds, objs0, n0, depth - 1, edges,
 			objs0, objs1 + nObjs, badRefines);
 		int aboveChild = bvhAccel->nextFreeNode;
 		bvhAccel->nodes[nodeNum].InitInterior(bestAxis, aboveChild, tSplit);
-		BuildTree(bvhAccel, aboveChild, bounds1, allPrimBounds, objs1, n1, depth - 1, edges,
+		BuildTree(bvhAccel, aboveChild, bounds1, allObjBounds, objs1, n1, depth - 1, edges,
 			objs0, objs1 + nObjs, badRefines);
 	}
 

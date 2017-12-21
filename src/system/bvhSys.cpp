@@ -277,12 +277,12 @@ namespace renderer {
 		int nObjs = end - start;
 		if (nObjs == 1) {
 			// Create leaf _BVHBuildNode_
-			int firstPrimOffset = orderedObjs.size();
+			int firstObjOffset = orderedObjs.size();
 			for (int i = start; i < end; ++i) {
-				int primNum = objInfo[i].objNumber;
-				orderedObjs.push_back(bvhAccel->objs[primNum]);
+				int objNum = objInfo[i].objNumber;
+				orderedObjs.push_back(bvhAccel->objs[objNum]);
 			}
-			InitLeaf(node, firstPrimOffset, nObjs, bounds);
+			InitLeaf(node, firstObjOffset, nObjs, bounds);
 			return node;
 		}
 		else {
@@ -296,12 +296,12 @@ namespace renderer {
 			int mid = (start + end) / 2;
 			if (centroidBounds.pMax[dim] == centroidBounds.pMin[dim]) {
 				// Create leaf _BVHBuildNode_
-				int firstPrimOffset = orderedObjs.size();
+				int firstObjOffset = orderedObjs.size();
 				for (int i = start; i < end; ++i) {
-					int primNum = objInfo[i].objNumber;
-					orderedObjs.push_back(bvhAccel->objs[primNum]);
+					int objNum = objInfo[i].objNumber;
+					orderedObjs.push_back(bvhAccel->objs[objNum]);
 				}
-				InitLeaf(node, firstPrimOffset, nObjs, bounds);
+				InitLeaf(node, firstObjOffset, nObjs, bounds);
 				return node;
 			}
 			else {
@@ -411,12 +411,12 @@ namespace renderer {
 						}
 						else {
 							// Create leaf _BVHBuildNode_
-							int firstPrimOffset = orderedObjs.size();
+							int firstObjOffset = orderedObjs.size();
 							for (int i = start; i < end; ++i) {
-								int primNum = objInfo[i].objNumber;
-								orderedObjs.push_back(bvhAccel->objs[primNum]);
+								int objNum = objInfo[i].objNumber;
+								orderedObjs.push_back(bvhAccel->objs[objNum]);
 							}
-							InitLeaf(node, firstPrimOffset, nObjs, bounds);
+							InitLeaf(node, firstObjOffset, nObjs, bounds);
 							return node;
 						}
 					}
@@ -514,13 +514,13 @@ namespace renderer {
 			(*totalNodes)++;
 			BVHBuildNode *node = buildNodes++;
 			BBox bounds;
-			int firstPrimOffset = orderedObjsOffset->fetch_add(nObjs);
+			int firstObjOffset = orderedObjsOffset->fetch_add(nObjs);
 			for (int i = 0; i < nObjs; ++i) {
 				int objIndex = mortonObjs[i].objIndex;
-				orderedObjs[firstPrimOffset + i] = bvhAccel->objs[objIndex];
+				orderedObjs[firstObjOffset + i] = bvhAccel->objs[objIndex];
 				bounds = Union(bounds, objInfo[objIndex].bounds);
 			}
-			InitLeaf(node, firstPrimOffset, nObjs, bounds);
+			InitLeaf(node, firstObjOffset, nObjs, bounds);
 			return node;
 		}
 		else {
@@ -669,7 +669,7 @@ namespace renderer {
 		if (node->nObjs > 0) {
 			Assert(!node->children[0] && !node->children[1]);
 			Assert(node->nObjs < 65536);
-			linearNode->objsOffset = node->firstPrimOffset;
+			linearNode->objsOffset = node->firstObjOffset;
 			linearNode->nObjs = node->nObjs;
 		}
 		else {
@@ -726,7 +726,7 @@ namespace renderer {
 	}
 
 	void BVHSystem::InitLeaf(BVHBuildNode * node, int first, int n, const BBox &b) {
-		node->firstPrimOffset = first;
+		node->firstObjOffset = first;
 		node->nObjs = n;
 		node->bounds = b;
 		node->children[0] = node->children[1] = nullptr;
