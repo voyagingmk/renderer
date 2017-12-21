@@ -12,7 +12,7 @@ using json = nlohmann::json;
 namespace renderer {
 	class KdTreeSystem : public System<KdTreeSystem>, public Receiver<KdTreeSystem> {
 	public:
-		void init(ObjectManager &objMgr, EventManager &evtMgr);
+		void init(ObjectManager &objMgr, EventManager &evtMgr) override;
 
 		void update(ObjectManager &objMgr, EventManager &evtMgr, float dt) override;
 
