@@ -7,20 +7,19 @@
 #include "mesh.hpp"
 
 namespace renderer {
+    
 	struct BVHBuildNode {
 		BBox bounds;
 		BVHBuildNode *children[2];
 		Axis splitAxis;
 		int firstObjOffset, nObjs;
 	};
+    
 	struct LBVHTreelet {
 		int startIndex, nObjs;
 		BVHBuildNode *buildNodes;
 	};
 
-
-
-	// BVHAccel Local Declarations
 	struct BVHObjInfo {
 		BVHObjInfo() {}
 		BVHObjInfo(size_t objNumber, const BBox &bounds)
@@ -43,12 +42,9 @@ namespace renderer {
 		uint8_t pad[1];        // ensure 32 byte total size
 	};
 
-	// BVHAccel Declarations
 	class BVHAccel {
 	public:
-		// BVHAccel Public Types
 		enum class SplitMethod { SAH, HLBVH, Middle, EqualCounts };
-		// BVHAccel Private Data
 		int maxObjsInNode;
 		SplitMethod splitMethod;
 		std::vector<ecs::ObjectID> objs;
@@ -61,4 +57,4 @@ namespace renderer {
 	};
 
 };
-#endif  // PBRT_ACCELERATORS_BVH_H
+#endif
