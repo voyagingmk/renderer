@@ -126,13 +126,18 @@ class ObjectManager
 		{
 			if (m_isAlive[id])
 			{
+                printf("[ecs] destroy obj %d\n", id);
 				destroy(id);
 			}
 		}
+        printf("[ecs] m_freeList.clear()\n");
 		m_freeList.clear();
+        printf("[ecs] m_isAlive.clear()\n");
 		m_isAlive.clear();
+        printf("[ecs] m_comHashes.clear()\n");
 		m_comHashes.clear();
 		m_objectIDCounter = 0;
+        printf("[ecs] reset success\n");
 	}
 
 	template<typename... Coms>

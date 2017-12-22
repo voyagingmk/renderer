@@ -74,7 +74,8 @@ int ecsMain(int argc, char *argv[])
 	ecsObj.setup();
 	int interval = 10;
 	int lastTick = SDL_GetTicks();
-	while (1) {
+    auto com = ecsObj.m_objMgr.getSingletonComponent<SDLContext>();
+	while (!com->shouldExit) {
 		ecsObj.update(0.01f);
 		while (SDL_GetTicks() < lastTick + interval) {
 		}
