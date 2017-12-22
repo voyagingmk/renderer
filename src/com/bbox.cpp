@@ -115,9 +115,11 @@ namespace renderer {
 	}
 
 	Vector3dF BBox::Offset(const Vector3dF &p) const {
-		return Vector3dF((p.x - pMin.x) / (pMax.x - pMin.x),
-			(p.y - pMin.y) / (pMax.y - pMin.y),
-			(p.z - pMin.z) / (pMax.z - pMin.z));
+        Vector3dF o = p - pMin;
+        if (pMax.x > pMin.x) o.x /= pMax.x - pMin.x;
+        if (pMax.y > pMin.y) o.y /= pMax.y - pMin.y;
+        if (pMax.z > pMin.z) o.z /= pMax.z - pMin.z;
+		return o;
 	}
 
 	void BBox::BoundingSphere(Vector3dF *c, float *rad) const {

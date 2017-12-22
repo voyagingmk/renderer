@@ -210,7 +210,7 @@ namespace renderer {
 			}
 		}; 
 		filterFunc(objScene);
-		CreateBVHAccel(bvhAccel, objs, "", 0);
+		CreateBVHAccel(bvhAccel, objs, "hlbvh", 0);
 	}
 
 
@@ -439,8 +439,7 @@ namespace renderer {
 		const std::vector<BVHObjInfo> &objInfo,
 		int *totalNodes,
 		std::vector<ObjectID> &orderedObjs)  {
-		return nullptr;
-		
+
 		// Compute bounding box of all obj centroids
 		BBox bounds;
 		for (const BVHObjInfo &pi : objInfo)
@@ -452,8 +451,10 @@ namespace renderer {
 			// Initialize _mortonObjs[i]_ for _i_th obj
 			constexpr int mortonBits = 10;
 			constexpr int mortonScale = 1 << mortonBits;
-			mortonObjs[i].objIndex = objInfo[i].objNumber;
-			Vector3dF centroidOffset = bounds.Offset(objInfo[i].centroid);
+            const BVHObjInfo& info = objInfo[i];
+            BBox bb = bounds;
+			mortonObjs[i].objIndex = info.objNumber;
+			Vector3dF centroidOffset = bounds.Offset(info.centroid);
 			mortonObjs[i].mortonCode = EncodeMorton3(centroidOffset * mortonScale);
 		}, objInfo.size(), 512);
 
