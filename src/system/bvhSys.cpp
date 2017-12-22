@@ -293,7 +293,6 @@ namespace renderer {
 			Axis dim = centroidBounds.MaximumExtent();
 
 			// Partition objs into two sets and build children
-			int mid = (start + end) / 2;
 			if (centroidBounds.pMax[dim] == centroidBounds.pMin[dim]) {
 				// Create leaf _BVHBuildNode_
 				int firstObjOffset = orderedObjs.size();
@@ -305,6 +304,7 @@ namespace renderer {
 				return node;
 			}
 			else {
+                int mid = (start + end) / 2;
 				// Partition objs based on _splitMethod_
 				switch (bvhAccel->splitMethod) {
 				case BVHAccel::SplitMethod::Middle: {
