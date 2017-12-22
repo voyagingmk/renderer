@@ -19,6 +19,8 @@
 #include "system/sceneGraphSys.hpp"
 #include "system/bvhSys.hpp"
 #include "system/kdtreeSys.hpp"
+#include "utils/parallel.hpp"
+
 
 
 using namespace ecs;
@@ -81,6 +83,7 @@ int ecsMain(int argc, char *argv[])
 		}
 		lastTick = SDL_GetTicks();
 	}
+    TerminateWorkerThreads();
 	return 0;
 }
 
