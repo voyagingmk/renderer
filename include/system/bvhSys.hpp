@@ -61,7 +61,8 @@ namespace renderer {
 		void InitLeaf(BVHBuildNode * node, int first, int n, const BBox &b);
 		
 		void InitInterior(BVHBuildNode * node, Axis axis, BVHBuildNode *c0, BVHBuildNode *c1);
-	};
+        
+    };
 };
 
 

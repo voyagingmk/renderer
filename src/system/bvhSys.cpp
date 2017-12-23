@@ -12,13 +12,13 @@ using namespace std;
 
 
 namespace renderer {
+    
+    struct BucketInfo {
+        int count = 0;
+        BBox bounds;
+    };
 
-
-	struct BucketInfo {
-		int count = 0;
-		BBox bounds;
-	};
-
+    void computeCosts(BBox& bounds, float* cost, BucketInfo* buckets, int nBuckets, float costTraverse);
 
 	// BVHAccel Utility Functions
 	inline uint32_t LeftShift3(uint32_t x) {
@@ -365,24 +365,8 @@ namespace renderer {
 								Union(buckets[b].bounds, objInfo[i].bounds);
 						}
 
-						// Compute costs for splitting after each bucket
 						float cost[nBuckets - 1];
-						for (int i = 0; i < nBuckets - 1; ++i) {
-							BBox b0, b1;
-							int count0 = 0, count1 = 0;
-							for (int j = 0; j <= i; ++j) {
-								b0 = Union(b0, buckets[j].bounds);
-								count0 += buckets[j].count;
-							}
-							for (int j = i + 1; j < nBuckets; ++j) {
-								b1 = Union(b1, buckets[j].bounds);
-								count1 += buckets[j].count;
-							}
-							cost[i] = 1 +
-								(count0 * b0.SurfaceArea() +
-									count1 * b1.SurfaceArea()) /
-								bounds.SurfaceArea();
-						}
+                        computeCosts(bounds, cost, buckets, nBuckets, 1.0f);
 
 						// Find bucket to split at that minimizes SAH metric
 						float minCost = cost[0];
@@ -457,10 +441,21 @@ namespace renderer {
 			Vector3dF centroidOffset = bounds.Offset(info.centroid);
 			mortonObjs[i].mortonCode = EncodeMorton3(centroidOffset * mortonScale);
 		}, objInfo.size(), 512);
-
+        /*
+        cout << "before sort" << endl;
+        for (int i = 0; i < mortonObjs.size(); ++i) {
+            cout<< "：" << bitset<32>(mortonObjs[i].mortonCode) << endl;
+        }*/
 		// Radix sort obj Morton indices
 		RadixSort(&mortonObjs);
-
+        /*
+        cout << "sort end" << endl;
+        for (int i = 0; i < mortonObjs.size(); ++i) {
+            cout<< "：" << bitset<32>(mortonObjs[i].mortonCode) << endl;
+        }
+        cout << "after sort" << endl;
+        */
+        
 		// Create LBVH treelets at bottom of BVH
 
 		// Find intervals of objs for each treelet
@@ -559,9 +554,9 @@ namespace renderer {
 				emitLBVH(bvhAccel, buildNodes, objInfo, mortonObjs, splitOffset,
 				totalNodes, orderedObjs, orderedObjsOffset,
 				bitIndex - 1),
-				emitLBVH(bvhAccel, buildNodes, objInfo, &mortonObjs[splitOffset],
-				nObjs - splitOffset, totalNodes, orderedObjs,
-				orderedObjsOffset, bitIndex - 1) };
+				emitLBVH(bvhAccel, buildNodes, objInfo, &mortonObjs[splitOffset], nObjs - splitOffset,
+                totalNodes, orderedObjs, orderedObjsOffset,
+                bitIndex - 1) };
 			Axis axis = static_cast<Axis>(bitIndex % 3);
 			InitInterior(node, axis, lbvh[0], lbvh[1]);
 			return node;
@@ -614,23 +609,9 @@ namespace renderer {
 			buckets[b].bounds = Union(buckets[b].bounds, treeletRoots[i]->bounds);
 		}
 
-		// Compute costs for splitting after each bucket
 		float cost[nBuckets - 1];
-		for (int i = 0; i < nBuckets - 1; ++i) {
-			BBox b0, b1;
-			int count0 = 0, count1 = 0;
-			for (int j = 0; j <= i; ++j) {
-				b0 = Union(b0, buckets[j].bounds);
-				count0 += buckets[j].count;
-			}
-			for (int j = i + 1; j < nBuckets; ++j) {
-				b1 = Union(b1, buckets[j].bounds);
-				count1 += buckets[j].count;
-			}
-			cost[i] = .125f +
-				(count0 * b0.SurfaceArea() + count1 * b1.SurfaceArea()) /
-				bounds.SurfaceArea();
-		}
+        computeCosts(bounds, cost, buckets, nBuckets, .125f);
+
 
 		// Find bucket to split at that minimizes SAH metric
 		float minCost = cost[0];
@@ -739,5 +720,23 @@ namespace renderer {
 		node->splitAxis = axis;
 		node->nObjs = 0;
 	}
+    
+    void computeCosts(BBox& bounds, float* cost, BucketInfo* buckets, int nBuckets, float costTraverse) {
+        for (int i = 0; i < nBuckets - 1; ++i) {
+            BBox b0, b1;
+            int count0 = 0, count1 = 0;
+            for (int j = 0; j <= i; ++j) {
+                b0 = Union(b0, buckets[j].bounds);
+                count0 += buckets[j].count;
+            }
+            for (int j = i + 1; j < nBuckets; ++j) {
+                b1 = Union(b1, buckets[j].bounds);
+                count1 += buckets[j].count;
+            }
+            cost[i] = costTraverse +
+            (count0 * b0.SurfaceArea() + count1 * b1.SurfaceArea()) /
+            bounds.SurfaceArea();
+        }
+    }
 
 };
