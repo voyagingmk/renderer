@@ -436,21 +436,10 @@ namespace renderer {
 			Vector3dF centroidOffset = bounds.Offset(info.centroid);
 			mortonObjs[i].mortonCode = EncodeMorton3(centroidOffset * mortonScale);
 		}, objInfo.size(), 512);
-        /*
-        cout << "before sort" << endl;
-        for (int i = 0; i < mortonObjs.size(); ++i) {
-            cout<< "：" << bitset<32>(mortonObjs[i].mortonCode) << endl;
-        }*/
+        
 		// Radix sort obj Morton indices
 		RadixSort(&mortonObjs);
-        /*
-        cout << "sort end" << endl;
-        for (int i = 0; i < mortonObjs.size(); ++i) {
-            cout<< "：" << bitset<32>(mortonObjs[i].mortonCode) << endl;
-        }
-        cout << "after sort" << endl;
-        */
-        
+
 		// Create LBVH treelets at bottom of BVH
 
 		// Find intervals of objs for each treelet
