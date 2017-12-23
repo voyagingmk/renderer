@@ -19,7 +19,9 @@ namespace renderer {
     };
 
     void computeCosts(BBox& bounds, float* cost, BucketInfo* buckets, int nBuckets, float costTraverse);
-
+    
+    void findMinCost(float* cost, int nBuckets, float* minCost, int* minCostSplitBucket);
+    
 	// BVHAccel Utility Functions
 	inline uint32_t LeftShift3(uint32_t x) {
 		Assert(x <= (1 << 10));
@@ -367,17 +369,10 @@ namespace renderer {
 
 						float cost[nBuckets - 1];
                         computeCosts(bounds, cost, buckets, nBuckets, 1.0f);
-
-						// Find bucket to split at that minimizes SAH metric
-						float minCost = cost[0];
-						int minCostSplitBucket = 0;
-						for (int i = 1; i < nBuckets - 1; ++i) {
-							if (cost[i] < minCost) {
-								minCost = cost[i];
-								minCostSplitBucket = i;
-							}
-						}
-
+                        float minCost;
+                        int minCostSplitBucket;
+                        findMinCost(cost, nBuckets, &minCost, &minCostSplitBucket);
+	
 						// Either create leaf or split objs at selected SAH
 						// bucket
 						float leafCost = nObjs;
@@ -611,17 +606,9 @@ namespace renderer {
 
 		float cost[nBuckets - 1];
         computeCosts(bounds, cost, buckets, nBuckets, .125f);
-
-
-		// Find bucket to split at that minimizes SAH metric
-		float minCost = cost[0];
-		int minCostSplitBucket = 0;
-		for (int i = 1; i < nBuckets - 1; ++i) {
-			if (cost[i] < minCost) {
-				minCost = cost[i];
-				minCostSplitBucket = i;
-			}
-		}
+        float minCost;
+        int minCostSplitBucket;
+        findMinCost(cost, nBuckets, &minCost, &minCostSplitBucket);
 
 		// Split nodes and create interior HLBVH SAH node
 		BVHBuildNode **pmid = std::partition(
@@ -736,6 +723,18 @@ namespace renderer {
             cost[i] = costTraverse +
             (count0 * b0.SurfaceArea() + count1 * b1.SurfaceArea()) /
             bounds.SurfaceArea();
+        }
+    }
+    
+    void findMinCost(float* cost, int nBuckets, float* minCost, int* minCostSplitBucket) {
+        // Find bucket to split at that minimizes SAH metric
+        *minCost = cost[0];
+        *minCostSplitBucket = 0;
+        for (int i = 1; i < nBuckets - 1; ++i) {
+            if (cost[i] < *minCost) {
+                *minCost = cost[i];
+                *minCostSplitBucket = i;
+            }
         }
     }
 
