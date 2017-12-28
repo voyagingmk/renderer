@@ -2,6 +2,8 @@
 #include "animation/runtime/animation.h"
 #include "animation/runtime/skeleton.h"
 #include "base/maths/simd_math.h"
+#include "base/maths/box.h"
+#include "base/maths/math_ex.h"
 #include "base/maths/soa_transform.h"
 #include "base/maths/vec_float.h"
 #include "base/io/archive.h"
