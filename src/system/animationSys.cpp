@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "system/animationSys.hpp"
+#include "com/vertex.hpp"
 
 using namespace std;
 
@@ -35,6 +36,8 @@ ScratchBuffer scratch_buffer;
 namespace renderer {
     void AnimationSystem::init(ObjectManager &objMgr, EventManager &evtMgr) {
         printf("AnimationSystem init\n");
+        assert(InitPostureRendering());
+
         ozz::options::internal::Registrer<ozz::options::StringOption> OPTIONS_skeleton(
             "skeleton", "", "assets/animation/skeleton.ozz", false);
         // Reading skeleton.
@@ -126,8 +129,8 @@ namespace renderer {
             glBindBuffer(GL_ARRAY_BUFFER, model.vbo);
             
             // Bind shader
-            model.shader->Bind(transform, camera_->view_proj(), sizeof(VertexPNC), 0,
-                               sizeof(VertexPNC), 12, sizeof(VertexPNC), 24);
+            model.shader->Bind(transform, camera_->view_proj(), sizeof(Vertex), 0,
+                               sizeof(Vertex), 12, sizeof(Vertex), 24);
             
             glBindBuffer(GL_ARRAY_BUFFER, 0);
             
@@ -233,6 +236,108 @@ namespace renderer {
         }
         
         return instances;
+    }
+    
+    
+    bool AnimationSystem::InitPostureRendering() {
+        const float kInter = .2f;
+        {  // Prepares bone mesh.
+            const Vector3dF pos[6] = {
+                    {1.f, 0.f, 0.f},     {kInter, .1f, .1f},
+                    {kInter, .1f, -.1f}, {kInter, -.1f, -.1f},
+                    {kInter, -.1f, .1f}, {0.f, 0.f, 0.f}
+                };
+            const Vector3dF normals[8] = {
+                (pos[2] - pos[1]).Cross(pos[2] - pos[0]).Normalize(),
+                (pos[1] - pos[2]).Cross(pos[1] - pos[5]).Normalize(),
+                (pos[3] - pos[2]).Cross(pos[3] - pos[0]).Normalize(),
+                (pos[2] - pos[3]).Cross(pos[2] - pos[5]).Normalize(),
+                (pos[4] - pos[3]).Cross(pos[4] - pos[0]).Normalize(),
+                (pos[3] - pos[4]).Cross(pos[3] - pos[5]).Normalize(),
+                (pos[1] - pos[4]).Cross(pos[1] - pos[0]).Normalize(),
+                (pos[4] - pos[1]).Cross(pos[4] - pos[5]).Normalize()};
+            const Vertex bones[24] = {
+                {pos[0], normals[0]}, {pos[2], normals[0]},
+                {pos[1], normals[0]}, {pos[5], normals[1]},
+                {pos[1], normals[1]}, {pos[2], normals[1]},
+                {pos[0], normals[2]}, {pos[3], normals[2]},
+                {pos[2], normals[2]}, {pos[5], normals[3]},
+                {pos[2], normals[3]}, {pos[3], normals[3]},
+                {pos[0], normals[4]}, {pos[4], normals[4]},
+                {pos[3], normals[4]}, {pos[5], normals[5]},
+                {pos[3], normals[5]}, {pos[4], normals[5]},
+                {pos[0], normals[6]}, {pos[1], normals[6]},
+                {pos[4], normals[6]}, {pos[5], normals[7]},
+                {pos[4], normals[7]}, {pos[1], normals[7]}};
+            
+            // Builds and fills the vbo.
+            Model& bone = models_[0];
+            bone.mode = GL_TRIANGLES;
+            bone.count = OZZ_ARRAY_SIZE(bones);
+            glGenBuffers(1, &bone.vbo);
+            glBindBuffer(GL_ARRAY_BUFFER, bone.vbo);
+            glBufferData(GL_ARRAY_BUFFER, sizeof(bones), bones, GL_STATIC_DRAW);
+            glBindBuffer(GL_ARRAY_BUFFER, 0);  // Unbinds.
+            
+            // Init bone shader.
+            bone.shader = BoneShader::Build();
+            if (!bone.shader) {
+                return false;
+            }
+        }
+        
+        {  // Prepares joint mesh.
+            const int kNumSlices = 20;
+            const int kNumPointsPerCircle = kNumSlices + 1;
+            const int kNumPointsYZ = kNumPointsPerCircle;
+            const int kNumPointsXY = kNumPointsPerCircle + kNumPointsPerCircle / 4;
+            const int kNumPointsXZ = kNumPointsPerCircle;
+            const int kNumPoints = kNumPointsXY + kNumPointsXZ + kNumPointsYZ;
+            const float kRadius = kInter;  // Radius multiplier.
+            Vertex joints[kNumPoints];
+            
+            // Fills vertices.
+            int index = 0;
+            for (int j = 0; j < kNumPointsYZ; ++j) {  // YZ plan.
+                float angle = j * ozz::math::k2Pi / kNumSlices;
+                float s = sinf(angle), c = cosf(angle);
+                Vertex& vertex = joints[index++];
+                vertex.position = Vector3dF(0.f, c * kRadius, s * kRadius);
+                vertex.normal = Vector3dF(0.f, c, s);
+            }
+            for (int j = 0; j < kNumPointsXY; ++j) {  // XY plan.
+                float angle = j * ozz::math::k2Pi / kNumSlices;
+                float s = sinf(angle), c = cosf(angle);
+                Vertex& vertex = joints[index++];
+                vertex.position = Vector3dF(s * kRadius, c * kRadius, 0.f);
+                vertex.normal = Vector3dF(s, c, 0.f);
+            }
+            for (int j = 0; j < kNumPointsXZ; ++j) {  // XZ plan.
+                float angle = j * ozz::math::k2Pi / kNumSlices;
+                float s = sinf(angle), c = cosf(angle);
+                Vertex& vertex = joints[index++];
+                vertex.position = Vector3dF(c * kRadius, 0.f, -s * kRadius);
+                vertex.normal = Vector3dF(c, 0.f, -s);
+            }
+            assert(index == kNumPoints);
+            
+            // Builds and fills the vbo.
+            Model& joint = models_[1];
+            joint.mode = GL_LINE_STRIP;
+            joint.count = OZZ_ARRAY_SIZE(joints);
+            GL(GenBuffers(1, &joint.vbo));
+            GL(BindBuffer(GL_ARRAY_BUFFER, joint.vbo));
+            glBufferData(GL_ARRAY_BUFFER, sizeof(joints), joints, GL_STATIC_DRAW);
+            glBindBuffer(GL_ARRAY_BUFFER, 0);  // Unbinds.
+            
+            // Init joint shader.
+            joint.shader = JointShader::Build();
+            if (!joint.shader) {
+                return false;
+            }
+        }
+        
+        return true;
     }
     
     bool AnimationSystem::LoadSkeleton(const char* _filename, ozz::animation::Skeleton* _skeleton) {

@@ -20,10 +20,8 @@ namespace renderer {
         
         void UpdateAnimationTime(AnimationCom com, float dt);
         
-        bool LoadSkeleton(const char* _filename, ozz::animation::Skeleton* _skeleton);
-        
-        bool LoadAnimation(const char* _filename, ozz::animation::Animation* _animation);
-        
+        bool InitPostureRendering();
+
         bool DrawPosture(const ozz::animation::Skeleton& skeleton,
                          ozz::Range<const ozz::math::Float4x4> matrices,
                          const ozz::math::Float4x4& transform,
@@ -35,6 +33,11 @@ namespace renderer {
         
         void DrawPosture_InstancedImpl(const ozz::math::Float4x4& transform, const float* uniforms,
                                                         int instance_count, bool draw_joints);
+        
+        bool LoadSkeleton(const char* _filename, ozz::animation::Skeleton* _skeleton);
+        
+        bool LoadAnimation(const char* _filename, ozz::animation::Animation* _animation);
+        
     };
     
 };
