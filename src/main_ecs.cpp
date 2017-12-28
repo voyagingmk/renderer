@@ -9,6 +9,7 @@
 #include "system/bufferSys.hpp"
 #include "system/materialSys.hpp"
 #include "system/spatialSys.hpp"
+#include "system/animationSys.hpp"
 #include "system/cameraSys.hpp"
 #include "system/motionSys.hpp"
 #include "system/configSys.hpp"
@@ -46,6 +47,7 @@ void MainECS::setup() {
 	m_systemMgr.add<StatSystem>();
     m_systemMgr.add<EnvSystem>();
 	m_systemMgr.add<BatchSystem>();
+    m_systemMgr.add<AnimationSystem>();
 	m_systemMgr.add<BVHSystem>();
 	m_systemMgr.add<KdTreeSystem>();
 	m_systemMgr.add<SceneGraphSystem>();

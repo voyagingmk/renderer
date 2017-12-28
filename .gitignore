@@ -30,3 +30,4 @@ assimp-vc140-mt.dll
 SDL2.dll
 *.cap
 vs_build/CMakeFiles/
+assets/animation
