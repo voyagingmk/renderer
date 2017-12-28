@@ -4,6 +4,7 @@
 #include "base.hpp"
 #include "ecs/ecs.hpp"
 #include "com/animation.hpp"
+#include "event/miscEvent.hpp"
 
 
 using namespace ecs;
@@ -16,6 +17,8 @@ namespace renderer {
         
         void update(ObjectManager &objMgr, EventManager &evtMgr, float dt) override;
         
+        void receive(const DebugDrawSkeletonEvent &evt);
+
     private:
         
         void UpdateAnimationTime(AnimationCom com, float dt);

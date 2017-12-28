@@ -73,6 +73,16 @@ namespace renderer {
 		ecs::Object objKdTree;
 	};
 
+    
+
+    class DebugDrawSkeletonEvent : public ecs::Event<DebugDrawSkeletonEvent> {
+    public:
+        DebugDrawSkeletonEvent(ecs::Object objCamera):
+            objCamera(objCamera)
+        {}
+        ecs::Object objCamera;
+    };
+
 };
 
 #endif

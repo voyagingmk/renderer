@@ -7,6 +7,7 @@
 #include "utils/helper.hpp"
 #include "event/bufferEvent.hpp"
 #include "event/shaderEvent.hpp"
+#include "event/miscEvent.hpp"
 #include "utils/glutils.hpp"
 
 
@@ -44,6 +45,10 @@ ScratchBuffer scratch_buffer;
 namespace renderer {
     void AnimationSystem::init(ObjectManager &objMgr, EventManager &evtMgr) {
         printf("AnimationSystem init\n");
+        
+        evtMgr.on<DebugDrawSkeletonEvent>(*this);
+        
+        
         assert(InitPostureRendering());
 
         ozz::options::internal::Registrer<ozz::options::StringOption> OPTIONS_skeleton(
@@ -66,6 +71,7 @@ namespace renderer {
         com.models = allocator->AllocateRange<ozz::math::Float4x4>(num_joints);
         // Allocates a cache that matches animation requirements.
         com.cache = allocator->New<ozz::animation::SamplingCache>(num_joints);
+        
     }
     
     void AnimationSystem::update(ObjectManager &objMgr, EventManager &evtMgr, float dt) {
@@ -90,6 +96,10 @@ namespace renderer {
         if (!ltm_job.Run()) {
             return;
         }
+    }
+    
+    
+    void AnimationSystem::receive(const DebugDrawSkeletonEvent &evt) {
         DrawPosture(a.skeleton, com.models, ozz::math::Float4x4::identity());
     }
     
@@ -143,10 +153,6 @@ namespace renderer {
             Shader shader = i == 0? shaderBone : shaderJoint;
             shader.use();
             m_evtMgr->emit<UploadCameraToShaderEvent>(objCamera, shader);
-
-            // Bind shader
-           // model.shader->Bind(transform, camera_->view_proj(), sizeof(Vertex), 0,
-            //                   sizeof(Vertex), 12, sizeof(Vertex), 24);
             m_evtMgr->emit<BindInstanceBufferEvent>(meshID, 0, "posture");
             m_evtMgr->emit<DrawMeshBufferEvent>(meshID, 0);
             m_evtMgr->emit<UnbindInstanceBufferEvent>(meshID, 0);
@@ -197,7 +203,6 @@ namespace renderer {
             
             // Next instance.
             ++instances;
-            uniform += 16;
             
             // Only the joint is rendered for leaves, the bone model isn't.
             if (properties[i].is_leaf) {

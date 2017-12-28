@@ -104,6 +104,7 @@ namespace renderer {
 		for (auto objBVH : m_objMgr->entities<BVHAccel>()) {
 			m_evtMgr->emit<DebugDrawBVHEvent>(objCamera, objBVH);
 		}
+        m_evtMgr->emit<DebugDrawSkeletonEvent>(objCamera);
 		evtMgr.emit<UnuseColorBufferEvent>(curSceneBuf);
 		
 		if (gSettingCom->get1b("enableSSAO")) {
