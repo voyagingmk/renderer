@@ -18,7 +18,9 @@ struct AnimationCom {
     ozz::Range<ozz::math::SoaTransform> locals;
     // Buffer of model space matrices.
     ozz::Range<ozz::math::Float4x4> models;
-    
+    bool play;
+    float time;
+    float playback_speed;
 };
 
 #endif

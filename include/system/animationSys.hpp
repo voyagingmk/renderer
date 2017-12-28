@@ -18,6 +18,8 @@ namespace renderer {
         
     private:
         
+        void UpdateAnimationTime(AnimationCom com, float dt);
+        
         bool LoadSkeleton(const char* _filename, ozz::animation::Skeleton* _skeleton);
         
         bool LoadAnimation(const char* _filename, ozz::animation::Animation* _animation);

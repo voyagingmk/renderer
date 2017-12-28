@@ -3,10 +3,12 @@
 
 using namespace std;
 
+Animation a;
+AnimationCom com;
+
 namespace renderer {
     void AnimationSystem::init(ObjectManager &objMgr, EventManager &evtMgr) {
         printf("AnimationSystem init\n");
-        Animation a;
         ozz::options::internal::Registrer<ozz::options::StringOption> OPTIONS_skeleton(
             "skeleton", "", "assets/animation/skeleton.ozz", false);
         // Reading skeleton.
@@ -19,7 +21,6 @@ namespace renderer {
         if (!LoadAnimation(OPTIONS_animation, &a.animation)) {
             return;
         }
-        AnimationCom com;
         ozz::memory::Allocator* allocator = ozz::memory::default_allocator();
         // Allocates runtime buffers.
         const int num_soa_joints = a.skeleton.num_soa_joints();
@@ -31,7 +32,27 @@ namespace renderer {
     }
     
     void AnimationSystem::update(ObjectManager &objMgr, EventManager &evtMgr, float dt) {
+        // Updates current animation time.
+        UpdateAnimationTime(com, dt);
         
+        // Samples optimized animation at t = animation_time_.
+        ozz::animation::SamplingJob sampling_job;
+        sampling_job.animation = &a.animation;
+        sampling_job.cache = com.cache;
+        sampling_job.time = com.time;
+        sampling_job.output = com.locals;
+        if (!sampling_job.Run()) {
+            return;
+        }
+        
+        // Converts from local space to model space matrices.
+        ozz::animation::LocalToModelJob ltm_job;
+        ltm_job.skeleton = &a.skeleton;
+        ltm_job.input = com.locals;
+        ltm_job.output = com.models;
+        if (!ltm_job.Run()) {
+            return;
+        }
     }
     
     bool AnimationSystem::LoadSkeleton(const char* _filename, ozz::animation::Skeleton* _skeleton) {
@@ -79,6 +100,12 @@ namespace renderer {
         archive >> *_animation;
         
         return true;
+    }
+    
+    void AnimationSystem::UpdateAnimationTime(AnimationCom com, float dt) {
+        const float new_time = com.time + dt * com.playback_speed;
+        const float loops = new_time / a.animation.duration();
+        com.time = new_time - floorf(loops) * a.animation.duration();
     }
     
 };
