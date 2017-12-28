@@ -133,15 +133,17 @@ namespace renderer {
         MeshID meshIDBone = meshSetCom->getMeshID("bone");
         MeshID meshIDJoint = meshSetCom->getMeshID("joint");
         
-        Shader shader = spSetCom->getShader("posture");
-        shader.use();
+        Shader shaderBone = spSetCom->getShader("bone");
+        Shader shaderJoint = spSetCom->getShader("joint");
         Object objCamera = m_objMgr->getSingletonComponent<PerspectiveCameraView>().object();
-        m_evtMgr->emit<UploadCameraToShaderEvent>(objCamera, shader);
-
 
         // Renders models.
         for (int i = 0; i < (draw_joints ? 2 : 1); ++i) {
             MeshID meshID = i == 0? meshIDBone : meshIDJoint;
+            Shader shader = i == 0? shaderBone : shaderJoint;
+            shader.use();
+            m_evtMgr->emit<UploadCameraToShaderEvent>(objCamera, shader);
+
             // Bind shader
            // model.shader->Bind(transform, camera_->view_proj(), sizeof(Vertex), 0,
             //                   sizeof(Vertex), 12, sizeof(Vertex), 24);

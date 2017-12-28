@@ -1,4 +1,3 @@
-
 #version 410 core
 
 layout (location = 0) in vec3 position;
@@ -29,12 +28,9 @@ mat4 GetWorldMatrix() {
   0.);
   world_matrix[3] = vec4(joint[3].xyz, 1.);
   return world_matrix;
-};
-
-
+}
 
 uniform mat4 PV;
-uniform vec3 normal;
 out vec3 Normal;
 
 void main() {
@@ -48,5 +44,4 @@ void main() {
   float invdet = 1.0 / dot(cross_matrix[2], world_matrix[2].xyz);
   mat3 normal_matrix = cross_matrix * invdet;
   Normal = normal_matrix * normal;
-  PassUv();
 }

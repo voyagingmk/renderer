@@ -47,7 +47,6 @@ void MainECS::setup() {
 	m_systemMgr.add<StatSystem>();
     m_systemMgr.add<EnvSystem>();
 	m_systemMgr.add<BatchSystem>();
-    m_systemMgr.add<AnimationSystem>();
 	m_systemMgr.add<BVHSystem>();
 	m_systemMgr.add<KdTreeSystem>();
 	m_systemMgr.add<SceneGraphSystem>();
@@ -62,6 +61,7 @@ void MainECS::setup() {
     m_systemMgr.add<MotionSystem>();
 	m_systemMgr.add<LoaderSystem>();
 	m_systemMgr.add<ConfigSystem>();
+    m_systemMgr.add<AnimationSystem>();
 	m_systemMgr.init();
 }
 

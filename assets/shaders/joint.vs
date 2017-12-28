@@ -31,7 +31,6 @@ mat4 GetWorldMatrix() {
 }
 
 uniform mat4 PV;
-uniform vec3 normal;
 out vec3 Normal;
 
 void main() {
@@ -45,5 +44,4 @@ void main() {
   float invdet = 1.0 / dot(cross_matrix[2], world_matrix[2].xyz);
   mat3 normal_matrix = cross_matrix * invdet;
   Normal = normal_matrix * normal;
-  PassUv();
 }
