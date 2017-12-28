@@ -70,9 +70,11 @@ namespace renderer {
 
 	enum class MeshType {
 		Tri = 0,
-		Lines = 1
+		Lines = 1,
+        LineStrip = 2
 	};
 
+    
 	// SubMesh没有自己的transform
 	// 只是Mesh的一个part
     class SubMesh {

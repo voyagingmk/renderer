@@ -243,6 +243,11 @@ namespace renderer {
 				mode = GL_LINES;
 				break;
 			}
+            case MeshType::LineStrip:
+            {
+                mode = GL_LINE_STRIP;
+                break;
+            }
 		}
 		if (!mode) {
 			return;
@@ -317,6 +322,7 @@ namespace renderer {
 		GLuint VBO, VAO, EBO;
 		MeshBufferRef meshBuffer;
 		meshBuffer.meshType = subMesh.meshType;
+        meshBuffer.noIndices = subMesh.indexes.size() == 0;
 		glGenVertexArrays(1, &VAO);
 		glGenBuffers(1, &VBO);
 		glGenBuffers(1, &EBO);
