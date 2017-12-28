@@ -34,6 +34,25 @@ namespace renderer {
 		glClearColor(clearColor.r(), clearColor.g(), clearColor.b(), clearColor.a());
 		glClear(clearBits);
 	}
+    
+    
+    
+    static void glVertexAttribMatrix(GLint attrib) {
+        const size_t matSize = 4 * 4 * sizeof(float); // 4 x 4 float
+        glEnableVertexAttribArray(attrib + 0);
+        glVertexAttribPointer(attrib + 0, 4, GL_FLOAT, GL_FALSE, matSize, (void*)(0));
+        glEnableVertexAttribArray(attrib + 1);
+        glVertexAttribPointer(attrib + 1, 4, GL_FLOAT, GL_FALSE, matSize, (void*)(16));
+        glEnableVertexAttribArray(attrib + 2);
+        glVertexAttribPointer(attrib + 2, 4, GL_FLOAT, GL_FALSE, matSize, (void*)(32));
+        glEnableVertexAttribArray(attrib + 3);
+        glVertexAttribPointer(attrib + 3, 4, GL_FLOAT, GL_FALSE, matSize, (void*)(48));
+        
+        glVertexAttribDivisor(attrib + 0, 1);
+        glVertexAttribDivisor(attrib + 1, 1);
+        glVertexAttribDivisor(attrib + 2, 1);
+        glVertexAttribDivisor(attrib + 3, 1);
+    }
 };
 
 #endif

@@ -2,8 +2,12 @@
 #include "system/animationSys.hpp"
 #include "com/vertex.hpp"
 #include "com/mesh.hpp"
+#include "com/shader.hpp"
+#include "com/cameraCom.hpp"
 #include "utils/helper.hpp"
 #include "event/bufferEvent.hpp"
+#include "event/shaderEvent.hpp"
+#include "utils/glutils.hpp"
 
 
 using namespace std;
@@ -119,58 +123,31 @@ namespace renderer {
     void AnimationSystem::DrawPosture_InstancedImpl(
                                                  const ozz::math::Float4x4& transform, const float* uniforms,
                                                  int instance_count, bool draw_joints) {
-        // Maps the dynamic buffer and update it.
-        glBindBuffer(GL_ARRAY_BUFFER, dynamic_array_bo_);
-        const size_t vbo_size = instance_count * 16 * sizeof(float);
-        glBufferData(GL_ARRAY_BUFFER, vbo_size, uniforms, GL_STREAM_DRAW);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        m_evtMgr->emit<CreateInstanceBufferEvent>("posture");
+        m_evtMgr->emit<UpdateInstanceBufferEvent>("posture",
+                                                  instance_count,
+                                                  16 * sizeof(float),
+                                                  (void*)uniforms);
+        auto meshSetCom = m_objMgr->getSingletonComponent<MeshSet>();
+        auto spSetCom = m_objMgr->getSingletonComponent<ShaderProgramSet>();
+        MeshID meshIDBone = meshSetCom->getMeshID("bone");
+        MeshID meshIDJoint = meshSetCom->getMeshID("joint");
         
+        Shader shader = spSetCom->getShader("posture");
+        shader.use();
+        Object objCamera = m_objMgr->getSingletonComponent<PerspectiveCameraView>().object();
+        m_evtMgr->emit<UploadCameraToShaderEvent>(objCamera, shader);
+
+
         // Renders models.
         for (int i = 0; i < (draw_joints ? 2 : 1); ++i) {
-            const Model& model = models_[i];
-            
-            // Setup model vertex data.
-            glBindBuffer(GL_ARRAY_BUFFER, model.vbo);
-            
+            MeshID meshID = i == 0? meshIDBone : meshIDJoint;
             // Bind shader
-            model.shader->Bind(transform, camera_->view_proj(), sizeof(Vertex), 0,
-                               sizeof(Vertex), 12, sizeof(Vertex), 24);
-            
-            glBindBuffer(GL_ARRAY_BUFFER, 0);
-            
-            // Setup instanced GL context.
-            const GLint joint_attrib = model.shader->joint_instanced_attrib();
-            glBindBuffer(GL_ARRAY_BUFFER, dynamic_array_bo_);
-            glEnableVertexAttribArray(joint_attrib + 0);
-            glEnableVertexAttribArray(joint_attrib + 1);
-            glEnableVertexAttribArray(joint_attrib + 2);
-            glEnableVertexAttribArray(joint_attrib + 3);
-            glVertexAttribDivisor(joint_attrib + 0, 1);
-            glVertexAttribDivisor(joint_attrib + 1, 1);
-            glVertexAttribDivisor(joint_attrib + 2, 1);
-            glVertexAttribDivisor(joint_attrib + 3, 1);
-            glVertexAttribPointer(joint_attrib + 0, 4, GL_FLOAT, GL_FALSE,
-                                   sizeof(ozz::math::Float4x4), GL_PTR_OFFSET(0));
-            glVertexAttribPointer(joint_attrib + 1, 4, GL_FLOAT, GL_FALSE,
-                                   sizeof(ozz::math::Float4x4), GL_PTR_OFFSET(16));
-            glVertexAttribPointer(joint_attrib + 2, 4, GL_FLOAT, GL_FALSE,
-                                  sizeof(ozz::math::Float4x4), GL_PTR_OFFSET(32));
-            glVertexAttribPointer(joint_attrib + 3, 4, GL_FLOAT, GL_FALSE,
-                                   sizeof(ozz::math::Float4x4), GL_PTR_OFFSET(48));
-            glBindBuffer(GL_ARRAY_BUFFER, 0);
-            
-            glDrawArraysInstanced(model.mode, 0, model.count, instance_count);
-            
-            glDisableVertexAttribArray(joint_attrib + 0);
-            glDisableVertexAttribArray(joint_attrib + 1);
-            glDisableVertexAttribArray(joint_attrib + 2);
-            glDisableVertexAttribArray(joint_attrib + 3);
-            glVertexAttribDivisor(joint_attrib + 0, 0);
-            glVertexAttribDivisor(joint_attrib + 1, 0);
-            glVertexAttribDivisor(joint_attrib + 2, 0);
-            glVertexAttribDivisor(joint_attrib + 3, 0);
-            
-            model.shader->Unbind();
+           // model.shader->Bind(transform, camera_->view_proj(), sizeof(Vertex), 0,
+            //                   sizeof(Vertex), 12, sizeof(Vertex), 24);
+            m_evtMgr->emit<BindInstanceBufferEvent>(meshID, 0, "posture");
+            m_evtMgr->emit<DrawMeshBufferEvent>(meshID, 0);
+            m_evtMgr->emit<UnbindInstanceBufferEvent>(meshID, 0);
         }
     }
     

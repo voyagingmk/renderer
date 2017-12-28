@@ -291,24 +291,8 @@ namespace renderer {
 		glBindVertexArray(buf.vao);
 		glBindBuffer(GL_ARRAY_BUFFER, insBuf.bufID);
 
-		// set attribute pointers for model matrix (4 times vec4)
-		// used for instance drawing
-		glEnableVertexAttribArray(4);
-		glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4Value), (void*)0);
-		glEnableVertexAttribArray(5);
-		glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4Value), (void*)(1 * sizeof(Matrix4x4Value) / 4));
-		glEnableVertexAttribArray(6);
-		glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4Value), (void*)(2 * sizeof(Matrix4x4Value) / 4));
-		glEnableVertexAttribArray(7);
-		glVertexAttribPointer(7, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix4x4Value), (void*)(3 * sizeof(Matrix4x4Value) / 4));
-
+        glVertexAttribMatrix(4);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-		glVertexAttribDivisor(4, 1);
-		glVertexAttribDivisor(5, 1);
-		glVertexAttribDivisor(6, 1);
-		glVertexAttribDivisor(7, 1);
-
 		glBindVertexArray(0);
 	}
 

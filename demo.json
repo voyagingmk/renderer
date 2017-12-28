@@ -90,6 +90,16 @@
             "fs": "skybox.fs"
         },
         {
+            "alias": "joint",
+            "vs": "joint.vs",
+            "fs": "joint.fs"
+        },
+        {
+            "alias": "bone",
+            "vs": "bone.vs",
+            "fs": "bone.fs"
+        },
+        {
             "alias": "gBuffer",
             "vs": "g_buffer.vs",
             "fs": "g_buffer.fs"

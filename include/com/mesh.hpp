@@ -149,10 +149,16 @@ namespace renderer {
 		}
 		Mesh& getMesh(MeshRef& ref) {
 			MeshID meshID = ref.meshID | alias2id[ref.meshName];
-			return meshDict[ref.meshID];
+			return meshDict[meshID];
         }
         Mesh& getMesh(MeshID meshID) {
             return meshDict[meshID];
+        }
+        Mesh& getMesh(std::string meshName) {
+            return meshDict[alias2id[meshName]];
+        }
+        MeshID getMeshID(std::string meshName) {
+            return alias2id[meshName];
         }
 		std::map<MeshID, Mesh> meshDict;
 		std::map<std::string, MeshID> alias2id;
