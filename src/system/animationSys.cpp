@@ -136,7 +136,7 @@ namespace renderer {
         m_evtMgr->emit<CreateInstanceBufferEvent>("posture");
         m_evtMgr->emit<UpdateInstanceBufferEvent>("posture",
                                                   instance_count,
-                                                  16 * sizeof(float),
+                                                  4 * 4 * sizeof(float),
                                                   (void*)uniforms);
         auto meshSetCom = m_objMgr->getSingletonComponent<MeshSet>();
         auto spSetCom = m_objMgr->getSingletonComponent<ShaderProgramSet>();
@@ -277,7 +277,7 @@ namespace renderer {
             const int kNumPointsXZ = kNumPointsPerCircle;
             const int kNumPoints = kNumPointsXY + kNumPointsXZ + kNumPointsYZ;
             const float kRadius = kInter;  // Radius multiplier.
-            subMesh.vertices.reserve(kNumPoints);
+            subMesh.vertices.resize(kNumPoints);
             subMesh.meshType = MeshType::LineStrip;
             // Fills vertices.
             int index = 0;
@@ -286,21 +286,21 @@ namespace renderer {
                 float s = sinf(angle), c = cosf(angle);
                 Vertex& vertex = subMesh.vertices[index++];
                 vertex.position = Vector3dF(0.f, c * kRadius, s * kRadius);
-                vertex.normal = Vector3dF(0.f, c, s);
+                vertex.normal = Vector3dF(0.f, c, s).Normalize();
             }
             for (int j = 0; j < kNumPointsXY; ++j) {  // XY plan.
                 float angle = j * ozz::math::k2Pi / kNumSlices;
                 float s = sinf(angle), c = cosf(angle);
                 Vertex& vertex = subMesh.vertices[index++];
                 vertex.position = Vector3dF(s * kRadius, c * kRadius, 0.f);
-                vertex.normal = Vector3dF(s, c, 0.f);
+                vertex.normal = Vector3dF(s, c, 0.f).Normalize();
             }
             for (int j = 0; j < kNumPointsXZ; ++j) {  // XZ plan.
                 float angle = j * ozz::math::k2Pi / kNumSlices;
                 float s = sinf(angle), c = cosf(angle);
                 Vertex& vertex = subMesh.vertices[index++];
                 vertex.position = Vector3dF(c * kRadius, 0.f, -s * kRadius);
-                vertex.normal = Vector3dF(c, 0.f, -s);
+                vertex.normal = Vector3dF(c, 0.f, -s).Normalize();
             }
             assert(index == kNumPoints);
             m_evtMgr->emit<CreateMeshBufferEvent>(meshID);

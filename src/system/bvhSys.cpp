@@ -97,13 +97,16 @@ namespace renderer {
 
 	void BVHSystem::receive(const DebugDrawBVHEvent &evt) {
 		auto bvhAccel = evt.objBVH.component<BVHAccel>();
+        LinearBVHNode *nodes = bvhAccel->nodes;
+        if (!nodes) {
+            return;
+        }
 		auto meshSet = m_objMgr->getSingletonComponent<MeshSet>();
 		auto matSetCom = m_objMgr->getSingletonComponent<MaterialSet>();
 		auto spSetCom = m_objMgr->getSingletonComponent<ShaderProgramSet>();
 		Shader shader = spSetCom->getShader("wireframe");
 		shader.use();
 		m_evtMgr->emit<UploadCameraToShaderEvent>(evt.objCamera, shader);
-		LinearBVHNode *nodes = bvhAccel->nodes;
 		int toVisitOffset = 0, currentNodeIndex = 0;
 		int nodesToVisit[64];
 		int nodesDepth[64];

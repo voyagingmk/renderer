@@ -94,8 +94,10 @@ namespace renderer {
 
 		Object objCamera = m_objMgr->create();
 		auto com = objCamera.addComponent<PerspectiveCameraView>(45.0f, (float)winWidth / (float)winHeight, 0.1f, 10000.0f);
-        com->eye = Vector3dF(156.0f, 116.0f, 143.0f);
-        com->SetFrontVector({30.0f, -15.0f, -30.0f});
+        //com->eye = Vector3dF(156.0f, 116.0f, 143.0f);
+        //com->SetFrontVector({30.0f, -15.0f, -30.0f});
+        com->eye = Vector3dF(0.0f, 0.0f, 3.0f);
+        com->SetFrontVector({0.0f, 0.0f, -1.0f});
 
         loadTextures(assetsDir + texSubDir, config);
 		loadSkyboxes(assetsDir + skyboxSubDir, config);

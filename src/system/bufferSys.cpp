@@ -270,7 +270,7 @@ namespace renderer {
 			}
 		}
 		glBindVertexArray(0);
-
+        CheckGLError;
 	}
 
 	void BufferSystem::DestroyFrameBuffer(FrameBufferBase& buf) {
@@ -307,6 +307,7 @@ namespace renderer {
 		MeshBufferRef meshBuffer;
 		meshBuffer.meshType = subMesh.meshType;
         meshBuffer.noIndices = subMesh.indexes.size() == 0;
+		meshBuffer.count = meshBuffer.noIndices ? subMesh.vertices.size() : subMesh.indexes.size();
 		glGenVertexArrays(1, &VAO);
 		glGenBuffers(1, &VBO);
 		glGenBuffers(1, &EBO);
@@ -339,7 +340,6 @@ namespace renderer {
 		meshBuffer.vbo = VBO;
 		meshBuffer.ebo = EBO;
 		assert(VAO > 0 && VBO > 0 && EBO > 0);
-		meshBuffer.count = subMesh.indexes.size();
 		//bufferDict[aliasname] = meshBuffer;
 		return meshBuffer;
 	}
