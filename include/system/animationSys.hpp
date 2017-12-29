@@ -21,7 +21,7 @@ namespace renderer {
 
     private:
         
-        void UpdateAnimationTime(AnimationCom com, float dt);
+        void UpdateAnimationTime(AnimationCom& com, float dt);
         
         bool InitPostureRendering();
 
