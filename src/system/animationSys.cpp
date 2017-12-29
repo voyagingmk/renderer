@@ -357,7 +357,7 @@ namespace renderer {
         return true;
     }
     
-    void AnimationSystem::UpdateAnimationTime(AnimationCom com, float dt) {
+    void AnimationSystem::UpdateAnimationTime(AnimationCom& com, float dt) {
         const float new_time = com.time + dt * com.playback_speed;
         const float loops = new_time / a.animation.duration();
         com.time = new_time - floorf(loops) * a.animation.duration();
