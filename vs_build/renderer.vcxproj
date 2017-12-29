@@ -381,6 +381,10 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="..\external\imgui.cpp" />
     <ClCompile Include="..\external\imgui_draw.cpp" />
     <ClCompile Include="..\external\imgui_impl_sdl_gl3.cpp" />
+    <ClCompile Include="..\external\ozz\ozz_animation.cc" />
+    <ClCompile Include="..\external\ozz\ozz_base.cc" />
+    <ClCompile Include="..\external\ozz\ozz_geometry.cc" />
+    <ClCompile Include="..\external\ozz\ozz_options.cc" />
     <ClCompile Include="..\external\SOIL\image_DXT.c" />
     <ClCompile Include="..\external\SOIL\image_helper.c" />
     <ClCompile Include="..\external\SOIL\SOIL.c" />
@@ -402,6 +406,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="..\src\com\transform.cpp" />
     <ClCompile Include="..\src\main.cpp" />
     <ClCompile Include="..\src\main_ecs.cpp" />
+    <ClCompile Include="..\src\system\animationSys.cpp" />
     <ClCompile Include="..\src\system\batchSys.cpp" />
     <ClCompile Include="..\src\system\bufferSys.cpp" />
     <ClCompile Include="..\src\system\bvhSys.cpp" />

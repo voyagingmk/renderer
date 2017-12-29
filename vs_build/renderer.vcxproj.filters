@@ -139,6 +139,21 @@
     <ClCompile Include="..\src\utils\memory.cpp">
       <Filter>Source Files\utils</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\system\animationSys.cpp">
+      <Filter>Source Files\system</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\ozz\ozz_animation.cc">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\ozz\ozz_base.cc">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\ozz\ozz_geometry.cc">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\ozz\ozz_options.cc">
+      <Filter>External</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="D:\workplace\github\renderer\CMakeLists.txt" />
