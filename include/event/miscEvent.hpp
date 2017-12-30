@@ -7,6 +7,12 @@
 using json = nlohmann::json;
 namespace renderer {
 
+    
+    class GlobalComAddedEvent: public ecs::Event<GlobalComAddedEvent> {
+    public:
+        GlobalComAddedEvent() {}
+    };
+    
 	class LoadConfigEvent: public ecs::Event<LoadConfigEvent> {
 	public:
         LoadConfigEvent(const json& config):

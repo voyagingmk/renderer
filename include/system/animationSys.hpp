@@ -21,6 +21,8 @@ namespace renderer {
 
         void receive(const LoadAnimationEvent &evt);
         
+        void receive(const GlobalComAddedEvent &evt);
+        
     private:
         
         void UpdateAnimationTime(ozz::animation::Animation& animation, AnimationCom& com, float dt);

@@ -59,9 +59,9 @@ void MainECS::setup() {
     m_systemMgr.add<SpatialSystem>();
     m_systemMgr.add<CameraSystem>();
     m_systemMgr.add<MotionSystem>();
+    m_systemMgr.add<AnimationSystem>();
 	m_systemMgr.add<LoaderSystem>();
 	m_systemMgr.add<ConfigSystem>();
-    m_systemMgr.add<AnimationSystem>();
 	m_systemMgr.init();
 }
 

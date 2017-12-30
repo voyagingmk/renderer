@@ -43,7 +43,8 @@ namespace renderer {
     void AnimationSystem::init(ObjectManager &objMgr, EventManager &evtMgr) {
         printf("AnimationSystem init\n");
         evtMgr.on<DebugDrawSkeletonEvent>(*this);
-        assert(InitPostureRendering());
+        evtMgr.on<LoadAnimationEvent>(*this);
+        evtMgr.on<GlobalComAddedEvent>(*this);
     }
     
     void AnimationSystem::update(ObjectManager &objMgr, EventManager &evtMgr, float dt) {
@@ -80,6 +81,9 @@ namespace renderer {
         LoadByConfig(evt.assetsDir, evt.config);
     }
     
+    void AnimationSystem::receive(const GlobalComAddedEvent &evt) {
+        assert(InitPostureRendering());
+    }
     
     void AnimationSystem::DoSamplingJob(float time,
                        ozz::animation::SamplingCache* cache,

@@ -60,6 +60,7 @@ namespace renderer {
 		obj.addComponent<ColorBufferDictCom>();
 		obj.addComponent<InstanceBufferDictCom>();
         obj.addComponent<AnimationDataSet>();
+        m_evtMgr->emit<GlobalComAddedEvent>();
         
 		
         auto shadowMapSetting = obj.addComponent<ShadowMapSetting>();
