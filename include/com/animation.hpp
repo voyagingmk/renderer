@@ -2,13 +2,34 @@
 #define RENDERER_ANIMATION_HPP
 
 #include "ozz/ozz.h"
+#include <map>
 
-struct Animation {
+class AnimationData {
+ public:
+    AnimationData(){}
     // Runtime skeleton.
     ozz::animation::Skeleton skeleton;
-    
     // Runtime animation.
-    ozz::animation::Animation animation;
+    std::map<std::string, ozz::animation::Animation> aniDict;
+ private:
+    // Disables copy and assignation.
+    AnimationData(AnimationData const&);
+    void operator=(AnimationData const&);
+
+};
+
+class AnimationDataSet {
+public:
+    bool hasAnimationData(std::string aliasName) {
+       return animations.find(aliasName) != animations.end();
+    }
+    
+    AnimationData& getAnimationData(std::string aliasName) {
+        return animations[aliasName];
+    }
+    
+    std::map<std::string, AnimationData> animations;
+    
 };
 
 struct AnimationCom {

@@ -19,9 +19,11 @@ namespace renderer {
         
         void receive(const DebugDrawSkeletonEvent &evt);
 
+        void receive(const LoadAnimationEvent &evt);
+        
     private:
         
-        void UpdateAnimationTime(AnimationCom& com, float dt);
+        void UpdateAnimationTime(ozz::animation::Animation& animation, AnimationCom& com, float dt);
         
         bool InitPostureRendering();
 
@@ -37,9 +39,21 @@ namespace renderer {
         void DrawPosture_InstancedImpl(const ozz::math::Float4x4& transform, const float* uniforms,
                                                         int instance_count, bool draw_joints);
         
+        bool LoadByConfig(const std::string& assetsDir,const json &config);
+        
+        bool LoadSkeleton(const std::string& assetsDir, std::string& aniDataName, std::string& skeletonFileName);
+        
+        bool LoadAnimation(const std::string& assetsDir, std::string& aniDataName, std::string& aniAliasName, std::string& aniFileName);
+        
         bool LoadSkeleton(const char* _filename, ozz::animation::Skeleton* _skeleton);
         
         bool LoadAnimation(const char* _filename, ozz::animation::Animation* _animation);
+        
+        void DoSamplingJob(float time, ozz::animation::SamplingCache* cache, ozz::animation::Animation& animation,  ozz::Range<ozz::math::SoaTransform> locals);
+        
+        void DoLocalToModelJob(ozz::animation::Skeleton& skeleton,
+                               ozz::Range<ozz::math::SoaTransform> locals,
+                               ozz::Range<ozz::math::Float4x4> models);
         
     };
     

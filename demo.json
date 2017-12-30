@@ -6,6 +6,7 @@
     "texSubDir": "images/",
     "shaderSubDir": "shaders/",
     "modelsDir": "models/",
+    "animationDir": "animation/",
     "skyboxSubDir": "images/skybox/",
     "shader": [
         {
@@ -320,13 +321,25 @@
             "shadow": true
         }
     ],
+    "animations": [
+        { 
+            "name": "test",
+            "file": "skeleton.ozz",
+            "aniDict": [
+                { 
+                    "name": "run",
+                    "file": "animation.ozz"
+                }
+            ]
+        }
+    ],
     "sceneRoot": {  
         "spatial": [
             [0, 0, 0],
             [1, 1, 1],
             [0, 0, 0]
         ],
-        "children": [
+        "children0": [
             {
                 "model": "teapot.obj",
                 "static": true,

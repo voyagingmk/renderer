@@ -4,6 +4,7 @@
 #include "com/glcommon.hpp"
 #include "com/shader.hpp"
 #include "com/spatialData.hpp"
+#include "com/animation.hpp"
 #include "com/cameraCom.hpp"
 #include "com/mesh.hpp"
 #include "com/lightCom.hpp"
@@ -43,6 +44,7 @@ namespace renderer {
         string texSubDir = config["texSubDir"];
 		string skyboxSubDir = config["skyboxSubDir"];
         string shaderSubDir = config["shaderSubDir"];
+        string animationSubDir = config["animationDir"];
 
 		Object obj = m_objMgr->create(); // singleTon, manage kinds of resources
 		obj.addComponent<RenderMode>();
@@ -57,6 +59,8 @@ namespace renderer {
 		obj.addComponent<GBufferDictCom>();
 		obj.addComponent<ColorBufferDictCom>();
 		obj.addComponent<InstanceBufferDictCom>();
+        obj.addComponent<AnimationDataSet>();
+        
 		
         auto shadowMapSetting = obj.addComponent<ShadowMapSetting>();
         shadowMapSetting->shaderSetting = {
@@ -104,6 +108,7 @@ namespace renderer {
         loadShaders(assetsDir + shaderSubDir, config);
         loadMaterials(config);
 		loadLights(config);
+        m_evtMgr->emit<LoadAnimationEvent>(assetsDir + animationSubDir, config["animations"]);
 		Object objRoot = loadSceneObjects(config, config["sceneRoot"]);
 		objRoot.addComponent<RootNodeTag>();
 		m_evtMgr->emit<UpdateBatchEvent>(objRoot, true);

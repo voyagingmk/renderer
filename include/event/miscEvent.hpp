@@ -82,6 +82,17 @@ namespace renderer {
         {}
         ecs::Object objCamera;
     };
+    
+    class LoadAnimationEvent : public ecs::Event<LoadAnimationEvent> {
+    public:
+        LoadAnimationEvent(std::string assetsDir, const json& config):
+            assetsDir(assetsDir),
+            config(config)
+        {}
+        std::string assetsDir;
+        const json& config;
+    };
+    
 
 };
 
