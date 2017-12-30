@@ -17,9 +17,6 @@ using namespace std;
 // Convenient macro definition for specifying buffer offsets.
 #define GL_PTR_OFFSET(i) reinterpret_cast<void*>(static_cast<intptr_t>(i))
 
-Animation a;
-AnimationCom com;
-
 class ScratchBuffer {
 public:
     ScratchBuffer() : buffer(NULL), size(0) {}
@@ -45,39 +42,16 @@ ScratchBuffer scratch_buffer;
 namespace renderer {
     void AnimationSystem::init(ObjectManager &objMgr, EventManager &evtMgr) {
         printf("AnimationSystem init\n");
-        
         evtMgr.on<DebugDrawSkeletonEvent>(*this);
-        
-        
         assert(InitPostureRendering());
-
-        ozz::options::internal::Registrer<ozz::options::StringOption> OPTIONS_skeleton(
-            "skeleton", "", "assets/animation/skeleton.ozz", false);
-        // Reading skeleton.
-        if (!LoadSkeleton(OPTIONS_skeleton, &a.skeleton)) {
-            return;
-        }
-        ozz::options::internal::Registrer<ozz::options::StringOption> OPTIONS_animation(
-            "animation", "", "assets/animation/animation.ozz", false);
-        // Reading animation.
-        if (!LoadAnimation(OPTIONS_animation, &a.animation)) {
-            return;
-        }
-        ozz::memory::Allocator* allocator = ozz::memory::default_allocator();
-        // Allocates runtime buffers.
-        const int num_soa_joints = a.skeleton.num_soa_joints();
-        com.locals = allocator->AllocateRange<ozz::math::SoaTransform>(num_soa_joints);
-        const int num_joints = a.skeleton.num_joints();
-        com.models = allocator->AllocateRange<ozz::math::Float4x4>(num_joints);
-        // Allocates a cache that matches animation requirements.
-        com.cache = allocator->New<ozz::animation::SamplingCache>(num_joints);
-        
     }
     
     void AnimationSystem::update(ObjectManager &objMgr, EventManager &evtMgr, float dt) {
         // Updates current animation time.
+       /*
         UpdateAnimationTime(com, dt);
-        
+        printf("time %.2f dt %.2f\n", com.time, dt);
+        printf("duration %.2f\n", a.animation.duration());
         // Samples optimized animation at t = animation_time_.
         ozz::animation::SamplingJob sampling_job;
         sampling_job.animation = &a.animation;
@@ -95,13 +69,103 @@ namespace renderer {
         ltm_job.output = com.models;
         if (!ltm_job.Run()) {
             return;
-        }
+        }*/
     }
-    
     
     void AnimationSystem::receive(const DebugDrawSkeletonEvent &evt) {
-        DrawPosture(a.skeleton, com.models, ozz::math::Float4x4::identity());
+        // DrawPosture(a.skeleton, com.models, ozz::math::Float4x4::identity());
     }
+    
+    void AnimationSystem::receive(const LoadAnimationEvent &evt) {
+        LoadByConfig(evt.assetsDir, evt.config);
+    }
+    
+    
+    void AnimationSystem::DoSamplingJob(float time,
+                       ozz::animation::SamplingCache* cache,
+                       ozz::animation::Animation& animation,
+                       ozz::Range<ozz::math::SoaTransform> locals) {
+        ozz::animation::SamplingJob sampling_job;
+        sampling_job.animation = &animation;
+        sampling_job.cache = cache;
+        sampling_job.time = time;
+        sampling_job.output = locals;
+        assert(sampling_job.Run());
+    }
+    
+    void AnimationSystem::DoLocalToModelJob(ozz::animation::Skeleton& skeleton,
+                                            ozz::Range<ozz::math::SoaTransform> locals,
+                                            ozz::Range<ozz::math::Float4x4> models) {
+        // Converts from local space to model space matrices.
+        ozz::animation::LocalToModelJob ltm_job;
+        ltm_job.skeleton = &skeleton;
+        ltm_job.input = locals;
+        ltm_job.output = models;
+        assert(ltm_job.Run());
+    }
+    
+    
+    bool AnimationSystem::LoadByConfig(const std::string& assetsDir, const json &config) {
+        for (auto aniDataInfo : config)
+        {
+            std::string aniDataName = aniDataInfo["name"];
+            std::string skeletonFileName = aniDataInfo["file"];
+            LoadSkeleton(assetsDir, aniDataName, skeletonFileName);
+            for (auto info : aniDataInfo["aniDict"])
+            {
+                std::string aniAliasName = info["name"];
+                std::string aniFileName = aniDataInfo["file"];
+                LoadAnimation(assetsDir, aniDataName, aniAliasName, aniFileName);
+            }
+        }
+        return true;
+    }
+    
+    bool AnimationSystem::LoadSkeleton(const std::string& assetsDir, std::string& aniDataName, std::string& skeletonFileName) {
+        auto com = m_objMgr->getSingletonComponent<AnimationDataSet>();
+        if (!com->hasAnimationData(aniDataName)) {
+            com->animations.emplace(aniDataName, AnimationData());
+        }
+        AnimationData& data = com->animations[aniDataName];
+        ozz::options::internal::Registrer<ozz::options::StringOption> OPTIONS_skeleton(
+            "skeleton", "", (assetsDir + skeletonFileName).c_str(), false);
+        // Reading skeleton.
+        if (!LoadSkeleton(OPTIONS_skeleton, &data.skeleton)) {
+            printf("LoadSkeleton failed %s %s", aniDataName.c_str(), skeletonFileName.c_str());
+            return false;
+        }
+        return true;
+    }
+    
+    bool AnimationSystem::LoadAnimation(const std::string& assetsDir, std::string& aniDataName, std::string& aniAliasName, std::string& aniFileName) {
+        auto com = m_objMgr->getSingletonComponent<AnimationDataSet>();
+        if (!com->hasAnimationData(aniDataName)) {
+            printf("please LoadSkeleton before LoadAnimation %s", aniDataName.c_str());
+            return false;
+        }
+        AnimationData& data = com->animations[aniDataName];
+        ozz::options::internal::Registrer<ozz::options::StringOption> OPTIONS_animation(
+            "animation", "", (assetsDir + aniFileName).c_str(), false);
+        data.aniDict.emplace(aniAliasName, ozz::animation::Animation());
+        ozz::animation::Animation& animation = data.aniDict[aniAliasName];
+        // Reading animation.
+        if (!LoadAnimation(OPTIONS_animation, &animation)) {
+            printf("LoadAnimation failed %s %s", aniDataName.c_str(), aniFileName.c_str());
+            return false;
+        }
+        return true;
+    }
+        /*
+        ozz::memory::Allocator* allocator = ozz::memory::default_allocator();
+        // Allocates runtime buffers.
+        const int num_soa_joints = a.skeleton.num_soa_joints();
+        com.locals = allocator->AllocateRange<ozz::math::SoaTransform>(num_soa_joints);
+        const int num_joints = a.skeleton.num_joints();
+        com.models = allocator->AllocateRange<ozz::math::Float4x4>(num_joints);
+        // Allocates a cache that matches animation requirements.
+        com.cache = allocator->New<ozz::animation::SamplingCache>(num_joints);
+        */
+    
     
     bool AnimationSystem::DrawPosture(const ozz::animation::Skeleton& skeleton,
                      ozz::Range<const ozz::math::Float4x4> matrices,
@@ -357,10 +421,10 @@ namespace renderer {
         return true;
     }
     
-    void AnimationSystem::UpdateAnimationTime(AnimationCom& com, float dt) {
+    void AnimationSystem::UpdateAnimationTime(ozz::animation::Animation& animation, AnimationCom& com, float dt) {
         const float new_time = com.time + dt * com.playback_speed;
-        const float loops = new_time / a.animation.duration();
-        com.time = new_time - floorf(loops) * a.animation.duration();
+        const float loops = new_time / animation.duration();
+        com.time = new_time - floorf(loops) * animation.duration();
     }
     
 };
