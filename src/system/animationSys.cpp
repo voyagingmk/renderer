@@ -124,7 +124,7 @@ namespace renderer {
     bool AnimationSystem::LoadSkeleton(const std::string& assetsDir, std::string& aniDataName, std::string& skeletonFileName) {
         auto com = m_objMgr->getSingletonComponent<AnimationDataSet>();
         if (!com->hasAnimationData(aniDataName)) {
-            com->animations.emplace(aniDataName, AnimationData());
+            com->animations.emplace(std::piecewise_construct, std::forward_as_tuple(aniDataName), std::forward_as_tuple());
         }
         AnimationData& data = com->animations[aniDataName];
         ozz::options::internal::Registrer<ozz::options::StringOption> OPTIONS_skeleton(
@@ -146,7 +146,8 @@ namespace renderer {
         AnimationData& data = com->animations[aniDataName];
         ozz::options::internal::Registrer<ozz::options::StringOption> OPTIONS_animation(
             "animation", "", (assetsDir + aniFileName).c_str(), false);
-        data.aniDict.emplace(aniAliasName, ozz::animation::Animation());
+        data.aniDict.emplace(std::piecewise_construct, std::forward_as_tuple(aniAliasName),
+			std::forward_as_tuple());
         ozz::animation::Animation& animation = data.aniDict[aniAliasName];
         // Reading animation.
         if (!LoadAnimation(OPTIONS_animation, &animation)) {
