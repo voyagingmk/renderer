@@ -4,14 +4,15 @@
 #include "ozz/ozz.h"
 #include <map>
 
-typedef size_t AnimationID;
+
+typedef size_t AnimationDataID;
+
 
 class AnimationData {
  public:
     AnimationData() {}
-    // Runtime skeleton.
+    ozz::sample::Mesh mesh;
     ozz::animation::Skeleton skeleton;
-    // Runtime animation.
     std::map<std::string, ozz::animation::Animation> aniDict;
     ozz::animation::Animation* GetAnimation(std::string aniName) {
         return &aniDict[aniName];
@@ -25,11 +26,11 @@ class AnimationData {
 
 class AnimationDataSet {
 public:
-    AnimationID newAnimationID() {
+    AnimationDataID newAnimationDataID() {
         return ++idCount;
     }
     
-    AnimationID getAnimationID(std::string aliasName) {
+    AnimationDataID getAnimationDataID(std::string aliasName) {
         return alias2id[aliasName];
     }
     
@@ -38,26 +39,26 @@ public:
        return alias2id.find(aliasName) != alias2id.end();
     }
     
-    bool hasAnimationData(AnimationID id) {
+    bool hasAnimationData(AnimationDataID id) {
         return animations.find(id) != animations.end();
     }
     
-    AnimationData& getAnimationData(AnimationID id) {
+    AnimationData& getAnimationData(AnimationDataID id) {
         return animations[id];
     }
     
     AnimationData& getAnimationData(std::string aliasName) {
         return animations[alias2id[aliasName]];
     }
-    AnimationID idCount;
-    std::map<std::string, AnimationID> alias2id;
-    std::map<AnimationID, AnimationData> animations;
+    AnimationDataID idCount;
+    std::map<std::string, AnimationDataID> alias2id;
+    std::map<AnimationDataID, AnimationData> animations;
 };
 
 class AnimationCom {
 public:
-    AnimationCom(AnimationID id, AnimationData& data) {
-        animationID = id;
+    AnimationCom(AnimationDataID id, AnimationData& data) {
+        aniDataID = id;
         ozz::memory::Allocator* allocator = ozz::memory::default_allocator();
         // Allocates runtime buffers.
         const int num_soa_joints = data.skeleton.num_soa_joints();
@@ -85,7 +86,7 @@ public:
     bool play = true;
     float time = 0.0f;
     float playback_speed = 1.0f;
-    AnimationID animationID = 0;
+    AnimationDataID aniDataID = 0;
     std::string curAniName = "";
 };
 

@@ -324,16 +324,18 @@
     "animations": [
         { 
             "name": "test",
-            "file": "skeleton.ozz",
+            "mesh": "testman_mesh.ozz",
+            "skeleton": "testman_skeleton.ozz",
             "aniDict": [
                 { 
                     "name": "run",
-                    "file": "animation.ozz"
+                    "file": "testman_animation.ozz"
                 }
             ]
         }
     ],
     "sceneRoot": {  
+        "model": "testman_mesh.ozz",
         "spatial": [
             [0, 0, 0],
             [1, 1, 1],

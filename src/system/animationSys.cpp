@@ -51,7 +51,7 @@ namespace renderer {
         auto dataSet = m_objMgr->getSingletonComponent<AnimationDataSet>();
         for (const Object obj : m_objMgr->entities<AnimationCom>()) {
             auto com = obj.component<AnimationCom>();
-            AnimationData& data = dataSet->getAnimationData(com->animationID);
+            AnimationData& data = dataSet->getAnimationData(com->aniDataID);
             UpdateAnimationTime(data, com, dt);
             ozz::animation::Animation* ani = data.GetAnimation(com->curAniName);
             // printf("time %.2f dt %.2f\n", com->time, dt);
@@ -65,7 +65,7 @@ namespace renderer {
         auto dataSet = m_objMgr->getSingletonComponent<AnimationDataSet>();
         for (const Object obj : m_objMgr->entities<AnimationCom>()) {
             auto com = obj.component<AnimationCom>();
-            AnimationData& data = dataSet->getAnimationData(com->animationID);
+            AnimationData& data = dataSet->getAnimationData(com->aniDataID);
             DrawPosture(data.skeleton, com->models, ozz::math::Float4x4::identity());
             //assert(com->models.Count() == com->skinning_matrices.Count() &&
             //       com->models.Count() == mesh_.inverse_bind_poses.size());
@@ -108,8 +108,9 @@ namespace renderer {
         for (auto aniDataInfo : config)
         {
             std::string aniDataName = aniDataInfo["name"];
-            std::string skeletonFileName = aniDataInfo["file"];
-            LoadSkeleton(assetsDir, aniDataName, skeletonFileName);
+            std::string meshFileName = aniDataInfo["mesh"];
+            std::string skeletonFileName = aniDataInfo["skeleton"];
+            LoadMeshAndSkeleton(assetsDir, aniDataName, meshFileName, skeletonFileName);
             for (auto info : aniDataInfo["aniDict"])
             {
                 std::string aniAliasName = info["name"];
@@ -120,17 +121,20 @@ namespace renderer {
         return true;
     }
     
-    bool AnimationSystem::LoadSkeleton(const std::string& assetsDir, std::string& aniDataName, std::string& skeletonFileName) {
+    bool AnimationSystem::LoadMeshAndSkeleton(const std::string& assetsDir, std::string& aniDataName, std::string& meshFileName, std::string& skeletonFileName) {
         auto com = m_objMgr->getSingletonComponent<AnimationDataSet>();
         if (!com->hasAnimationData(aniDataName)) {
-            auto id = com->newAnimationID();
+            auto id = com->newAnimationDataID();
             com->animations.emplace(std::piecewise_construct, std::forward_as_tuple(id), std::forward_as_tuple());
             com->alias2id.emplace(std::piecewise_construct, std::forward_as_tuple(aniDataName), std::forward_as_tuple(id));
         }
         AnimationData& data = com->getAnimationData(aniDataName);
+        if (!LoadMesh((assetsDir + meshFileName).c_str(), &data.mesh)) {
+            printf("LoadMesh failed %s %s", aniDataName.c_str(), meshFileName.c_str());
+            return false;
+        }
         ozz::options::internal::Registrer<ozz::options::StringOption> OPTIONS_skeleton(
             "skeleton", "", (assetsDir + skeletonFileName).c_str(), false);
-        // Reading skeleton.
         if (!LoadSkeleton(OPTIONS_skeleton, &data.skeleton)) {
             printf("LoadSkeleton failed %s %s", aniDataName.c_str(), skeletonFileName.c_str());
             return false;

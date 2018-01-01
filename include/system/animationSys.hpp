@@ -43,7 +43,7 @@ namespace renderer {
         
         bool LoadByConfig(const std::string& assetsDir,const json &config);
         
-        bool LoadSkeleton(const std::string& assetsDir, std::string& aniDataName, std::string& skeletonFileName);
+        bool LoadMeshAndSkeleton(const std::string& assetsDir, std::string& aniDataName, std::string& meshFileName, std::string& skeletonFileName);
         
         bool LoadAnimation(const std::string& assetsDir, std::string& aniDataName, std::string& aniAliasName, std::string& aniFileName);
         

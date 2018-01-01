@@ -114,6 +114,11 @@ namespace renderer {
         return std::fabs(v1 - v2) < T(0.0001);
     }
     
+    static bool endsWith(const std::string& str, const std::string&& end)
+    {
+        return str.rfind(end) == (str.length() - end.length());
+    }
+    
 	template<typename T>
 	T** new2DArray(int h, int w) {
 		T ** v = new T*[h];

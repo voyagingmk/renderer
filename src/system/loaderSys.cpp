@@ -317,16 +317,19 @@ namespace renderer {
 		bool hasModel = objInfo["model"].is_string();
 		if (hasModel) {
 			std::string filename = objInfo["model"];
-			MeshID meshID = loadMesh(config, filename);
-			objScene.addComponent<MeshRef>(meshID);
-			objScene.addComponent<ReceiveLightTag>();
-			objScene.addComponent<RenderableTag>();
-			printf("scene obj with mesh, ID: %d, meshID: %d \n", (int)objScene.ID(), (int)meshID);
+            if (endsWith(filename, std::string(".obj"))) {
+                MeshID meshID = loadMesh(config, filename);
+                objScene.addComponent<MeshRef>(meshID);
+                objScene.addComponent<ReceiveLightTag>();
+                objScene.addComponent<RenderableTag>();
+                printf("scene obj with mesh, ID: %d, meshID: %d \n", (int)objScene.ID(), (int)meshID);
+            } else {
+                AnimationData& data = aniDataSet->getAnimationData("test");
+                auto id = aniDataSet->getAnimationDataID("test");
+                auto com = objScene.addComponent<AnimationCom>(id, data);
+                com->curAniName = "run";
+            }
 		}
-        AnimationData& data = aniDataSet->getAnimationData("test");
-        AnimationID id = aniDataSet->getAnimationID("test");
-        auto com = objScene.addComponent<AnimationCom>(id, data);
-        com->curAniName = "run";
 		if (objInfo["static"].is_boolean() && bool(objInfo["static"]) == true) {
 			objScene.addComponent<StaticObjTag>();
 		}
