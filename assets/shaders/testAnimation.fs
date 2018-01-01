@@ -9,11 +9,13 @@ vec4 GetAmbient(vec3 _world_normal) {
     vec4 ambient = vec4(
         mix(vec3(bt.x, .3, bt.y), vec3(bt.z, .8, bt.w), alpha.y), 1.);
     return ambient;
-};
+}
 
 in vec3 v_world_normal;
 
+out vec4 FragColor;
+
 void main() {
     vec4 ambient = GetAmbient(v_world_normal);
-    gl_FragColor = vec4(ambient, 1.0);
-};
+    FragColor = ambient;
+}

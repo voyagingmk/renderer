@@ -2,6 +2,7 @@
 #include "system/animationSys.hpp"
 #include "com/vertex.hpp"
 #include "com/mesh.hpp"
+#include "com/spatialData.hpp"
 #include "com/shader.hpp"
 #include "com/cameraCom.hpp"
 #include "utils/helper.hpp"
@@ -67,8 +68,13 @@ namespace renderer {
             auto com = obj.component<AnimationCom>();
             AnimationData& data = dataSet->getAnimationData(com->aniDataID);
             DrawPosture(data.skeleton, com->models, ozz::math::Float4x4::identity());
-            //assert(com->models.Count() == com->skinning_matrices.Count() &&
-            //       com->models.Count() == mesh_.inverse_bind_poses.size());
+           
+            assert(com->models.Count() == com->skinning_matrices.Count() &&
+                   com->models.Count() == data.mesh.inverse_bind_poses.size());
+            for (size_t i = 0; i < com->models.Count(); ++i) {
+                com->skinning_matrices[i] = com->models[i] * data.mesh.inverse_bind_poses[i];
+            }
+            DrawSkinnedMesh(data.mesh, com->skinning_matrices, obj);
         }
     }
     
@@ -159,6 +165,251 @@ namespace renderer {
             printf("LoadAnimation failed %s %s", aniDataName.c_str(), aniFileName.c_str());
             return false;
         }
+        return true;
+    }
+    
+    bool AnimationSystem::DrawSkinnedMesh(const ozz::sample::Mesh& mesh, const ozz::Range<ozz::math::Float4x4> skinning_matrices, Object obj) {
+        auto spatialData = obj.component<SpatialData>();
+        const Matrix4x4& modelMat = spatialData->o2w.GetMatrix();
+        auto spSetCom = m_objMgr->getSingletonComponent<ShaderProgramSet>();
+        Shader shader = spSetCom->getShader("testAnimation");
+        shader.use();
+        bool hasTexture = false;
+        // Forward to DrawMesh function is skinning is disabled.
+        //if (_options.skip_skinning) {
+        //    return DrawMesh(mesh, _transform, _options);
+        //}
+        // Dynamic vbo used for arrays.
+        static GLuint dynamic_array_bo_ = 0;
+        
+        // Dynamic vbo used for indices.
+        static GLuint dynamic_index_bo_ = 0;
+        
+        if (!dynamic_array_bo_) {
+            // Builds the dynamic vbo
+            glGenBuffers(1, &dynamic_array_bo_);
+            glGenBuffers(1, &dynamic_index_bo_);
+        }
+        
+        const int vertex_count = mesh.vertex_count();
+        
+        // Positions and normals are interleaved to improve caching while executing
+        // skinning job.
+        const GLsizei positions_offset = 0;
+        const GLsizei normals_offset = sizeof(float) * 3;
+        const GLsizei tangents_offset = sizeof(float) * 6;
+        const GLsizei positions_stride = sizeof(float) * 9;
+        const GLsizei normals_stride = positions_stride;
+        const GLsizei tangents_stride = positions_stride;
+        const GLsizei skinned_data_size = vertex_count * positions_stride;
+        
+        // Colors and uvs are contiguous. They aren't transformed, so they can be
+        // directly copied from source mesh which is non-interleaved as-well.
+        // Colors will be filled with white if _options.colors is false.
+        // UVs will be skipped if _options.textured is false.
+        const GLsizei colors_offset = skinned_data_size;
+        const GLsizei colors_stride = sizeof(uint8_t) * 4;
+        const GLsizei colors_size = vertex_count * colors_stride;
+        const GLsizei uvs_offset = colors_offset + colors_size;
+        const GLsizei uvs_stride = hasTexture ? sizeof(float) * 2 : 0;
+        const GLsizei uvs_size = vertex_count * uvs_stride;
+        const GLsizei fixed_data_size = colors_size + uvs_size;
+        
+        // Reallocate vertex buffer.
+        const GLsizei vbo_size = skinned_data_size + fixed_data_size;
+        void* vbo_map = scratch_buffer.Resize(vbo_size);
+        
+        // Iterate mesh parts and fills vbo.
+        // Runs a skinning job per mesh part. Triangle indices are shared
+        // across parts.
+        size_t processed_vertex_count = 0;
+        for (size_t i = 0; i < mesh.parts.size(); ++i) {
+            const ozz::sample::Mesh::Part& part = mesh.parts[i];
+            
+            // Skip this iteration if no vertex.
+            const size_t part_vertex_count = part.positions.size() / 3;
+            if (part_vertex_count == 0) {
+                continue;
+            }
+            
+            // Fills the job.
+            ozz::geometry::SkinningJob skinning_job;
+            skinning_job.vertex_count = static_cast<int>(part_vertex_count);
+            const int part_influences_count = part.influences_count();
+            
+            // Clamps joints influence count according to the option.
+            skinning_job.influences_count = part_influences_count;
+            
+            // Setup skinning matrices, that came from the animation stage before being
+            // multiplied by inverse model-space bind-pose.
+            skinning_job.joint_matrices = skinning_matrices;
+            
+            // Setup joint's indices.
+            skinning_job.joint_indices = make_range(part.joint_indices);
+            skinning_job.joint_indices_stride =
+            sizeof(uint16_t) * part_influences_count;
+            
+            // Setup joint's weights.
+            if (part_influences_count > 1) {
+                skinning_job.joint_weights = make_range(part.joint_weights);
+                skinning_job.joint_weights_stride =
+                sizeof(float) * (part_influences_count - 1);
+            }
+            
+            // Setup input positions, coming from the loaded mesh.
+            skinning_job.in_positions = make_range(part.positions);
+            skinning_job.in_positions_stride =
+            sizeof(float) * ozz::sample::Mesh::Part::kPositionsCpnts;
+            
+            // Setup output positions, coming from the rendering output mesh buffers.
+            // We need to offset the buffer every loop.
+            skinning_job.out_positions.begin = reinterpret_cast<float*>(
+                                                                        ozz::PointerStride(vbo_map, positions_offset + processed_vertex_count *
+                                                                                           positions_stride));
+            skinning_job.out_positions.end = ozz::PointerStride(
+                                                                skinning_job.out_positions.begin, part_vertex_count * positions_stride);
+            skinning_job.out_positions_stride = positions_stride;
+            
+            // Setup normals if input are provided.
+            float* out_normal_begin = reinterpret_cast<float*>(ozz::PointerStride(
+                                                                                  vbo_map, normals_offset + processed_vertex_count * normals_stride));
+            const float* out_normal_end = ozz::PointerStride(
+                                                             out_normal_begin, part_vertex_count * normals_stride);
+            
+            if (part.normals.size() / ozz::sample::Mesh::Part::kNormalsCpnts ==
+                part_vertex_count) {
+                // Setup input normals, coming from the loaded mesh.
+                skinning_job.in_normals = make_range(part.normals);
+                skinning_job.in_normals_stride =
+                sizeof(float) * ozz::sample::Mesh::Part::kNormalsCpnts;
+                
+                // Setup output normals, coming from the rendering output mesh buffers.
+                // We need to offset the buffer every loop.
+                skinning_job.out_normals.begin = out_normal_begin;
+                skinning_job.out_normals.end = out_normal_end;
+                skinning_job.out_normals_stride = normals_stride;
+            } else {
+                // Fills output with default normals.
+                for (float* normal = out_normal_begin; normal < out_normal_end;
+                     normal = ozz::PointerStride(normal, normals_stride)) {
+                    normal[0] = 0.f;
+                    normal[1] = 1.f;
+                    normal[2] = 0.f;
+                }
+            }
+            
+            // Setup tangents if input are provided.
+            float* out_tangent_begin = reinterpret_cast<float*>(ozz::PointerStride(
+                                                                                   vbo_map, tangents_offset + processed_vertex_count * tangents_stride));
+            const float* out_tangent_end = ozz::PointerStride(
+                                                              out_tangent_begin, part_vertex_count * tangents_stride);
+            
+            if (part.tangents.size() / ozz::sample::Mesh::Part::kTangentsCpnts ==
+                part_vertex_count) {
+                // Setup input tangents, coming from the loaded mesh.
+                skinning_job.in_tangents = make_range(part.tangents);
+                skinning_job.in_tangents_stride =
+                sizeof(float) * ozz::sample::Mesh::Part::kTangentsCpnts;
+                
+                // Setup output tangents, coming from the rendering output mesh buffers.
+                // We need to offset the buffer every loop.
+                skinning_job.out_tangents.begin = out_tangent_begin;
+                skinning_job.out_tangents.end = out_tangent_end;
+                skinning_job.out_tangents_stride = tangents_stride;
+            } else {
+                // Fills output with default tangents.
+                for (float* tangent = out_tangent_begin; tangent < out_tangent_end;
+                     tangent = ozz::PointerStride(tangent, tangents_stride)) {
+                    tangent[0] = 1.f;
+                    tangent[1] = 0.f;
+                    tangent[2] = 0.f;
+                }
+            }
+            
+            // Execute the job, which should succeed unless a parameter is invalid.
+            if (!skinning_job.Run()) {
+                return false;
+            }
+            /*
+            // Un-optimal path used when the right number of colors is not provided.
+            OZZ_STATIC_ASSERT(sizeof(kDefaultColorsArray[0]) == colors_stride);
+            for (size_t j = 0; j < part_vertex_count;
+                 j += OZZ_ARRAY_SIZE(kDefaultColorsArray)) {
+                const size_t this_loop_count = math::Min(
+                                                         OZZ_ARRAY_SIZE(kDefaultColorsArray), part_vertex_count - j);
+                memcpy(ozz::PointerStride(
+                                          vbo_map, colors_offset +
+                                          (processed_vertex_count + j) * colors_stride),
+                       kDefaultColorsArray, colors_stride * this_loop_count);
+            }
+            */
+            
+            // Some more vertices were processed.
+            processed_vertex_count += part_vertex_count;
+        }
+        
+        // Updates dynamic vertex buffer with skinned data.
+        glBindBuffer(GL_ARRAY_BUFFER, dynamic_array_bo_);
+        glBufferData(GL_ARRAY_BUFFER, vbo_size, NULL, GL_STREAM_DRAW);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, vbo_size, vbo_map);
+        
+        // Binds shader with this array buffer, depending on rendering options.
+        if (hasTexture) {
+            /*
+            ambient_textured_shader->Bind(_transform, camera()->view_proj(),
+                                          positions_stride, positions_offset,
+                                          normals_stride, normals_offset, colors_stride,
+                                          colors_offset, uvs_stride, uvs_offset);
+            shader = ambient_textured_shader;
+            
+            // Binds default texture
+            glBindTexture(GL_TEXTURE_2D, checkered_texture_);
+            */
+        } else {
+           /*
+            ambient_shader->Bind(_transform, camera()->view_proj(), positions_stride,
+                                 positions_offset, normals_stride, normals_offset,
+                                 colors_stride, colors_offset);
+            */
+            // m_evtMgr->emit<BindInstanceBufferEvent>(meshID, 0, "posture");
+           //  m_evtMgr->emit<DrawMeshBufferEvent>(meshID, 0);
+            // m_evtMgr->emit<UnbindInstanceBufferEvent>(meshID, 0);
+        }
+        const GLint position_attrib = 0;
+        glEnableVertexAttribArray(position_attrib);
+        glVertexAttribPointer(position_attrib, 3, GL_FLOAT, GL_FALSE, positions_stride,
+                               GL_PTR_OFFSET(positions_offset));
+        
+        const GLint normal_attrib = 1;
+        glEnableVertexAttribArray(normal_attrib);
+        glVertexAttribPointer(normal_attrib, 3, GL_FLOAT, GL_TRUE, normals_stride,
+                               GL_PTR_OFFSET(normals_offset));
+        
+        const GLint color_attrib = 2;
+        glEnableVertexAttribArray(color_attrib);
+        glVertexAttribPointer(color_attrib, 4, GL_UNSIGNED_BYTE, GL_TRUE,
+                               colors_stride, GL_PTR_OFFSET(colors_offset));
+        Object objCamera = m_objMgr->getSingletonComponent<PerspectiveCameraView>().object();
+        m_evtMgr->emit<UploadCameraToShaderEvent>(objCamera, shader);
+        shader.setMatrix4f("modelmat", modelMat);
+        
+        // Maps the index dynamic buffer and update it.
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, dynamic_index_bo_);
+        const ozz::sample::Mesh::TriangleIndices& indices = mesh.triangle_indices;
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER,
+                     indices.size() * sizeof(ozz::sample::Mesh::TriangleIndices::value_type),
+                      array_begin(indices), GL_STREAM_DRAW);
+        
+        // Draws the mesh.
+        OZZ_STATIC_ASSERT(sizeof(ozz::sample::Mesh::TriangleIndices::value_type) == 2);
+        glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()),
+                        GL_UNSIGNED_SHORT, 0);
+        
+        // Unbinds.
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
         return true;
     }
     
@@ -288,8 +539,6 @@ namespace renderer {
     
     bool AnimationSystem::InitPostureRendering() {
         auto meshSetCom = m_objMgr->getSingletonComponent<MeshSet>();
-        // m_evtMgr->emit<CreateMeshBufferEvent>(meshID);
-        
         const float kInter = .2f;
         {
             // Prepares bone mesh.
@@ -416,8 +665,8 @@ namespace renderer {
         return true;
     }
     
-    bool AnimationSystem::LoadMesh(const char* _filename, ozz::sample::Mesh* _mesh) {
-        assert(_filename && _mesh);
+    bool AnimationSystem::LoadMesh(const char* _filename, ozz::sample::Mesh* mesh) {
+        assert(_filename && mesh);
         ozz::log::Out() << "Loading mesh archive: " << _filename << "." << std::endl;
         ozz::io::File file(_filename, "rb");
         if (!file.opened()) {
@@ -433,7 +682,7 @@ namespace renderer {
         }
         
         // Once the tag is validated, reading cannot fail.
-        archive >> *_mesh;
+        archive >> *mesh;
         
         return true;
     }

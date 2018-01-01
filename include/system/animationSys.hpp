@@ -29,6 +29,9 @@ namespace renderer {
         
         bool InitPostureRendering();
 
+        bool DrawSkinnedMesh(const ozz::sample::Mesh& mesh, const ozz::Range<ozz::math::Float4x4> skinning_matrices,
+                                              Object obj);
+        
         bool DrawPosture(const ozz::animation::Skeleton& skeleton,
                          ozz::Range<const ozz::math::Float4x4> matrices,
                          const ozz::math::Float4x4& transform,

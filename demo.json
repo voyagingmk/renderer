@@ -101,6 +101,11 @@
             "fs": "bone.fs"
         },
         {
+            "alias": "testAnimation",
+            "vs": "testAnimation.vs",
+            "fs": "testAnimation.fs"
+        },
+        {
             "alias": "gBuffer",
             "vs": "g_buffer.vs",
             "fs": "g_buffer.fs"
