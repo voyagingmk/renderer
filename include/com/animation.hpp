@@ -66,12 +66,14 @@ public:
         models = allocator->AllocateRange<ozz::math::Float4x4>(num_joints);
         // Allocates a cache that matches animation requirements.
         cache = allocator->New<ozz::animation::SamplingCache>(num_joints);
+        skinning_matrices = allocator->AllocateRange<ozz::math::Float4x4>(num_joints);
     }
     ~AnimationCom() {
         ozz::memory::Allocator* allocator = ozz::memory::default_allocator();
         allocator->Deallocate(locals);
         allocator->Deallocate(models);
         allocator->Delete(cache);
+        allocator->Deallocate(skinning_matrices);
     }
     // Sampling cache.
     ozz::animation::SamplingCache* cache;
@@ -79,6 +81,7 @@ public:
     ozz::Range<ozz::math::SoaTransform> locals;
     // Buffer of model space matrices.
     ozz::Range<ozz::math::Float4x4> models;
+    ozz::Range<ozz::math::Float4x4> skinning_matrices;
     bool play = true;
     float time = 0.0f;
     float playback_speed = 1.0f;

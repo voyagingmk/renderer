@@ -51,6 +51,8 @@ namespace renderer {
         
         bool LoadAnimation(const char* _filename, ozz::animation::Animation* _animation);
         
+        bool LoadMesh(const char* _filename, ozz::sample::Mesh* _mesh);
+        
         void DoSamplingJob(float time, ozz::animation::SamplingCache* cache, ozz::animation::Animation* animation,  ozz::Range<ozz::math::SoaTransform> locals);
         
         void DoLocalToModelJob(ozz::animation::Skeleton& skeleton,

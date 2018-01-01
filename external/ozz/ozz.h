@@ -13,3 +13,4 @@
 #include "base/memory/allocator.h"
 #include "animation/runtime/local_to_model_job.h"
 #include "animation/runtime/sampling_job.h"
+#include "mesh.h"
