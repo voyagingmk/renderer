@@ -27,7 +27,7 @@ public:
     }
     
     AnimationID getAnimationID(std::string aliasName) {
-        return alias2id[id];
+        return alias2id[aliasName];
     }
     
     
