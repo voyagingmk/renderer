@@ -14,6 +14,32 @@
 
 using namespace std;
 
+const uint8_t kDefaultColorsArray[][4] = {
+    {255, 255, 255, 255}, {255, 255, 255, 255}, {255, 255, 255, 255},
+    {255, 255, 255, 255}, {255, 255, 255, 255}, {255, 255, 255, 255},
+    {255, 255, 255, 255}, {255, 255, 255, 255}, {255, 255, 255, 255},
+    {255, 255, 255, 255}, {255, 255, 255, 255}, {255, 255, 255, 255},
+    {255, 255, 255, 255}, {255, 255, 255, 255}, {255, 255, 255, 255},
+    {255, 255, 255, 255}, {255, 255, 255, 255}, {255, 255, 255, 255},
+    {255, 255, 255, 255}, {255, 255, 255, 255}, {255, 255, 255, 255},
+    {255, 255, 255, 255}, {255, 255, 255, 255}, {255, 255, 255, 255},
+    {255, 255, 255, 255}, {255, 255, 255, 255}, {255, 255, 255, 255},
+    {255, 255, 255, 255}, {255, 255, 255, 255}, {255, 255, 255, 255},
+    {255, 255, 255, 255}, {255, 255, 255, 255}, {255, 255, 255, 255},
+    {255, 255, 255, 255}, {255, 255, 255, 255}, {255, 255, 255, 255},
+    {255, 255, 255, 255}, {255, 255, 255, 255}, {255, 255, 255, 255},
+    {255, 255, 255, 255}, {255, 255, 255, 255}, {255, 255, 255, 255},
+    {255, 255, 255, 255}, {255, 255, 255, 255}, {255, 255, 255, 255},
+    {255, 255, 255, 255}, {255, 255, 255, 255}, {255, 255, 255, 255},
+    {255, 255, 255, 255}, {255, 255, 255, 255}, {255, 255, 255, 255},
+    {255, 255, 255, 255}, {255, 255, 255, 255}, {255, 255, 255, 255},
+    {255, 255, 255, 255}, {255, 255, 255, 255}, {255, 255, 255, 255},
+    {255, 255, 255, 255}, {255, 255, 255, 255}, {255, 255, 255, 255},
+    {255, 255, 255, 255}, {255, 255, 255, 255}, {255, 255, 255, 255},
+    {255, 255, 255, 255}, {255, 255, 255, 255}, {255, 255, 255, 255},
+    {255, 255, 255, 255}, {255, 255, 255, 255}, {255, 255, 255, 255},
+    {255, 255, 255, 255}, {255, 255, 255, 255}, {255, 255, 255, 255}};
+
 
 // Convenient macro definition for specifying buffer offsets.
 #define GL_PTR_OFFSET(i) reinterpret_cast<void*>(static_cast<intptr_t>(i))
@@ -67,7 +93,7 @@ namespace renderer {
         for (const Object obj : m_objMgr->entities<AnimationCom>()) {
             auto com = obj.component<AnimationCom>();
             AnimationData& data = dataSet->getAnimationData(com->aniDataID);
-            DrawPosture(data.skeleton, com->models, ozz::math::Float4x4::identity());
+            // DrawPosture(data.skeleton, com->models, ozz::math::Float4x4::identity());
            
             assert(com->models.Count() == com->skinning_matrices.Count() &&
                    com->models.Count() == data.mesh.inverse_bind_poses.size());
@@ -179,6 +205,7 @@ namespace renderer {
         //if (_options.skip_skinning) {
         //    return DrawMesh(mesh, _transform, _options);
         //}
+        static GLuint dynamic_vao_ = 0;
         // Dynamic vbo used for arrays.
         static GLuint dynamic_array_bo_ = 0;
         
@@ -189,6 +216,7 @@ namespace renderer {
             // Builds the dynamic vbo
             glGenBuffers(1, &dynamic_array_bo_);
             glGenBuffers(1, &dynamic_index_bo_);
+            glGenVertexArrays(1, &dynamic_vao_);
         }
         
         const int vertex_count = mesh.vertex_count();
@@ -330,55 +358,37 @@ namespace renderer {
             if (!skinning_job.Run()) {
                 return false;
             }
-            /*
+            
             // Un-optimal path used when the right number of colors is not provided.
             OZZ_STATIC_ASSERT(sizeof(kDefaultColorsArray[0]) == colors_stride);
             for (size_t j = 0; j < part_vertex_count;
                  j += OZZ_ARRAY_SIZE(kDefaultColorsArray)) {
-                const size_t this_loop_count = math::Min(
+                const size_t this_loop_count = ozz::math::Min(
                                                          OZZ_ARRAY_SIZE(kDefaultColorsArray), part_vertex_count - j);
                 memcpy(ozz::PointerStride(
                                           vbo_map, colors_offset +
                                           (processed_vertex_count + j) * colors_stride),
                        kDefaultColorsArray, colors_stride * this_loop_count);
             }
-            */
             
             // Some more vertices were processed.
             processed_vertex_count += part_vertex_count;
         }
-        
+        CheckGLError;
         // Updates dynamic vertex buffer with skinned data.
+        glBindVertexArray(dynamic_vao_);
         glBindBuffer(GL_ARRAY_BUFFER, dynamic_array_bo_);
         glBufferData(GL_ARRAY_BUFFER, vbo_size, NULL, GL_STREAM_DRAW);
         glBufferSubData(GL_ARRAY_BUFFER, 0, vbo_size, vbo_map);
         
-        // Binds shader with this array buffer, depending on rendering options.
-        if (hasTexture) {
-            /*
-            ambient_textured_shader->Bind(_transform, camera()->view_proj(),
-                                          positions_stride, positions_offset,
-                                          normals_stride, normals_offset, colors_stride,
-                                          colors_offset, uvs_stride, uvs_offset);
-            shader = ambient_textured_shader;
-            
-            // Binds default texture
-            glBindTexture(GL_TEXTURE_2D, checkered_texture_);
-            */
-        } else {
-           /*
-            ambient_shader->Bind(_transform, camera()->view_proj(), positions_stride,
-                                 positions_offset, normals_stride, normals_offset,
-                                 colors_stride, colors_offset);
-            */
-            // m_evtMgr->emit<BindInstanceBufferEvent>(meshID, 0, "posture");
-           //  m_evtMgr->emit<DrawMeshBufferEvent>(meshID, 0);
-            // m_evtMgr->emit<UnbindInstanceBufferEvent>(meshID, 0);
-        }
+        CheckGLError;
+
         const GLint position_attrib = 0;
         glEnableVertexAttribArray(position_attrib);
         glVertexAttribPointer(position_attrib, 3, GL_FLOAT, GL_FALSE, positions_stride,
                                GL_PTR_OFFSET(positions_offset));
+     
+        CheckGLError;
         
         const GLint normal_attrib = 1;
         glEnableVertexAttribArray(normal_attrib);
@@ -389,9 +399,14 @@ namespace renderer {
         glEnableVertexAttribArray(color_attrib);
         glVertexAttribPointer(color_attrib, 4, GL_UNSIGNED_BYTE, GL_TRUE,
                                colors_stride, GL_PTR_OFFSET(colors_offset));
+        
+        CheckGLError;
+        
         Object objCamera = m_objMgr->getSingletonComponent<PerspectiveCameraView>().object();
         m_evtMgr->emit<UploadCameraToShaderEvent>(objCamera, shader);
-        shader.setMatrix4f("modelmat", modelMat);
+        shader.setMatrix4f("modelMat", modelMat);
+        
+        CheckGLError;
         
         // Maps the index dynamic buffer and update it.
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, dynamic_index_bo_);
@@ -400,15 +415,20 @@ namespace renderer {
                      indices.size() * sizeof(ozz::sample::Mesh::TriangleIndices::value_type),
                       array_begin(indices), GL_STREAM_DRAW);
         
+        CheckGLError;
+        
         // Draws the mesh.
         OZZ_STATIC_ASSERT(sizeof(ozz::sample::Mesh::TriangleIndices::value_type) == 2);
         glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()),
                         GL_UNSIGNED_SHORT, 0);
         
+        CheckGLError;
+        
         // Unbinds.
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindTexture(GL_TEXTURE_2D, 0);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        glBindVertexArray(0);
 
         return true;
     }
