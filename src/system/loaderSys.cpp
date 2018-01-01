@@ -322,10 +322,11 @@ namespace renderer {
 			objScene.addComponent<ReceiveLightTag>();
 			objScene.addComponent<RenderableTag>();
 			printf("scene obj with mesh, ID: %d, meshID: %d \n", (int)objScene.ID(), (int)meshID);
-            AnimationData& data = aniDataSet->getAnimationData("test");
-            objScene.addComponent<AnimationCom>(data);
-            
 		}
+        AnimationData& data = aniDataSet->getAnimationData("test");
+        AnimationID id = aniDataSet->getAnimationID("test");
+        auto com = objScene.addComponent<AnimationCom>(id, data);
+        com->curAniName = "run";
 		if (objInfo["static"].is_boolean() && bool(objInfo["static"]) == true) {
 			objScene.addComponent<StaticObjTag>();
 		}

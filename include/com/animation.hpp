@@ -8,11 +8,14 @@ typedef size_t AnimationID;
 
 class AnimationData {
  public:
-    AnimationData(){}
+    AnimationData() {}
     // Runtime skeleton.
     ozz::animation::Skeleton skeleton;
     // Runtime animation.
     std::map<std::string, ozz::animation::Animation> aniDict;
+    ozz::animation::Animation* GetAnimation(std::string aniName) {
+        return &aniDict[aniName];
+    }
  private:
     // Disables copy and assignation.
     AnimationData(AnimationData const&);
@@ -53,7 +56,8 @@ public:
 
 class AnimationCom {
 public:
-    AnimationCom(AnimationData& data) {
+    AnimationCom(AnimationID id, AnimationData& data) {
+        animationID = id;
         ozz::memory::Allocator* allocator = ozz::memory::default_allocator();
         // Allocates runtime buffers.
         const int num_soa_joints = data.skeleton.num_soa_joints();
@@ -67,7 +71,7 @@ public:
         ozz::memory::Allocator* allocator = ozz::memory::default_allocator();
         allocator->Deallocate(locals);
         allocator->Deallocate(models);
-        allocator->Deallocate(cache);
+        allocator->Delete(cache);
     }
     // Sampling cache.
     ozz::animation::SamplingCache* cache;
@@ -78,6 +82,8 @@ public:
     bool play = true;
     float time = 0.0f;
     float playback_speed = 1.0f;
+    AnimationID animationID = 0;
+    std::string curAniName = "";
 };
 
 #endif

@@ -36,7 +36,7 @@ private:
     size_t size;
 };
 
-ScratchBuffer scratch_buffer;
+static ScratchBuffer scratch_buffer;
 
 
 namespace renderer {
@@ -48,18 +48,26 @@ namespace renderer {
     }
     
     void AnimationSystem::update(ObjectManager &objMgr, EventManager &evtMgr, float dt) {
-        // Updates current animation time.
-        /*
-        UpdateAnimationTime(com, dt);
-        printf("time %.2f dt %.2f\n", com.time, dt);
-        printf("duration %.2f\n", a.animation.duration());
-        DoSamplingJob(com.time, a.animation, com.cache, com.locals);
-        DoLocalToModelJob(a.skeleton, com.locals, com.models);
-        */
+        auto dataSet = m_objMgr->getSingletonComponent<AnimationDataSet>();
+        for (const Object obj : m_objMgr->entities<AnimationCom>()) {
+            auto com = obj.component<AnimationCom>();
+            AnimationData& data = dataSet->getAnimationData(com->animationID);
+            UpdateAnimationTime(data, com, dt);
+            ozz::animation::Animation* ani = data.GetAnimation(com->curAniName);
+            // printf("time %.2f dt %.2f\n", com->time, dt);
+            // printf("duration %.2f\n", a.animation.duration());
+            DoSamplingJob(com->time, com->cache, ani, com->locals);
+            DoLocalToModelJob(data.skeleton, com->locals, com->models);
+        }
     }
     
     void AnimationSystem::receive(const DebugDrawSkeletonEvent &evt) {
-        // DrawPosture(a.skeleton, com.models, ozz::math::Float4x4::identity());
+        auto dataSet = m_objMgr->getSingletonComponent<AnimationDataSet>();
+        for (const Object obj : m_objMgr->entities<AnimationCom>()) {
+            auto com = obj.component<AnimationCom>();
+            AnimationData& data = dataSet->getAnimationData(com->animationID);
+            DrawPosture(data.skeleton, com->models, ozz::math::Float4x4::identity());
+        }
     }
     
     void AnimationSystem::receive(const LoadAnimationEvent &evt) {
@@ -72,10 +80,10 @@ namespace renderer {
     
     void AnimationSystem::DoSamplingJob(float time,
                        ozz::animation::SamplingCache* cache,
-                       ozz::animation::Animation& animation,
+                       ozz::animation::Animation* animation,
                        ozz::Range<ozz::math::SoaTransform> locals) {
         ozz::animation::SamplingJob sampling_job;
-        sampling_job.animation = &animation;
+        sampling_job.animation = animation;
         sampling_job.cache = cache;
         sampling_job.time = time;
         sampling_job.output = locals;
@@ -103,7 +111,7 @@ namespace renderer {
             for (auto info : aniDataInfo["aniDict"])
             {
                 std::string aniAliasName = info["name"];
-                std::string aniFileName = aniDataInfo["file"];
+                std::string aniFileName = info["file"];
                 LoadAnimation(assetsDir, aniDataName, aniAliasName, aniFileName);
             }
         }
@@ -147,17 +155,6 @@ namespace renderer {
         }
         return true;
     }
-        /*
-        ozz::memory::Allocator* allocator = ozz::memory::default_allocator();
-        // Allocates runtime buffers.
-        const int num_soa_joints = a.skeleton.num_soa_joints();
-        com.locals = allocator->AllocateRange<ozz::math::SoaTransform>(num_soa_joints);
-        const int num_joints = a.skeleton.num_joints();
-        com.models = allocator->AllocateRange<ozz::math::Float4x4>(num_joints);
-        // Allocates a cache that matches animation requirements.
-        com.cache = allocator->New<ozz::animation::SamplingCache>(num_joints);
-        */
-    
     
     bool AnimationSystem::DrawPosture(const ozz::animation::Skeleton& skeleton,
                      ozz::Range<const ozz::math::Float4x4> matrices,
@@ -413,10 +410,11 @@ namespace renderer {
         return true;
     }
     
-    void AnimationSystem::UpdateAnimationTime(ozz::animation::Animation& animation, AnimationCom& com, float dt) {
-        const float new_time = com.time + dt * com.playback_speed;
-        const float loops = new_time / animation.duration();
-        com.time = new_time - floorf(loops) * animation.duration();
+    void AnimationSystem::UpdateAnimationTime(AnimationData& data, ComponentHandle<AnimationCom> com, float dt) {
+        ozz::animation::Animation* animation = data.GetAnimation(com->curAniName);
+        const float new_time = com->time + dt * com->playback_speed;
+        const float loops = new_time / animation->duration();
+        com->time = new_time - floorf(loops) * animation->duration();
     }
     
 };

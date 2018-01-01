@@ -25,7 +25,7 @@ namespace renderer {
         
     private:
         
-        void UpdateAnimationTime(ozz::animation::Animation& animation, AnimationCom& com, float dt);
+        void UpdateAnimationTime(AnimationData& data, ComponentHandle<AnimationCom> com, float dt);
         
         bool InitPostureRendering();
 
@@ -51,7 +51,7 @@ namespace renderer {
         
         bool LoadAnimation(const char* _filename, ozz::animation::Animation* _animation);
         
-        void DoSamplingJob(float time, ozz::animation::SamplingCache* cache, ozz::animation::Animation& animation,  ozz::Range<ozz::math::SoaTransform> locals);
+        void DoSamplingJob(float time, ozz::animation::SamplingCache* cache, ozz::animation::Animation* animation,  ozz::Range<ozz::math::SoaTransform> locals);
         
         void DoLocalToModelJob(ozz::animation::Skeleton& skeleton,
                                ozz::Range<ozz::math::SoaTransform> locals,
