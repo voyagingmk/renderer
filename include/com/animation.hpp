@@ -51,7 +51,24 @@ public:
     std::map<AnimationID, AnimationData> animations;
 };
 
-struct AnimationCom {
+class AnimationCom {
+public:
+    AnimationCom(AnimationData& data) {
+        ozz::memory::Allocator* allocator = ozz::memory::default_allocator();
+        // Allocates runtime buffers.
+        const int num_soa_joints = data.skeleton.num_soa_joints();
+        locals = allocator->AllocateRange<ozz::math::SoaTransform>(num_soa_joints);
+        const int num_joints = data.skeleton.num_joints();
+        models = allocator->AllocateRange<ozz::math::Float4x4>(num_joints);
+        // Allocates a cache that matches animation requirements.
+        cache = allocator->New<ozz::animation::SamplingCache>(num_joints);
+    }
+    ~AnimationCom() {
+        ozz::memory::Allocator* allocator = ozz::memory::default_allocator();
+        allocator->Deallocate(locals);
+        allocator->Deallocate(models);
+        allocator->Deallocate(cache);
+    }
     // Sampling cache.
     ozz::animation::SamplingCache* cache;
     // Buffer of local transforms as sampled from animation_.

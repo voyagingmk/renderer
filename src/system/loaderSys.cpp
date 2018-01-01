@@ -309,6 +309,7 @@ namespace renderer {
 	}
 
 	Object LoaderSystem::loadSceneObjects(const json &config, const json &objInfo) {
+        auto aniDataSet = m_objMgr->getSingletonComponent<AnimationDataSet>();
 		Object objScene = m_objMgr->create();
 		auto sgNode = objScene.addComponent<SceneGraphNode>();
 		auto spatial = objInfo["spatial"];
@@ -321,6 +322,9 @@ namespace renderer {
 			objScene.addComponent<ReceiveLightTag>();
 			objScene.addComponent<RenderableTag>();
 			printf("scene obj with mesh, ID: %d, meshID: %d \n", (int)objScene.ID(), (int)meshID);
+            AnimationData& data = aniDataSet->getAnimationData("test");
+            objScene.addComponent<AnimationCom>(data);
+            
 		}
 		if (objInfo["static"].is_boolean() && bool(objInfo["static"]) == true) {
 			objScene.addComponent<StaticObjTag>();
