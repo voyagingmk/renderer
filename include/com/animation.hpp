@@ -4,6 +4,8 @@
 #include "ozz/ozz.h"
 #include <map>
 
+typedef size_t AnimationID;
+
 class AnimationData {
  public:
     AnimationData(){}
@@ -20,16 +22,33 @@ class AnimationData {
 
 class AnimationDataSet {
 public:
+    AnimationID newAnimationID() {
+        return ++idCount;
+    }
+    
+    AnimationID getAnimationID(std::string aliasName) {
+        return alias2id[id];
+    }
+    
+    
     bool hasAnimationData(std::string aliasName) {
-       return animations.find(aliasName) != animations.end();
+       return alias2id.find(aliasName) != alias2id.end();
+    }
+    
+    bool hasAnimationData(AnimationID id) {
+        return animations.find(id) != animations.end();
+    }
+    
+    AnimationData& getAnimationData(AnimationID id) {
+        return animations[id];
     }
     
     AnimationData& getAnimationData(std::string aliasName) {
-        return animations[aliasName];
+        return animations[alias2id[aliasName]];
     }
-    
-    std::map<std::string, AnimationData> animations;
-    
+    AnimationID idCount;
+    std::map<std::string, AnimationID> alias2id;
+    std::map<AnimationID, AnimationData> animations;
 };
 
 struct AnimationCom {

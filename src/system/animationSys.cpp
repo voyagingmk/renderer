@@ -49,28 +49,13 @@ namespace renderer {
     
     void AnimationSystem::update(ObjectManager &objMgr, EventManager &evtMgr, float dt) {
         // Updates current animation time.
-       /*
+        /*
         UpdateAnimationTime(com, dt);
         printf("time %.2f dt %.2f\n", com.time, dt);
         printf("duration %.2f\n", a.animation.duration());
-        // Samples optimized animation at t = animation_time_.
-        ozz::animation::SamplingJob sampling_job;
-        sampling_job.animation = &a.animation;
-        sampling_job.cache = com.cache;
-        sampling_job.time = com.time;
-        sampling_job.output = com.locals;
-        if (!sampling_job.Run()) {
-            return;
-        }
-        
-        // Converts from local space to model space matrices.
-        ozz::animation::LocalToModelJob ltm_job;
-        ltm_job.skeleton = &a.skeleton;
-        ltm_job.input = com.locals;
-        ltm_job.output = com.models;
-        if (!ltm_job.Run()) {
-            return;
-        }*/
+        DoSamplingJob(com.time, a.animation, com.cache, com.locals);
+        DoLocalToModelJob(a.skeleton, com.locals, com.models);
+        */
     }
     
     void AnimationSystem::receive(const DebugDrawSkeletonEvent &evt) {
@@ -128,9 +113,11 @@ namespace renderer {
     bool AnimationSystem::LoadSkeleton(const std::string& assetsDir, std::string& aniDataName, std::string& skeletonFileName) {
         auto com = m_objMgr->getSingletonComponent<AnimationDataSet>();
         if (!com->hasAnimationData(aniDataName)) {
-            com->animations.emplace(std::piecewise_construct, std::forward_as_tuple(aniDataName), std::forward_as_tuple());
+            auto id = com->newAnimationID();
+            com->animations.emplace(std::piecewise_construct, std::forward_as_tuple(id), std::forward_as_tuple());
+            com->alias2id.emplace(std::piecewise_construct, std::forward_as_tuple(aniDataName), std::forward_as_tuple(id));
         }
-        AnimationData& data = com->animations[aniDataName];
+        AnimationData& data = com->getAnimationData(aniDataName);
         ozz::options::internal::Registrer<ozz::options::StringOption> OPTIONS_skeleton(
             "skeleton", "", (assetsDir + skeletonFileName).c_str(), false);
         // Reading skeleton.
@@ -147,7 +134,7 @@ namespace renderer {
             printf("please LoadSkeleton before LoadAnimation %s", aniDataName.c_str());
             return false;
         }
-        AnimationData& data = com->animations[aniDataName];
+        AnimationData& data = com->getAnimationData(aniDataName);
         ozz::options::internal::Registrer<ozz::options::StringOption> OPTIONS_animation(
             "animation", "", (assetsDir + aniFileName).c_str(), false);
         data.aniDict.emplace(std::piecewise_construct, std::forward_as_tuple(aniAliasName),
