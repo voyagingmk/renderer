@@ -34,14 +34,14 @@ namespace renderer {
         
         bool DrawPosture(const ozz::animation::Skeleton& skeleton,
                          ozz::Range<const ozz::math::Float4x4> matrices,
-                         const ozz::math::Float4x4& transform,
+                         Object obj,
                          bool draw_joints = true);
         
         int DrawPosture_FillUniforms(const ozz::animation::Skeleton& skeleton,
                                                       ozz::Range<const ozz::math::Float4x4> matrices,
                                                       float* uniforms, int max_instances);
         
-        void DrawPosture_InstancedImpl(const ozz::math::Float4x4& transform, const float* uniforms,
+        void DrawPosture_InstancedImpl(Object obj, const float* uniforms,
                                                         int instance_count, bool draw_joints);
         
         bool LoadByConfig(const std::string& assetsDir,const json &config);

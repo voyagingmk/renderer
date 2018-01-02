@@ -28,13 +28,14 @@ mat4 GetWorldMatrix() {
     return world_matrix;
 }
 
+uniform mat4 modelMat;
 uniform mat4 PV;
 out vec3 Normal;
 
 void main() {
   mat4 world_matrix = GetWorldMatrix();
   vec4 vertex = vec4(position.xyz, 1.);
-  gl_Position = PV * world_matrix * vertex;
+  gl_Position = PV * modelMat * world_matrix * vertex;
   mat3 cross_matrix = mat3(
     cross(world_matrix[1].xyz, world_matrix[2].xyz),
     cross(world_matrix[2].xyz, world_matrix[0].xyz),

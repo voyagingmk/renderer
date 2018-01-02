@@ -81,8 +81,6 @@ namespace renderer {
             AnimationData& data = dataSet->getAnimationData(com->aniDataID);
             UpdateAnimationTime(data, com, dt);
             ozz::animation::Animation* ani = data.GetAnimation(com->curAniName);
-            // printf("time %.2f dt %.2f\n", com->time, dt);
-            // printf("duration %.2f\n", a.animation.duration());
             DoSamplingJob(com->time, com->cache, ani, com->locals);
             DoLocalToModelJob(data.skeleton, com->locals, com->models);
         }
@@ -93,7 +91,7 @@ namespace renderer {
         for (const Object obj : m_objMgr->entities<AnimationCom>()) {
             auto com = obj.component<AnimationCom>();
             AnimationData& data = dataSet->getAnimationData(com->aniDataID);
-            // DrawPosture(data.skeleton, com->models, ozz::math::Float4x4::identity());
+            DrawPosture(data.skeleton, com->models, obj);
            
             assert(com->models.Count() == com->skinning_matrices.Count() &&
                    com->models.Count() == data.mesh.inverse_bind_poses.size());
@@ -206,8 +204,8 @@ namespace renderer {
         shader.use();
         bool hasTexture = false;
         // Forward to DrawMesh function is skinning is disabled.
-        //if (_options.skip_skinning) {
-        //    return DrawMesh(mesh, _transform, _options);
+        //if (skip_skinning) {
+        //    return DrawMesh(mesh, obj);
         //}
         static GLuint dynamic_vao_ = 0;
         // Dynamic vbo used for arrays.
@@ -439,8 +437,8 @@ namespace renderer {
     
     bool AnimationSystem::DrawPosture(const ozz::animation::Skeleton& skeleton,
                      ozz::Range<const ozz::math::Float4x4> matrices,
-                     const ozz::math::Float4x4& transform,
-                                      bool draw_joints) {
+                     Object obj,
+                     bool draw_joints) {
         if (!matrices.begin || !matrices.end) {
             return false;
         }
@@ -457,7 +455,7 @@ namespace renderer {
         const int instance_count = DrawPosture_FillUniforms(skeleton, matrices, uniforms, max_skeleton_pieces);
         assert(instance_count <= max_skeleton_pieces);
         
-        DrawPosture_InstancedImpl(transform, uniforms, instance_count, draw_joints);
+        DrawPosture_InstancedImpl(obj, uniforms, instance_count, draw_joints);
 
         return true;
     }
@@ -465,13 +463,17 @@ namespace renderer {
     
     // "Draw posture" internal instanced rendering implementation.
     void AnimationSystem::DrawPosture_InstancedImpl(
-                                                 const ozz::math::Float4x4& transform, const float* uniforms,
+                                                 Object obj, const float* uniforms,
                                                  int instance_count, bool draw_joints) {
         m_evtMgr->emit<CreateInstanceBufferEvent>("posture");
         m_evtMgr->emit<UpdateInstanceBufferEvent>("posture",
                                                   instance_count,
                                                   4 * 4 * sizeof(float),
                                                   (void*)uniforms);
+        
+        auto spatialData = obj.component<SpatialData>();
+        const Matrix4x4& modelMat = spatialData->o2w.GetMatrix();
+        
         auto meshSetCom = m_objMgr->getSingletonComponent<MeshSet>();
         auto spSetCom = m_objMgr->getSingletonComponent<ShaderProgramSet>();
         MeshID meshIDBone = meshSetCom->getMeshID("bone");
@@ -486,6 +488,7 @@ namespace renderer {
             MeshID meshID = i == 0? meshIDBone : meshIDJoint;
             Shader shader = i == 0? shaderBone : shaderJoint;
             shader.use();
+            shader.setMatrix4f("modelMat", modelMat);
             m_evtMgr->emit<UploadCameraToShaderEvent>(objCamera, shader);
             m_evtMgr->emit<BindInstanceBufferEvent>(meshID, 0, "posture");
             m_evtMgr->emit<DrawMeshBufferEvent>(meshID, 0);
