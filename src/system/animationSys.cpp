@@ -143,11 +143,13 @@ namespace renderer {
             std::string meshFileName = aniDataInfo["mesh"];
             std::string skeletonFileName = aniDataInfo["skeleton"];
             LoadMeshAndSkeleton(assetsDir, aniDataName, meshFileName, skeletonFileName);
-            for (auto info : aniDataInfo["aniDict"])
-            {
-                std::string aniAliasName = info["name"];
-                std::string aniFileName = info["file"];
-                LoadAnimation(assetsDir, aniDataName, aniAliasName, aniFileName);
+            if (!aniDataInfo["aniDict"].is_null()) {
+                for (auto info : aniDataInfo["aniDict"])
+                {
+                    std::string aniAliasName = info["name"];
+                    std::string aniFileName = info["file"];
+                    LoadAnimation(assetsDir, aniDataName, aniAliasName, aniFileName);
+                }
             }
         }
         return true;
@@ -165,11 +167,13 @@ namespace renderer {
             printf("LoadMesh failed %s %s", aniDataName.c_str(), meshFileName.c_str());
             return false;
         }
-        ozz::options::internal::Registrer<ozz::options::StringOption> OPTIONS_skeleton(
-            "skeleton", "", (assetsDir + skeletonFileName).c_str(), false);
-        if (!LoadSkeleton(OPTIONS_skeleton, &data.skeleton)) {
-            printf("LoadSkeleton failed %s %s", aniDataName.c_str(), skeletonFileName.c_str());
-            return false;
+        if (skeletonFileName != "") {
+            ozz::options::internal::Registrer<ozz::options::StringOption> OPTIONS_skeleton(
+                "skeleton", "", (assetsDir + skeletonFileName).c_str(), false);
+            if (!LoadSkeleton(OPTIONS_skeleton, &data.skeleton)) {
+                printf("LoadSkeleton failed %s %s", aniDataName.c_str(), skeletonFileName.c_str());
+                return false;
+            }
         }
         return true;
     }
