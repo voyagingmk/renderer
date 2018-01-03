@@ -196,34 +196,27 @@ namespace renderer {
         return true;
     }
     
-    bool AnimationSystem::DoSkinningJob(const ozz::sample::Mesh& mesh, const ozz::Range<ozz::math::Float4x4> skinning_matrices, bool hasTexture, size_t& processed_vertex_count) {
+    bool AnimationSystem::DoSkinningJob(const ozz::sample::Mesh& mesh,
+             const ozz::Range<ozz::math::Float4x4> skinning_matrices,
+             bool hasTexture,
+             size_t &processed_vertex_count,
+             void* &vbo_map,
+             GLsizei &vbo_size) {
         const int vertex_count = mesh.vertex_count();
         
         // Positions and normals are interleaved to improve caching while executing
         // skinning job.
         const GLsizei positions_offset = 0;
         const GLsizei normals_offset = sizeof(float) * 3;
-        const GLsizei tangents_offset = sizeof(float) * 6;
-        const GLsizei positions_stride = sizeof(float) * 9;
+        const GLsizei uvs_offset = sizeof(float) * 6;
+        const GLsizei tangents_offset = sizeof(float) * 8;
+        const GLsizei positions_stride = sizeof(float) * 11;
         const GLsizei normals_stride = positions_stride;
         const GLsizei tangents_stride = positions_stride;
+        const GLsizei uvs_stride = positions_stride;
         const GLsizei skinned_data_size = vertex_count * positions_stride;
-        
-        // Colors and uvs are contiguous. They aren't transformed, so they can be
-        // directly copied from source mesh which is non-interleaved as-well.
-        // Colors will be filled with white if _options.colors is false.
-        // UVs will be skipped if _options.textured is false.
-        const GLsizei colors_offset = skinned_data_size;
-        const GLsizei colors_stride = sizeof(uint8_t) * 4;
-        const GLsizei colors_size = vertex_count * colors_stride;
-        const GLsizei uvs_offset = colors_offset + colors_size;
-        const GLsizei uvs_stride = hasTexture ? sizeof(float) * 2 : 0;
-        const GLsizei uvs_size = vertex_count * uvs_stride;
-        const GLsizei fixed_data_size = colors_size + uvs_size;
-        
-        // Reallocate vertex buffer.
-        const GLsizei vbo_size = skinned_data_size + fixed_data_size;
-        void* vbo_map = scratch_buffer.Resize(vbo_size);
+        vbo_size = skinned_data_size;
+        vbo_map = scratch_buffer.Resize(vbo_size);
         
         // Iterate mesh parts and fills vbo.
         // Runs a skinning job per mesh part. Triangle indices are shared
@@ -305,9 +298,9 @@ namespace renderer {
             
             // Setup tangents if input are provided.
             float* out_tangent_begin = reinterpret_cast<float*>(ozz::PointerStride(
-                                                                                   vbo_map, tangents_offset + processed_vertex_count * tangents_stride));
+                vbo_map, tangents_offset + processed_vertex_count * tangents_stride));
             const float* out_tangent_end = ozz::PointerStride(
-                                                              out_tangent_begin, part_vertex_count * tangents_stride);
+                out_tangent_begin, part_vertex_count * tangents_stride);
             
             if (part.tangents.size() / ozz::sample::Mesh::Part::kTangentsCpnts ==
                 part_vertex_count) {
@@ -335,19 +328,21 @@ namespace renderer {
             if (!skinning_job.Run()) {
                 return false;
             }
-            
-            // Un-optimal path used when the right number of colors is not provided.
-            OZZ_STATIC_ASSERT(sizeof(kDefaultColorsArray[0]) == colors_stride);
-            for (size_t j = 0; j < part_vertex_count;
-                 j += OZZ_ARRAY_SIZE(kDefaultColorsArray)) {
-                const size_t this_loop_count = ozz::math::Min(
-                                                              OZZ_ARRAY_SIZE(kDefaultColorsArray), part_vertex_count - j);
-                memcpy(ozz::PointerStride(
-                                          vbo_map, colors_offset +
-                                          (processed_vertex_count + j) * colors_stride),
-                       kDefaultColorsArray, colors_stride * this_loop_count);
+        
+            const size_t part_uvs_count =
+            part.uvs.size() / ozz::sample::Mesh::Part::kUVsCpnts;
+            if (part_vertex_count == part_uvs_count) {
+                float* out_uv_begin = reinterpret_cast<float*>(ozz::PointerStride(
+                    vbo_map, uvs_offset + processed_vertex_count * uvs_stride));
+                const float* out_uv_end = ozz::PointerStride(
+                    out_uv_begin, part_vertex_count * uvs_stride);
+                uint32_t i = 0;
+                float* uv = out_uv_begin;
+                for (; uv < out_uv_end; uv = ozz::PointerStride(uv, uvs_stride), i++) {
+                    uv[0] = part.uvs[i + 0];
+                    uv[1] = part.uvs[i + 1];
+                }
             }
-            
             // Some more vertices were processed.
             processed_vertex_count += part_vertex_count;
         }
@@ -378,69 +373,44 @@ namespace renderer {
             glGenBuffers(1, &dynamic_index_bo_);
             glGenVertexArrays(1, &dynamic_vao_);
         }
-        
-        const int vertex_count = mesh.vertex_count();
-        
-        // Positions and normals are interleaved to improve caching while executing
-        // skinning job.
-        const GLsizei positions_offset = 0;
-        const GLsizei normals_offset = sizeof(float) * 3;
-        const GLsizei tangents_offset = sizeof(float) * 6;
-        const GLsizei positions_stride = sizeof(float) * 9;
-        const GLsizei normals_stride = positions_stride;
-        const GLsizei tangents_stride = positions_stride;
-        const GLsizei skinned_data_size = vertex_count * positions_stride;
-        
-        // Colors and uvs are contiguous. They aren't transformed, so they can be
-        // directly copied from source mesh which is non-interleaved as-well.
-        // Colors will be filled with white if _options.colors is false.
-        // UVs will be skipped if _options.textured is false.
-        const GLsizei colors_offset = skinned_data_size;
-        const GLsizei colors_stride = sizeof(uint8_t) * 4;
-        const GLsizei colors_size = vertex_count * colors_stride;
-        const GLsizei uvs_offset = colors_offset + colors_size;
-        const GLsizei uvs_stride = hasTexture ? sizeof(float) * 2 : 0;
-        const GLsizei uvs_size = vertex_count * uvs_stride;
-        const GLsizei fixed_data_size = colors_size + uvs_size;
-        
-        // Reallocate vertex buffer.
-        const GLsizei vbo_size = skinned_data_size + fixed_data_size;
-        void* vbo_map = scratch_buffer.Resize(vbo_size);
-        
-        // Iterate mesh parts and fills vbo.
-        // Runs a skinning job per mesh part. Triangle indices are shared
-        // across parts.
+
+        void* vbo_map = nullptr;
+        GLsizei vbo_size = 0;
         size_t processed_vertex_count = 0;
-        DoSkinningJob(mesh, skinning_matrices, hasTexture, processed_vertex_count);
+        if (!DoSkinningJob(mesh, skinning_matrices, hasTexture, processed_vertex_count, vbo_map, vbo_size)) {
+            return;
+        }
        
-        CheckGLError;
         // Updates dynamic vertex buffer with skinned data.
         glBindVertexArray(dynamic_vao_);
         glBindBuffer(GL_ARRAY_BUFFER, dynamic_array_bo_);
         glBufferData(GL_ARRAY_BUFFER, vbo_size, NULL, GL_STREAM_DRAW);
         glBufferSubData(GL_ARRAY_BUFFER, 0, vbo_size, vbo_map);
         
-        CheckGLError;
-
         const GLint position_attrib = 0;
         glEnableVertexAttribArray(position_attrib);
-        glVertexAttribPointer(position_attrib, 3, GL_FLOAT, GL_FALSE, positions_stride,
-                               GL_PTR_OFFSET(positions_offset));
+        glVertexAttribPointer(position_attrib, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 11,
+                               GL_PTR_OFFSET(0));
      
-        CheckGLError;
-        
         const GLint normal_attrib = 1;
         glEnableVertexAttribArray(normal_attrib);
-        glVertexAttribPointer(normal_attrib, 3, GL_FLOAT, GL_TRUE, normals_stride,
-                               GL_PTR_OFFSET(normals_offset));
+        glVertexAttribPointer(normal_attrib, 3, GL_FLOAT, GL_TRUE, sizeof(float) * 11,
+                               GL_PTR_OFFSET(sizeof(float) * 3));
+       
+        const GLint uv_attrib = 2;
+        glEnableVertexAttribArray(uv_attrib);
+        glVertexAttribPointer(uv_attrib, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 11,
+                              GL_PTR_OFFSET(sizeof(float) * 6));
         
-        CheckGLError;
+        const GLint tangent_attrib = 3;
+        glEnableVertexAttribArray(tangent_attrib);
+        glVertexAttribPointer(tangent_attrib, 3, GL_FLOAT, GL_TRUE, sizeof(float) * 11,
+                              GL_PTR_OFFSET(sizeof(float) * 8));
         
         Object objCamera = m_objMgr->getSingletonComponent<PerspectiveCameraView>().object();
         m_evtMgr->emit<UploadCameraToShaderEvent>(objCamera, shader);
         shader.setMatrix4f("modelMat", modelMat);
-        
-        CheckGLError;
+
         
         // Maps the index dynamic buffer and update it.
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, dynamic_index_bo_);
