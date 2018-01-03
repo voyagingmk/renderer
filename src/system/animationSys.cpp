@@ -379,8 +379,7 @@ namespace renderer {
         // Updates dynamic vertex buffer with skinned data.
         glBindVertexArray(dynamic_vao_);
         glBindBuffer(GL_ARRAY_BUFFER, dynamic_array_bo_);
-        glBufferData(GL_ARRAY_BUFFER, vbo_size, NULL, GL_STREAM_DRAW);
-        glBufferSubData(GL_ARRAY_BUFFER, 0, vbo_size, vbo_map);
+        glBufferData(GL_ARRAY_BUFFER, vbo_size, vbo_map, GL_STREAM_DRAW);
         
         const GLint position_attrib = 0;
         glEnableVertexAttribArray(position_attrib);
