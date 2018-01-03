@@ -43,8 +43,8 @@ namespace renderer {
 		Mesh& mesh = meshSet->meshDict[meshID];
 		meshBuffersSet->buffersDict.insert({meshID, MeshBufferRefs()});
 		MeshBufferRefs& buffers = meshBuffersSet->buffersDict[meshID];
-		for (const SubMesh& mesh : mesh.meshes) {
-			buffers.push_back(CreateMeshBuffer(mesh));
+		for (const SubMesh& subMesh : mesh.meshes) {
+			buffers.push_back(CreateSubMeshBuffer(subMesh));
 		}
 	}
 
@@ -301,46 +301,50 @@ namespace renderer {
 		buf.insBuf.bufID = 0;
 		buf.insBuf.instanceNum = 1;
 	}
+    
+    MeshBufferRef BufferSystem::CreateMeshBuffer() {
+        MeshBufferRef meshBuffer;
+        glGenVertexArrays(1, &meshBuffer.vao);
+        glGenBuffers(1, &meshBuffer.vbo);
+        glGenBuffers(1, &meshBuffer.ebo);
+        // Bind the Vertex Array Object first, then bind and set vertex buffer(s) and attribute pointer(s).
+        glBindVertexArray(meshBuffer.vao);
+        glBindBuffer(GL_ARRAY_BUFFER, meshBuffer.vbo);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshBuffer.ebo);
 
-	MeshBufferRef BufferSystem::CreateMeshBuffer(const SubMesh& subMesh) {
-		GLuint VBO, VAO, EBO;
-		MeshBufferRef meshBuffer;
+        // Position attribute
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)0);
+        glEnableVertexAttribArray(0);
+        // Normal attribute
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(3 * sizeof(GLfloat)));
+        glEnableVertexAttribArray(1);
+        //TexCoord attribute
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(6 * sizeof(GLfloat)));
+        glEnableVertexAttribArray(2);
+        //Vertex Tangent attribute
+        glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(8 * sizeof(GLfloat)));
+        glEnableVertexAttribArray(3);
+        
+        glBindBuffer(GL_ARRAY_BUFFER, 0); // Note that this is allowed, the call to glVertexAttribPointer registered VBO as the currently bound vertex buffer object so afterwards we can safely unbind
+        
+        glBindVertexArray(0); // Unbind VAO (it's always a good thing to unbind any buffer/array to prevent strange bugs), remember: do NOT unbind the EBO, keep it bound to this VAO
+        
+        assert(meshBuffer.vao > 0 && meshBuffer.vbo > 0 && meshBuffer.ebo > 0);
+        return meshBuffer;
+    }
+    
+	MeshBufferRef BufferSystem::CreateSubMeshBuffer(const SubMesh& subMesh) {
+        MeshBufferRef meshBuffer = CreateMeshBuffer();
 		meshBuffer.meshType = subMesh.meshType;
         meshBuffer.noIndices = subMesh.indexes.size() == 0;
 		meshBuffer.count = meshBuffer.noIndices ? subMesh.vertices.size() : subMesh.indexes.size();
-		glGenVertexArrays(1, &VAO);
-		glGenBuffers(1, &VBO);
-		glGenBuffers(1, &EBO);
-		// Bind the Vertex Array Object first, then bind and set vertex buffer(s) and attribute pointer(s).
-		glBindVertexArray(VAO);
-		glBindBuffer(GL_ARRAY_BUFFER, VBO);
+		glBindVertexArray(meshBuffer.vao);
+		glBindBuffer(GL_ARRAY_BUFFER, meshBuffer.vbo);
 		glBufferData(GL_ARRAY_BUFFER, subMesh.vertices.size() * sizeof(Vertex), &subMesh.vertices[0], GL_STATIC_DRAW);
-
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshBuffer.ebo);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, subMesh.indexes.size() * sizeof(unsigned int), &subMesh.indexes[0], GL_STATIC_DRAW);
-
-		// Position attribute
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)0);
-		glEnableVertexAttribArray(0);
-		// Normal attribute
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(3 * sizeof(GLfloat)));
-		glEnableVertexAttribArray(1);
-		//TexCoord attribute
-		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(6 * sizeof(GLfloat)));
-		glEnableVertexAttribArray(2);
-		//Vertex Tangent attribute
-		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(8 * sizeof(GLfloat)));
-		glEnableVertexAttribArray(3);
-
-		glBindBuffer(GL_ARRAY_BUFFER, 0); // Note that this is allowed, the call to glVertexAttribPointer registered VBO as the currently bound vertex buffer object so afterwards we can safely unbind
-
-		glBindVertexArray(0); // Unbind VAO (it's always a good thing to unbind any buffer/array to prevent strange bugs), remember: do NOT unbind the EBO, keep it bound to this VAO
-
-		meshBuffer.vao = VAO;
-		meshBuffer.vbo = VBO;
-		meshBuffer.ebo = EBO;
-		assert(VAO > 0 && VBO > 0 && EBO > 0);
-		//bufferDict[aliasname] = meshBuffer;
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindVertexArray(0);
 		return meshBuffer;
 	}
 
