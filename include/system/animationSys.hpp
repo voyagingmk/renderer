@@ -62,6 +62,7 @@ namespace renderer {
                                ozz::Range<ozz::math::SoaTransform> locals,
                                ozz::Range<ozz::math::Float4x4> models);
         
+        bool DoSkinningJob(const ozz::sample::Mesh& mesh, const ozz::Range<ozz::math::Float4x4> skinning_matrices, bool hasTexture, size_t& processed_vertex_count);
     };
     
 };
