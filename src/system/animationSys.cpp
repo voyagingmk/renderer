@@ -198,12 +198,10 @@ namespace renderer {
     
     bool AnimationSystem::DoSkinningJob(const ozz::sample::Mesh& mesh,
              const ozz::Range<ozz::math::Float4x4> skinning_matrices,
-             bool hasTexture,
-             size_t &processed_vertex_count,
              void* &vbo_map,
              GLsizei &vbo_size) {
         const int vertex_count = mesh.vertex_count();
-        
+        size_t processed_vertex_count = 0;
         // Positions and normals are interleaved to improve caching while executing
         // skinning job.
         const GLsizei positions_offset = 0;
@@ -221,7 +219,6 @@ namespace renderer {
         // Iterate mesh parts and fills vbo.
         // Runs a skinning job per mesh part. Triangle indices are shared
         // across parts.
-        processed_vertex_count = 0;
         for (size_t i = 0; i < mesh.parts.size(); ++i) {
             const ozz::sample::Mesh::Part& part = mesh.parts[i];
             
@@ -355,7 +352,6 @@ namespace renderer {
         auto spSetCom = m_objMgr->getSingletonComponent<ShaderProgramSet>();
         Shader shader = spSetCom->getShader("testAnimation");
         shader.use();
-        bool hasTexture = false;
         // Forward to DrawMesh function is skinning is disabled.
         // if (skip_skinning) {
         //    return DrawMesh(mesh, obj);
@@ -376,9 +372,8 @@ namespace renderer {
 
         void* vbo_map = nullptr;
         GLsizei vbo_size = 0;
-        size_t processed_vertex_count = 0;
-        if (!DoSkinningJob(mesh, skinning_matrices, hasTexture, processed_vertex_count, vbo_map, vbo_size)) {
-            return;
+        if (!DoSkinningJob(mesh, skinning_matrices, vbo_map, vbo_size)) {
+            return false;
         }
        
         // Updates dynamic vertex buffer with skinned data.
