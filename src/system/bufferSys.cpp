@@ -11,6 +11,9 @@ namespace renderer {
 	void BufferSystem::init(ObjectManager &objMgr, EventManager &evtMgr) {
 		printf("BufferSystem init\n");
         evtMgr.on<CreateDynamicMeshBufferEvent>(*this);
+        evtMgr.on<UpdateDynamicMeshBufferEvent>(*this);
+        evtMgr.on<BindDynamicMeshBufferEvent>(*this);
+        evtMgr.on<UnbindDynamicMeshBufferEvent>(*this);
 		evtMgr.on<CreateMeshBufferEvent>(*this);
 		evtMgr.on<CreateSkyboxBufferEvent>(*this);
 		evtMgr.on<DrawMeshBufferEvent>(*this);
@@ -38,18 +41,43 @@ namespace renderer {
 	}
     
     void BufferSystem::receive(const CreateDynamicMeshBufferEvent &evt) {
-        /*
-        auto meshSet = m_objMgr->getSingletonComponent<MeshSet>();
-		StaticMeshBuffersDict& smDict = m_objMgr->getSingletonComponent<AllBufferDictCom>()->smDict;
-        MeshID meshID = evt.meshID | meshSet->alias2id[evt.meshName];
-        Mesh& mesh = meshSet->meshDict[meshID];
-        smDict.insert({meshID, MeshBufferRefs()});
-        MeshBufferRefs& buffers = smDict[meshID];
-        for (const SubMesh& subMesh : mesh.meshes) {
-            buffers.push_back(CreateSubMeshBuffer(subMesh));
-        }*/
+        DynamicMeshBufferDict& dmDict = m_objMgr->getSingletonComponent<AllBufferDictCom>()->dmDict;
+        if (dmDict.find(evt.meshName) != dmDict.end()) {
+            return;
+        }
+        dmDict[evt.meshName] = CreateMeshBuffer();
     }
 
+    void BufferSystem::receive(const UpdateDynamicMeshBufferEvent &evt) {
+        DynamicMeshBufferDict& dmDict = m_objMgr->getSingletonComponent<AllBufferDictCom>()->dmDict;
+        if (dmDict.find(evt.meshName) == dmDict.end()) {
+            return;
+        }
+        // MeshBufferRef& buf = dmDict[evt.meshName];
+        glBufferData(GL_ARRAY_BUFFER, evt.vbo_size, evt.vbo_data, GL_STREAM_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, evt.ebo_size, evt.ebo_data, GL_STREAM_DRAW);
+    }
+    
+    void BufferSystem::receive(const BindDynamicMeshBufferEvent &evt) {
+        DynamicMeshBufferDict& dmDict = m_objMgr->getSingletonComponent<AllBufferDictCom>()->dmDict;
+        if (dmDict.find(evt.meshName) == dmDict.end()) {
+            return;
+        }
+        MeshBufferRef& buf = dmDict[evt.meshName];
+        glBindVertexArray(buf.vao);
+        glBindBuffer(GL_ARRAY_BUFFER, buf.vbo);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buf.ebo);
+    }
+    
+    void BufferSystem::receive(const UnbindDynamicMeshBufferEvent &evt) {
+        DynamicMeshBufferDict& dmDict = m_objMgr->getSingletonComponent<AllBufferDictCom>()->dmDict;
+        if (dmDict.find(evt.meshName) == dmDict.end()) {
+            return;
+        }
+        // MeshBufferRef& buf = dmDict[evt.meshName];
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindVertexArray(0);
+    }
     
 	void BufferSystem::receive(const CreateMeshBufferEvent &evt) {
 		auto meshSet = m_objMgr->getSingletonComponent<MeshSet>();
@@ -330,13 +358,13 @@ namespace renderer {
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)0);
         glEnableVertexAttribArray(0);
         // Normal attribute
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(3 * sizeof(GLfloat)));
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_TRUE, sizeof(Vertex), (GLvoid*)(3 * sizeof(GLfloat)));
         glEnableVertexAttribArray(1);
         //TexCoord attribute
         glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(6 * sizeof(GLfloat)));
         glEnableVertexAttribArray(2);
         //Vertex Tangent attribute
-        glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(8 * sizeof(GLfloat)));
+        glVertexAttribPointer(3, 3, GL_FLOAT, GL_TRUE, sizeof(Vertex), (GLvoid*)(8 * sizeof(GLfloat)));
         glEnableVertexAttribArray(3);
         
         glBindBuffer(GL_ARRAY_BUFFER, 0); // Note that this is allowed, the call to glVertexAttribPointer registered VBO as the currently bound vertex buffer object so afterwards we can safely unbind

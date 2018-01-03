@@ -119,9 +119,6 @@ namespace renderer {
 
 
 	typedef std::vector<MeshBufferRef> MeshBufferRefs;
-	typedef std::map<MeshID, MeshBufferRefs> MeshBuffersDict;
-
-
 	typedef std::map<std::string, GBufferRef> GBufferDict;
 	typedef std::map<std::string, ColorBufferRef> ColorBufferDict;
 	typedef std::map<std::string, InstanceBufferRef> InstanceBufferDict;

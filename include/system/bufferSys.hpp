@@ -16,11 +16,17 @@ namespace renderer {
 	class BufferSystem : public System<BufferSystem>, public Receiver<BufferSystem>
 	{
 	public:
-		void init(ObjectManager &objMgr, EventManager &evtMgr);
+		void init(ObjectManager &objMgr, EventManager &evtMgr) override;
 
 		void update(ObjectManager &objMgr, EventManager &evtMgr, float dt) override;
 
         void receive(const CreateDynamicMeshBufferEvent &evt);
+        
+        void receive(const UpdateDynamicMeshBufferEvent &evt);
+        
+        void receive(const BindDynamicMeshBufferEvent &evt);
+        
+        void receive(const UnbindDynamicMeshBufferEvent &evt);
         
 		void receive(const CreateMeshBufferEvent &evt);
 

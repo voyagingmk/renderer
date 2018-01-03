@@ -7,6 +7,7 @@
 #include "com/mesh.hpp"
 
 namespace renderer {
+    
     class CreateDynamicMeshBufferEvent: public ecs::Event<CreateDynamicMeshBufferEvent> {
     public:
         CreateDynamicMeshBufferEvent(std::string meshName) :
@@ -14,8 +15,46 @@ namespace renderer {
         {}
         std::string meshName;
     };
-
-	
+    
+    
+    class UpdateDynamicMeshBufferEvent: public ecs::Event<UpdateDynamicMeshBufferEvent> {
+    public:
+        UpdateDynamicMeshBufferEvent(std::string meshName,
+            size_t vbo_size,
+            const void* vbo_data,
+            size_t ebo_size,
+            const void* ebo_data) :
+            meshName(meshName),
+            vbo_size(vbo_size),
+            vbo_data(vbo_data),
+            ebo_size(ebo_size),
+            ebo_data(ebo_data)
+        {}
+        std::string meshName;
+        size_t vbo_size;
+        const void* vbo_data;
+        size_t ebo_size;
+        const void* ebo_data;
+    };
+    
+    
+    class BindDynamicMeshBufferEvent: public ecs::Event<BindDynamicMeshBufferEvent> {
+    public:
+        BindDynamicMeshBufferEvent(std::string meshName) :
+            meshName(meshName)
+        {}
+        std::string meshName;
+    };
+    
+    
+    class UnbindDynamicMeshBufferEvent: public ecs::Event<UnbindDynamicMeshBufferEvent> {
+    public:
+        UnbindDynamicMeshBufferEvent(std::string meshName) :
+            meshName(meshName)
+        {}
+        std::string meshName;
+    };
+    
 	class CreateMeshBufferEvent: public ecs::Event<CreateMeshBufferEvent> {
 	public:
 		CreateMeshBufferEvent(MeshID meshID) :

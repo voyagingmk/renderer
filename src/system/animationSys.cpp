@@ -356,78 +356,31 @@ namespace renderer {
         // if (skip_skinning) {
         //    return DrawMesh(mesh, obj);
         // }
-        static GLuint dynamic_vao_ = 0;
-        // Dynamic vbo used for arrays.
-        static GLuint dynamic_array_bo_ = 0;
         
-        // Dynamic vbo used for indices.
-        static GLuint dynamic_index_bo_ = 0;
-        
-        if (!dynamic_array_bo_) {
-            // Builds the dynamic vbo
-            glGenBuffers(1, &dynamic_array_bo_);
-            glGenBuffers(1, &dynamic_index_bo_);
-            glGenVertexArrays(1, &dynamic_vao_);
-        }
-
         void* vbo_map = nullptr;
         GLsizei vbo_size = 0;
         if (!DoSkinningJob(mesh, skinning_matrices, vbo_map, vbo_size)) {
             return false;
         }
-       
-        // Updates dynamic vertex buffer with skinned data.
-        glBindVertexArray(dynamic_vao_);
-        glBindBuffer(GL_ARRAY_BUFFER, dynamic_array_bo_);
-        glBufferData(GL_ARRAY_BUFFER, vbo_size, vbo_map, GL_STREAM_DRAW);
-        
-        const GLint position_attrib = 0;
-        glEnableVertexAttribArray(position_attrib);
-        glVertexAttribPointer(position_attrib, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 11,
-                               GL_PTR_OFFSET(0));
-     
-        const GLint normal_attrib = 1;
-        glEnableVertexAttribArray(normal_attrib);
-        glVertexAttribPointer(normal_attrib, 3, GL_FLOAT, GL_TRUE, sizeof(float) * 11,
-                               GL_PTR_OFFSET(sizeof(float) * 3));
-       
-        const GLint uv_attrib = 2;
-        glEnableVertexAttribArray(uv_attrib);
-        glVertexAttribPointer(uv_attrib, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 11,
-                              GL_PTR_OFFSET(sizeof(float) * 6));
-        
-        const GLint tangent_attrib = 3;
-        glEnableVertexAttribArray(tangent_attrib);
-        glVertexAttribPointer(tangent_attrib, 3, GL_FLOAT, GL_TRUE, sizeof(float) * 11,
-                              GL_PTR_OFFSET(sizeof(float) * 8));
         
         Object objCamera = m_objMgr->getSingletonComponent<PerspectiveCameraView>().object();
         m_evtMgr->emit<UploadCameraToShaderEvent>(objCamera, shader);
         shader.setMatrix4f("modelMat", modelMat);
 
-        
-        // Maps the index dynamic buffer and update it.
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, dynamic_index_bo_);
         const ozz::sample::Mesh::TriangleIndices& indices = mesh.triangle_indices;
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER,
-                     indices.size() * sizeof(ozz::sample::Mesh::TriangleIndices::value_type),
-                      array_begin(indices), GL_STREAM_DRAW);
         
-        CheckGLError;
+        m_evtMgr->emit<CreateDynamicMeshBufferEvent>("skinned");
+        m_evtMgr->emit<BindDynamicMeshBufferEvent>("skinned");
+        m_evtMgr->emit<UpdateDynamicMeshBufferEvent>("skinned", vbo_size, vbo_map, indices.size() * sizeof(ozz::sample::Mesh::TriangleIndices::value_type), array_begin(indices));
         
         // Draws the mesh.
         OZZ_STATIC_ASSERT(sizeof(ozz::sample::Mesh::TriangleIndices::value_type) == 2);
         glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()),
-                        GL_UNSIGNED_SHORT, 0);
+                       GL_UNSIGNED_SHORT, 0);
         
+        m_evtMgr->emit<UnbindDynamicMeshBufferEvent>("skinned");
+    
         CheckGLError;
-        
-        // Unbinds.
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glBindTexture(GL_TEXTURE_2D, 0);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-        glBindVertexArray(0);
-
         return true;
     }
     
