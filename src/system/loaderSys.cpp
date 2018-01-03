@@ -55,10 +55,7 @@ namespace renderer {
         obj.addComponent<ShaderProgramSet>();
         obj.addComponent<MaterialSet>();
 		obj.addComponent<MeshSet>();
-		obj.addComponent<MeshBuffersSet>();
-		obj.addComponent<GBufferDictCom>();
-		obj.addComponent<ColorBufferDictCom>();
-		obj.addComponent<InstanceBufferDictCom>();
+        obj.addComponent<AllBufferDictCom>();
         obj.addComponent<AnimationDataSet>();
         m_evtMgr->emit<GlobalComAddedEvent>();
         

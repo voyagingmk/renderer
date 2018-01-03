@@ -10,6 +10,7 @@ namespace renderer {
 
 	void BufferSystem::init(ObjectManager &objMgr, EventManager &evtMgr) {
 		printf("BufferSystem init\n");
+        evtMgr.on<CreateDynamicMeshBufferEvent>(*this);
 		evtMgr.on<CreateMeshBufferEvent>(*this);
 		evtMgr.on<CreateSkyboxBufferEvent>(*this);
 		evtMgr.on<DrawMeshBufferEvent>(*this);
@@ -35,14 +36,28 @@ namespace renderer {
 	void BufferSystem::update(ObjectManager &objMgr, EventManager &evtMgr, float dt) {
 
 	}
+    
+    void BufferSystem::receive(const CreateDynamicMeshBufferEvent &evt) {
+        /*
+        auto meshSet = m_objMgr->getSingletonComponent<MeshSet>();
+		StaticMeshBuffersDict& smDict = m_objMgr->getSingletonComponent<AllBufferDictCom>()->smDict;
+        MeshID meshID = evt.meshID | meshSet->alias2id[evt.meshName];
+        Mesh& mesh = meshSet->meshDict[meshID];
+        smDict.insert({meshID, MeshBufferRefs()});
+        MeshBufferRefs& buffers = smDict[meshID];
+        for (const SubMesh& subMesh : mesh.meshes) {
+            buffers.push_back(CreateSubMeshBuffer(subMesh));
+        }*/
+    }
 
+    
 	void BufferSystem::receive(const CreateMeshBufferEvent &evt) {
 		auto meshSet = m_objMgr->getSingletonComponent<MeshSet>();
-		auto meshBuffersSet = m_objMgr->getSingletonComponent<MeshBuffersSet>();
+		StaticMeshBuffersDict& smDict = m_objMgr->getSingletonComponent<AllBufferDictCom>()->smDict;
 		MeshID meshID = evt.meshID | meshSet->alias2id[evt.meshName];
 		Mesh& mesh = meshSet->meshDict[meshID];
-		meshBuffersSet->buffersDict.insert({meshID, MeshBufferRefs()});
-		MeshBufferRefs& buffers = meshBuffersSet->buffersDict[meshID];
+		smDict.insert({meshID, MeshBufferRefs()});
+		MeshBufferRefs& buffers = smDict[meshID];
 		for (const SubMesh& subMesh : mesh.meshes) {
 			buffers.push_back(CreateSubMeshBuffer(subMesh));
 		}
@@ -54,22 +69,22 @@ namespace renderer {
 	
 	void BufferSystem::receive(const DrawMeshBufferEvent& evt) {
 		auto meshSet = m_objMgr->getSingletonComponent<MeshSet>();
-		auto meshBuffersSet = m_objMgr->getSingletonComponent<MeshBuffersSet>();
+		StaticMeshBuffersDict& smDict = m_objMgr->getSingletonComponent<AllBufferDictCom>()->smDict;
 		MeshID meshID = evt.meshID | meshSet->alias2id[evt.meshName];
-		auto bufferRefs = meshBuffersSet->buffersDict[meshID];
+		auto bufferRefs = smDict[meshID];
 		MeshBufferRef& bufferRef = bufferRefs[evt.subMeshIdx];
 		drawMeshBuffer(bufferRef);
 	}
 
 	void BufferSystem::receive(const BindInstanceBufferEvent& evt) {
-		auto InsBufferDict = m_objMgr->getSingletonComponent<InstanceBufferDictCom>();
-		auto meshBuffersSet = m_objMgr->getSingletonComponent<MeshBuffersSet>();
-		auto it = InsBufferDict->dict.find(std::string(evt.insBufferName));
-		if (it == InsBufferDict->dict.end()) {
+		InstanceBufferDict& insDict = m_objMgr->getSingletonComponent<AllBufferDictCom>()->insDict;
+		StaticMeshBuffersDict& smDict = m_objMgr->getSingletonComponent<AllBufferDictCom>()->smDict;
+		auto it = insDict.find(std::string(evt.insBufferName));
+		if (it == insDict.end()) {
 			return;
 		}
-		auto it2 = meshBuffersSet->buffersDict.find(evt.meshID);
-		if (it2 == meshBuffersSet->buffersDict.end()) {
+		auto it2 = smDict.find(evt.meshID);
+		if (it2 == smDict.end()) {
 			return;
 		}
 		MeshBufferRefs& refs = it2->second;
@@ -77,10 +92,9 @@ namespace renderer {
 	}
 
 	void BufferSystem::receive(const UnbindInstanceBufferEvent& evt) {
-		auto InsBufferDict = m_objMgr->getSingletonComponent<InstanceBufferDictCom>();
-		auto meshBuffersSet = m_objMgr->getSingletonComponent<MeshBuffersSet>();
-		auto it = meshBuffersSet->buffersDict.find(evt.meshID);
-		if (it == meshBuffersSet->buffersDict.end()) {
+		StaticMeshBuffersDict& smDict = m_objMgr->getSingletonComponent<AllBufferDictCom>()->smDict;
+		auto it = smDict.find(evt.meshID);
+		if (it == smDict.end()) {
 			return;
 		}
 		MeshBufferRefs& refs = it->second;
@@ -93,20 +107,20 @@ namespace renderer {
 	}
 
 	void BufferSystem::receive(const CreateInstanceBufferEvent& evt) {
-		auto com = m_objMgr->getSingletonComponent<InstanceBufferDictCom>();
-		auto it = com->dict.find(evt.aliasName);
-		if (it != com->dict.end()) {
+		InstanceBufferDict& insDict = m_objMgr->getSingletonComponent<AllBufferDictCom>()->insDict;
+		auto it = insDict.find(evt.aliasName);
+		if (it != insDict.end()) {
 			return;
 		}
 		InstanceBufferRef buf;
 		glGenBuffers(1, &buf.bufID);
-		com->dict[evt.aliasName] = buf;
+		insDict[evt.aliasName] = buf;
 	}
 
 	void BufferSystem::receive(const DestroyInstanceBufferEvent& evt) {
-		auto com = m_objMgr->getSingletonComponent<InstanceBufferDictCom>();
-		auto it = com->dict.find(evt.aliasName);
-		if (it == com->dict.end()) {
+		InstanceBufferDict& insDict = m_objMgr->getSingletonComponent<AllBufferDictCom>()->insDict;
+		auto it = insDict.find(evt.aliasName);
+		if (it == insDict.end()) {
 			return;
 		}
 		InstanceBufferRef& buf = it->second;
@@ -114,9 +128,9 @@ namespace renderer {
 	}
 
 	void BufferSystem::receive(const UpdateInstanceBufferEvent& evt) {
-		auto com = m_objMgr->getSingletonComponent<InstanceBufferDictCom>();
-		auto it = com->dict.find(evt.aliasName);
-		if (it == com->dict.end()) {
+		InstanceBufferDict& insDict = m_objMgr->getSingletonComponent<AllBufferDictCom>()->insDict;
+		auto it = insDict.find(evt.aliasName);
+		if (it == insDict.end()) {
 			return;
 		}
 		InstanceBufferRef& buf = it->second;
@@ -127,76 +141,76 @@ namespace renderer {
 	}
 
     void BufferSystem::receive(const CreateDpethBufferEvent& evt) {
-        auto com = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
-        if (com->dict.find(std::string(evt.aliasName)) != com->dict.end()) {
+		ColorBufferDict& cDict = m_objMgr->getSingletonComponent<AllBufferDictCom>()->cDict;
+        if (cDict.find(std::string(evt.aliasName)) != cDict.end()) {
 			return;
 		}
 		ColorBufferRef buf = CreateDepthFrameBuffer(evt.dtType, evt.texAliasname, evt.width);
-        com->dict[std::string(evt.aliasName)] = buf;
+        cDict[std::string(evt.aliasName)] = buf;
     }
     
 	void BufferSystem::receive(const CreateColorBufferEvent& evt) {
-		auto com = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
+		ColorBufferDict& cDict = m_objMgr->getSingletonComponent<AllBufferDictCom>()->cDict;
 		ColorBufferRef buf = CreateColorBuffer(
             evt.width, evt.height, evt.internalFormat, evt.format, evt.dataType,
             evt.depthType, evt.MSAA, evt.texParam);
-		com->dict[std::string(evt.aliasName)] = buf;
+		cDict[std::string(evt.aliasName)] = buf;
 	}
 
 	void BufferSystem::receive(const AddColorBufferEvent& evt) {
-		auto com = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
-		com->dict[std::string(evt.aliasName)] = evt.buf;
+		ColorBufferDict& cDict = m_objMgr->getSingletonComponent<AllBufferDictCom>()->cDict;
+		cDict[std::string(evt.aliasName)] = evt.buf;
 	}
 
 	void BufferSystem::receive(const DestroyColorBufferEvent& evt) {
-		auto com = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
-		auto it = com->dict.find(std::string(evt.aliasName));
-		if (it == com->dict.end()) {
+		ColorBufferDict& cDict = m_objMgr->getSingletonComponent<AllBufferDictCom>()->cDict;
+		auto it = cDict.find(std::string(evt.aliasName));
+		if (it == cDict.end()) {
 			return;
 		}
 		DestroyColorBuffer(it->second);
-		com->dict.erase(it);
+		cDict.erase(it);
 	}
 
 	void BufferSystem::receive(const UseColorBufferEvent& evt) {
-		auto com = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
-		auto it = com->dict.find(evt.aliasName);
-        if (it == com->dict.end()) {
+		ColorBufferDict& cDict = m_objMgr->getSingletonComponent<AllBufferDictCom>()->cDict;
+		auto it = cDict.find(evt.aliasName);
+        if (it == cDict.end()) {
 			return;
 		}
 		UseFrameBuffer(it->second);
 	}
 
 	void BufferSystem::receive(const UnuseColorBufferEvent& evt) {
-		auto com = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
-		auto it = com->dict.find(evt.aliasName);
-		if (it == com->dict.end()) {
+		ColorBufferDict& cDict = m_objMgr->getSingletonComponent<AllBufferDictCom>()->cDict;
+		auto it = cDict.find(evt.aliasName);
+		if (it == cDict.end()) {
 			return;
 		}
 		UnuseFrameBuffer(it->second);
 	}
 
 	void BufferSystem::receive(const CreateGBufferEvent& evt) {
-		auto com = m_objMgr->getSingletonComponent<GBufferDictCom>();
+		GBufferDict& gDict = m_objMgr->getSingletonComponent<AllBufferDictCom>()->gDict;
 		GBufferRef buf = CreateGBuffer(evt.width, evt.height);
-		com->dict[std::string(evt.aliasName)] = buf;
+		gDict[std::string(evt.aliasName)] = buf;
 	}
 
 	void BufferSystem::receive(const DestroyGBufferEvent& evt) {
-		auto com = m_objMgr->getSingletonComponent<GBufferDictCom>();
-		auto it = com->dict.find(evt.aliasName);
-		if (it == com->dict.end()) {
+		GBufferDict& gDict = m_objMgr->getSingletonComponent<AllBufferDictCom>()->gDict;
+		auto it = gDict.find(evt.aliasName);
+		if (it == gDict.end()) {
 			assert(false);
 			return;
 		}
 		DestroyGBuffer(it->second);
-		com->dict.erase(it);
+		gDict.erase(it);
 	}
 
 	void BufferSystem::receive(const UseGBufferEvent& evt) {
-		auto com = m_objMgr->getSingletonComponent<GBufferDictCom>();
-		auto it = com->dict.find(evt.aliasName);
-		if (it == com->dict.end()) {
+		GBufferDict& gDict = m_objMgr->getSingletonComponent<AllBufferDictCom>()->gDict;
+		auto it = gDict.find(evt.aliasName);
+		if (it == gDict.end()) {
 			assert(false);
 			return;
 		}
@@ -204,9 +218,9 @@ namespace renderer {
 	}
 
 	void BufferSystem::receive(const UnuseGBufferEvent& evt) {
-		auto com = m_objMgr->getSingletonComponent<GBufferDictCom>();
-		auto it = com->dict.find(evt.aliasName);
-		if (it == com->dict.end()) {
+		GBufferDict& gDict = m_objMgr->getSingletonComponent<AllBufferDictCom>()->gDict;
+		auto it = gDict.find(evt.aliasName);
+		if (it == gDict.end()) {
 			assert(false);
 			return;
 		}
@@ -214,18 +228,18 @@ namespace renderer {
 	}
 
 	void BufferSystem::receive(const CopyGBufferDepth2ColorBufferEvent& evt) {
-		auto com = m_objMgr->getSingletonComponent<GBufferDictCom>();
-		auto it = com->dict.find(std::string(evt.aliasName));
-		if (it == com->dict.end()) {
+		GBufferDict& gDict = m_objMgr->getSingletonComponent<AllBufferDictCom>()->gDict;
+		ColorBufferDict& cDict = m_objMgr->getSingletonComponent<AllBufferDictCom>()->cDict;
+		auto it = gDict.find(std::string(evt.aliasName));
+		if (it == gDict.end()) {
 			assert(false);
 			return;
 		}
 		FrameBufferBase buf1 = it->second;
 
-		auto com2 = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
-		auto it2 = com2->dict.find(std::string(evt.aliasName2));
+		auto it2 = cDict.find(std::string(evt.aliasName2));
 		FrameBufferBase buf2;
-		if (it2 != com2->dict.end()) {
+		if (it2 != cDict.end()) {
 			buf2 = it2->second;
 		}
 		CopyFrameBufferDepth(buf1, buf2);
@@ -349,9 +363,9 @@ namespace renderer {
 	}
 
 	void BufferSystem::CreateSkyboxBuffer(MeshID meshID) {
-		auto meshBuffersSet = m_objMgr->getSingletonComponent<MeshBuffersSet>();
+		StaticMeshBuffersDict& smDict = m_objMgr->getSingletonComponent<AllBufferDictCom>()->smDict;
 		auto meshSet = m_objMgr->getSingletonComponent<MeshSet>();
-		if (meshBuffersSet->buffersDict.find(meshID) != meshBuffersSet->buffersDict.end()) {
+		if (smDict.find(meshID) != smDict.end()) {
 			return;
 		}
 		Mesh& mesh = meshSet->meshDict[meshID];
@@ -368,7 +382,7 @@ namespace renderer {
 		glBindVertexArray(0);
 		meshBuffer.noIndices = true;
 		meshBuffer.count = 12 * 3;
-		meshBuffersSet->buffersDict[meshID] = { meshBuffer };
+		smDict[meshID] = { meshBuffer };
 	}
     
     ColorBufferRef BufferSystem::CreateDepthFrameBuffer(DepthTexType dtType, std::string texAliasname, size_t width) {

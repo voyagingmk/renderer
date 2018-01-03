@@ -7,6 +7,13 @@
 #include "com/mesh.hpp"
 
 namespace renderer {
+    class CreateDynamicMeshBufferEvent: public ecs::Event<CreateDynamicMeshBufferEvent> {
+    public:
+        CreateDynamicMeshBufferEvent(std::string meshName) :
+            meshName(meshName)
+        {}
+        std::string meshName;
+    };
 
 	
 	class CreateMeshBufferEvent: public ecs::Event<CreateMeshBufferEvent> {

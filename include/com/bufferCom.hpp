@@ -122,27 +122,20 @@ namespace renderer {
 	typedef std::map<MeshID, MeshBufferRefs> MeshBuffersDict;
 
 
-	struct MeshBuffersSet {
-		MeshBuffersDict buffersDict;
-	};
-
 	typedef std::map<std::string, GBufferRef> GBufferDict;
 	typedef std::map<std::string, ColorBufferRef> ColorBufferDict;
 	typedef std::map<std::string, InstanceBufferRef> InstanceBufferDict;
+    typedef std::map<std::string, MeshBufferRef> DynamicMeshBufferDict;
+    typedef std::map<MeshID, MeshBufferRefs> StaticMeshBuffersDict;
 
-	typedef std::vector<GBufferRef> GBuffers;
 
-	struct GBufferDictCom {
-		GBufferDict dict;
-	};
-
-	struct ColorBufferDictCom {
-		ColorBufferDict dict;
-	};
-
-	struct InstanceBufferDictCom {
-		InstanceBufferDict dict;
-	};
+    struct AllBufferDictCom {
+        GBufferDict gDict;
+        ColorBufferDict cDict;
+        InstanceBufferDict insDict;
+        StaticMeshBuffersDict smDict;
+        DynamicMeshBufferDict dmDict;
+    };
 }
 
 #endif

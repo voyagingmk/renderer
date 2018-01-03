@@ -20,6 +20,8 @@ namespace renderer {
 
 		void update(ObjectManager &objMgr, EventManager &evtMgr, float dt) override;
 
+        void receive(const CreateDynamicMeshBufferEvent &evt);
+        
 		void receive(const CreateMeshBufferEvent &evt);
 
 		void receive(const CreateSkyboxBufferEvent &evt);

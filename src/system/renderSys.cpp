@@ -68,8 +68,6 @@ namespace renderer {
 			// optional
 			ssaoBlurPass("ssao", "ssaoBlur", context->width, context->height);
 		}
-
-		auto colorBufferCom = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
 		
 		// TODO: only update shadow map of dynamic lights
 		updateShadowMapPass("main", objCamera);
@@ -187,8 +185,8 @@ namespace renderer {
 		Shader shader = getShader("ssao");
 		shader.use();
 		m_evtMgr->emit<UploadCameraToShaderEvent>(objCamera, shader);
-		auto gBufferCom = m_objMgr->getSingletonComponent<GBufferDictCom>();
-		GBufferRef& buf = gBufferCom->dict[gBufferAliasName];
+		GBufferDict& gDict = m_objMgr->getSingletonComponent<AllBufferDictCom>()->gDict;
+		GBufferRef& buf = gDict[gBufferAliasName];
 		m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "gPosition", 0, buf.posTexID);
 		m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "gNormal", 1, buf.normalTexID);
 		m_evtMgr->emit<ActiveTextureEvent>(shader, "texNoise", 2, "ssaoNoise");
@@ -207,8 +205,8 @@ namespace renderer {
 
 	void RenderSystem::ssaoBlurPass(std::string ssaoBuffer, std::string ssaoBlurBuffer, size_t winWidth, size_t winHeight) {
 		m_evtMgr->emit<UseColorBufferEvent>(ssaoBlurBuffer);
-		auto colorBufferCom = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
-		ColorBufferRef& buf = colorBufferCom->dict[ssaoBuffer];
+		ColorBufferDict& cDict = m_objMgr->getSingletonComponent<AllBufferDictCom>()->cDict;
+		ColorBufferRef& buf = cDict[ssaoBuffer];
 		setViewport(std::make_tuple(0, 0, winWidth, winHeight));
 		clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
 			GL_COLOR_BUFFER_BIT);
@@ -221,10 +219,10 @@ namespace renderer {
 	}
 
 	void RenderSystem::ssaoApplyPass(std::string inputBuffer, std::string outputBuffer, std::string ssaoBlurBuffer, size_t winWidth, size_t winHeight) {
-		auto colorBufferCom = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
-		ColorBufferRef& inputBuf = colorBufferCom->dict[inputBuffer];
-		ColorBufferRef& outputBuf = colorBufferCom->dict[outputBuffer];
-		ColorBufferRef& ssoaBuf = colorBufferCom->dict[ssaoBlurBuffer];
+		ColorBufferDict& cDict = m_objMgr->getSingletonComponent<AllBufferDictCom>()->cDict;
+		ColorBufferRef& inputBuf = cDict[inputBuffer];
+		ColorBufferRef& outputBuf = cDict[outputBuffer];
+		ColorBufferRef& ssoaBuf = cDict[ssaoBlurBuffer];
 		m_evtMgr->emit<UseColorBufferEvent>(outputBuffer);
 		setViewport(std::make_tuple(0, 0, winWidth, winHeight));
 		clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
@@ -239,10 +237,10 @@ namespace renderer {
 	}
 
 	void RenderSystem::updateShadowMapPass(std::string gBufferAliasName, Object objCamera) {
-		auto colorBufferCom = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
+		ColorBufferDict& cDict = m_objMgr->getSingletonComponent<AllBufferDictCom>()->cDict;
 		auto gSettingCom = m_objMgr->getSingletonComponent<GlobalSettingCom>();
-		auto gBufferCom = m_objMgr->getSingletonComponent<GBufferDictCom>();
-		GBufferRef& gBuf = gBufferCom->dict[gBufferAliasName];
+		GBufferDict& gDict = m_objMgr->getSingletonComponent<AllBufferDictCom>()->gDict;
+		GBufferRef& gBuf = gDict[gBufferAliasName];
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_FRONT);
 		// Point Light Pass
@@ -251,10 +249,10 @@ namespace renderer {
 			auto transCom = obj.component<PointLightTransform>();
 			auto spatialDataCom = obj.component<SpatialData>();
 			auto bufAliasname = "lightDepth" + std::to_string(obj.ID());
-			if (colorBufferCom->dict.find(bufAliasname) == colorBufferCom->dict.end()) {
+			if (cDict.find(bufAliasname) == cDict.end()) {
 				continue;
 			}
-			ColorBufferRef& shadowBuf = colorBufferCom->dict[bufAliasname];
+			ColorBufferRef& shadowBuf = cDict[bufAliasname];
 			m_evtMgr->emit<UseColorBufferEvent>(bufAliasname);
 			
 			Shader pointShadowDepthShader = getShader("pointShadowDepth");
@@ -280,10 +278,10 @@ namespace renderer {
 			auto lightCommon = obj.component<LightCommon>();
 			auto transCom = obj.component<SpotLightTransform>();
 			auto bufAliasname = "lightDepth" + std::to_string(obj.ID());
-			if (colorBufferCom->dict.find(bufAliasname) == colorBufferCom->dict.end()) {
+			if (cDict.find(bufAliasname) == cDict.end()) {
 				continue;
 			}
-			ColorBufferRef& shadowBuf = colorBufferCom->dict[bufAliasname];
+			ColorBufferRef& shadowBuf = cDict[bufAliasname];
 			m_evtMgr->emit<UseColorBufferEvent>(bufAliasname);
 			
 			auto shadowMapSettingCom = m_objMgr->getSingletonComponent<ShadowMapSetting>();
@@ -307,10 +305,10 @@ namespace renderer {
 			auto lightCommon = obj.component<LightCommon>();
 			auto transCom = obj.component<DirLightTransform>();
 			auto bufAliasname = "lightDepth" + std::to_string(obj.ID());
-			if (colorBufferCom->dict.find(bufAliasname) == colorBufferCom->dict.end()) {
+			if (cDict.find(bufAliasname) == cDict.end()) {
 				continue;
 			}
-			ColorBufferRef& shadowBuf = colorBufferCom->dict[bufAliasname];
+			ColorBufferRef& shadowBuf = cDict[bufAliasname];
 			m_evtMgr->emit<UseColorBufferEvent>(bufAliasname);
 			
 
@@ -337,10 +335,10 @@ namespace renderer {
 		glBlendFunc(GL_ONE, GL_ONE);
 		glDisable(GL_DEPTH_TEST);
 		m_evtMgr->emit<UseColorBufferEvent>(colorBufferAliasName);
-		auto colorBufferCom = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
+		ColorBufferDict& cDict = m_objMgr->getSingletonComponent<AllBufferDictCom>()->cDict;
 		auto gSettingCom = m_objMgr->getSingletonComponent<GlobalSettingCom>();
-		auto gBufferCom = m_objMgr->getSingletonComponent<GBufferDictCom>();
-		GBufferRef& buf = gBufferCom->dict[gBufferAliasName];
+		GBufferDict& gDict = m_objMgr->getSingletonComponent<AllBufferDictCom>()->gDict;
+		GBufferRef& buf = gDict[gBufferAliasName];
 		Shader shader = getShader("deferredShading");
 		shader.use();
 		m_evtMgr->emit<UploadCameraToShaderEvent>(objCamera, shader);
@@ -348,7 +346,7 @@ namespace renderer {
 		m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "gNormal", 1, buf.normalTexID);
 		m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "gAlbedo", 2, buf.albedoTexID);
 		m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "gPBR", 3, buf.pbrTexID);
-		//ColorBufferRef& ssaoBuf = colorBufferCom->dict["ssaoBlur"];
+		//ColorBufferRef& ssaoBuf = cDict["ssaoBlur"];
 		//m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "ssao", 4, ssaoBuf.tex.texID);
 		shader.set1f("depthBias", gSettingCom->get1f("depthBias", 1.0f));
 		shader.set1f("diskFactor", gSettingCom->get1f("diskFactor", 3.0f));
@@ -371,7 +369,7 @@ namespace renderer {
 	}
     
 	void RenderSystem::uploadLight(Shader shader, Object lightObject) {
-		auto colorBufferCom = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
+		ColorBufferDict& cDict = m_objMgr->getSingletonComponent<AllBufferDictCom>()->cDict;
 		auto lightCommon = lightObject.component<LightCommon>();
 		shader.set1f("light.intensity", lightCommon->intensity);
 		shader.set1i("light.shadowType", static_cast<int>(lightCommon->shadowType));
@@ -405,8 +403,8 @@ namespace renderer {
 			shader.set1f("light.outerCutOff", cos(lightCom->outerCutOff.radian));
 		}
 		std::string depthBufName = "lightDepth" + std::to_string(lightObject.ID());
-		if (colorBufferCom->dict.find(depthBufName) != colorBufferCom->dict.end()) {
-			ColorBufferRef& shadowBuf = colorBufferCom->dict[depthBufName];
+		if (cDict.find(depthBufName) != cDict.end()) {
+			ColorBufferRef& shadowBuf = cDict[depthBufName];
 			if (shadowBuf.depthTex.type == TexType::CubeMap){
 				m_evtMgr->emit<ActiveTextureByIDEvent>(shader, "depthCubeMap", 4, shadowBuf.depthTex);
 			}
@@ -449,8 +447,8 @@ namespace renderer {
 	}
    
 	void RenderSystem::smaaPass(std::string inputBuffer, std::string outputBuffer) {
-		auto colorBufferCom = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
-		ColorBufferRef& inputBuf = colorBufferCom->dict[inputBuffer];
+		ColorBufferDict& cDict = m_objMgr->getSingletonComponent<AllBufferDictCom>()->cDict;
+		ColorBufferRef& inputBuf = cDict[inputBuffer];
 		{
 			// debug edge detect
 			m_evtMgr->emit<UseColorBufferEvent>("edge");
@@ -489,7 +487,7 @@ namespace renderer {
 			Shader smaaWeight = getShader("smaaWeight");
 			smaaWeight.use();
 			smaaWeight.set2f("imgSize", inputBuf.width, inputBuf.height);
-			ColorBufferRef& edgeBuf = colorBufferCom->dict["edge"];
+			ColorBufferRef& edgeBuf = cDict["edge"];
 			clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
 				GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 			m_evtMgr->emit<ActiveTextureByIDEvent>(smaaWeight, "edgesTex", 0, edgeBuf.tex);
@@ -503,8 +501,8 @@ namespace renderer {
 			Shader smaaBlending = getShader("smaaBlending");
 			smaaBlending.use();
 			smaaBlending.set2f("imgSize", inputBuf.width, inputBuf.height);
-			ColorBufferRef& weightBuf = colorBufferCom->dict["weight"];
-			ColorBufferRef& sceneBuf = colorBufferCom->dict[inputBuffer];
+			ColorBufferRef& weightBuf = cDict["weight"];
+			ColorBufferRef& sceneBuf = cDict[inputBuffer];
 			m_evtMgr->emit<ActiveTextureByIDEvent>(smaaBlending, "colorTex", 0, sceneBuf.tex);
 			m_evtMgr->emit<ActiveTextureByIDEvent>(smaaBlending, "blendTex", 1, weightBuf.tex);
 			clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
@@ -527,22 +525,22 @@ namespace renderer {
 	}
 
     void RenderSystem::renderColorBuffer(std::string colorBufferAliasName, size_t winWidth, size_t winHeight, bool noGamma, bool noToneMapping) {
-        auto colorBufferCom = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
-        ColorBufferRef& buf = colorBufferCom->dict[colorBufferAliasName];
+		ColorBufferDict& cDict = m_objMgr->getSingletonComponent<AllBufferDictCom>()->cDict;
+        ColorBufferRef& buf = cDict[colorBufferAliasName];
         renderTex(buf.tex, winWidth, winHeight, noGamma, noToneMapping);
     }
 
 	void RenderSystem::renderDepthBuffer(std::string colorBufferAliasName, size_t winWidth, size_t winHeight, bool noGamma, bool noToneMapping) {
-		auto colorBufferCom = m_objMgr->getSingletonComponent<ColorBufferDictCom>();
-		ColorBufferRef& buf = colorBufferCom->dict[colorBufferAliasName];
+		ColorBufferDict& cDict = m_objMgr->getSingletonComponent<AllBufferDictCom>()->cDict;
+		ColorBufferRef& buf = cDict[colorBufferAliasName];
 		renderTex(buf.depthTex, winWidth, winHeight, noGamma, noToneMapping);
 	}
 
     void RenderSystem::renderGBufferDebug(std::string gBufferAliasName, size_t winWidth, size_t winHeight) {
         Shader shader = getShader("screen");
         shader.use();
-        auto gBufferCom = m_objMgr->getSingletonComponent<GBufferDictCom>();
-        GBufferRef& buf = gBufferCom->dict[gBufferAliasName];
+		GBufferDict& gDict = m_objMgr->getSingletonComponent<AllBufferDictCom>()->gDict;
+        GBufferRef& buf = gDict[gBufferAliasName];
         
         clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
                   GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
