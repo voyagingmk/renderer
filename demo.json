@@ -328,7 +328,7 @@
     ],
     "animations": [
         { 
-            "name": "test",
+            "name": "test0",
             "mesh": "testman_mesh.ozz",
             "skeleton": "testman_skeleton.ozz",
             "aniDict": [
@@ -336,11 +336,24 @@
                     "name": "run",
                     "file": "testman_animation.ozz"
                 }
-            ]
+            ],
+            "material": "tt"
+        },
+        { 
+            "name": "test",
+            "mesh": "tt_mesh.ozz",
+            "skeleton": "tt_skeleton.ozz",
+            "aniDict": [
+                { 
+                    "name": "run",
+                    "file": "tt_animation.ozz"
+                }
+            ],
+            "material": "tt"
         }
     ],
     "sceneRoot": {  
-        "model": "testman_mesh.ozz",
+        "model": "tt_mesh.ozz",
         "spatial": [
             [0, 0, 0],
             [1, 1, 1],
@@ -389,22 +402,13 @@
     ],
     "material": [
         {
-            "alias": "room",
-            "type": "PBR",
-            "albedo": [255, 255, 255],
-            "ao": 1.0,
-            "roughness": 0.7,
-            "metallic": 0.99,
-            "shaderName": "pbr"
-        },
-        {
-            "alias": "teapot",
+            "alias": "tt",
             "type": "PBR",
             "albedo": [255, 255, 255],
             "ao": 1.0,
             "roughness": 0.5,
             "metallic": 0.5,
-            "shaderName": "pbr"
+            "textures": ["tt.png"]
         }
     ]
 }

@@ -4,6 +4,7 @@
 #include "base.hpp"
 #include "ecs/ecs.hpp"
 #include "com/animation.hpp"
+#include "com/mesh.hpp"
 #include "event/miscEvent.hpp"
 
 
@@ -29,7 +30,7 @@ namespace renderer {
         
         bool InitPostureRendering();
 
-        bool DrawSkinnedMesh(const ozz::sample::Mesh& mesh, const ozz::Range<ozz::math::Float4x4> skinning_matrices,
+        bool DrawSkinnedMesh(const OzzMesh& mesh, const ozz::Range<ozz::math::Float4x4> skinning_matrices,
                                               Object obj);
         
         bool DrawPosture(const ozz::animation::Skeleton& skeleton,
@@ -54,7 +55,7 @@ namespace renderer {
         
         bool LoadAnimation(const char* _filename, ozz::animation::Animation* _animation);
         
-        bool LoadMesh(const char* _filename, ozz::sample::Mesh* _mesh);
+        bool LoadMesh(const char* _filename, OzzMesh* _mesh);
         
         void DoSamplingJob(float time, ozz::animation::SamplingCache* cache, ozz::animation::Animation* animation,  ozz::Range<ozz::math::SoaTransform> locals);
         
@@ -62,7 +63,7 @@ namespace renderer {
                                ozz::Range<ozz::math::SoaTransform> locals,
                                ozz::Range<ozz::math::Float4x4> models);
         
-        bool DoSkinningJob(const ozz::sample::Mesh& mesh, const ozz::Range<ozz::math::Float4x4> skinning_matrices, void* &vbo_map,
+        bool DoSkinningJob(const OzzMesh& mesh, const ozz::Range<ozz::math::Float4x4> skinning_matrices, void* &vbo_map,
                            GLsizei &vbo_size);
     };
     

@@ -5,7 +5,7 @@
 #include "bbox.hpp"
 #include "vertex.hpp"
 #include "materialCom.hpp"
-
+#include "ozz/ozz.h"
 
 namespace renderer {
   	/*
@@ -117,6 +117,16 @@ namespace renderer {
             std::vector<SubMesh> meshes;
 			std::vector<MaterialSettingID> settingIDs;
 			BBox bbox;
+    };
+    
+    
+    class OzzMesh: public ozz::sample::Mesh {
+    public:
+        BBox Bound() {
+            return bbox;
+        }
+        std::vector<MaterialSettingID> settingIDs;
+        BBox bbox;
     };
 
 	// 场景可渲染物体，必须加MeshRef

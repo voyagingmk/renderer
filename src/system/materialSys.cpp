@@ -10,7 +10,7 @@ namespace renderer {
 
 	void MaterialSystem::init(ObjectManager &objMgr, EventManager &evtMgr) {
 		evtMgr.on<LoadAiMaterialEvent>(*this);
-        // evtMgr.on<LoadMaterialEvent>(*this);
+        evtMgr.on<LoadMaterialEvent>(*this);
 		evtMgr.on<ActiveMaterialEvent>(*this);
 		evtMgr.on<DeactiveMaterialEvent>(*this);
     }
@@ -79,6 +79,7 @@ namespace renderer {
         auto com = m_objMgr->getSingletonComponent<MaterialSet>();
 		MaterialSettingID id = com->newSettingID();
         MaterialSettingBase* setting;
+        /*
         if (evt.matInfo["type"] == "Phong") {
             setting = new MaterialPhongSettingCom(evt.matInfo["shaderName"],
                 parseColor(evt.matInfo["ambient"]),
@@ -87,10 +88,11 @@ namespace renderer {
                 evt.matInfo["shininess"],
                 evt.matInfo["reflectiveness"]);
         } else if (evt.matInfo["type"] == "PBR") {
-            setting = new MaterialPBRSettingCom(evt.matInfo["shaderName"],
+        */
+        setting = new MaterialPBRSettingCom("",
                 evt.matInfo["roughness"],
                 evt.matInfo["metallic"]);
-        }
+        
         com->settingDict.insert({ id, setting });
 		com->alias2id.insert({ evt.matInfo["alias"], id });
 		for (std::string tex : evt.matInfo["textures"]) {

@@ -2,8 +2,10 @@
 #define RENDERER_ANIMATION_HPP
 
 #include "ozz/ozz.h"
+#include "com/mesh.hpp"
 #include <map>
 
+namespace renderer {
 
 typedef size_t AnimationDataID;
 
@@ -11,7 +13,7 @@ typedef size_t AnimationDataID;
 class AnimationData {
  public:
     AnimationData() {}
-    ozz::sample::Mesh mesh;
+    OzzMesh mesh;
     ozz::animation::Skeleton skeleton;
     std::map<std::string, ozz::animation::Animation> aniDict;
     ozz::animation::Animation* GetAnimation(std::string aniName) {
@@ -90,4 +92,5 @@ public:
     std::string curAniName = "";
 };
 
+}
 #endif

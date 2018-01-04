@@ -91,7 +91,7 @@ namespace renderer {
         for (const Object obj : m_objMgr->entities<AnimationCom>()) {
             auto com = obj.component<AnimationCom>();
             AnimationData& data = dataSet->getAnimationData(com->aniDataID);
-            DrawPosture(data.skeleton, com->models, obj);
+            // DrawPosture(data.skeleton, com->models, obj);
            
             assert(com->models.Count() == com->skinning_matrices.Count() &&
                    com->models.Count() == data.mesh.inverse_bind_poses.size());
@@ -149,6 +149,13 @@ namespace renderer {
                     LoadAnimation(assetsDir, aniDataName, aniAliasName, aniFileName);
                 }
             }
+            if (!aniDataInfo["material"].is_null()) {
+                auto com = m_objMgr->getSingletonComponent<AnimationDataSet>();
+                AnimationData& aniData = com->getAnimationData(aniDataName);
+                auto matSet = m_objMgr->getSingletonComponent<MaterialSet>();
+                aniData.mesh.settingIDs.push_back(matSet->alias2id[aniDataInfo["material"]]);
+                
+            }
         }
         return true;
     }
@@ -196,7 +203,7 @@ namespace renderer {
         return true;
     }
     
-    bool AnimationSystem::DoSkinningJob(const ozz::sample::Mesh& mesh,
+    bool AnimationSystem::DoSkinningJob(const OzzMesh& mesh,
              const ozz::Range<ozz::math::Float4x4> skinning_matrices,
              void* &vbo_map,
              GLsizei &vbo_size) {
@@ -220,7 +227,7 @@ namespace renderer {
         // Runs a skinning job per mesh part. Triangle indices are shared
         // across parts.
         for (size_t i = 0; i < mesh.parts.size(); ++i) {
-            const ozz::sample::Mesh::Part& part = mesh.parts[i];
+            const OzzMesh::Part& part = mesh.parts[i];
             
             // Skip this iteration if no vertex.
             const size_t part_vertex_count = part.positions.size() / 3;
@@ -255,7 +262,7 @@ namespace renderer {
             // Setup input positions, coming from the loaded mesh.
             skinning_job.in_positions = make_range(part.positions);
             skinning_job.in_positions_stride =
-            sizeof(float) * ozz::sample::Mesh::Part::kPositionsCpnts;
+            sizeof(float) * OzzMesh::Part::kPositionsCpnts;
             
             // Setup output positions, coming from the rendering output mesh buffers.
             // We need to offset the buffer every loop.
@@ -271,12 +278,12 @@ namespace renderer {
             const float* out_normal_end = ozz::PointerStride(
                 out_normal_begin, part_vertex_count * normals_stride);
             
-            if (part.normals.size() / ozz::sample::Mesh::Part::kNormalsCpnts ==
+            if (part.normals.size() / OzzMesh::Part::kNormalsCpnts ==
                 part_vertex_count) {
                 // Setup input normals, coming from the loaded mesh.
                 skinning_job.in_normals = make_range(part.normals);
                 skinning_job.in_normals_stride =
-                sizeof(float) * ozz::sample::Mesh::Part::kNormalsCpnts;
+                sizeof(float) * OzzMesh::Part::kNormalsCpnts;
                 
                 // Setup output normals, coming from the rendering output mesh buffers.
                 // We need to offset the buffer every loop.
@@ -299,12 +306,12 @@ namespace renderer {
             const float* out_tangent_end = ozz::PointerStride(
                 out_tangent_begin, part_vertex_count * tangents_stride);
             
-            if (part.tangents.size() / ozz::sample::Mesh::Part::kTangentsCpnts ==
+            if (part.tangents.size() / OzzMesh::Part::kTangentsCpnts ==
                 part_vertex_count) {
                 // Setup input tangents, coming from the loaded mesh.
                 skinning_job.in_tangents = make_range(part.tangents);
                 skinning_job.in_tangents_stride =
-                sizeof(float) * ozz::sample::Mesh::Part::kTangentsCpnts;
+                sizeof(float) * OzzMesh::Part::kTangentsCpnts;
                 
                 // Setup output tangents, coming from the rendering output mesh buffers.
                 // We need to offset the buffer every loop.
@@ -327,7 +334,7 @@ namespace renderer {
             }
         
             const size_t part_uvs_count =
-            part.uvs.size() / ozz::sample::Mesh::Part::kUVsCpnts;
+            part.uvs.size() / OzzMesh::Part::kUVsCpnts;
             if (part_vertex_count == part_uvs_count) {
                 float* out_uv_begin = reinterpret_cast<float*>(ozz::PointerStride(
                     vbo_map, uvs_offset + processed_vertex_count * uvs_stride));
@@ -346,7 +353,7 @@ namespace renderer {
         return true;
     }
     
-    bool AnimationSystem::DrawSkinnedMesh(const ozz::sample::Mesh& mesh, const ozz::Range<ozz::math::Float4x4> skinning_matrices, Object obj) {
+    bool AnimationSystem::DrawSkinnedMesh(const OzzMesh& mesh, const ozz::Range<ozz::math::Float4x4> skinning_matrices, Object obj) {
         auto spatialData = obj.component<SpatialData>();
         const Matrix4x4& modelMat = spatialData->o2w.GetMatrix();
         auto spSetCom = m_objMgr->getSingletonComponent<ShaderProgramSet>();
@@ -367,14 +374,14 @@ namespace renderer {
         m_evtMgr->emit<UploadCameraToShaderEvent>(objCamera, shader);
         shader.setMatrix4f("modelMat", modelMat);
 
-        const ozz::sample::Mesh::TriangleIndices& indices = mesh.triangle_indices;
+        const OzzMesh::TriangleIndices& indices = mesh.triangle_indices;
         
         m_evtMgr->emit<CreateDynamicMeshBufferEvent>("skinned");
         m_evtMgr->emit<BindDynamicMeshBufferEvent>("skinned");
-        m_evtMgr->emit<UpdateDynamicMeshBufferEvent>("skinned", vbo_size, vbo_map, indices.size() * sizeof(ozz::sample::Mesh::TriangleIndices::value_type), array_begin(indices));
+        m_evtMgr->emit<UpdateDynamicMeshBufferEvent>("skinned", vbo_size, vbo_map, indices.size() * sizeof(OzzMesh::TriangleIndices::value_type), array_begin(indices));
         
         // Draws the mesh.
-        OZZ_STATIC_ASSERT(sizeof(ozz::sample::Mesh::TriangleIndices::value_type) == 2);
+        OZZ_STATIC_ASSERT(sizeof(OzzMesh::TriangleIndices::value_type) == 2);
         glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()),
                        GL_UNSIGNED_SHORT, 0);
         
@@ -641,7 +648,8 @@ namespace renderer {
         return true;
     }
     
-    bool AnimationSystem::LoadMesh(const char* _filename, ozz::sample::Mesh* mesh) {
+    bool AnimationSystem::LoadMesh(const char* _filename, OzzMesh* ozzMesh) {
+        ozz::sample::Mesh* mesh = ozzMesh;
         assert(_filename && mesh);
         ozz::log::Out() << "Loading mesh archive: " << _filename << "." << std::endl;
         ozz::io::File file(_filename, "rb");
