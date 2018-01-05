@@ -8,6 +8,7 @@
 #include "utils/helper.hpp"
 #include "event/bufferEvent.hpp"
 #include "event/shaderEvent.hpp"
+#include "event/materialEvent.hpp"
 #include "event/miscEvent.hpp"
 #include "utils/glutils.hpp"
 
@@ -369,6 +370,9 @@ namespace renderer {
         if (!DoSkinningJob(mesh, skinning_matrices, vbo_map, vbo_size)) {
             return false;
         }
+        
+        auto settingID = mesh.settingIDs[0];
+        m_evtMgr->emit<ActiveMaterialEvent>(settingID, shader);
         
         Object objCamera = m_objMgr->getSingletonComponent<PerspectiveCameraView>().object();
         m_evtMgr->emit<UploadCameraToShaderEvent>(objCamera, shader);

@@ -96,7 +96,7 @@ namespace renderer {
         com->settingDict.insert({ id, setting });
 		com->alias2id.insert({ evt.matInfo["alias"], id });
 		for (std::string tex : evt.matInfo["textures"]) {
-			setting->texList.insert({ std::string("default"), tex });
+			setting->texList.insert({ std::string("albedoMap"), tex });
 		}
     }
 

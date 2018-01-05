@@ -12,10 +12,14 @@ vec4 GetAmbient(vec3 _world_normal) {
 }
 
 in vec3 v_world_normal;
+in vec2 TexCoord;
 
 out vec4 FragColor;
 
+uniform sampler2D albedoMap;
+
 void main() {
+    vec3 albedo = texture(albedoMap, TexCoord).rgb;
     vec4 ambient = GetAmbient(v_world_normal);
-    FragColor = ambient;
+    FragColor = vec4(albedo, 1.0);
 }

@@ -174,8 +174,13 @@
             "file": "msdf.png",
             "toLinear": true,
             "channels": 3
+        },
+        {
+            "alias": "tt",
+            "file": "tt.png",
+            "toLinear": true,
+            "channels": 4
         }
-        
     ],
     "light": [
         {
@@ -408,7 +413,7 @@
             "ao": 1.0,
             "roughness": 0.5,
             "metallic": 0.5,
-            "textures": ["tt.png"]
+            "textures": ["tt"]
         }
     ]
 }

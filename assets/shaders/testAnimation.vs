@@ -15,6 +15,8 @@ uniform mat4 PV;
 
 out vec3 v_world_normal;
 
+out vec2 TexCoord;
+
 void main() {
     mat4 world_matrix = GetWorldMatrix();
     vec4 vertex = vec4(position.xyz, 1.);
@@ -26,4 +28,5 @@ void main() {
     float invdet = 1.0 / dot(cross_matrix[2], world_matrix[2].xyz);
     mat3 normal_matrix = cross_matrix * invdet;
     v_world_normal = normal_matrix * normal;
+    TexCoord = texCoord;
 }
