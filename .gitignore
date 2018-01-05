@@ -31,3 +31,7 @@ SDL2.dll
 *.cap
 vs_build/CMakeFiles/
 assets/animation
+mac_build/renderer.build
+mac_build/CMakeFiles
+mac_build/CMakeScripts
+CMakeCache.txt

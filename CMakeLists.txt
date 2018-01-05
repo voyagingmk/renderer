@@ -27,6 +27,7 @@ include_directories("${PROJECT_SOURCE_DIR}")
 include_directories("${PROJECT_SOURCE_DIR}/external")
 include_directories("${PROJECT_SOURCE_DIR}/external/SOIL")
 include_directories("${PROJECT_SOURCE_DIR}/external/SDL")
+include_directories("${PROJECT_SOURCE_DIR}/external/reactphysics3d")
 
 include_directories("${PROJECT_SOURCE_DIR}/include")
 include_directories("${PROJECT_SOURCE_DIR}/include/realtime")
