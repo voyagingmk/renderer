@@ -9,34 +9,34 @@
 /* Begin PBXAggregateTarget section */
 		511F220EEC2043DEA74E4508 /* install */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = 3E7B8C5440244300A23E7695 /* Build configuration list for PBXAggregateTarget "install" */;
+			buildConfigurationList = 150400DA6A04473E98823B39 /* Build configuration list for PBXAggregateTarget "install" */;
 			buildPhases = (
-				DAD25F33282D4657BBD28597 /* CMake PostBuild Rules */,
+				DAD5CE8D8C4C4F04A0808F57 /* CMake PostBuild Rules */,
 			);
 			dependencies = (
-				03F843678DD440F48E91F2DD /* PBXTargetDependency */,
+				CF32831FA6DC4442BB63DA96 /* PBXTargetDependency */,
 			);
 			name = install;
 			productName = install;
 		};
 		E3BF0868E7044AD3B1A7FC01 /* ALL_BUILD */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = BC97F3B99B4243F89959272B /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */;
+			buildConfigurationList = 3CADFEBA04964DAB888C8922 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */;
 			buildPhases = (
-				91859BEBE0184D20AAF52A37 /* CMake Rules */,
+				3846ACD6C3E24D099E1CF085 /* CMake Rules */,
 			);
 			dependencies = (
-				AEFFD627AEB4465F8253E0A4 /* PBXTargetDependency */,
-				DE07B66E59394EEA9698F5B6 /* PBXTargetDependency */,
+				A5E6DA080AB8474B9923F40D /* PBXTargetDependency */,
+				2D030B1D465F4FD583B25028 /* PBXTargetDependency */,
 			);
 			name = ALL_BUILD;
 			productName = ALL_BUILD;
 		};
 		FF26E37ED56C4ABD880E623F /* ZERO_CHECK */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = 489F86D17ACF4511A5212147 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */;
+			buildConfigurationList = D1C7E5968AD74663A4C015A1 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */;
 			buildPhases = (
-				075E6833576D4ABEA420ADB5 /* CMake Rules */,
+				CF76F2A64FA1410CB812BAFE /* CMake Rules */,
 			);
 			dependencies = (
 			);
@@ -46,257 +46,953 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		07F6BB1EBEBE424AA0B7C1EF /* /Users/wyman/github/renderer/src/com/ray.cpp */ = {isa = PBXBuildFile; fileRef = 2B87329BED544A519C88FAD7 /* /Users/wyman/github/renderer/src/com/ray.cpp */; };
-		1423B6DA3186420295E233CF /* /Users/wyman/github/renderer/src/system/renderSys.cpp */ = {isa = PBXBuildFile; fileRef = 0A93C93D626F4E8E94A09ABA /* /Users/wyman/github/renderer/src/system/renderSys.cpp */; };
-		14CF0B49186D4EABA56CBFBB /* /Users/wyman/github/renderer/src/utils/parallel.cpp */ = {isa = PBXBuildFile; fileRef = 69C6EE90FCCD435B99457161 /* /Users/wyman/github/renderer/src/utils/parallel.cpp */; };
-		1BA913A4BE1F473CA2017897 /* /Users/wyman/github/renderer/src/system/uiSys.cpp */ = {isa = PBXBuildFile; fileRef = 19F6736D856F4603BF7B35E1 /* /Users/wyman/github/renderer/src/system/uiSys.cpp */; };
-		2029A6B007084982BE135281 /* /Users/wyman/github/renderer/src/system/animationSys.cpp */ = {isa = PBXBuildFile; fileRef = E9138291135E4E7BBE96F558 /* /Users/wyman/github/renderer/src/system/animationSys.cpp */; };
-		2503674FE060421D90E53951 /* /Users/wyman/github/renderer/src/com/bbox.cpp */ = {isa = PBXBuildFile; fileRef = EA7CCE5970C947D8934298DD /* /Users/wyman/github/renderer/src/com/bbox.cpp */; };
-		281F26FBFC914908B2337080 /* /Users/wyman/github/renderer/src/system/bufferSys.cpp */ = {isa = PBXBuildFile; fileRef = B681AD83F1A34473925881CB /* /Users/wyman/github/renderer/src/system/bufferSys.cpp */; };
-		2B614BFDB94842678B336805 /* /Users/wyman/github/renderer/src/com/camera.cpp */ = {isa = PBXBuildFile; fileRef = 7635B7905EAD4632938A335B /* /Users/wyman/github/renderer/src/com/camera.cpp */; };
-		330114B6B5584ED69B023FAA /* /Users/wyman/github/renderer/src/film.cpp */ = {isa = PBXBuildFile; fileRef = 6099EDE5B5814628BD07ED0F /* /Users/wyman/github/renderer/src/film.cpp */; };
-		42C57783DFBE4D87AB1E95DD /* /Users/wyman/github/renderer/src/system/spatialSys.cpp */ = {isa = PBXBuildFile; fileRef = B96CBA3FDC854D5F98AFD7B8 /* /Users/wyman/github/renderer/src/system/spatialSys.cpp */; };
-		4E5810A065504CE9A3DC9516 /* /Users/wyman/github/renderer/src/system/configSys.cpp */ = {isa = PBXBuildFile; fileRef = A476F186608A4CA3A8A3CE04 /* /Users/wyman/github/renderer/src/system/configSys.cpp */; };
-		5316B49660B34A3C8046DEF5 /* /Users/wyman/github/renderer/src/system/physicsSys.cpp */ = {isa = PBXBuildFile; fileRef = D75EEBB17EA243478ADA8BFD /* /Users/wyman/github/renderer/src/system/physicsSys.cpp */; };
-		57BF9112E9DE40E88D10CF10 /* /Users/wyman/github/renderer/src/system/textureSys.cpp */ = {isa = PBXBuildFile; fileRef = F2CE2F2E5812457DACC49341 /* /Users/wyman/github/renderer/src/system/textureSys.cpp */; };
-		68289687247C4D6EA368D9EF /* /Users/wyman/github/renderer/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 46670BBBA6FD4B8CB648D005 /* /Users/wyman/github/renderer/CMakeLists.txt */; };
-		6A28568E1036458CB353FE54 /* /Users/wyman/github/renderer/src/system/loaderSys.cpp */ = {isa = PBXBuildFile; fileRef = 0FF0E80CD05240BFA723855A /* /Users/wyman/github/renderer/src/system/loaderSys.cpp */; };
-		6F830E1C70294F719C3BA0CD /* /Users/wyman/github/renderer/src/system/cameraSys.cpp */ = {isa = PBXBuildFile; fileRef = 4E4C912EB34145699A9453E9 /* /Users/wyman/github/renderer/src/system/cameraSys.cpp */; };
-		76FB9D7201014DA4BF11CEF9 /* /Users/wyman/github/renderer/src/system/envSys.cpp */ = {isa = PBXBuildFile; fileRef = 1E5CBBC4BE5C4CD086ED2D6C /* /Users/wyman/github/renderer/src/system/envSys.cpp */; };
-		8194BBE625C54CA996833916 /* /Users/wyman/github/renderer/src/system/shaderSys.cpp */ = {isa = PBXBuildFile; fileRef = 9EEA79F217994AA58133D10F /* /Users/wyman/github/renderer/src/system/shaderSys.cpp */; };
-		8AC6D8F7ED9A49C4AF541F19 /* /Users/wyman/github/renderer/src/com/geometry.cpp */ = {isa = PBXBuildFile; fileRef = 067BAE428352427D963254CB /* /Users/wyman/github/renderer/src/com/geometry.cpp */; };
-		8CECFE905DFC4CDC8FCA2B9A /* /Users/wyman/github/renderer/src/system/statSys.cpp */ = {isa = PBXBuildFile; fileRef = C59CB3F6A809487988024D8C /* /Users/wyman/github/renderer/src/system/statSys.cpp */; };
-		96FF31519B7741B9B0CCCD5B /* /Users/wyman/github/renderer/src/com/intersect_result.cpp */ = {isa = PBXBuildFile; fileRef = 46F116648D3744D6BDAC47C8 /* /Users/wyman/github/renderer/src/com/intersect_result.cpp */; };
-		991BE845E50740C489379E2F /* /Users/wyman/github/renderer/src/system/kdtreeSys.cpp */ = {isa = PBXBuildFile; fileRef = DDC4A8A321E542C3BBA04F23 /* /Users/wyman/github/renderer/src/system/kdtreeSys.cpp */; };
-		9C0D64722E6D474BB44D5F01 /* /Users/wyman/github/renderer/src/utils/memory.cpp */ = {isa = PBXBuildFile; fileRef = 94BB5EC1771F4B9693F38BB5 /* /Users/wyman/github/renderer/src/utils/memory.cpp */; };
-		9F16EBDA8FC04601ABFE157F /* /Users/wyman/github/renderer/external/GL/gl3w.c */ = {isa = PBXBuildFile; fileRef = 411B56A9BAE74A928458AA58 /* /Users/wyman/github/renderer/external/GL/gl3w.c */; };
-		A0357C28AF004CBDAD6C9C4B /* /Users/wyman/github/renderer/src/system/materialSys.cpp */ = {isa = PBXBuildFile; fileRef = C54F9ABECCEE4C0C976904ED /* /Users/wyman/github/renderer/src/system/materialSys.cpp */; };
-		BCA09E787E644A77A80205C7 /* /Users/wyman/github/renderer/src/main.cpp */ = {isa = PBXBuildFile; fileRef = 8D3728543375453FAAD86E25 /* /Users/wyman/github/renderer/src/main.cpp */; };
-		C0EE9EAA262249BF95B356BC /* /Users/wyman/github/renderer/src/utils/profiler.cpp */ = {isa = PBXBuildFile; fileRef = 5350788746764941B7163C7A /* /Users/wyman/github/renderer/src/utils/profiler.cpp */; };
-		C48D20BE616B45F9A75498C2 /* /Users/wyman/github/renderer/src/system/sceneGraphSys.cpp */ = {isa = PBXBuildFile; fileRef = 2DBFE22646E74497B8931143 /* /Users/wyman/github/renderer/src/system/sceneGraphSys.cpp */; };
-		CB75D34A90484C80AB64032D /* /Users/wyman/github/renderer/src/com/color.cpp */ = {isa = PBXBuildFile; fileRef = 2671404D3CEA455D9A0F3AB8 /* /Users/wyman/github/renderer/src/com/color.cpp */; };
-		CE2B17D7AAC44290BE78CDFF /* /Users/wyman/github/renderer/src/system/batchSys.cpp */ = {isa = PBXBuildFile; fileRef = C3FD0743751C46C49B2F1F59 /* /Users/wyman/github/renderer/src/system/batchSys.cpp */; };
-		DC607543697544F8B3DE6D44 /* /Users/wyman/github/renderer/src/utils/defines.cpp */ = {isa = PBXBuildFile; fileRef = B1CACBCDCD634E6B984DB2BE /* /Users/wyman/github/renderer/src/utils/defines.cpp */; };
-		E788B51E9D7642FBB6F8670A /* /Users/wyman/github/renderer/src/system/bvhSys.cpp */ = {isa = PBXBuildFile; fileRef = 4ECD9DB6A8D04DF88FC65787 /* /Users/wyman/github/renderer/src/system/bvhSys.cpp */; };
-		ECF29A1FD55443C89947BAED /* /Users/wyman/github/renderer */ = {isa = PBXBuildFile; fileRef = 15A6AC0306DB49789551FB1C /* /Users/wyman/github/renderer */; };
-		EE8086CE9580423A9A267E3E /* /Users/wyman/github/renderer/src/system/lightSys.cpp */ = {isa = PBXBuildFile; fileRef = 6E59F252C4274339992FC1E7 /* /Users/wyman/github/renderer/src/system/lightSys.cpp */; };
-		F0433E835F7544DBBDA3610F /* /Users/wyman/github/renderer/src/main_ecs.cpp */ = {isa = PBXBuildFile; fileRef = 1458113ED587415B8691EB78 /* /Users/wyman/github/renderer/src/main_ecs.cpp */; };
-		F2438E17DAE4408D8E58CFAF /* /Users/wyman/github/renderer/src/com/transform.cpp */ = {isa = PBXBuildFile; fileRef = C8898A96ABA746E3A4CA644F /* /Users/wyman/github/renderer/src/com/transform.cpp */; };
-		F4E9EA1496B44313B1A2D3DB /* /Users/wyman/github/renderer/src/com/matrix.cpp */ = {isa = PBXBuildFile; fileRef = F3F1FD55011A4CC086F3B92D /* /Users/wyman/github/renderer/src/com/matrix.cpp */; };
-		F532E4B470F74C7398FCF57B /* /Users/wyman/github/renderer/src/com/shaderCom.cpp */ = {isa = PBXBuildFile; fileRef = 04ED56CD2728447FB5C3E5E0 /* /Users/wyman/github/renderer/src/com/shaderCom.cpp */; };
-		FB56BA05C2E941A6A5A99009 /* /Users/wyman/github/renderer/src/system/motionSys.cpp */ = {isa = PBXBuildFile; fileRef = 12BADF3FD8AD460AB6FF6C27 /* /Users/wyman/github/renderer/src/system/motionSys.cpp */; };
+		3C5B04777A344A6CB1A62C97 /* gl3w.c in Sources */ = {isa = PBXBuildFile; fileRef = CD768ED31C904300A83FBFDB /* gl3w.c */; };
+		99E0F5B435FB47B781F961CD /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07AB1A1749FF4087B64C7065 /* main.cpp */; };
+		CFB4C4EDF2E94272AB7A81A7 /* film.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6C04C8A0C13446494538FC0 /* film.cpp */; };
+		F5058AE31FE78C9A00DC3A9F /* batchSys.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5058AE21FE78C9A00DC3A9F /* batchSys.cpp */; };
+		F5058AE51FE78CA000DC3A9F /* bvhSys.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5058AE41FE78C9F00DC3A9F /* bvhSys.cpp */; };
+		F5058AE71FE78CA500DC3A9F /* sceneGraphSys.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5058AE61FE78CA500DC3A9F /* sceneGraphSys.cpp */; };
+		F520C4FA1F6F781A000B6E54 /* bufferSys.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F520C4F91F6F781A000B6E54 /* bufferSys.cpp */; };
+		F520C4FC1F6F7822000B6E54 /* cameraSys.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F520C4FB1F6F7822000B6E54 /* cameraSys.cpp */; };
+		F520C4FE1F6F7828000B6E54 /* configSys.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F520C4FD1F6F7828000B6E54 /* configSys.cpp */; };
+		F5435C511FFF4E1C004A1A01 /* RigidBody.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435BC71FFF4E1C004A1A01 /* RigidBody.cpp */; };
+		F5435C521FFF4E1C004A1A01 /* CollisionBody.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435BC91FFF4E1C004A1A01 /* CollisionBody.cpp */; };
+		F5435C531FFF4E1C004A1A01 /* Body.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435BCA1FFF4E1C004A1A01 /* Body.cpp */; };
+		F5435C541FFF4E1C004A1A01 /* mathematics_functions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435BD01FFF4E1C004A1A01 /* mathematics_functions.cpp */; };
+		F5435C551FFF4E1C004A1A01 /* Vector3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435BD11FFF4E1C004A1A01 /* Vector3.cpp */; };
+		F5435C561FFF4E1C004A1A01 /* Matrix2x2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435BD31FFF4E1C004A1A01 /* Matrix2x2.cpp */; };
+		F5435C571FFF4E1C004A1A01 /* Vector2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435BD41FFF4E1C004A1A01 /* Vector2.cpp */; };
+		F5435C581FFF4E1C004A1A01 /* Matrix3x3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435BD71FFF4E1C004A1A01 /* Matrix3x3.cpp */; };
+		F5435C591FFF4E1C004A1A01 /* Transform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435BD91FFF4E1C004A1A01 /* Transform.cpp */; };
+		F5435C5A1FFF4E1C004A1A01 /* Quaternion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435BDB1FFF4E1C004A1A01 /* Quaternion.cpp */; };
+		F5435C5B1FFF4E1C004A1A01 /* MemoryAllocator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435BE51FFF4E1C004A1A01 /* MemoryAllocator.cpp */; };
+		F5435C5C1FFF4E1C004A1A01 /* CollisionWorld.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435BE81FFF4E1C004A1A01 /* CollisionWorld.cpp */; };
+		F5435C5D1FFF4E1C004A1A01 /* Profiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435BEA1FFF4E1C004A1A01 /* Profiler.cpp */; };
+		F5435C5E1FFF4E1C004A1A01 /* Timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435BEE1FFF4E1C004A1A01 /* Timer.cpp */; };
+		F5435C5F1FFF4E1C004A1A01 /* DynamicsWorld.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435BF21FFF4E1C004A1A01 /* DynamicsWorld.cpp */; };
+		F5435C601FFF4E1C004A1A01 /* ConstraintSolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435BF31FFF4E1C004A1A01 /* ConstraintSolver.cpp */; };
+		F5435C611FFF4E1C004A1A01 /* ContactSolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435BF51FFF4E1C004A1A01 /* ContactSolver.cpp */; };
+		F5435C621FFF4E1C004A1A01 /* Island.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435BF61FFF4E1C004A1A01 /* Island.cpp */; };
+		F5435C631FFF4E1C004A1A01 /* OverlappingPair.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435BF71FFF4E1C004A1A01 /* OverlappingPair.cpp */; };
+		F5435C641FFF4E1C004A1A01 /* Material.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435BFA1FFF4E1C004A1A01 /* Material.cpp */; };
+		F5435C651FFF4E1C004A1A01 /* TriangleMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435BFD1FFF4E1C004A1A01 /* TriangleMesh.cpp */; };
+		F5435C661FFF4E1C004A1A01 /* TriangleVertexArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435C001FFF4E1C004A1A01 /* TriangleVertexArray.cpp */; };
+		F5435C671FFF4E1C004A1A01 /* CollisionDetection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435C011FFF4E1C004A1A01 /* CollisionDetection.cpp */; };
+		F5435C681FFF4E1C004A1A01 /* ConcaveShape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435C051FFF4E1C004A1A01 /* ConcaveShape.cpp */; };
+		F5435C691FFF4E1C004A1A01 /* TriangleShape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435C061FFF4E1C004A1A01 /* TriangleShape.cpp */; };
+		F5435C6A1FFF4E1C004A1A01 /* ConvexShape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435C0A1FFF4E1C004A1A01 /* ConvexShape.cpp */; };
+		F5435C6B1FFF4E1C004A1A01 /* CylinderShape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435C0B1FFF4E1C004A1A01 /* CylinderShape.cpp */; };
+		F5435C6C1FFF4E1C004A1A01 /* CollisionShape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435C0D1FFF4E1C004A1A01 /* CollisionShape.cpp */; };
+		F5435C6D1FFF4E1C004A1A01 /* AABB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435C0F1FFF4E1C004A1A01 /* AABB.cpp */; };
+		F5435C6E1FFF4E1C004A1A01 /* ConeShape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435C121FFF4E1C004A1A01 /* ConeShape.cpp */; };
+		F5435C6F1FFF4E1C004A1A01 /* ConvexMeshShape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435C131FFF4E1C004A1A01 /* ConvexMeshShape.cpp */; };
+		F5435C701FFF4E1C004A1A01 /* SphereShape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435C141FFF4E1C004A1A01 /* SphereShape.cpp */; };
+		F5435C711FFF4E1C004A1A01 /* ConcaveMeshShape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435C191FFF4E1C004A1A01 /* ConcaveMeshShape.cpp */; };
+		F5435C721FFF4E1C004A1A01 /* BoxShape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435C1A1FFF4E1C004A1A01 /* BoxShape.cpp */; };
+		F5435C731FFF4E1C004A1A01 /* CapsuleShape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435C1C1FFF4E1C004A1A01 /* CapsuleShape.cpp */; };
+		F5435C741FFF4E1C004A1A01 /* HeightFieldShape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435C1E1FFF4E1C004A1A01 /* HeightFieldShape.cpp */; };
+		F5435C751FFF4E1C004A1A01 /* ProxyShape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435C1F1FFF4E1C004A1A01 /* ProxyShape.cpp */; };
+		F5435C761FFF4E1C004A1A01 /* DynamicAABBTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435C221FFF4E1C004A1A01 /* DynamicAABBTree.cpp */; };
+		F5435C771FFF4E1C004A1A01 /* BroadPhaseAlgorithm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435C231FFF4E1C004A1A01 /* BroadPhaseAlgorithm.cpp */; };
+		F5435C781FFF4E1C004A1A01 /* ContactManifold.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435C261FFF4E1C004A1A01 /* ContactManifold.cpp */; };
+		F5435C791FFF4E1C004A1A01 /* ContactManifoldSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435C281FFF4E1C004A1A01 /* ContactManifoldSet.cpp */; };
+		F5435C7A1FFF4E1C004A1A01 /* RaycastInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435C291FFF4E1C004A1A01 /* RaycastInfo.cpp */; };
+		F5435C7B1FFF4E1C004A1A01 /* ConcaveVsConvexAlgorithm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435C2E1FFF4E1C004A1A01 /* ConcaveVsConvexAlgorithm.cpp */; };
+		F5435C7C1FFF4E1C004A1A01 /* Simplex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435C301FFF4E1C004A1A01 /* Simplex.cpp */; };
+		F5435C7D1FFF4E1C004A1A01 /* GJKAlgorithm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435C331FFF4E1C004A1A01 /* GJKAlgorithm.cpp */; };
+		F5435C7E1FFF4E1C004A1A01 /* NarrowPhaseAlgorithm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435C351FFF4E1C004A1A01 /* NarrowPhaseAlgorithm.cpp */; };
+		F5435C7F1FFF4E1C004A1A01 /* EdgeEPA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435C381FFF4E1C004A1A01 /* EdgeEPA.cpp */; };
+		F5435C801FFF4E1C004A1A01 /* EPAAlgorithm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435C391FFF4E1C004A1A01 /* EPAAlgorithm.cpp */; };
+		F5435C811FFF4E1C004A1A01 /* TriangleEPA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435C3C1FFF4E1C004A1A01 /* TriangleEPA.cpp */; };
+		F5435C821FFF4E1C004A1A01 /* TrianglesStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435C3E1FFF4E1C004A1A01 /* TrianglesStore.cpp */; };
+		F5435C831FFF4E1C004A1A01 /* SphereVsSphereAlgorithm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435C401FFF4E1C004A1A01 /* SphereVsSphereAlgorithm.cpp */; };
+		F5435C841FFF4E1C004A1A01 /* DefaultCollisionDispatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435C411FFF4E1C004A1A01 /* DefaultCollisionDispatch.cpp */; };
+		F5435C851FFF4E1C004A1A01 /* HingeJoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435C451FFF4E1C004A1A01 /* HingeJoint.cpp */; };
+		F5435C861FFF4E1C004A1A01 /* FixedJoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435C461FFF4E1C004A1A01 /* FixedJoint.cpp */; };
+		F5435C871FFF4E1C004A1A01 /* Joint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435C481FFF4E1C004A1A01 /* Joint.cpp */; };
+		F5435C881FFF4E1C004A1A01 /* ContactPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435C4B1FFF4E1C004A1A01 /* ContactPoint.cpp */; };
+		F5435C891FFF4E1C004A1A01 /* BallAndSocketJoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435C4D1FFF4E1C004A1A01 /* BallAndSocketJoint.cpp */; };
+		F5435C8A1FFF4E1C004A1A01 /* SliderJoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5435C501FFF4E1C004A1A01 /* SliderJoint.cpp */; };
+		F54806371FEC0073001A5B13 /* parallel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F54806351FEC0073001A5B13 /* parallel.cpp */; };
+		F54806381FEC0073001A5B13 /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F54806361FEC0073001A5B13 /* memory.cpp */; };
+		F548063A1FEC0083001A5B13 /* kdtreeSys.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F54806391FEC0083001A5B13 /* kdtreeSys.cpp */; };
+		F5484D4D1FF4C11B008850F7 /* ozz_options.cc in Sources */ = {isa = PBXBuildFile; fileRef = F5484D451FF4C11B008850F7 /* ozz_options.cc */; };
+		F5484D4E1FF4C11B008850F7 /* ozz_animation.cc in Sources */ = {isa = PBXBuildFile; fileRef = F5484D461FF4C11B008850F7 /* ozz_animation.cc */; };
+		F5484D4F1FF4C11B008850F7 /* ozz_geometry.cc in Sources */ = {isa = PBXBuildFile; fileRef = F5484D471FF4C11B008850F7 /* ozz_geometry.cc */; };
+		F5484D501FF4C11B008850F7 /* ozz_base.cc in Sources */ = {isa = PBXBuildFile; fileRef = F5484D481FF4C11B008850F7 /* ozz_base.cc */; };
+		F5484D551FF4C26E008850F7 /* animationSys.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5484D541FF4C26E008850F7 /* animationSys.cpp */; };
+		F54F3BAE1FC180AD00987986 /* matrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F54F3BAD1FC180AD00987986 /* matrix.cpp */; };
+		F55137CF1F664E4F0061DF99 /* shaderSys.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F55137CE1F664E4F0061DF99 /* shaderSys.cpp */; };
+		F55E2B2A1FF222BD008CF25D /* duktape.c in Sources */ = {isa = PBXBuildFile; fileRef = F55E2B291FF222BD008CF25D /* duktape.c */; };
+		F58A3DDA1F679AB40046A853 /* event.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F58A3DCE1F679AB40046A853 /* event.cpp */; };
+		F58A3DDC1F679AB40046A853 /* object.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F58A3DD31F679AB40046A853 /* object.cpp */; };
+		F58A3E021F67ADAE0046A853 /* materialSys.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F58A3E011F67ADAE0046A853 /* materialSys.cpp */; };
+		F58A3E061F67B5430046A853 /* spatialSys.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F58A3E051F67B5430046A853 /* spatialSys.cpp */; };
+		F592374A1F6AA00F00A82A24 /* shaderCom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F59237491F6AA00F00A82A24 /* shaderCom.cpp */; };
+		F592374C1F6AA01D00A82A24 /* transform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F592374B1F6AA01D00A82A24 /* transform.cpp */; };
+		F5AEC4521F5E677F00F91CE7 /* test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5AEC4511F5E677F00F91CE7 /* test.cpp */; };
+		F5AEC4581F5E678800F91CE7 /* object_manager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5AEC4541F5E678800F91CE7 /* object_manager.cpp */; };
+		F5AEC45A1F5E678800F91CE7 /* system.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5AEC4561F5E678800F91CE7 /* system.cpp */; };
+		F5CD5E0C1F824E2A00A23D8A /* uiSys.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5CD5E0B1F824E2A00A23D8A /* uiSys.cpp */; };
+		F5CE08E61F66337B00989DDE /* bbox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5CE08E21F66337B00989DDE /* bbox.cpp */; };
+		F5CE08E71F66337B00989DDE /* color.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5CE08E31F66337B00989DDE /* color.cpp */; };
+		F5CE08E81F66337B00989DDE /* geometry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5CE08E41F66337B00989DDE /* geometry.cpp */; };
+		F5CE08E91F66337B00989DDE /* transform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5CE08E51F66337B00989DDE /* transform.cpp */; };
+		F5CE08EB1F66338700989DDE /* envSys.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5CE08EA1F66338700989DDE /* envSys.cpp */; };
+		F5CE08EE1F66339300989DDE /* defines.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5CE08EC1F66339300989DDE /* defines.cpp */; };
+		F5CE08EF1F66339300989DDE /* profiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5CE08ED1F66339300989DDE /* profiler.cpp */; };
+		F5CE08F11F6633AB00989DDE /* main_ecs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5CE08F01F6633AB00989DDE /* main_ecs.cpp */; };
+		F5CE08F71F66343500989DDE /* loaderSys.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5CE08F41F66343500989DDE /* loaderSys.cpp */; };
+		F5CE08F81F66343500989DDE /* renderSys.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5CE08F51F66343500989DDE /* renderSys.cpp */; };
+		F5CE08F91F66343500989DDE /* textureSys.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5CE08F61F66343500989DDE /* textureSys.cpp */; };
+		F5DBE2B31FDE4CB5004420F4 /* statSys.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5DBE2B21FDE4CB4004420F4 /* statSys.cpp */; };
+		F5E972931FFA2C4E007399E9 /* mesh.cc in Sources */ = {isa = PBXBuildFile; fileRef = F5E972921FFA2C4E007399E9 /* mesh.cc */; };
+		F5F27AB51F95C80900F8347E /* lightSys.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5F27AB41F95C80900F8347E /* lightSys.cpp */; };
+		F5F67D411F82485D0016CEF2 /* imgui_impl_sdl_gl3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5F67D401F82485D0016CEF2 /* imgui_impl_sdl_gl3.cpp */; };
+		F5F67D431F8249950016CEF2 /* imgui_draw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5F67D421F8249950016CEF2 /* imgui_draw.cpp */; };
+		F5F67D451F8249C00016CEF2 /* imgui.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5F67D441F8249C00016CEF2 /* imgui.cpp */; };
+		F5FD0B401F70CF57007BA9DB /* motionSys.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5FD0B3F1F70CF57007BA9DB /* motionSys.cpp */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXBuildStyle section */
-		4C417753633942DD984F6FC1 /* Release */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-			};
-			name = Release;
-		};
-		6FAFADA5F33A4438B86E2636 /* RelWithDebInfo */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-			};
-			name = RelWithDebInfo;
-		};
-		A0794F0E90A548C8812107A4 /* MinSizeRel */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-			};
-			name = MinSizeRel;
-		};
-		F099421BF86E4BAF835C27AA /* Debug */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-			};
-			name = Debug;
-		};
-/* End PBXBuildStyle section */
-
 /* Begin PBXContainerItemProxy section */
-		9E2B64F5CBD14238AD48FBAA /* PBXContainerItemProxy */ = {
+		22892493A35D4DAAB1C0D1CE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 9B18665F7D80422D8936D569 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 63347A43FDDA4D668DC41B43;
 			remoteInfo = renderer;
 		};
-		B2F80F9E87E24ED8B5E56084 /* PBXContainerItemProxy */ = {
+		3C662694837C423BAF23FF46 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 9B18665F7D80422D8936D569 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = FF26E37ED56C4ABD880E623F;
 			remoteInfo = ZERO_CHECK;
 		};
-		C1F82219B0D54293A26C02B7 /* PBXContainerItemProxy */ = {
+		6D03D27957054C3F9B95790A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9B18665F7D80422D8936D569 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FF26E37ED56C4ABD880E623F;
+			remoteInfo = ZERO_CHECK;
+		};
+		9D296993FD0A45B8A8244312 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 9B18665F7D80422D8936D569 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = E3BF0868E7044AD3B1A7FC01;
 			remoteInfo = ALL_BUILD;
 		};
-		E5460C1B5D2242AEA30136F9 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 9B18665F7D80422D8936D569 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = FF26E37ED56C4ABD880E623F;
-			remoteInfo = ZERO_CHECK;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		04ED56CD2728447FB5C3E5E0 /* /Users/wyman/github/renderer/src/com/shaderCom.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = shaderCom.cpp; path = src/com/shaderCom.cpp; sourceTree = SOURCE_ROOT; };
-		067BAE428352427D963254CB /* /Users/wyman/github/renderer/src/com/geometry.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = geometry.cpp; path = src/com/geometry.cpp; sourceTree = SOURCE_ROOT; };
-		0A93C93D626F4E8E94A09ABA /* /Users/wyman/github/renderer/src/system/renderSys.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = renderSys.cpp; path = src/system/renderSys.cpp; sourceTree = SOURCE_ROOT; };
-		0FF0E80CD05240BFA723855A /* /Users/wyman/github/renderer/src/system/loaderSys.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = loaderSys.cpp; path = src/system/loaderSys.cpp; sourceTree = SOURCE_ROOT; };
-		12BADF3FD8AD460AB6FF6C27 /* /Users/wyman/github/renderer/src/system/motionSys.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = motionSys.cpp; path = src/system/motionSys.cpp; sourceTree = SOURCE_ROOT; };
-		1458113ED587415B8691EB78 /* /Users/wyman/github/renderer/src/main_ecs.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = main_ecs.cpp; path = src/main_ecs.cpp; sourceTree = SOURCE_ROOT; };
-		15A6AC0306DB49789551FB1C /* /Users/wyman/github/renderer */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = folder; name = .; path = .; sourceTree = SOURCE_ROOT; };
-		19F6736D856F4603BF7B35E1 /* /Users/wyman/github/renderer/src/system/uiSys.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = uiSys.cpp; path = src/system/uiSys.cpp; sourceTree = SOURCE_ROOT; };
-		1E5CBBC4BE5C4CD086ED2D6C /* /Users/wyman/github/renderer/src/system/envSys.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = envSys.cpp; path = src/system/envSys.cpp; sourceTree = SOURCE_ROOT; };
-		2671404D3CEA455D9A0F3AB8 /* /Users/wyman/github/renderer/src/com/color.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = color.cpp; path = src/com/color.cpp; sourceTree = SOURCE_ROOT; };
-		2B87329BED544A519C88FAD7 /* /Users/wyman/github/renderer/src/com/ray.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ray.cpp; path = src/com/ray.cpp; sourceTree = SOURCE_ROOT; };
-		2DBFE22646E74497B8931143 /* /Users/wyman/github/renderer/src/system/sceneGraphSys.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = sceneGraphSys.cpp; path = src/system/sceneGraphSys.cpp; sourceTree = SOURCE_ROOT; };
-		411B56A9BAE74A928458AA58 /* /Users/wyman/github/renderer/external/GL/gl3w.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = gl3w.c; path = external/GL/gl3w.c; sourceTree = SOURCE_ROOT; };
-		46670BBBA6FD4B8CB648D005 /* /Users/wyman/github/renderer/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		46F116648D3744D6BDAC47C8 /* /Users/wyman/github/renderer/src/com/intersect_result.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = intersect_result.cpp; path = src/com/intersect_result.cpp; sourceTree = SOURCE_ROOT; };
-		4E4C912EB34145699A9453E9 /* /Users/wyman/github/renderer/src/system/cameraSys.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = cameraSys.cpp; path = src/system/cameraSys.cpp; sourceTree = SOURCE_ROOT; };
-		4ECD9DB6A8D04DF88FC65787 /* /Users/wyman/github/renderer/src/system/bvhSys.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = bvhSys.cpp; path = src/system/bvhSys.cpp; sourceTree = SOURCE_ROOT; };
-		5350788746764941B7163C7A /* /Users/wyman/github/renderer/src/utils/profiler.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = profiler.cpp; path = src/utils/profiler.cpp; sourceTree = SOURCE_ROOT; };
-		55C1626C553843BEA5B06BA1 /* /Users/wyman/github/renderer/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		6099EDE5B5814628BD07ED0F /* /Users/wyman/github/renderer/src/film.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = film.cpp; path = src/film.cpp; sourceTree = SOURCE_ROOT; };
-		69C6EE90FCCD435B99457161 /* /Users/wyman/github/renderer/src/utils/parallel.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = parallel.cpp; path = src/utils/parallel.cpp; sourceTree = SOURCE_ROOT; };
-		6E59F252C4274339992FC1E7 /* /Users/wyman/github/renderer/src/system/lightSys.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = lightSys.cpp; path = src/system/lightSys.cpp; sourceTree = SOURCE_ROOT; };
-		7635B7905EAD4632938A335B /* /Users/wyman/github/renderer/src/com/camera.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = camera.cpp; path = src/com/camera.cpp; sourceTree = SOURCE_ROOT; };
-		8D3728543375453FAAD86E25 /* /Users/wyman/github/renderer/src/main.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = main.cpp; path = src/main.cpp; sourceTree = SOURCE_ROOT; };
-		94BB5EC1771F4B9693F38BB5 /* /Users/wyman/github/renderer/src/utils/memory.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = memory.cpp; path = src/utils/memory.cpp; sourceTree = SOURCE_ROOT; };
-		9EEA79F217994AA58133D10F /* /Users/wyman/github/renderer/src/system/shaderSys.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = shaderSys.cpp; path = src/system/shaderSys.cpp; sourceTree = SOURCE_ROOT; };
-		A2825B92A04D43F89FE67A47 /* renderer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; path = renderer; sourceTree = BUILT_PRODUCTS_DIR; };
-		A476F186608A4CA3A8A3CE04 /* /Users/wyman/github/renderer/src/system/configSys.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = configSys.cpp; path = src/system/configSys.cpp; sourceTree = SOURCE_ROOT; };
-		A595B645A7FF49D2AF504F85 /* /Users/wyman/github/renderer/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		B1CACBCDCD634E6B984DB2BE /* /Users/wyman/github/renderer/src/utils/defines.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = defines.cpp; path = src/utils/defines.cpp; sourceTree = SOURCE_ROOT; };
-		B681AD83F1A34473925881CB /* /Users/wyman/github/renderer/src/system/bufferSys.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = bufferSys.cpp; path = src/system/bufferSys.cpp; sourceTree = SOURCE_ROOT; };
-		B96CBA3FDC854D5F98AFD7B8 /* /Users/wyman/github/renderer/src/system/spatialSys.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = spatialSys.cpp; path = src/system/spatialSys.cpp; sourceTree = SOURCE_ROOT; };
-		C3FD0743751C46C49B2F1F59 /* /Users/wyman/github/renderer/src/system/batchSys.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = batchSys.cpp; path = src/system/batchSys.cpp; sourceTree = SOURCE_ROOT; };
-		C54F9ABECCEE4C0C976904ED /* /Users/wyman/github/renderer/src/system/materialSys.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = materialSys.cpp; path = src/system/materialSys.cpp; sourceTree = SOURCE_ROOT; };
-		C59CB3F6A809487988024D8C /* /Users/wyman/github/renderer/src/system/statSys.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = statSys.cpp; path = src/system/statSys.cpp; sourceTree = SOURCE_ROOT; };
-		C8898A96ABA746E3A4CA644F /* /Users/wyman/github/renderer/src/com/transform.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = transform.cpp; path = src/com/transform.cpp; sourceTree = SOURCE_ROOT; };
-		D75EEBB17EA243478ADA8BFD /* /Users/wyman/github/renderer/src/system/physicsSys.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = physicsSys.cpp; path = src/system/physicsSys.cpp; sourceTree = SOURCE_ROOT; };
-		DDC4A8A321E542C3BBA04F23 /* /Users/wyman/github/renderer/src/system/kdtreeSys.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = kdtreeSys.cpp; path = src/system/kdtreeSys.cpp; sourceTree = SOURCE_ROOT; };
-		E9138291135E4E7BBE96F558 /* /Users/wyman/github/renderer/src/system/animationSys.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = animationSys.cpp; path = src/system/animationSys.cpp; sourceTree = SOURCE_ROOT; };
-		EA7CCE5970C947D8934298DD /* /Users/wyman/github/renderer/src/com/bbox.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = bbox.cpp; path = src/com/bbox.cpp; sourceTree = SOURCE_ROOT; };
-		F2CE2F2E5812457DACC49341 /* /Users/wyman/github/renderer/src/system/textureSys.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = textureSys.cpp; path = src/system/textureSys.cpp; sourceTree = SOURCE_ROOT; };
-		F3F1FD55011A4CC086F3B92D /* /Users/wyman/github/renderer/src/com/matrix.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = matrix.cpp; path = src/com/matrix.cpp; sourceTree = SOURCE_ROOT; };
+		07AB1A1749FF4087B64C7065 /* main.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = main.cpp; path = src/main.cpp; sourceTree = SOURCE_ROOT; };
+		189730E7C677457EB3814810 /* CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		4E442DD79A41497B9DF9762D /* CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		9F7AA41AA9AA4133878BC284 /* . */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = folder; path = .; sourceTree = SOURCE_ROOT; };
+		A6C04C8A0C13446494538FC0 /* film.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = film.cpp; path = src/film.cpp; sourceTree = SOURCE_ROOT; };
+		B14BE0D46D5D4E53BD4CEDF4 /* renderer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; path = renderer; sourceTree = BUILT_PRODUCTS_DIR; };
+		CD768ED31C904300A83FBFDB /* gl3w.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = gl3w.c; path = external/GL/gl3w.c; sourceTree = SOURCE_ROOT; };
+		F5024F4B1F9F127300D6C743 /* SearchTex.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SearchTex.h; path = external/SearchTex.h; sourceTree = "<group>"; };
+		F5024F4C1F9F127300D6C743 /* AreaTex.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AreaTex.h; path = external/AreaTex.h; sourceTree = "<group>"; };
+		F5058AE21FE78C9A00DC3A9F /* batchSys.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = batchSys.cpp; path = src/system/batchSys.cpp; sourceTree = "<group>"; };
+		F5058AE41FE78C9F00DC3A9F /* bvhSys.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = bvhSys.cpp; path = src/system/bvhSys.cpp; sourceTree = "<group>"; };
+		F5058AE61FE78CA500DC3A9F /* sceneGraphSys.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sceneGraphSys.cpp; path = src/system/sceneGraphSys.cpp; sourceTree = "<group>"; };
+		F5058AEA1FE7905100DC3A9F /* bvh.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = bvh.hpp; path = include/com/bvh.hpp; sourceTree = "<group>"; };
+		F520C4F91F6F781A000B6E54 /* bufferSys.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = bufferSys.cpp; path = src/system/bufferSys.cpp; sourceTree = "<group>"; };
+		F520C4FB1F6F7822000B6E54 /* cameraSys.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cameraSys.cpp; path = src/system/cameraSys.cpp; sourceTree = "<group>"; };
+		F520C4FD1F6F7828000B6E54 /* configSys.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = configSys.cpp; path = src/system/configSys.cpp; sourceTree = "<group>"; };
+		F520C4FF1F6F7889000B6E54 /* spatialEvent.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = spatialEvent.hpp; path = include/event/spatialEvent.hpp; sourceTree = "<group>"; };
+		F520C5001F6F788F000B6E54 /* bufferEvent.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = bufferEvent.hpp; path = include/event/bufferEvent.hpp; sourceTree = "<group>"; };
+		F520C5011F6F7894000B6E54 /* loaderEvent.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = loaderEvent.hpp; path = include/event/loaderEvent.hpp; sourceTree = "<group>"; };
+		F520C5021F6F789D000B6E54 /* miscEvent.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = miscEvent.hpp; path = include/event/miscEvent.hpp; sourceTree = "<group>"; };
+		F520C5031F6F78A3000B6E54 /* renderEvent.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = renderEvent.hpp; path = include/event/renderEvent.hpp; sourceTree = "<group>"; };
+		F520C5041F6F78C3000B6E54 /* configSys.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = configSys.hpp; path = include/system/configSys.hpp; sourceTree = "<group>"; };
+		F520C5051F6F78DF000B6E54 /* spatialSys.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = spatialSys.hpp; path = include/system/spatialSys.hpp; sourceTree = "<group>"; };
+		F520C5061F6F7940000B6E54 /* miscCom.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = miscCom.hpp; path = include/com/miscCom.hpp; sourceTree = "<group>"; };
+		F520C5071F6F794E000B6E54 /* bufferCom.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = bufferCom.hpp; path = include/com/bufferCom.hpp; sourceTree = "<group>"; };
+		F5435BC61FFF4E1C004A1A01 /* Body.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Body.h; sourceTree = "<group>"; };
+		F5435BC71FFF4E1C004A1A01 /* RigidBody.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RigidBody.cpp; sourceTree = "<group>"; };
+		F5435BC81FFF4E1C004A1A01 /* RigidBody.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RigidBody.h; sourceTree = "<group>"; };
+		F5435BC91FFF4E1C004A1A01 /* CollisionBody.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CollisionBody.cpp; sourceTree = "<group>"; };
+		F5435BCA1FFF4E1C004A1A01 /* Body.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Body.cpp; sourceTree = "<group>"; };
+		F5435BCB1FFF4E1C004A1A01 /* CollisionBody.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CollisionBody.h; sourceTree = "<group>"; };
+		F5435BCF1FFF4E1C004A1A01 /* mathematics_functions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mathematics_functions.h; sourceTree = "<group>"; };
+		F5435BD01FFF4E1C004A1A01 /* mathematics_functions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mathematics_functions.cpp; sourceTree = "<group>"; };
+		F5435BD11FFF4E1C004A1A01 /* Vector3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Vector3.cpp; sourceTree = "<group>"; };
+		F5435BD21FFF4E1C004A1A01 /* Vector2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vector2.h; sourceTree = "<group>"; };
+		F5435BD31FFF4E1C004A1A01 /* Matrix2x2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Matrix2x2.cpp; sourceTree = "<group>"; };
+		F5435BD41FFF4E1C004A1A01 /* Vector2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Vector2.cpp; sourceTree = "<group>"; };
+		F5435BD51FFF4E1C004A1A01 /* Matrix3x3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Matrix3x3.h; sourceTree = "<group>"; };
+		F5435BD61FFF4E1C004A1A01 /* Quaternion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Quaternion.h; sourceTree = "<group>"; };
+		F5435BD71FFF4E1C004A1A01 /* Matrix3x3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Matrix3x3.cpp; sourceTree = "<group>"; };
+		F5435BD81FFF4E1C004A1A01 /* Matrix2x2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Matrix2x2.h; sourceTree = "<group>"; };
+		F5435BD91FFF4E1C004A1A01 /* Transform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Transform.cpp; sourceTree = "<group>"; };
+		F5435BDA1FFF4E1C004A1A01 /* Transform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Transform.h; sourceTree = "<group>"; };
+		F5435BDB1FFF4E1C004A1A01 /* Quaternion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Quaternion.cpp; sourceTree = "<group>"; };
+		F5435BDC1FFF4E1C004A1A01 /* Ray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ray.h; sourceTree = "<group>"; };
+		F5435BDD1FFF4E1C004A1A01 /* mathematics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mathematics.h; sourceTree = "<group>"; };
+		F5435BDE1FFF4E1C004A1A01 /* Vector3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vector3.h; sourceTree = "<group>"; };
+		F5435BE01FFF4E1C004A1A01 /* reactphysics3d.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = reactphysics3d.h; path = external/reactphysics3d/reactphysics3d.h; sourceTree = "<group>"; };
+		F5435BE11FFF4E1C004A1A01 /* configuration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = configuration.h; path = external/reactphysics3d/configuration.h; sourceTree = "<group>"; };
+		F5435BE31FFF4E1C004A1A01 /* MemoryAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryAllocator.h; sourceTree = "<group>"; };
+		F5435BE41FFF4E1C004A1A01 /* Stack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Stack.h; sourceTree = "<group>"; };
+		F5435BE51FFF4E1C004A1A01 /* MemoryAllocator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryAllocator.cpp; sourceTree = "<group>"; };
+		F5435BE71FFF4E1C004A1A01 /* ConstraintSolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConstraintSolver.h; sourceTree = "<group>"; };
+		F5435BE81FFF4E1C004A1A01 /* CollisionWorld.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CollisionWorld.cpp; sourceTree = "<group>"; };
+		F5435BE91FFF4E1C004A1A01 /* ContactSolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContactSolver.h; sourceTree = "<group>"; };
+		F5435BEA1FFF4E1C004A1A01 /* Profiler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Profiler.cpp; sourceTree = "<group>"; };
+		F5435BEB1FFF4E1C004A1A01 /* EventListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventListener.h; sourceTree = "<group>"; };
+		F5435BEC1FFF4E1C004A1A01 /* Island.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Island.h; sourceTree = "<group>"; };
+		F5435BED1FFF4E1C004A1A01 /* DynamicsWorld.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DynamicsWorld.h; sourceTree = "<group>"; };
+		F5435BEE1FFF4E1C004A1A01 /* Timer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Timer.cpp; sourceTree = "<group>"; };
+		F5435BEF1FFF4E1C004A1A01 /* Material.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Material.h; sourceTree = "<group>"; };
+		F5435BF01FFF4E1C004A1A01 /* OverlappingPair.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OverlappingPair.h; sourceTree = "<group>"; };
+		F5435BF11FFF4E1C004A1A01 /* CollisionWorld.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CollisionWorld.h; sourceTree = "<group>"; };
+		F5435BF21FFF4E1C004A1A01 /* DynamicsWorld.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DynamicsWorld.cpp; sourceTree = "<group>"; };
+		F5435BF31FFF4E1C004A1A01 /* ConstraintSolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConstraintSolver.cpp; sourceTree = "<group>"; };
+		F5435BF41FFF4E1C004A1A01 /* Timer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Timer.h; sourceTree = "<group>"; };
+		F5435BF51FFF4E1C004A1A01 /* ContactSolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContactSolver.cpp; sourceTree = "<group>"; };
+		F5435BF61FFF4E1C004A1A01 /* Island.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Island.cpp; sourceTree = "<group>"; };
+		F5435BF71FFF4E1C004A1A01 /* OverlappingPair.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OverlappingPair.cpp; sourceTree = "<group>"; };
+		F5435BF81FFF4E1C004A1A01 /* Impulse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Impulse.h; sourceTree = "<group>"; };
+		F5435BF91FFF4E1C004A1A01 /* Profiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Profiler.h; sourceTree = "<group>"; };
+		F5435BFA1FFF4E1C004A1A01 /* Material.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Material.cpp; sourceTree = "<group>"; };
+		F5435BFB1FFF4E1C004A1A01 /* decimal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = decimal.h; path = external/reactphysics3d/decimal.h; sourceTree = "<group>"; };
+		F5435BFD1FFF4E1C004A1A01 /* TriangleMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TriangleMesh.cpp; sourceTree = "<group>"; };
+		F5435BFE1FFF4E1C004A1A01 /* ProxyShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProxyShape.h; sourceTree = "<group>"; };
+		F5435BFF1FFF4E1C004A1A01 /* RaycastInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RaycastInfo.h; sourceTree = "<group>"; };
+		F5435C001FFF4E1C004A1A01 /* TriangleVertexArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TriangleVertexArray.cpp; sourceTree = "<group>"; };
+		F5435C011FFF4E1C004A1A01 /* CollisionDetection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CollisionDetection.cpp; sourceTree = "<group>"; };
+		F5435C021FFF4E1C004A1A01 /* ContactManifoldSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContactManifoldSet.h; sourceTree = "<group>"; };
+		F5435C031FFF4E1C004A1A01 /* CollisionDetection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CollisionDetection.h; sourceTree = "<group>"; };
+		F5435C051FFF4E1C004A1A01 /* ConcaveShape.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConcaveShape.cpp; sourceTree = "<group>"; };
+		F5435C061FFF4E1C004A1A01 /* TriangleShape.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TriangleShape.cpp; sourceTree = "<group>"; };
+		F5435C071FFF4E1C004A1A01 /* ConvexMeshShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConvexMeshShape.h; sourceTree = "<group>"; };
+		F5435C081FFF4E1C004A1A01 /* TriangleShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TriangleShape.h; sourceTree = "<group>"; };
+		F5435C091FFF4E1C004A1A01 /* ConcaveShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConcaveShape.h; sourceTree = "<group>"; };
+		F5435C0A1FFF4E1C004A1A01 /* ConvexShape.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConvexShape.cpp; sourceTree = "<group>"; };
+		F5435C0B1FFF4E1C004A1A01 /* CylinderShape.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CylinderShape.cpp; sourceTree = "<group>"; };
+		F5435C0C1FFF4E1C004A1A01 /* HeightFieldShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeightFieldShape.h; sourceTree = "<group>"; };
+		F5435C0D1FFF4E1C004A1A01 /* CollisionShape.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CollisionShape.cpp; sourceTree = "<group>"; };
+		F5435C0E1FFF4E1C004A1A01 /* ConvexShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConvexShape.h; sourceTree = "<group>"; };
+		F5435C0F1FFF4E1C004A1A01 /* AABB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AABB.cpp; sourceTree = "<group>"; };
+		F5435C101FFF4E1C004A1A01 /* SphereShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SphereShape.h; sourceTree = "<group>"; };
+		F5435C111FFF4E1C004A1A01 /* BoxShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BoxShape.h; sourceTree = "<group>"; };
+		F5435C121FFF4E1C004A1A01 /* ConeShape.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConeShape.cpp; sourceTree = "<group>"; };
+		F5435C131FFF4E1C004A1A01 /* ConvexMeshShape.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConvexMeshShape.cpp; sourceTree = "<group>"; };
+		F5435C141FFF4E1C004A1A01 /* SphereShape.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SphereShape.cpp; sourceTree = "<group>"; };
+		F5435C151FFF4E1C004A1A01 /* CylinderShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CylinderShape.h; sourceTree = "<group>"; };
+		F5435C161FFF4E1C004A1A01 /* ConcaveMeshShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConcaveMeshShape.h; sourceTree = "<group>"; };
+		F5435C171FFF4E1C004A1A01 /* ConeShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConeShape.h; sourceTree = "<group>"; };
+		F5435C181FFF4E1C004A1A01 /* CapsuleShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CapsuleShape.h; sourceTree = "<group>"; };
+		F5435C191FFF4E1C004A1A01 /* ConcaveMeshShape.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConcaveMeshShape.cpp; sourceTree = "<group>"; };
+		F5435C1A1FFF4E1C004A1A01 /* BoxShape.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BoxShape.cpp; sourceTree = "<group>"; };
+		F5435C1B1FFF4E1C004A1A01 /* CollisionShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CollisionShape.h; sourceTree = "<group>"; };
+		F5435C1C1FFF4E1C004A1A01 /* CapsuleShape.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CapsuleShape.cpp; sourceTree = "<group>"; };
+		F5435C1D1FFF4E1C004A1A01 /* AABB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AABB.h; sourceTree = "<group>"; };
+		F5435C1E1FFF4E1C004A1A01 /* HeightFieldShape.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HeightFieldShape.cpp; sourceTree = "<group>"; };
+		F5435C1F1FFF4E1C004A1A01 /* ProxyShape.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProxyShape.cpp; sourceTree = "<group>"; };
+		F5435C211FFF4E1C004A1A01 /* BroadPhaseAlgorithm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BroadPhaseAlgorithm.h; sourceTree = "<group>"; };
+		F5435C221FFF4E1C004A1A01 /* DynamicAABBTree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DynamicAABBTree.cpp; sourceTree = "<group>"; };
+		F5435C231FFF4E1C004A1A01 /* BroadPhaseAlgorithm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BroadPhaseAlgorithm.cpp; sourceTree = "<group>"; };
+		F5435C241FFF4E1C004A1A01 /* DynamicAABBTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DynamicAABBTree.h; sourceTree = "<group>"; };
+		F5435C251FFF4E1C004A1A01 /* TriangleVertexArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TriangleVertexArray.h; sourceTree = "<group>"; };
+		F5435C261FFF4E1C004A1A01 /* ContactManifold.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContactManifold.cpp; sourceTree = "<group>"; };
+		F5435C271FFF4E1C004A1A01 /* ContactManifold.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContactManifold.h; sourceTree = "<group>"; };
+		F5435C281FFF4E1C004A1A01 /* ContactManifoldSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContactManifoldSet.cpp; sourceTree = "<group>"; };
+		F5435C291FFF4E1C004A1A01 /* RaycastInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RaycastInfo.cpp; sourceTree = "<group>"; };
+		F5435C2A1FFF4E1C004A1A01 /* CollisionShapeInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CollisionShapeInfo.h; sourceTree = "<group>"; };
+		F5435C2C1FFF4E1C004A1A01 /* ConcaveVsConvexAlgorithm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConcaveVsConvexAlgorithm.h; sourceTree = "<group>"; };
+		F5435C2D1FFF4E1C004A1A01 /* CollisionDispatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CollisionDispatch.h; sourceTree = "<group>"; };
+		F5435C2E1FFF4E1C004A1A01 /* ConcaveVsConvexAlgorithm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConcaveVsConvexAlgorithm.cpp; sourceTree = "<group>"; };
+		F5435C301FFF4E1C004A1A01 /* Simplex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Simplex.cpp; sourceTree = "<group>"; };
+		F5435C311FFF4E1C004A1A01 /* Simplex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Simplex.h; sourceTree = "<group>"; };
+		F5435C321FFF4E1C004A1A01 /* GJKAlgorithm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GJKAlgorithm.h; sourceTree = "<group>"; };
+		F5435C331FFF4E1C004A1A01 /* GJKAlgorithm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GJKAlgorithm.cpp; sourceTree = "<group>"; };
+		F5435C341FFF4E1C004A1A01 /* SphereVsSphereAlgorithm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SphereVsSphereAlgorithm.h; sourceTree = "<group>"; };
+		F5435C351FFF4E1C004A1A01 /* NarrowPhaseAlgorithm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NarrowPhaseAlgorithm.cpp; sourceTree = "<group>"; };
+		F5435C361FFF4E1C004A1A01 /* NarrowPhaseAlgorithm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NarrowPhaseAlgorithm.h; sourceTree = "<group>"; };
+		F5435C381FFF4E1C004A1A01 /* EdgeEPA.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EdgeEPA.cpp; sourceTree = "<group>"; };
+		F5435C391FFF4E1C004A1A01 /* EPAAlgorithm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EPAAlgorithm.cpp; sourceTree = "<group>"; };
+		F5435C3A1FFF4E1C004A1A01 /* TriangleEPA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TriangleEPA.h; sourceTree = "<group>"; };
+		F5435C3B1FFF4E1C004A1A01 /* TrianglesStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TrianglesStore.h; sourceTree = "<group>"; };
+		F5435C3C1FFF4E1C004A1A01 /* TriangleEPA.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TriangleEPA.cpp; sourceTree = "<group>"; };
+		F5435C3D1FFF4E1C004A1A01 /* EPAAlgorithm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EPAAlgorithm.h; sourceTree = "<group>"; };
+		F5435C3E1FFF4E1C004A1A01 /* TrianglesStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TrianglesStore.cpp; sourceTree = "<group>"; };
+		F5435C3F1FFF4E1C004A1A01 /* EdgeEPA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EdgeEPA.h; sourceTree = "<group>"; };
+		F5435C401FFF4E1C004A1A01 /* SphereVsSphereAlgorithm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SphereVsSphereAlgorithm.cpp; sourceTree = "<group>"; };
+		F5435C411FFF4E1C004A1A01 /* DefaultCollisionDispatch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DefaultCollisionDispatch.cpp; sourceTree = "<group>"; };
+		F5435C421FFF4E1C004A1A01 /* DefaultCollisionDispatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DefaultCollisionDispatch.h; sourceTree = "<group>"; };
+		F5435C431FFF4E1C004A1A01 /* TriangleMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TriangleMesh.h; sourceTree = "<group>"; };
+		F5435C451FFF4E1C004A1A01 /* HingeJoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HingeJoint.cpp; sourceTree = "<group>"; };
+		F5435C461FFF4E1C004A1A01 /* FixedJoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FixedJoint.cpp; sourceTree = "<group>"; };
+		F5435C471FFF4E1C004A1A01 /* ContactPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContactPoint.h; sourceTree = "<group>"; };
+		F5435C481FFF4E1C004A1A01 /* Joint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Joint.cpp; sourceTree = "<group>"; };
+		F5435C491FFF4E1C004A1A01 /* HingeJoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HingeJoint.h; sourceTree = "<group>"; };
+		F5435C4A1FFF4E1C004A1A01 /* BallAndSocketJoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BallAndSocketJoint.h; sourceTree = "<group>"; };
+		F5435C4B1FFF4E1C004A1A01 /* ContactPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContactPoint.cpp; sourceTree = "<group>"; };
+		F5435C4C1FFF4E1C004A1A01 /* Joint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Joint.h; sourceTree = "<group>"; };
+		F5435C4D1FFF4E1C004A1A01 /* BallAndSocketJoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BallAndSocketJoint.cpp; sourceTree = "<group>"; };
+		F5435C4E1FFF4E1C004A1A01 /* SliderJoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SliderJoint.h; sourceTree = "<group>"; };
+		F5435C4F1FFF4E1C004A1A01 /* FixedJoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FixedJoint.h; sourceTree = "<group>"; };
+		F5435C501FFF4E1C004A1A01 /* SliderJoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SliderJoint.cpp; sourceTree = "<group>"; };
+		F54468D11FC3FA1A00D955C0 /* lightCom.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = lightCom.hpp; path = include/com/lightCom.hpp; sourceTree = "<group>"; };
+		F54806351FEC0073001A5B13 /* parallel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = parallel.cpp; path = src/utils/parallel.cpp; sourceTree = "<group>"; };
+		F54806361FEC0073001A5B13 /* memory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = memory.cpp; path = src/utils/memory.cpp; sourceTree = "<group>"; };
+		F54806391FEC0083001A5B13 /* kdtreeSys.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = kdtreeSys.cpp; path = src/system/kdtreeSys.cpp; sourceTree = "<group>"; };
+		F548063B1FEC01E8001A5B13 /* kdtreeSys.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = kdtreeSys.hpp; path = include/system/kdtreeSys.hpp; sourceTree = "<group>"; };
+		F5484D451FF4C11B008850F7 /* ozz_options.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ozz_options.cc; path = external/ozz/ozz_options.cc; sourceTree = "<group>"; };
+		F5484D461FF4C11B008850F7 /* ozz_animation.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ozz_animation.cc; path = external/ozz/ozz_animation.cc; sourceTree = "<group>"; };
+		F5484D471FF4C11B008850F7 /* ozz_geometry.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ozz_geometry.cc; path = external/ozz/ozz_geometry.cc; sourceTree = "<group>"; };
+		F5484D481FF4C11B008850F7 /* ozz_base.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ozz_base.cc; path = external/ozz/ozz_base.cc; sourceTree = "<group>"; };
+		F5484D541FF4C26E008850F7 /* animationSys.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = animationSys.cpp; path = src/system/animationSys.cpp; sourceTree = "<group>"; };
+		F5484D561FF4C2E6008850F7 /* animationSys.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = animationSys.hpp; path = include/system/animationSys.hpp; sourceTree = "<group>"; };
+		F5484D571FF4C35A008850F7 /* animation.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = animation.hpp; path = include/com/animation.hpp; sourceTree = "<group>"; };
+		F5484D581FF4D676008850F7 /* ozz.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ozz.h; path = external/ozz/ozz.h; sourceTree = "<group>"; };
+		F54F3BAD1FC180AD00987986 /* matrix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = matrix.cpp; path = src/com/matrix.cpp; sourceTree = "<group>"; };
+		F55137CE1F664E4F0061DF99 /* shaderSys.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = shaderSys.cpp; path = src/system/shaderSys.cpp; sourceTree = "<group>"; };
+		F55E2B291FF222BD008CF25D /* duktape.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = duktape.c; path = external/duktape/duktape.c; sourceTree = "<group>"; };
+		F55E2B2B1FF222C1008CF25D /* duktape.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = duktape.h; path = external/duktape/duktape.h; sourceTree = "<group>"; };
+		F55E2B2C1FF222C1008CF25D /* duk_config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = duk_config.h; path = external/duktape/duk_config.h; sourceTree = "<group>"; };
+		F576A1E31FF50F5F00CD09D2 /* glutils.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = glutils.hpp; path = include/utils/glutils.hpp; sourceTree = "<group>"; };
+		F58A3DBA1F679AA50046A853 /* bbox.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = bbox.hpp; path = include/com/bbox.hpp; sourceTree = "<group>"; };
+		F58A3DBB1F679AA50046A853 /* cameraCom.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = cameraCom.hpp; path = include/com/cameraCom.hpp; sourceTree = "<group>"; };
+		F58A3DBC1F679AA50046A853 /* color.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = color.hpp; path = include/com/color.hpp; sourceTree = "<group>"; };
+		F58A3DBD1F679AA50046A853 /* geometry.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = geometry.hpp; path = include/com/geometry.hpp; sourceTree = "<group>"; };
+		F58A3DBE1F679AA50046A853 /* glcommon.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = glcommon.hpp; path = include/com/glcommon.hpp; sourceTree = "<group>"; };
+		F58A3DBF1F679AA50046A853 /* keyState.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = keyState.hpp; path = include/com/keyState.hpp; sourceTree = "<group>"; };
+		F58A3DC01F679AA50046A853 /* matrix.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = matrix.hpp; path = include/com/matrix.hpp; sourceTree = "<group>"; };
+		F58A3DC11F679AA50046A853 /* mesh.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = mesh.hpp; path = include/com/mesh.hpp; sourceTree = "<group>"; };
+		F58A3DC31F679AA50046A853 /* quaternion.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = quaternion.hpp; path = include/com/quaternion.hpp; sourceTree = "<group>"; };
+		F58A3DC41F679AA50046A853 /* renderMode.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = renderMode.hpp; path = include/com/renderMode.hpp; sourceTree = "<group>"; };
+		F58A3DC51F679AA50046A853 /* screenSize.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = screenSize.hpp; path = include/com/screenSize.hpp; sourceTree = "<group>"; };
+		F58A3DC61F679AA50046A853 /* sdlContext.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = sdlContext.hpp; path = include/com/sdlContext.hpp; sourceTree = "<group>"; };
+		F58A3DC71F679AA50046A853 /* shader.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = shader.hpp; path = include/com/shader.hpp; sourceTree = "<group>"; };
+		F58A3DC81F679AA50046A853 /* spatialData.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = spatialData.hpp; path = include/com/spatialData.hpp; sourceTree = "<group>"; };
+		F58A3DC91F679AA50046A853 /* transform.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = transform.hpp; path = include/com/transform.hpp; sourceTree = "<group>"; };
+		F58A3DCA1F679AA50046A853 /* vertex.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = vertex.hpp; path = include/com/vertex.hpp; sourceTree = "<group>"; };
+		F58A3DCB1F679AB40046A853 /* component_handle.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = component_handle.hpp; path = include/ecs/component_handle.hpp; sourceTree = "<group>"; };
+		F58A3DCC1F679AB40046A853 /* ecs.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = ecs.hpp; path = include/ecs/ecs.hpp; sourceTree = "<group>"; };
+		F58A3DCD1F679AB40046A853 /* event_builtin.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = event_builtin.hpp; path = include/ecs/event_builtin.hpp; sourceTree = "<group>"; };
+		F58A3DCE1F679AB40046A853 /* event.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = event.cpp; path = include/ecs/event.cpp; sourceTree = "<group>"; };
+		F58A3DCF1F679AB40046A853 /* event.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = event.hpp; path = include/ecs/event.hpp; sourceTree = "<group>"; };
+		F58A3DD01F679AB40046A853 /* manager.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = manager.hpp; path = include/ecs/manager.hpp; sourceTree = "<group>"; };
+		F58A3DD21F679AB40046A853 /* object_manager.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = object_manager.hpp; path = include/ecs/object_manager.hpp; sourceTree = "<group>"; };
+		F58A3DD31F679AB40046A853 /* object.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = object.cpp; path = include/ecs/object.cpp; sourceTree = "<group>"; };
+		F58A3DD41F679AB40046A853 /* object.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = object.hpp; path = include/ecs/object.hpp; sourceTree = "<group>"; };
+		F58A3DD51F679AB40046A853 /* setting.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = setting.hpp; path = include/ecs/setting.hpp; sourceTree = "<group>"; };
+		F58A3DD71F679AB40046A853 /* system.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = system.hpp; path = include/ecs/system.hpp; sourceTree = "<group>"; };
+		F58A3DD91F679AB40046A853 /* test.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = test.hpp; path = include/ecs/test.hpp; sourceTree = "<group>"; };
+		F58A3DE01F679AC30046A853 /* shaderEvent.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = shaderEvent.hpp; path = include/event/shaderEvent.hpp; sourceTree = "<group>"; };
+		F58A3DE11F679AC30046A853 /* textureEvent.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = textureEvent.hpp; path = include/event/textureEvent.hpp; sourceTree = "<group>"; };
+		F58A3DE21F679AC30046A853 /* winEvent.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = winEvent.hpp; path = include/event/winEvent.hpp; sourceTree = "<group>"; };
+		F58A3DEC1F679ADB0046A853 /* defines.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = defines.hpp; path = include/utils/defines.hpp; sourceTree = "<group>"; };
+		F58A3DED1F679ADB0046A853 /* draw.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = draw.hpp; path = include/utils/draw.hpp; sourceTree = "<group>"; };
+		F58A3DEE1F679ADB0046A853 /* error.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = error.hpp; path = include/utils/error.hpp; sourceTree = "<group>"; };
+		F58A3DEF1F679ADB0046A853 /* MemoryPool.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = MemoryPool.hpp; path = include/utils/MemoryPool.hpp; sourceTree = "<group>"; };
+		F58A3DF01F679ADB0046A853 /* profiler.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = profiler.hpp; path = include/utils/profiler.hpp; sourceTree = "<group>"; };
+		F58A3DF21F679BF00046A853 /* bufferSys.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = bufferSys.hpp; path = include/system/bufferSys.hpp; sourceTree = "<group>"; };
+		F58A3DF31F679BF00046A853 /* cameraSys.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = cameraSys.hpp; path = include/system/cameraSys.hpp; sourceTree = "<group>"; };
+		F58A3DF91F679CDE0046A853 /* envSys.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = envSys.hpp; path = include/system/envSys.hpp; sourceTree = "<group>"; };
+		F58A3DFA1F679CDE0046A853 /* loaderSys.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = loaderSys.hpp; path = include/system/loaderSys.hpp; sourceTree = "<group>"; };
+		F58A3DFB1F679CDE0046A853 /* renderSys.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = renderSys.hpp; path = include/system/renderSys.hpp; sourceTree = "<group>"; };
+		F58A3DFC1F679CDE0046A853 /* shaderSys.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = shaderSys.hpp; path = include/system/shaderSys.hpp; sourceTree = "<group>"; };
+		F58A3DFD1F679CDE0046A853 /* textureSys.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = textureSys.hpp; path = include/system/textureSys.hpp; sourceTree = "<group>"; };
+		F58A3DFE1F679DAB0046A853 /* materialCom.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = materialCom.hpp; path = include/com/materialCom.hpp; sourceTree = "<group>"; };
+		F58A3DFF1F67ACA80046A853 /* materialEvent.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = materialEvent.hpp; path = include/event/materialEvent.hpp; sourceTree = "<group>"; };
+		F58A3E001F67AD210046A853 /* materialSys.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = materialSys.hpp; path = include/system/materialSys.hpp; sourceTree = "<group>"; };
+		F58A3E011F67ADAE0046A853 /* materialSys.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = materialSys.cpp; path = src/system/materialSys.cpp; sourceTree = "<group>"; };
+		F58A3E051F67B5430046A853 /* spatialSys.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = spatialSys.cpp; path = src/system/spatialSys.cpp; sourceTree = "<group>"; };
+		F59237491F6AA00F00A82A24 /* shaderCom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = shaderCom.cpp; path = src/com/shaderCom.cpp; sourceTree = "<group>"; };
+		F592374B1F6AA01D00A82A24 /* transform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = transform.cpp; path = src/com/transform.cpp; sourceTree = "<group>"; };
+		F5AEC4511F5E677F00F91CE7 /* test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = test.cpp; path = include/ecs/test.cpp; sourceTree = "<group>"; };
+		F5AEC4541F5E678800F91CE7 /* object_manager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = object_manager.cpp; path = include/ecs/object_manager.cpp; sourceTree = "<group>"; };
+		F5AEC4561F5E678800F91CE7 /* system.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = system.cpp; path = include/ecs/system.cpp; sourceTree = "<group>"; };
+		F5CD5E0A1F824E1700A23D8A /* uiSys.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = uiSys.hpp; path = include/system/uiSys.hpp; sourceTree = "<group>"; };
+		F5CD5E0B1F824E2A00A23D8A /* uiSys.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = uiSys.cpp; path = src/system/uiSys.cpp; sourceTree = "<group>"; };
+		F5CD5E0D1F824E3B00A23D8A /* uiEvent.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = uiEvent.hpp; path = include/event/uiEvent.hpp; sourceTree = "<group>"; };
+		F5CE08E21F66337B00989DDE /* bbox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = bbox.cpp; path = src/com/bbox.cpp; sourceTree = "<group>"; };
+		F5CE08E31F66337B00989DDE /* color.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = color.cpp; path = src/com/color.cpp; sourceTree = "<group>"; };
+		F5CE08E41F66337B00989DDE /* geometry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = geometry.cpp; path = src/com/geometry.cpp; sourceTree = "<group>"; };
+		F5CE08E51F66337B00989DDE /* transform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = transform.cpp; path = src/com/transform.cpp; sourceTree = "<group>"; };
+		F5CE08EA1F66338700989DDE /* envSys.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = envSys.cpp; path = src/system/envSys.cpp; sourceTree = "<group>"; };
+		F5CE08EC1F66339300989DDE /* defines.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = defines.cpp; path = src/utils/defines.cpp; sourceTree = "<group>"; };
+		F5CE08ED1F66339300989DDE /* profiler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = profiler.cpp; path = src/utils/profiler.cpp; sourceTree = "<group>"; };
+		F5CE08F01F6633AB00989DDE /* main_ecs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main_ecs.cpp; path = src/main_ecs.cpp; sourceTree = "<group>"; };
+		F5CE08F41F66343500989DDE /* loaderSys.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = loaderSys.cpp; path = src/system/loaderSys.cpp; sourceTree = "<group>"; };
+		F5CE08F51F66343500989DDE /* renderSys.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = renderSys.cpp; path = src/system/renderSys.cpp; sourceTree = "<group>"; };
+		F5CE08F61F66343500989DDE /* textureSys.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = textureSys.cpp; path = src/system/textureSys.cpp; sourceTree = "<group>"; };
+		F5DBE2B21FDE4CB4004420F4 /* statSys.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = statSys.cpp; path = src/system/statSys.cpp; sourceTree = "<group>"; };
+		F5DF9F321F7FBD420084BB93 /* helper.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = helper.hpp; path = include/utils/helper.hpp; sourceTree = "<group>"; };
+		F5E972911FFA2C49007399E9 /* mesh.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = mesh.h; path = external/ozz/mesh.h; sourceTree = "<group>"; };
+		F5E972921FFA2C4E007399E9 /* mesh.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mesh.cc; path = external/ozz/mesh.cc; sourceTree = "<group>"; };
+		F5F27AB41F95C80900F8347E /* lightSys.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = lightSys.cpp; path = src/system/lightSys.cpp; sourceTree = "<group>"; };
+		F5F27AB61F95C81800F8347E /* lightSys.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = lightSys.hpp; path = include/system/lightSys.hpp; sourceTree = "<group>"; };
+		F5F67D401F82485D0016CEF2 /* imgui_impl_sdl_gl3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = imgui_impl_sdl_gl3.cpp; path = external/imgui_impl_sdl_gl3.cpp; sourceTree = "<group>"; };
+		F5F67D421F8249950016CEF2 /* imgui_draw.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = imgui_draw.cpp; path = external/imgui_draw.cpp; sourceTree = "<group>"; };
+		F5F67D441F8249C00016CEF2 /* imgui.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = imgui.cpp; path = external/imgui.cpp; sourceTree = "<group>"; };
+		F5FD0B3F1F70CF57007BA9DB /* motionSys.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = motionSys.cpp; path = src/system/motionSys.cpp; sourceTree = "<group>"; };
+		F5FD0B411F70CF69007BA9DB /* motionSys.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = motionSys.hpp; path = include/system/motionSys.hpp; sourceTree = "<group>"; };
+		F5FD0B421F70D31C007BA9DB /* motionCom.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = motionCom.hpp; path = include/com/motionCom.hpp; sourceTree = "<group>"; };
+		F5FD0B431F70EC43007BA9DB /* actionCom.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = actionCom.hpp; path = include/com/actionCom.hpp; sourceTree = "<group>"; };
+		F5FD0B441F726EFD007BA9DB /* base.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = base.hpp; path = include/base.hpp; sourceTree = "<group>"; };
+		F64270B82FB946F9BC21F3DA /* CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
-		08AE4DFDBAD546FAA0D3F8A4 = {
+		0A388FCA8CFF478EB4764400 /* ALL_BUILD */ = {
 			isa = PBXGroup;
 			children = (
-				58E664F8E7EF42FFA1CE6179 /* renderer */,
-				CEAE3250F3804C5A9C4F1C46 /* ALL_BUILD */,
-				3C55F14FA8984A27A22131D8 /* ZERO_CHECK */,
-				1AC939D43DDF46D481744A2D /* Products */,
+				100AD2F544684740B533BC54 /* CMake Rules */,
+				189730E7C677457EB3814810 /* CMakeLists.txt */,
 			);
+			name = ALL_BUILD;
 			sourceTree = "<group>";
 		};
-		115139E7405A4E32893CB4A5 /* CMake Rules */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = "CMake Rules";
-			sourceTree = "<group>";
-		};
-		1AC939D43DDF46D481744A2D /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				A2825B92A04D43F89FE67A47 /* renderer */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		37E39F8622D6476699419AEB /* CMake Rules */ = {
+		0CE240B8217C4198A5B7DDAC /* CMake Rules */ = {
 			isa = PBXGroup;
 			children = (
 			);
 			name = "CMake Rules";
 			sourceTree = "<group>";
 		};
-		3C55F14FA8984A27A22131D8 /* ZERO_CHECK */ = {
+		100AD2F544684740B533BC54 /* CMake Rules */ = {
 			isa = PBXGroup;
 			children = (
-				37E39F8622D6476699419AEB /* CMake Rules */,
-				A595B645A7FF49D2AF504F85 /* /Users/wyman/github/renderer/CMakeLists.txt */,
+			);
+			name = "CMake Rules";
+			sourceTree = "<group>";
+		};
+		1E8D5BEA206B48FF98F0A5FF /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				A2C9E563F61A47718DBE5002 /* renderer */,
+				0A388FCA8CFF478EB4764400 /* ALL_BUILD */,
+				6125278F38CA49F5AE46791E /* ZERO_CHECK */,
+			);
+			name = Sources;
+			sourceTree = "<group>";
+		};
+		5357B001526544C684195FEC = {
+			isa = PBXGroup;
+			children = (
+				1E8D5BEA206B48FF98F0A5FF /* Sources */,
+				FE234D3859294ECE8F1B6A88 /* Resources */,
+				8E61CE74C8FD4120960A6B0C /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		6125278F38CA49F5AE46791E /* ZERO_CHECK */ = {
+			isa = PBXGroup;
+			children = (
+				0CE240B8217C4198A5B7DDAC /* CMake Rules */,
+				F64270B82FB946F9BC21F3DA /* CMakeLists.txt */,
 			);
 			name = ZERO_CHECK;
 			sourceTree = "<group>";
 		};
-		58E664F8E7EF42FFA1CE6179 /* renderer */ = {
+		8AD25E94727B4871BD99B377 /* Source Files */ = {
 			isa = PBXGroup;
 			children = (
-				B5ABB2A018B84FB285C670C8 /* Source Files */,
-				15A6AC0306DB49789551FB1C /* /Users/wyman/github/renderer */,
-				46670BBBA6FD4B8CB648D005 /* /Users/wyman/github/renderer/CMakeLists.txt */,
-			);
-			name = renderer;
-			sourceTree = "<group>";
-		};
-		B5ABB2A018B84FB285C670C8 /* Source Files */ = {
-			isa = PBXGroup;
-			children = (
-				411B56A9BAE74A928458AA58 /* /Users/wyman/github/renderer/external/GL/gl3w.c */,
-				EA7CCE5970C947D8934298DD /* /Users/wyman/github/renderer/src/com/bbox.cpp */,
-				7635B7905EAD4632938A335B /* /Users/wyman/github/renderer/src/com/camera.cpp */,
-				2671404D3CEA455D9A0F3AB8 /* /Users/wyman/github/renderer/src/com/color.cpp */,
-				067BAE428352427D963254CB /* /Users/wyman/github/renderer/src/com/geometry.cpp */,
-				46F116648D3744D6BDAC47C8 /* /Users/wyman/github/renderer/src/com/intersect_result.cpp */,
-				F3F1FD55011A4CC086F3B92D /* /Users/wyman/github/renderer/src/com/matrix.cpp */,
-				2B87329BED544A519C88FAD7 /* /Users/wyman/github/renderer/src/com/ray.cpp */,
-				04ED56CD2728447FB5C3E5E0 /* /Users/wyman/github/renderer/src/com/shaderCom.cpp */,
-				C8898A96ABA746E3A4CA644F /* /Users/wyman/github/renderer/src/com/transform.cpp */,
-				6099EDE5B5814628BD07ED0F /* /Users/wyman/github/renderer/src/film.cpp */,
-				8D3728543375453FAAD86E25 /* /Users/wyman/github/renderer/src/main.cpp */,
-				1458113ED587415B8691EB78 /* /Users/wyman/github/renderer/src/main_ecs.cpp */,
-				E9138291135E4E7BBE96F558 /* /Users/wyman/github/renderer/src/system/animationSys.cpp */,
-				C3FD0743751C46C49B2F1F59 /* /Users/wyman/github/renderer/src/system/batchSys.cpp */,
-				B681AD83F1A34473925881CB /* /Users/wyman/github/renderer/src/system/bufferSys.cpp */,
-				4ECD9DB6A8D04DF88FC65787 /* /Users/wyman/github/renderer/src/system/bvhSys.cpp */,
-				4E4C912EB34145699A9453E9 /* /Users/wyman/github/renderer/src/system/cameraSys.cpp */,
-				A476F186608A4CA3A8A3CE04 /* /Users/wyman/github/renderer/src/system/configSys.cpp */,
-				1E5CBBC4BE5C4CD086ED2D6C /* /Users/wyman/github/renderer/src/system/envSys.cpp */,
-				DDC4A8A321E542C3BBA04F23 /* /Users/wyman/github/renderer/src/system/kdtreeSys.cpp */,
-				6E59F252C4274339992FC1E7 /* /Users/wyman/github/renderer/src/system/lightSys.cpp */,
-				0FF0E80CD05240BFA723855A /* /Users/wyman/github/renderer/src/system/loaderSys.cpp */,
-				C54F9ABECCEE4C0C976904ED /* /Users/wyman/github/renderer/src/system/materialSys.cpp */,
-				12BADF3FD8AD460AB6FF6C27 /* /Users/wyman/github/renderer/src/system/motionSys.cpp */,
-				D75EEBB17EA243478ADA8BFD /* /Users/wyman/github/renderer/src/system/physicsSys.cpp */,
-				0A93C93D626F4E8E94A09ABA /* /Users/wyman/github/renderer/src/system/renderSys.cpp */,
-				2DBFE22646E74497B8931143 /* /Users/wyman/github/renderer/src/system/sceneGraphSys.cpp */,
-				9EEA79F217994AA58133D10F /* /Users/wyman/github/renderer/src/system/shaderSys.cpp */,
-				B96CBA3FDC854D5F98AFD7B8 /* /Users/wyman/github/renderer/src/system/spatialSys.cpp */,
-				C59CB3F6A809487988024D8C /* /Users/wyman/github/renderer/src/system/statSys.cpp */,
-				F2CE2F2E5812457DACC49341 /* /Users/wyman/github/renderer/src/system/textureSys.cpp */,
-				19F6736D856F4603BF7B35E1 /* /Users/wyman/github/renderer/src/system/uiSys.cpp */,
-				B1CACBCDCD634E6B984DB2BE /* /Users/wyman/github/renderer/src/utils/defines.cpp */,
-				94BB5EC1771F4B9693F38BB5 /* /Users/wyman/github/renderer/src/utils/memory.cpp */,
-				69C6EE90FCCD435B99457161 /* /Users/wyman/github/renderer/src/utils/parallel.cpp */,
-				5350788746764941B7163C7A /* /Users/wyman/github/renderer/src/utils/profiler.cpp */,
+				F58A3DF11F679AEC0046A853 /* utils */,
+				F58A3DB61F6799F90046A853 /* system */,
+				F55137D01F6655760061DF99 /* com */,
+				A6C04C8A0C13446494538FC0 /* film.cpp */,
+				F5CE08F01F6633AB00989DDE /* main_ecs.cpp */,
+				F5CE08E51F66337B00989DDE /* transform.cpp */,
+				07AB1A1749FF4087B64C7065 /* main.cpp */,
 			);
 			name = "Source Files";
 			sourceTree = "<group>";
 		};
-		CEAE3250F3804C5A9C4F1C46 /* ALL_BUILD */ = {
+		8E61CE74C8FD4120960A6B0C /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				115139E7405A4E32893CB4A5 /* CMake Rules */,
-				55C1626C553843BEA5B06BA1 /* /Users/wyman/github/renderer/CMakeLists.txt */,
+				B14BE0D46D5D4E53BD4CEDF4 /* renderer */,
 			);
-			name = ALL_BUILD;
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A2C9E563F61A47718DBE5002 /* renderer */ = {
+			isa = PBXGroup;
+			children = (
+				F58A3DB81F679A1A0046A853 /* ecs */,
+				F58A3DB71F6799FE0046A853 /* External */,
+				F58A3DB21F6799DA0046A853 /* Include Files */,
+				8AD25E94727B4871BD99B377 /* Source Files */,
+				9F7AA41AA9AA4133878BC284 /* . */,
+				4E442DD79A41497B9DF9762D /* CMakeLists.txt */,
+			);
+			name = renderer;
+			sourceTree = "<group>";
+		};
+		F5435BC41FFF4E07004A1A01 /* reactphysics3d */ = {
+			isa = PBXGroup;
+			children = (
+				F5435BC51FFF4E1B004A1A01 /* body */,
+				F5435BFC1FFF4E1C004A1A01 /* collision */,
+				F5435BE11FFF4E1C004A1A01 /* configuration.h */,
+				F5435C441FFF4E1C004A1A01 /* constraint */,
+				F5435BFB1FFF4E1C004A1A01 /* decimal.h */,
+				F5435BE61FFF4E1C004A1A01 /* engine */,
+				F5435BDF1FFF4E1C004A1A01 /* fluid */,
+				F5435BCE1FFF4E1C004A1A01 /* mathematics */,
+				F5435BE21FFF4E1C004A1A01 /* memory */,
+				F5435BCC1FFF4E1C004A1A01 /* opencl */,
+				F5435BE01FFF4E1C004A1A01 /* reactphysics3d.h */,
+			);
+			name = reactphysics3d;
+			sourceTree = "<group>";
+		};
+		F5435BC51FFF4E1B004A1A01 /* body */ = {
+			isa = PBXGroup;
+			children = (
+				F5435BC61FFF4E1C004A1A01 /* Body.h */,
+				F5435BC71FFF4E1C004A1A01 /* RigidBody.cpp */,
+				F5435BC81FFF4E1C004A1A01 /* RigidBody.h */,
+				F5435BC91FFF4E1C004A1A01 /* CollisionBody.cpp */,
+				F5435BCA1FFF4E1C004A1A01 /* Body.cpp */,
+				F5435BCB1FFF4E1C004A1A01 /* CollisionBody.h */,
+			);
+			name = body;
+			path = external/reactphysics3d/body;
+			sourceTree = "<group>";
+		};
+		F5435BCC1FFF4E1C004A1A01 /* opencl */ = {
+			isa = PBXGroup;
+			children = (
+				F5435BCD1FFF4E1C004A1A01 /* kernels */,
+			);
+			name = opencl;
+			path = external/reactphysics3d/opencl;
+			sourceTree = "<group>";
+		};
+		F5435BCD1FFF4E1C004A1A01 /* kernels */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = kernels;
+			sourceTree = "<group>";
+		};
+		F5435BCE1FFF4E1C004A1A01 /* mathematics */ = {
+			isa = PBXGroup;
+			children = (
+				F5435BCF1FFF4E1C004A1A01 /* mathematics_functions.h */,
+				F5435BD01FFF4E1C004A1A01 /* mathematics_functions.cpp */,
+				F5435BD11FFF4E1C004A1A01 /* Vector3.cpp */,
+				F5435BD21FFF4E1C004A1A01 /* Vector2.h */,
+				F5435BD31FFF4E1C004A1A01 /* Matrix2x2.cpp */,
+				F5435BD41FFF4E1C004A1A01 /* Vector2.cpp */,
+				F5435BD51FFF4E1C004A1A01 /* Matrix3x3.h */,
+				F5435BD61FFF4E1C004A1A01 /* Quaternion.h */,
+				F5435BD71FFF4E1C004A1A01 /* Matrix3x3.cpp */,
+				F5435BD81FFF4E1C004A1A01 /* Matrix2x2.h */,
+				F5435BD91FFF4E1C004A1A01 /* Transform.cpp */,
+				F5435BDA1FFF4E1C004A1A01 /* Transform.h */,
+				F5435BDB1FFF4E1C004A1A01 /* Quaternion.cpp */,
+				F5435BDC1FFF4E1C004A1A01 /* Ray.h */,
+				F5435BDD1FFF4E1C004A1A01 /* mathematics.h */,
+				F5435BDE1FFF4E1C004A1A01 /* Vector3.h */,
+			);
+			name = mathematics;
+			path = external/reactphysics3d/mathematics;
+			sourceTree = "<group>";
+		};
+		F5435BDF1FFF4E1C004A1A01 /* fluid */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = fluid;
+			path = external/reactphysics3d/fluid;
+			sourceTree = "<group>";
+		};
+		F5435BE21FFF4E1C004A1A01 /* memory */ = {
+			isa = PBXGroup;
+			children = (
+				F5435BE31FFF4E1C004A1A01 /* MemoryAllocator.h */,
+				F5435BE41FFF4E1C004A1A01 /* Stack.h */,
+				F5435BE51FFF4E1C004A1A01 /* MemoryAllocator.cpp */,
+			);
+			name = memory;
+			path = external/reactphysics3d/memory;
+			sourceTree = "<group>";
+		};
+		F5435BE61FFF4E1C004A1A01 /* engine */ = {
+			isa = PBXGroup;
+			children = (
+				F5435BE71FFF4E1C004A1A01 /* ConstraintSolver.h */,
+				F5435BE81FFF4E1C004A1A01 /* CollisionWorld.cpp */,
+				F5435BE91FFF4E1C004A1A01 /* ContactSolver.h */,
+				F5435BEA1FFF4E1C004A1A01 /* Profiler.cpp */,
+				F5435BEB1FFF4E1C004A1A01 /* EventListener.h */,
+				F5435BEC1FFF4E1C004A1A01 /* Island.h */,
+				F5435BED1FFF4E1C004A1A01 /* DynamicsWorld.h */,
+				F5435BEE1FFF4E1C004A1A01 /* Timer.cpp */,
+				F5435BEF1FFF4E1C004A1A01 /* Material.h */,
+				F5435BF01FFF4E1C004A1A01 /* OverlappingPair.h */,
+				F5435BF11FFF4E1C004A1A01 /* CollisionWorld.h */,
+				F5435BF21FFF4E1C004A1A01 /* DynamicsWorld.cpp */,
+				F5435BF31FFF4E1C004A1A01 /* ConstraintSolver.cpp */,
+				F5435BF41FFF4E1C004A1A01 /* Timer.h */,
+				F5435BF51FFF4E1C004A1A01 /* ContactSolver.cpp */,
+				F5435BF61FFF4E1C004A1A01 /* Island.cpp */,
+				F5435BF71FFF4E1C004A1A01 /* OverlappingPair.cpp */,
+				F5435BF81FFF4E1C004A1A01 /* Impulse.h */,
+				F5435BF91FFF4E1C004A1A01 /* Profiler.h */,
+				F5435BFA1FFF4E1C004A1A01 /* Material.cpp */,
+			);
+			name = engine;
+			path = external/reactphysics3d/engine;
+			sourceTree = "<group>";
+		};
+		F5435BFC1FFF4E1C004A1A01 /* collision */ = {
+			isa = PBXGroup;
+			children = (
+				F5435BFD1FFF4E1C004A1A01 /* TriangleMesh.cpp */,
+				F5435BFE1FFF4E1C004A1A01 /* ProxyShape.h */,
+				F5435BFF1FFF4E1C004A1A01 /* RaycastInfo.h */,
+				F5435C001FFF4E1C004A1A01 /* TriangleVertexArray.cpp */,
+				F5435C011FFF4E1C004A1A01 /* CollisionDetection.cpp */,
+				F5435C021FFF4E1C004A1A01 /* ContactManifoldSet.h */,
+				F5435C031FFF4E1C004A1A01 /* CollisionDetection.h */,
+				F5435C041FFF4E1C004A1A01 /* shapes */,
+				F5435C1F1FFF4E1C004A1A01 /* ProxyShape.cpp */,
+				F5435C201FFF4E1C004A1A01 /* broadphase */,
+				F5435C251FFF4E1C004A1A01 /* TriangleVertexArray.h */,
+				F5435C261FFF4E1C004A1A01 /* ContactManifold.cpp */,
+				F5435C271FFF4E1C004A1A01 /* ContactManifold.h */,
+				F5435C281FFF4E1C004A1A01 /* ContactManifoldSet.cpp */,
+				F5435C291FFF4E1C004A1A01 /* RaycastInfo.cpp */,
+				F5435C2A1FFF4E1C004A1A01 /* CollisionShapeInfo.h */,
+				F5435C2B1FFF4E1C004A1A01 /* narrowphase */,
+				F5435C431FFF4E1C004A1A01 /* TriangleMesh.h */,
+			);
+			name = collision;
+			path = external/reactphysics3d/collision;
+			sourceTree = "<group>";
+		};
+		F5435C041FFF4E1C004A1A01 /* shapes */ = {
+			isa = PBXGroup;
+			children = (
+				F5435C051FFF4E1C004A1A01 /* ConcaveShape.cpp */,
+				F5435C061FFF4E1C004A1A01 /* TriangleShape.cpp */,
+				F5435C071FFF4E1C004A1A01 /* ConvexMeshShape.h */,
+				F5435C081FFF4E1C004A1A01 /* TriangleShape.h */,
+				F5435C091FFF4E1C004A1A01 /* ConcaveShape.h */,
+				F5435C0A1FFF4E1C004A1A01 /* ConvexShape.cpp */,
+				F5435C0B1FFF4E1C004A1A01 /* CylinderShape.cpp */,
+				F5435C0C1FFF4E1C004A1A01 /* HeightFieldShape.h */,
+				F5435C0D1FFF4E1C004A1A01 /* CollisionShape.cpp */,
+				F5435C0E1FFF4E1C004A1A01 /* ConvexShape.h */,
+				F5435C0F1FFF4E1C004A1A01 /* AABB.cpp */,
+				F5435C101FFF4E1C004A1A01 /* SphereShape.h */,
+				F5435C111FFF4E1C004A1A01 /* BoxShape.h */,
+				F5435C121FFF4E1C004A1A01 /* ConeShape.cpp */,
+				F5435C131FFF4E1C004A1A01 /* ConvexMeshShape.cpp */,
+				F5435C141FFF4E1C004A1A01 /* SphereShape.cpp */,
+				F5435C151FFF4E1C004A1A01 /* CylinderShape.h */,
+				F5435C161FFF4E1C004A1A01 /* ConcaveMeshShape.h */,
+				F5435C171FFF4E1C004A1A01 /* ConeShape.h */,
+				F5435C181FFF4E1C004A1A01 /* CapsuleShape.h */,
+				F5435C191FFF4E1C004A1A01 /* ConcaveMeshShape.cpp */,
+				F5435C1A1FFF4E1C004A1A01 /* BoxShape.cpp */,
+				F5435C1B1FFF4E1C004A1A01 /* CollisionShape.h */,
+				F5435C1C1FFF4E1C004A1A01 /* CapsuleShape.cpp */,
+				F5435C1D1FFF4E1C004A1A01 /* AABB.h */,
+				F5435C1E1FFF4E1C004A1A01 /* HeightFieldShape.cpp */,
+			);
+			path = shapes;
+			sourceTree = "<group>";
+		};
+		F5435C201FFF4E1C004A1A01 /* broadphase */ = {
+			isa = PBXGroup;
+			children = (
+				F5435C211FFF4E1C004A1A01 /* BroadPhaseAlgorithm.h */,
+				F5435C221FFF4E1C004A1A01 /* DynamicAABBTree.cpp */,
+				F5435C231FFF4E1C004A1A01 /* BroadPhaseAlgorithm.cpp */,
+				F5435C241FFF4E1C004A1A01 /* DynamicAABBTree.h */,
+			);
+			path = broadphase;
+			sourceTree = "<group>";
+		};
+		F5435C2B1FFF4E1C004A1A01 /* narrowphase */ = {
+			isa = PBXGroup;
+			children = (
+				F5435C2C1FFF4E1C004A1A01 /* ConcaveVsConvexAlgorithm.h */,
+				F5435C2D1FFF4E1C004A1A01 /* CollisionDispatch.h */,
+				F5435C2E1FFF4E1C004A1A01 /* ConcaveVsConvexAlgorithm.cpp */,
+				F5435C2F1FFF4E1C004A1A01 /* GJK */,
+				F5435C341FFF4E1C004A1A01 /* SphereVsSphereAlgorithm.h */,
+				F5435C351FFF4E1C004A1A01 /* NarrowPhaseAlgorithm.cpp */,
+				F5435C361FFF4E1C004A1A01 /* NarrowPhaseAlgorithm.h */,
+				F5435C371FFF4E1C004A1A01 /* EPA */,
+				F5435C401FFF4E1C004A1A01 /* SphereVsSphereAlgorithm.cpp */,
+				F5435C411FFF4E1C004A1A01 /* DefaultCollisionDispatch.cpp */,
+				F5435C421FFF4E1C004A1A01 /* DefaultCollisionDispatch.h */,
+			);
+			path = narrowphase;
+			sourceTree = "<group>";
+		};
+		F5435C2F1FFF4E1C004A1A01 /* GJK */ = {
+			isa = PBXGroup;
+			children = (
+				F5435C301FFF4E1C004A1A01 /* Simplex.cpp */,
+				F5435C311FFF4E1C004A1A01 /* Simplex.h */,
+				F5435C321FFF4E1C004A1A01 /* GJKAlgorithm.h */,
+				F5435C331FFF4E1C004A1A01 /* GJKAlgorithm.cpp */,
+			);
+			path = GJK;
+			sourceTree = "<group>";
+		};
+		F5435C371FFF4E1C004A1A01 /* EPA */ = {
+			isa = PBXGroup;
+			children = (
+				F5435C381FFF4E1C004A1A01 /* EdgeEPA.cpp */,
+				F5435C391FFF4E1C004A1A01 /* EPAAlgorithm.cpp */,
+				F5435C3A1FFF4E1C004A1A01 /* TriangleEPA.h */,
+				F5435C3B1FFF4E1C004A1A01 /* TrianglesStore.h */,
+				F5435C3C1FFF4E1C004A1A01 /* TriangleEPA.cpp */,
+				F5435C3D1FFF4E1C004A1A01 /* EPAAlgorithm.h */,
+				F5435C3E1FFF4E1C004A1A01 /* TrianglesStore.cpp */,
+				F5435C3F1FFF4E1C004A1A01 /* EdgeEPA.h */,
+			);
+			path = EPA;
+			sourceTree = "<group>";
+		};
+		F5435C441FFF4E1C004A1A01 /* constraint */ = {
+			isa = PBXGroup;
+			children = (
+				F5435C451FFF4E1C004A1A01 /* HingeJoint.cpp */,
+				F5435C461FFF4E1C004A1A01 /* FixedJoint.cpp */,
+				F5435C471FFF4E1C004A1A01 /* ContactPoint.h */,
+				F5435C481FFF4E1C004A1A01 /* Joint.cpp */,
+				F5435C491FFF4E1C004A1A01 /* HingeJoint.h */,
+				F5435C4A1FFF4E1C004A1A01 /* BallAndSocketJoint.h */,
+				F5435C4B1FFF4E1C004A1A01 /* ContactPoint.cpp */,
+				F5435C4C1FFF4E1C004A1A01 /* Joint.h */,
+				F5435C4D1FFF4E1C004A1A01 /* BallAndSocketJoint.cpp */,
+				F5435C4E1FFF4E1C004A1A01 /* SliderJoint.h */,
+				F5435C4F1FFF4E1C004A1A01 /* FixedJoint.h */,
+				F5435C501FFF4E1C004A1A01 /* SliderJoint.cpp */,
+			);
+			name = constraint;
+			path = external/reactphysics3d/constraint;
+			sourceTree = "<group>";
+		};
+		F5484D411FF4C10E008850F7 /* ozz */ = {
+			isa = PBXGroup;
+			children = (
+				F5484D461FF4C11B008850F7 /* ozz_animation.cc */,
+				F5484D481FF4C11B008850F7 /* ozz_base.cc */,
+				F5E972911FFA2C49007399E9 /* mesh.h */,
+				F5E972921FFA2C4E007399E9 /* mesh.cc */,
+				F5484D581FF4D676008850F7 /* ozz.h */,
+				F5484D471FF4C11B008850F7 /* ozz_geometry.cc */,
+				F5484D451FF4C11B008850F7 /* ozz_options.cc */,
+			);
+			name = ozz;
+			sourceTree = "<group>";
+		};
+		F55137D01F6655760061DF99 /* com */ = {
+			isa = PBXGroup;
+			children = (
+				F5CE08E41F66337B00989DDE /* geometry.cpp */,
+				F5CE08E31F66337B00989DDE /* color.cpp */,
+				F54F3BAD1FC180AD00987986 /* matrix.cpp */,
+				F59237491F6AA00F00A82A24 /* shaderCom.cpp */,
+				F592374B1F6AA01D00A82A24 /* transform.cpp */,
+				F5CE08E21F66337B00989DDE /* bbox.cpp */,
+			);
+			name = com;
+			sourceTree = "<group>";
+		};
+		F55E2B281FF222B2008CF25D /* duktape */ = {
+			isa = PBXGroup;
+			children = (
+				F55E2B2C1FF222C1008CF25D /* duk_config.h */,
+				F55E2B2B1FF222C1008CF25D /* duktape.h */,
+				F55E2B291FF222BD008CF25D /* duktape.c */,
+			);
+			name = duktape;
+			sourceTree = "<group>";
+		};
+		F58A3DB21F6799DA0046A853 /* Include Files */ = {
+			isa = PBXGroup;
+			children = (
+				F5FD0B441F726EFD007BA9DB /* base.hpp */,
+				F58A3DDF1F679ABD0046A853 /* event */,
+				F58A3DB91F679A770046A853 /* utils */,
+				F58A3DB41F6799EB0046A853 /* system */,
+				F58A3DB31F6799E70046A853 /* com */,
+			);
+			name = "Include Files";
+			sourceTree = "<group>";
+		};
+		F58A3DB31F6799E70046A853 /* com */ = {
+			isa = PBXGroup;
+			children = (
+				F58A3DBA1F679AA50046A853 /* bbox.hpp */,
+				F58A3DBB1F679AA50046A853 /* cameraCom.hpp */,
+				F5058AEA1FE7905100DC3A9F /* bvh.hpp */,
+				F54468D11FC3FA1A00D955C0 /* lightCom.hpp */,
+				F5FD0B431F70EC43007BA9DB /* actionCom.hpp */,
+				F58A3DBC1F679AA50046A853 /* color.hpp */,
+				F58A3DBD1F679AA50046A853 /* geometry.hpp */,
+				F520C5071F6F794E000B6E54 /* bufferCom.hpp */,
+				F5FD0B421F70D31C007BA9DB /* motionCom.hpp */,
+				F58A3DFE1F679DAB0046A853 /* materialCom.hpp */,
+				F58A3DBE1F679AA50046A853 /* glcommon.hpp */,
+				F58A3DBF1F679AA50046A853 /* keyState.hpp */,
+				F58A3DC01F679AA50046A853 /* matrix.hpp */,
+				F58A3DC11F679AA50046A853 /* mesh.hpp */,
+				F520C5061F6F7940000B6E54 /* miscCom.hpp */,
+				F58A3DC31F679AA50046A853 /* quaternion.hpp */,
+				F58A3DC41F679AA50046A853 /* renderMode.hpp */,
+				F58A3DC51F679AA50046A853 /* screenSize.hpp */,
+				F58A3DC61F679AA50046A853 /* sdlContext.hpp */,
+				F58A3DC71F679AA50046A853 /* shader.hpp */,
+				F58A3DC81F679AA50046A853 /* spatialData.hpp */,
+				F58A3DC91F679AA50046A853 /* transform.hpp */,
+				F58A3DCA1F679AA50046A853 /* vertex.hpp */,
+				F5484D571FF4C35A008850F7 /* animation.hpp */,
+			);
+			name = com;
+			sourceTree = "<group>";
+		};
+		F58A3DB41F6799EB0046A853 /* system */ = {
+			isa = PBXGroup;
+			children = (
+				F58A3DF21F679BF00046A853 /* bufferSys.hpp */,
+				F58A3DF91F679CDE0046A853 /* envSys.hpp */,
+				F5FD0B411F70CF69007BA9DB /* motionSys.hpp */,
+				F548063B1FEC01E8001A5B13 /* kdtreeSys.hpp */,
+				F5F27AB61F95C81800F8347E /* lightSys.hpp */,
+				F520C5041F6F78C3000B6E54 /* configSys.hpp */,
+				F58A3E001F67AD210046A853 /* materialSys.hpp */,
+				F5484D561FF4C2E6008850F7 /* animationSys.hpp */,
+				F58A3DFA1F679CDE0046A853 /* loaderSys.hpp */,
+				F5CD5E0A1F824E1700A23D8A /* uiSys.hpp */,
+				F58A3DFB1F679CDE0046A853 /* renderSys.hpp */,
+				F58A3DFC1F679CDE0046A853 /* shaderSys.hpp */,
+				F58A3DFD1F679CDE0046A853 /* textureSys.hpp */,
+				F58A3DF31F679BF00046A853 /* cameraSys.hpp */,
+				F520C5051F6F78DF000B6E54 /* spatialSys.hpp */,
+			);
+			name = system;
+			sourceTree = "<group>";
+		};
+		F58A3DB61F6799F90046A853 /* system */ = {
+			isa = PBXGroup;
+			children = (
+				F520C4F91F6F781A000B6E54 /* bufferSys.cpp */,
+				F5058AE21FE78C9A00DC3A9F /* batchSys.cpp */,
+				F520C4FB1F6F7822000B6E54 /* cameraSys.cpp */,
+				F54806391FEC0083001A5B13 /* kdtreeSys.cpp */,
+				F520C4FD1F6F7828000B6E54 /* configSys.cpp */,
+				F5058AE41FE78C9F00DC3A9F /* bvhSys.cpp */,
+				F5FD0B3F1F70CF57007BA9DB /* motionSys.cpp */,
+				F5CE08EA1F66338700989DDE /* envSys.cpp */,
+				F5058AE61FE78CA500DC3A9F /* sceneGraphSys.cpp */,
+				F5CD5E0B1F824E2A00A23D8A /* uiSys.cpp */,
+				F5F27AB41F95C80900F8347E /* lightSys.cpp */,
+				F5DBE2B21FDE4CB4004420F4 /* statSys.cpp */,
+				F5CE08F41F66343500989DDE /* loaderSys.cpp */,
+				F58A3E011F67ADAE0046A853 /* materialSys.cpp */,
+				F5CE08F51F66343500989DDE /* renderSys.cpp */,
+				F55137CE1F664E4F0061DF99 /* shaderSys.cpp */,
+				F58A3E051F67B5430046A853 /* spatialSys.cpp */,
+				F5CE08F61F66343500989DDE /* textureSys.cpp */,
+				F5484D541FF4C26E008850F7 /* animationSys.cpp */,
+			);
+			name = system;
+			sourceTree = "<group>";
+		};
+		F58A3DB71F6799FE0046A853 /* External */ = {
+			isa = PBXGroup;
+			children = (
+				F5435BC41FFF4E07004A1A01 /* reactphysics3d */,
+				F5484D411FF4C10E008850F7 /* ozz */,
+				F55E2B281FF222B2008CF25D /* duktape */,
+				CD768ED31C904300A83FBFDB /* gl3w.c */,
+				F5024F4C1F9F127300D6C743 /* AreaTex.h */,
+				F5024F4B1F9F127300D6C743 /* SearchTex.h */,
+				F5F67D441F8249C00016CEF2 /* imgui.cpp */,
+				F5F67D421F8249950016CEF2 /* imgui_draw.cpp */,
+				F5F67D401F82485D0016CEF2 /* imgui_impl_sdl_gl3.cpp */,
+			);
+			name = External;
+			sourceTree = "<group>";
+		};
+		F58A3DB81F679A1A0046A853 /* ecs */ = {
+			isa = PBXGroup;
+			children = (
+				F5AEC4561F5E678800F91CE7 /* system.cpp */,
+				F5AEC4541F5E678800F91CE7 /* object_manager.cpp */,
+				F58A3DCB1F679AB40046A853 /* component_handle.hpp */,
+				F58A3DCC1F679AB40046A853 /* ecs.hpp */,
+				F58A3DCD1F679AB40046A853 /* event_builtin.hpp */,
+				F58A3DCE1F679AB40046A853 /* event.cpp */,
+				F58A3DCF1F679AB40046A853 /* event.hpp */,
+				F58A3DD01F679AB40046A853 /* manager.hpp */,
+				F58A3DD21F679AB40046A853 /* object_manager.hpp */,
+				F58A3DD31F679AB40046A853 /* object.cpp */,
+				F58A3DD41F679AB40046A853 /* object.hpp */,
+				F58A3DD51F679AB40046A853 /* setting.hpp */,
+				F58A3DD71F679AB40046A853 /* system.hpp */,
+				F58A3DD91F679AB40046A853 /* test.hpp */,
+				F5AEC4511F5E677F00F91CE7 /* test.cpp */,
+			);
+			name = ecs;
+			sourceTree = "<group>";
+		};
+		F58A3DB91F679A770046A853 /* utils */ = {
+			isa = PBXGroup;
+			children = (
+				F58A3DEC1F679ADB0046A853 /* defines.hpp */,
+				F5DF9F321F7FBD420084BB93 /* helper.hpp */,
+				F58A3DED1F679ADB0046A853 /* draw.hpp */,
+				F576A1E31FF50F5F00CD09D2 /* glutils.hpp */,
+				F58A3DEE1F679ADB0046A853 /* error.hpp */,
+				F58A3DEF1F679ADB0046A853 /* MemoryPool.hpp */,
+				F58A3DF01F679ADB0046A853 /* profiler.hpp */,
+			);
+			name = utils;
+			sourceTree = "<group>";
+		};
+		F58A3DDF1F679ABD0046A853 /* event */ = {
+			isa = PBXGroup;
+			children = (
+				F520C5001F6F788F000B6E54 /* bufferEvent.hpp */,
+				F520C5011F6F7894000B6E54 /* loaderEvent.hpp */,
+				F58A3DFF1F67ACA80046A853 /* materialEvent.hpp */,
+				F5CD5E0D1F824E3B00A23D8A /* uiEvent.hpp */,
+				F520C5021F6F789D000B6E54 /* miscEvent.hpp */,
+				F520C5031F6F78A3000B6E54 /* renderEvent.hpp */,
+				F58A3DE01F679AC30046A853 /* shaderEvent.hpp */,
+				F58A3DE11F679AC30046A853 /* textureEvent.hpp */,
+				F520C4FF1F6F7889000B6E54 /* spatialEvent.hpp */,
+				F58A3DE21F679AC30046A853 /* winEvent.hpp */,
+			);
+			name = event;
+			sourceTree = "<group>";
+		};
+		F58A3DF11F679AEC0046A853 /* utils */ = {
+			isa = PBXGroup;
+			children = (
+				F54806361FEC0073001A5B13 /* memory.cpp */,
+				F54806351FEC0073001A5B13 /* parallel.cpp */,
+				F5CE08EC1F66339300989DDE /* defines.cpp */,
+				F5CE08ED1F66339300989DDE /* profiler.cpp */,
+			);
+			name = utils;
+			sourceTree = "<group>";
+		};
+		FE234D3859294ECE8F1B6A88 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Resources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -304,18 +1000,18 @@
 /* Begin PBXNativeTarget section */
 		63347A43FDDA4D668DC41B43 /* renderer */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = FCE18F5389CF443F90E6814F /* Build configuration list for PBXNativeTarget "renderer" */;
+			buildConfigurationList = 0316E814AD5D46F584D29490 /* Build configuration list for PBXNativeTarget "renderer" */;
 			buildPhases = (
-				30D5733D8DB7429196D4B1E6 /* Sources */,
+				331552EE80DB4CB5818C8559 /* Sources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				CDB2A8B12F8645D9B9AF8DCE /* PBXTargetDependency */,
+				23B2768ED8D1448496617F76 /* PBXTargetDependency */,
 			);
 			name = renderer;
 			productName = renderer;
-			productReference = A2825B92A04D43F89FE67A47 /* renderer */;
+			productReference = B14BE0D46D5D4E53BD4CEDF4 /* renderer */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -325,20 +1021,22 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 0920;
+				LastUpgradeCheck = 0830;
+				TargetAttributes = {
+					63347A43FDDA4D668DC41B43 = {
+						DevelopmentTeam = YFWU6D8ZM3;
+						ProvisioningStyle = Automatic;
+					};
+				};
 			};
-			buildConfigurationList = E25089EF816741FB836C1C92 /* Build configuration list for PBXProject "renderer" */;
-			buildSettings = {
-			};
-			buildStyles = (
-				F099421BF86E4BAF835C27AA /* Debug */,
-				4C417753633942DD984F6FC1 /* Release */,
-				A0794F0E90A548C8812107A4 /* MinSizeRel */,
-				6FAFADA5F33A4438B86E2636 /* RelWithDebInfo */,
-			);
+			buildConfigurationList = 512E7FA4DDE94994A86FAF6E /* Build configuration list for PBXProject "renderer" */;
 			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
 			hasScannedForEncodings = 0;
-			mainGroup = 08AE4DFDBAD546FAA0D3F8A4;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 5357B001526544C684195FEC;
 			projectDirPath = ../;
 			projectRoot = "";
 			targets = (
@@ -351,33 +1049,7 @@
 /* End PBXProject section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		075E6833576D4ABEA420ADB5 /* CMake Rules */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			name = "CMake Rules";
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "make -C /Users/wyman/github/renderer/mac_build -f /Users/wyman/github/renderer/mac_build/CMakeScripts/ZERO_CHECK_cmakeRulesBuildPhase.make$CONFIGURATION all";
-			showEnvVarsInLog = 0;
-		};
-		407681C0DE824477BA5B7292 = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# shell script goes here
-exit 0";
-			showEnvVarsInLog = 0;
-		};
-		91859BEBE0184D20AAF52A37 /* CMake Rules */ = {
+		3846ACD6C3E24D099E1CF085 /* CMake Rules */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -388,22 +1060,18 @@ exit 0";
 			shellScript = "make -C /Users/wyman/github/renderer/mac_build -f /Users/wyman/github/renderer/mac_build/CMakeScripts/ALL_BUILD_cmakeRulesBuildPhase.make$CONFIGURATION all";
 			showEnvVarsInLog = 0;
 		};
-		9C186FA7CEF246F8A099759E = {
+		CF76F2A64FA1410CB812BAFE /* CMake Rules */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
+			name = "CMake Rules";
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# shell script goes here
-exit 0";
+			shellScript = "make -C /Users/wyman/github/renderer/mac_build -f /Users/wyman/github/renderer/mac_build/CMakeScripts/ZERO_CHECK_cmakeRulesBuildPhase.make$CONFIGURATION all";
 			showEnvVarsInLog = 0;
 		};
-		DAD25F33282D4657BBD28597 /* CMake PostBuild Rules */ = {
+		DAD5CE8D8C4C4F04A0808F57 /* CMake PostBuild Rules */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -414,104 +1082,178 @@ exit 0";
 			shellScript = "make -C /Users/wyman/github/renderer/mac_build -f /Users/wyman/github/renderer/mac_build/CMakeScripts/install_postBuildPhase.make$CONFIGURATION all";
 			showEnvVarsInLog = 0;
 		};
-		FDE400897DD341539301E433 = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# shell script goes here
-exit 0";
-			showEnvVarsInLog = 0;
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		30D5733D8DB7429196D4B1E6 /* Sources */ = {
+		331552EE80DB4CB5818C8559 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9F16EBDA8FC04601ABFE157F /* /Users/wyman/github/renderer/external/GL/gl3w.c */,
-				2503674FE060421D90E53951 /* /Users/wyman/github/renderer/src/com/bbox.cpp */,
-				2B614BFDB94842678B336805 /* /Users/wyman/github/renderer/src/com/camera.cpp */,
-				CB75D34A90484C80AB64032D /* /Users/wyman/github/renderer/src/com/color.cpp */,
-				8AC6D8F7ED9A49C4AF541F19 /* /Users/wyman/github/renderer/src/com/geometry.cpp */,
-				96FF31519B7741B9B0CCCD5B /* /Users/wyman/github/renderer/src/com/intersect_result.cpp */,
-				F4E9EA1496B44313B1A2D3DB /* /Users/wyman/github/renderer/src/com/matrix.cpp */,
-				07F6BB1EBEBE424AA0B7C1EF /* /Users/wyman/github/renderer/src/com/ray.cpp */,
-				F532E4B470F74C7398FCF57B /* /Users/wyman/github/renderer/src/com/shaderCom.cpp */,
-				F2438E17DAE4408D8E58CFAF /* /Users/wyman/github/renderer/src/com/transform.cpp */,
-				330114B6B5584ED69B023FAA /* /Users/wyman/github/renderer/src/film.cpp */,
-				BCA09E787E644A77A80205C7 /* /Users/wyman/github/renderer/src/main.cpp */,
-				F0433E835F7544DBBDA3610F /* /Users/wyman/github/renderer/src/main_ecs.cpp */,
-				2029A6B007084982BE135281 /* /Users/wyman/github/renderer/src/system/animationSys.cpp */,
-				CE2B17D7AAC44290BE78CDFF /* /Users/wyman/github/renderer/src/system/batchSys.cpp */,
-				281F26FBFC914908B2337080 /* /Users/wyman/github/renderer/src/system/bufferSys.cpp */,
-				E788B51E9D7642FBB6F8670A /* /Users/wyman/github/renderer/src/system/bvhSys.cpp */,
-				6F830E1C70294F719C3BA0CD /* /Users/wyman/github/renderer/src/system/cameraSys.cpp */,
-				4E5810A065504CE9A3DC9516 /* /Users/wyman/github/renderer/src/system/configSys.cpp */,
-				76FB9D7201014DA4BF11CEF9 /* /Users/wyman/github/renderer/src/system/envSys.cpp */,
-				991BE845E50740C489379E2F /* /Users/wyman/github/renderer/src/system/kdtreeSys.cpp */,
-				EE8086CE9580423A9A267E3E /* /Users/wyman/github/renderer/src/system/lightSys.cpp */,
-				6A28568E1036458CB353FE54 /* /Users/wyman/github/renderer/src/system/loaderSys.cpp */,
-				A0357C28AF004CBDAD6C9C4B /* /Users/wyman/github/renderer/src/system/materialSys.cpp */,
-				FB56BA05C2E941A6A5A99009 /* /Users/wyman/github/renderer/src/system/motionSys.cpp */,
-				5316B49660B34A3C8046DEF5 /* /Users/wyman/github/renderer/src/system/physicsSys.cpp */,
-				1423B6DA3186420295E233CF /* /Users/wyman/github/renderer/src/system/renderSys.cpp */,
-				C48D20BE616B45F9A75498C2 /* /Users/wyman/github/renderer/src/system/sceneGraphSys.cpp */,
-				8194BBE625C54CA996833916 /* /Users/wyman/github/renderer/src/system/shaderSys.cpp */,
-				42C57783DFBE4D87AB1E95DD /* /Users/wyman/github/renderer/src/system/spatialSys.cpp */,
-				8CECFE905DFC4CDC8FCA2B9A /* /Users/wyman/github/renderer/src/system/statSys.cpp */,
-				57BF9112E9DE40E88D10CF10 /* /Users/wyman/github/renderer/src/system/textureSys.cpp */,
-				1BA913A4BE1F473CA2017897 /* /Users/wyman/github/renderer/src/system/uiSys.cpp */,
-				DC607543697544F8B3DE6D44 /* /Users/wyman/github/renderer/src/utils/defines.cpp */,
-				9C0D64722E6D474BB44D5F01 /* /Users/wyman/github/renderer/src/utils/memory.cpp */,
-				14CF0B49186D4EABA56CBFBB /* /Users/wyman/github/renderer/src/utils/parallel.cpp */,
-				C0EE9EAA262249BF95B356BC /* /Users/wyman/github/renderer/src/utils/profiler.cpp */,
+				F5435C6E1FFF4E1C004A1A01 /* ConeShape.cpp in Sources */,
+				3C5B04777A344A6CB1A62C97 /* gl3w.c in Sources */,
+				F5CE08EE1F66339300989DDE /* defines.cpp in Sources */,
+				F5435C571FFF4E1C004A1A01 /* Vector2.cpp in Sources */,
+				F5CD5E0C1F824E2A00A23D8A /* uiSys.cpp in Sources */,
+				F5AEC4581F5E678800F91CE7 /* object_manager.cpp in Sources */,
+				F5CE08EF1F66339300989DDE /* profiler.cpp in Sources */,
+				F5435C5B1FFF4E1C004A1A01 /* MemoryAllocator.cpp in Sources */,
+				F5CE08F81F66343500989DDE /* renderSys.cpp in Sources */,
+				F5435C821FFF4E1C004A1A01 /* TrianglesStore.cpp in Sources */,
+				F5435C6C1FFF4E1C004A1A01 /* CollisionShape.cpp in Sources */,
+				CFB4C4EDF2E94272AB7A81A7 /* film.cpp in Sources */,
+				F5CE08F71F66343500989DDE /* loaderSys.cpp in Sources */,
+				F5435C621FFF4E1C004A1A01 /* Island.cpp in Sources */,
+				F5058AE31FE78C9A00DC3A9F /* batchSys.cpp in Sources */,
+				F5435C7F1FFF4E1C004A1A01 /* EdgeEPA.cpp in Sources */,
+				F5058AE71FE78CA500DC3A9F /* sceneGraphSys.cpp in Sources */,
+				F58A3DDA1F679AB40046A853 /* event.cpp in Sources */,
+				F5058AE51FE78CA000DC3A9F /* bvhSys.cpp in Sources */,
+				F5484D4E1FF4C11B008850F7 /* ozz_animation.cc in Sources */,
+				F5435C7D1FFF4E1C004A1A01 /* GJKAlgorithm.cpp in Sources */,
+				F592374C1F6AA01D00A82A24 /* transform.cpp in Sources */,
+				F5435C6B1FFF4E1C004A1A01 /* CylinderShape.cpp in Sources */,
+				F5435C671FFF4E1C004A1A01 /* CollisionDetection.cpp in Sources */,
+				F5FD0B401F70CF57007BA9DB /* motionSys.cpp in Sources */,
+				F5435C531FFF4E1C004A1A01 /* Body.cpp in Sources */,
+				F54806371FEC0073001A5B13 /* parallel.cpp in Sources */,
+				F5435C561FFF4E1C004A1A01 /* Matrix2x2.cpp in Sources */,
+				F5435C6F1FFF4E1C004A1A01 /* ConvexMeshShape.cpp in Sources */,
+				F5435C6A1FFF4E1C004A1A01 /* ConvexShape.cpp in Sources */,
+				F5CE08E81F66337B00989DDE /* geometry.cpp in Sources */,
+				F5435C801FFF4E1C004A1A01 /* EPAAlgorithm.cpp in Sources */,
+				F55E2B2A1FF222BD008CF25D /* duktape.c in Sources */,
+				F5435C651FFF4E1C004A1A01 /* TriangleMesh.cpp in Sources */,
+				F5435C731FFF4E1C004A1A01 /* CapsuleShape.cpp in Sources */,
+				F5435C7B1FFF4E1C004A1A01 /* ConcaveVsConvexAlgorithm.cpp in Sources */,
+				F520C4FA1F6F781A000B6E54 /* bufferSys.cpp in Sources */,
+				F54F3BAE1FC180AD00987986 /* matrix.cpp in Sources */,
+				F5435C6D1FFF4E1C004A1A01 /* AABB.cpp in Sources */,
+				F5435C8A1FFF4E1C004A1A01 /* SliderJoint.cpp in Sources */,
+				F55137CF1F664E4F0061DF99 /* shaderSys.cpp in Sources */,
+				F5435C891FFF4E1C004A1A01 /* BallAndSocketJoint.cpp in Sources */,
+				F5435C851FFF4E1C004A1A01 /* HingeJoint.cpp in Sources */,
+				F5435C7A1FFF4E1C004A1A01 /* RaycastInfo.cpp in Sources */,
+				F5484D4D1FF4C11B008850F7 /* ozz_options.cc in Sources */,
+				F5435C7C1FFF4E1C004A1A01 /* Simplex.cpp in Sources */,
+				F5DBE2B31FDE4CB5004420F4 /* statSys.cpp in Sources */,
+				F5435C791FFF4E1C004A1A01 /* ContactManifoldSet.cpp in Sources */,
+				F54806381FEC0073001A5B13 /* memory.cpp in Sources */,
+				F5435C881FFF4E1C004A1A01 /* ContactPoint.cpp in Sources */,
+				F5435C591FFF4E1C004A1A01 /* Transform.cpp in Sources */,
+				F5E972931FFA2C4E007399E9 /* mesh.cc in Sources */,
+				99E0F5B435FB47B781F961CD /* main.cpp in Sources */,
+				F5435C641FFF4E1C004A1A01 /* Material.cpp in Sources */,
+				F5CE08EB1F66338700989DDE /* envSys.cpp in Sources */,
+				F5435C7E1FFF4E1C004A1A01 /* NarrowPhaseAlgorithm.cpp in Sources */,
+				F58A3DDC1F679AB40046A853 /* object.cpp in Sources */,
+				F5435C521FFF4E1C004A1A01 /* CollisionBody.cpp in Sources */,
+				F5484D501FF4C11B008850F7 /* ozz_base.cc in Sources */,
+				F5435C5C1FFF4E1C004A1A01 /* CollisionWorld.cpp in Sources */,
+				F58A3E061F67B5430046A853 /* spatialSys.cpp in Sources */,
+				F5435C721FFF4E1C004A1A01 /* BoxShape.cpp in Sources */,
+				F5435C841FFF4E1C004A1A01 /* DefaultCollisionDispatch.cpp in Sources */,
+				F5435C811FFF4E1C004A1A01 /* TriangleEPA.cpp in Sources */,
+				F5435C601FFF4E1C004A1A01 /* ConstraintSolver.cpp in Sources */,
+				F5CE08E71F66337B00989DDE /* color.cpp in Sources */,
+				F5435C741FFF4E1C004A1A01 /* HeightFieldShape.cpp in Sources */,
+				F5CE08F11F6633AB00989DDE /* main_ecs.cpp in Sources */,
+				F5435C5A1FFF4E1C004A1A01 /* Quaternion.cpp in Sources */,
+				F5435C611FFF4E1C004A1A01 /* ContactSolver.cpp in Sources */,
+				F5484D551FF4C26E008850F7 /* animationSys.cpp in Sources */,
+				F5F67D431F8249950016CEF2 /* imgui_draw.cpp in Sources */,
+				F5484D4F1FF4C11B008850F7 /* ozz_geometry.cc in Sources */,
+				F5435C781FFF4E1C004A1A01 /* ContactManifold.cpp in Sources */,
+				F5435C551FFF4E1C004A1A01 /* Vector3.cpp in Sources */,
+				F5435C701FFF4E1C004A1A01 /* SphereShape.cpp in Sources */,
+				F5CE08F91F66343500989DDE /* textureSys.cpp in Sources */,
+				F548063A1FEC0083001A5B13 /* kdtreeSys.cpp in Sources */,
+				F5435C631FFF4E1C004A1A01 /* OverlappingPair.cpp in Sources */,
+				F520C4FE1F6F7828000B6E54 /* configSys.cpp in Sources */,
+				F5435C871FFF4E1C004A1A01 /* Joint.cpp in Sources */,
+				F5435C5E1FFF4E1C004A1A01 /* Timer.cpp in Sources */,
+				F5435C5D1FFF4E1C004A1A01 /* Profiler.cpp in Sources */,
+				F5AEC4521F5E677F00F91CE7 /* test.cpp in Sources */,
+				F5435C511FFF4E1C004A1A01 /* RigidBody.cpp in Sources */,
+				F5CE08E61F66337B00989DDE /* bbox.cpp in Sources */,
+				F520C4FC1F6F7822000B6E54 /* cameraSys.cpp in Sources */,
+				F5CE08E91F66337B00989DDE /* transform.cpp in Sources */,
+				F5F67D451F8249C00016CEF2 /* imgui.cpp in Sources */,
+				F5435C691FFF4E1C004A1A01 /* TriangleShape.cpp in Sources */,
+				F5435C761FFF4E1C004A1A01 /* DynamicAABBTree.cpp in Sources */,
+				F5435C5F1FFF4E1C004A1A01 /* DynamicsWorld.cpp in Sources */,
+				F5435C581FFF4E1C004A1A01 /* Matrix3x3.cpp in Sources */,
+				F5435C861FFF4E1C004A1A01 /* FixedJoint.cpp in Sources */,
+				F5435C541FFF4E1C004A1A01 /* mathematics_functions.cpp in Sources */,
+				F5435C681FFF4E1C004A1A01 /* ConcaveShape.cpp in Sources */,
+				F5F67D411F82485D0016CEF2 /* imgui_impl_sdl_gl3.cpp in Sources */,
+				F58A3E021F67ADAE0046A853 /* materialSys.cpp in Sources */,
+				F5AEC45A1F5E678800F91CE7 /* system.cpp in Sources */,
+				F5435C771FFF4E1C004A1A01 /* BroadPhaseAlgorithm.cpp in Sources */,
+				F5435C661FFF4E1C004A1A01 /* TriangleVertexArray.cpp in Sources */,
+				F592374A1F6AA00F00A82A24 /* shaderCom.cpp in Sources */,
+				F5435C751FFF4E1C004A1A01 /* ProxyShape.cpp in Sources */,
+				F5435C711FFF4E1C004A1A01 /* ConcaveMeshShape.cpp in Sources */,
+				F5F27AB51F95C80900F8347E /* lightSys.cpp in Sources */,
+				F5435C831FFF4E1C004A1A01 /* SphereVsSphereAlgorithm.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		03F843678DD440F48E91F2DD /* PBXTargetDependency */ = {
+		23B2768ED8D1448496617F76 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = E3BF0868E7044AD3B1A7FC01 /* ALL_BUILD */;
-			targetProxy = C1F82219B0D54293A26C02B7 /* PBXContainerItemProxy */;
+			target = FF26E37ED56C4ABD880E623F /* ZERO_CHECK */;
+			targetProxy = 3C662694837C423BAF23FF46 /* PBXContainerItemProxy */;
 		};
-		AEFFD627AEB4465F8253E0A4 /* PBXTargetDependency */ = {
+		2D030B1D465F4FD583B25028 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 63347A43FDDA4D668DC41B43 /* renderer */;
-			targetProxy = 9E2B64F5CBD14238AD48FBAA /* PBXContainerItemProxy */;
+			targetProxy = 22892493A35D4DAAB1C0D1CE /* PBXContainerItemProxy */;
 		};
-		CDB2A8B12F8645D9B9AF8DCE /* PBXTargetDependency */ = {
+		A5E6DA080AB8474B9923F40D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = FF26E37ED56C4ABD880E623F /* ZERO_CHECK */;
-			targetProxy = B2F80F9E87E24ED8B5E56084 /* PBXContainerItemProxy */;
+			targetProxy = 6D03D27957054C3F9B95790A /* PBXContainerItemProxy */;
 		};
-		DE07B66E59394EEA9698F5B6 /* PBXTargetDependency */ = {
+		CF32831FA6DC4442BB63DA96 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = FF26E37ED56C4ABD880E623F /* ZERO_CHECK */;
-			targetProxy = E5460C1B5D2242AEA30136F9 /* PBXContainerItemProxy */;
+			target = E3BF0868E7044AD3B1A7FC01 /* ALL_BUILD */;
+			targetProxy = 9D296993FD0A45B8A8244312 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		0F25784C27C8416B84C44660 /* RelWithDebInfo */ = {
+		0C503EE601224B6288C7513A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk;
+				SYMROOT = /Users/wyman/github/renderer/mac_build/build;
+			};
+			name = Release;
+		};
+		1011F1DFDC8F445F9FD5189F /* MinSizeRel */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'";
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/wyman/github/renderer,/Users/wyman/github/renderer/external,/Users/wyman/github/renderer/external/SOIL,/Users/wyman/github/renderer/external/SDL,/Users/wyman/github/renderer/external/reactphysics3d,/Users/wyman/github/renderer/include,/Users/wyman/github/renderer/include/realtime,/Users/wyman/github/renderer/include/shapes,/Users/wyman/github/renderer/src,/Users/wyman/github/renderer/src/realtime,/Users/wyman/github/renderer/src/shapes);
+				HEADER_SEARCH_PATHS = (
+					/Users/wyman/github/renderer,
+					/Users/wyman/github/renderer/external,
+					/Users/wyman/github/renderer/external/SOIL,
+					/Users/wyman/github/renderer/external/SDL,
+					/Users/wyman/github/renderer/include,
+					/Users/wyman/github/renderer/include/realtime,
+					/Users/wyman/github/renderer/include/shapes,
+					/Users/wyman/github/renderer/src,
+					/Users/wyman/github/renderer/src/realtime,
+					/Users/wyman/github/renderer/src/shapes,
+				);
 				INSTALL_PATH = "";
 				OTHER_LDFLAGS = " ";
 				OTHER_REZFLAGS = "";
@@ -519,20 +1261,36 @@ exit 0";
 				SECTORDER_FLAGS = "";
 				SYMROOT = /Users/wyman/github/renderer/mac_build;
 				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+					"$(inherited)",
+				);
 			};
-			name = RelWithDebInfo;
+			name = MinSizeRel;
 		};
-		210F3A24958F45A192CEC7D4 /* Debug */ = {
+		11B17E161796495DBB172D3B /* RelWithDebInfo */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'";
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/wyman/github/renderer,/Users/wyman/github/renderer/external,/Users/wyman/github/renderer/external/SOIL,/Users/wyman/github/renderer/external/SDL,/Users/wyman/github/renderer/external/reactphysics3d,/Users/wyman/github/renderer/include,/Users/wyman/github/renderer/include/realtime,/Users/wyman/github/renderer/include/shapes,/Users/wyman/github/renderer/src,/Users/wyman/github/renderer/src/realtime,/Users/wyman/github/renderer/src/shapes);
+				HEADER_SEARCH_PATHS = (
+					/Users/wyman/github/renderer,
+					/Users/wyman/github/renderer/external,
+					/Users/wyman/github/renderer/external/SOIL,
+					/Users/wyman/github/renderer/external/SDL,
+					/Users/wyman/github/renderer/include,
+					/Users/wyman/github/renderer/include/realtime,
+					/Users/wyman/github/renderer/include/shapes,
+					/Users/wyman/github/renderer/src,
+					/Users/wyman/github/renderer/src/realtime,
+					/Users/wyman/github/renderer/src/shapes,
+				);
 				INSTALL_PATH = "";
 				OTHER_LDFLAGS = " ";
 				OTHER_REZFLAGS = "";
@@ -540,348 +1298,257 @@ exit 0";
 				SECTORDER_FLAGS = "";
 				SYMROOT = /Users/wyman/github/renderer/mac_build;
 				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
-			};
-			name = Debug;
-		};
-		45679C6598B9456BA99C3C95 /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/wyman/github/renderer,/Users/wyman/github/renderer/external,/Users/wyman/github/renderer/external/SOIL,/Users/wyman/github/renderer/external/SDL,/Users/wyman/github/renderer/external/reactphysics3d,/Users/wyman/github/renderer/include,/Users/wyman/github/renderer/include/realtime,/Users/wyman/github/renderer/include/shapes,/Users/wyman/github/renderer/src,/Users/wyman/github/renderer/src/realtime,/Users/wyman/github/renderer/src/shapes);
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = " ";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ZERO_CHECK;
-				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/wyman/github/renderer/mac_build;
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		48B502BE31584774B21A7AD4 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/wyman/github/renderer,/Users/wyman/github/renderer/external,/Users/wyman/github/renderer/external/SOIL,/Users/wyman/github/renderer/external/SDL,/Users/wyman/github/renderer/external/reactphysics3d,/Users/wyman/github/renderer/include,/Users/wyman/github/renderer/include/realtime,/Users/wyman/github/renderer/include/shapes,/Users/wyman/github/renderer/src,/Users/wyman/github/renderer/src/realtime,/Users/wyman/github/renderer/src/shapes);
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = " ";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ZERO_CHECK;
-				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/wyman/github/renderer/mac_build;
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
-			};
-			name = Debug;
-		};
-		493A5FC73A2A42E8B3EEC2C4 /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = /Users/wyman/github/renderer/mac_build/bin/MinSizeRel;
-				EXECUTABLE_PREFIX = "";
-				EXECUTABLE_SUFFIX = "";
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = s;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/wyman/github/renderer,/Users/wyman/github/renderer/external,/Users/wyman/github/renderer/external/SOIL,/Users/wyman/github/renderer/external/SDL,/Users/wyman/github/renderer/external/reactphysics3d,/Users/wyman/github/renderer/include,/Users/wyman/github/renderer/include/realtime,/Users/wyman/github/renderer/include/shapes,/Users/wyman/github/renderer/src,/Users/wyman/github/renderer/src/realtime,/Users/wyman/github/renderer/src/shapes);
-				INSTALL_PATH = "";
-				LD_RUNPATH_SEARCH_PATHS = "/Users/wyman/github/renderer/./lib/mac /usr/local/lib";
-				LIBRARY_SEARCH_PATHS = " /Users/wyman/github/renderer/./lib/mac/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME) /Users/wyman/github/renderer/./lib/mac /usr/local/lib/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME) /usr/local/lib";
-				OTHER_CFLAGS = "    -DNDEBUG  ";
-				OTHER_CPLUSPLUSFLAGS = "    -DNDEBUG '-std=gnu++11'  ";
-				OTHER_LDFLAGS = " -Wl,-search_paths_first -Wl,-headerpad_max_install_names  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/Carbon.framework /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/OpenGL.framework /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/CoreFoundation.framework /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/Cocoa.framework /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/CoreAudio.framework /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/AudioToolbox.framework /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/CoreVideo.framework /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/IOKit.framework /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/ForceFeedback.framework /usr/local/lib/libassimp.dylib /usr/local/lib/libfreetype.dylib -lSDL2 -lSOIL";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = renderer;
-				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/wyman/github/renderer/mac_build;
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		572FCCE3B84C45F993508A20 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = /Users/wyman/github/renderer/mac_build/bin/Release;
-				EXECUTABLE_PREFIX = "";
-				EXECUTABLE_SUFFIX = "";
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 3;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/wyman/github/renderer,/Users/wyman/github/renderer/external,/Users/wyman/github/renderer/external/SOIL,/Users/wyman/github/renderer/external/SDL,/Users/wyman/github/renderer/external/reactphysics3d,/Users/wyman/github/renderer/include,/Users/wyman/github/renderer/include/realtime,/Users/wyman/github/renderer/include/shapes,/Users/wyman/github/renderer/src,/Users/wyman/github/renderer/src/realtime,/Users/wyman/github/renderer/src/shapes);
-				INSTALL_PATH = "";
-				LD_RUNPATH_SEARCH_PATHS = "/Users/wyman/github/renderer/./lib/mac /usr/local/lib";
-				LIBRARY_SEARCH_PATHS = " /Users/wyman/github/renderer/./lib/mac/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME) /Users/wyman/github/renderer/./lib/mac /usr/local/lib/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME) /usr/local/lib";
-				OTHER_CFLAGS = "    -DNDEBUG  ";
-				OTHER_CPLUSPLUSFLAGS = "    -DNDEBUG '-std=gnu++11'  ";
-				OTHER_LDFLAGS = " -Wl,-search_paths_first -Wl,-headerpad_max_install_names  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/Carbon.framework /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/OpenGL.framework /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/CoreFoundation.framework /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/Cocoa.framework /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/CoreAudio.framework /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/AudioToolbox.framework /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/CoreVideo.framework /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/IOKit.framework /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/ForceFeedback.framework /usr/local/lib/libassimp.dylib /usr/local/lib/libfreetype.dylib -lSDL2 -lSOIL";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = renderer;
-				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/wyman/github/renderer/mac_build;
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
-			};
-			name = Release;
-		};
-		6E292349AD144E6D9ABC50B9 /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = "";
-				SYMROOT = /Users/wyman/github/renderer/mac_build/build;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+					"$(inherited)",
+				);
 			};
 			name = RelWithDebInfo;
 		};
-		8AE3B930F21C44D5911D902F /* Release */ = {
+		11C47E8819734568AFFC82F4 /* RelWithDebInfo */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/wyman/github/renderer,/Users/wyman/github/renderer/external,/Users/wyman/github/renderer/external/SOIL,/Users/wyman/github/renderer/external/SDL,/Users/wyman/github/renderer/external/reactphysics3d,/Users/wyman/github/renderer/include,/Users/wyman/github/renderer/include/realtime,/Users/wyman/github/renderer/include/shapes,/Users/wyman/github/renderer/src,/Users/wyman/github/renderer/src/realtime,/Users/wyman/github/renderer/src/shapes);
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = " ";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ALL_BUILD;
-				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/wyman/github/renderer/mac_build;
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
-			};
-			name = Release;
-		};
-		924A197765D847D08F0AC69D /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/wyman/github/renderer,/Users/wyman/github/renderer/external,/Users/wyman/github/renderer/external/SOIL,/Users/wyman/github/renderer/external/SDL,/Users/wyman/github/renderer/external/reactphysics3d,/Users/wyman/github/renderer/include,/Users/wyman/github/renderer/include/realtime,/Users/wyman/github/renderer/include/shapes,/Users/wyman/github/renderer/src,/Users/wyman/github/renderer/src/realtime,/Users/wyman/github/renderer/src/shapes);
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = " ";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ALL_BUILD;
-				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/wyman/github/renderer/mac_build;
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		9A1B0EF8DBD74D7B8992979F /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/wyman/github/renderer,/Users/wyman/github/renderer/external,/Users/wyman/github/renderer/external/SOIL,/Users/wyman/github/renderer/external/SDL,/Users/wyman/github/renderer/external/reactphysics3d,/Users/wyman/github/renderer/include,/Users/wyman/github/renderer/include/realtime,/Users/wyman/github/renderer/include/shapes,/Users/wyman/github/renderer/src,/Users/wyman/github/renderer/src/realtime,/Users/wyman/github/renderer/src/shapes);
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = " ";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ZERO_CHECK;
-				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/wyman/github/renderer/mac_build;
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
-			};
-			name = Release;
-		};
-		A45D5D6FF98B45F38676D65C /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/wyman/github/renderer,/Users/wyman/github/renderer/external,/Users/wyman/github/renderer/external/SOIL,/Users/wyman/github/renderer/external/SDL,/Users/wyman/github/renderer/external/reactphysics3d,/Users/wyman/github/renderer/include,/Users/wyman/github/renderer/include/realtime,/Users/wyman/github/renderer/include/shapes,/Users/wyman/github/renderer/src,/Users/wyman/github/renderer/src/realtime,/Users/wyman/github/renderer/src/shapes);
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = " ";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = install;
-				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/wyman/github/renderer/mac_build;
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		A894B259BAC5484585F3388B /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = "";
-				SYMROOT = /Users/wyman/github/renderer/mac_build/build;
-			};
-			name = Debug;
-		};
-		B608219BDA734C1199241E54 /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = "";
-				SYMROOT = /Users/wyman/github/renderer/mac_build/build;
-			};
-			name = MinSizeRel;
-		};
-		D5501C908CFF4CA6AD4ACCC3 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/wyman/github/renderer,/Users/wyman/github/renderer/external,/Users/wyman/github/renderer/external/SOIL,/Users/wyman/github/renderer/external/SDL,/Users/wyman/github/renderer/external/reactphysics3d,/Users/wyman/github/renderer/include,/Users/wyman/github/renderer/include/realtime,/Users/wyman/github/renderer/include/shapes,/Users/wyman/github/renderer/src,/Users/wyman/github/renderer/src/realtime,/Users/wyman/github/renderer/src/shapes);
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = " ";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = install;
-				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/wyman/github/renderer/mac_build;
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
-			};
-			name = Release;
-		};
-		D8D5B743339C4922B4AE6D06 /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/wyman/github/renderer,/Users/wyman/github/renderer/external,/Users/wyman/github/renderer/external/SOIL,/Users/wyman/github/renderer/external/SDL,/Users/wyman/github/renderer/external/reactphysics3d,/Users/wyman/github/renderer/include,/Users/wyman/github/renderer/include/realtime,/Users/wyman/github/renderer/include/shapes,/Users/wyman/github/renderer/src,/Users/wyman/github/renderer/src/realtime,/Users/wyman/github/renderer/src/shapes);
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = " ";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ZERO_CHECK;
-				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/wyman/github/renderer/mac_build;
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		DB0688A1060F40EC8A6E2A5D /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/wyman/github/renderer,/Users/wyman/github/renderer/external,/Users/wyman/github/renderer/external/SOIL,/Users/wyman/github/renderer/external/SDL,/Users/wyman/github/renderer/external/reactphysics3d,/Users/wyman/github/renderer/include,/Users/wyman/github/renderer/include/realtime,/Users/wyman/github/renderer/include/shapes,/Users/wyman/github/renderer/src,/Users/wyman/github/renderer/src/realtime,/Users/wyman/github/renderer/src/shapes);
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = " ";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ALL_BUILD;
-				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/wyman/github/renderer/mac_build;
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		ED923642DAA84C8FB7E74276 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = /Users/wyman/github/renderer/mac_build/bin/Debug;
-				EXECUTABLE_PREFIX = "";
-				EXECUTABLE_SUFFIX = "";
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/wyman/github/renderer,/Users/wyman/github/renderer/external,/Users/wyman/github/renderer/external/SOIL,/Users/wyman/github/renderer/external/SDL,/Users/wyman/github/renderer/external/reactphysics3d,/Users/wyman/github/renderer/include,/Users/wyman/github/renderer/include/realtime,/Users/wyman/github/renderer/include/shapes,/Users/wyman/github/renderer/src,/Users/wyman/github/renderer/src/realtime,/Users/wyman/github/renderer/src/shapes);
-				INSTALL_PATH = "";
-				LD_RUNPATH_SEARCH_PATHS = "/Users/wyman/github/renderer/./lib/mac /usr/local/lib";
-				LIBRARY_SEARCH_PATHS = " /Users/wyman/github/renderer/./lib/mac/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME) /Users/wyman/github/renderer/./lib/mac /usr/local/lib/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME) /usr/local/lib";
-				OTHER_CFLAGS = "    ";
-				OTHER_CPLUSPLUSFLAGS = "   '-std=gnu++11'  ";
-				OTHER_LDFLAGS = " -Wl,-search_paths_first -Wl,-headerpad_max_install_names  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/Carbon.framework /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/OpenGL.framework /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/CoreFoundation.framework /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/Cocoa.framework /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/CoreAudio.framework /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/AudioToolbox.framework /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/CoreVideo.framework /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/IOKit.framework /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/ForceFeedback.framework /usr/local/lib/libassimp.dylib /usr/local/lib/libfreetype.dylib -lSDL2 -lSOIL";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = renderer;
-				SECTORDER_FLAGS = "";
-				SYMROOT = /Users/wyman/github/renderer/mac_build;
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
-			};
-			name = Debug;
-		};
-		EED7A3B8739C4A6A91C3C607 /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = /Users/wyman/github/renderer/mac_build/bin/RelWithDebInfo;
+				DEVELOPMENT_TEAM = YFWU6D8ZM3;
 				EXECUTABLE_PREFIX = "";
 				EXECUTABLE_SUFFIX = "";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_OPTIMIZATION_LEVEL = 2;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'";
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/wyman/github/renderer,/Users/wyman/github/renderer/external,/Users/wyman/github/renderer/external/SOIL,/Users/wyman/github/renderer/external/SDL,/Users/wyman/github/renderer/external/reactphysics3d,/Users/wyman/github/renderer/include,/Users/wyman/github/renderer/include/realtime,/Users/wyman/github/renderer/include/shapes,/Users/wyman/github/renderer/src,/Users/wyman/github/renderer/src/realtime,/Users/wyman/github/renderer/src/shapes);
+				HEADER_SEARCH_PATHS = (
+					/Users/wyman/github/renderer,
+					/Users/wyman/github/renderer/external,
+					/Users/wyman/github/renderer/external/SOIL,
+					/Users/wyman/github/renderer/external/reactphysics3d,
+					/Users/wyman/github/renderer/external/SDL,
+					/Users/wyman/github/renderer/include,
+					/Users/wyman/github/renderer/include/realtime,
+					/Users/wyman/github/renderer/include/shapes,
+					/Users/wyman/github/renderer/src,
+					/Users/wyman/github/renderer/src/realtime,
+					/Users/wyman/github/renderer/src/shapes,
+				);
 				INSTALL_PATH = "";
 				LD_RUNPATH_SEARCH_PATHS = "/Users/wyman/github/renderer/./lib/mac /usr/local/lib";
-				LIBRARY_SEARCH_PATHS = " /Users/wyman/github/renderer/./lib/mac/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME) /Users/wyman/github/renderer/./lib/mac /usr/local/lib/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME) /usr/local/lib";
-				OTHER_CFLAGS = "       -DNDEBUG  ";
-				OTHER_CPLUSPLUSFLAGS = "       -DNDEBUG '-std=gnu++11'  ";
-				OTHER_LDFLAGS = " -Wl,-search_paths_first -Wl,-headerpad_max_install_names  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/Carbon.framework /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/OpenGL.framework /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/CoreFoundation.framework /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/Cocoa.framework /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/CoreAudio.framework /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/AudioToolbox.framework /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/CoreVideo.framework /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/IOKit.framework /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/ForceFeedback.framework /usr/local/lib/libassimp.dylib /usr/local/lib/libfreetype.dylib -lSDL2 -lSOIL";
+				LIBRARY_SEARCH_PATHS = (
+					"/Users/wyman/github/renderer/./lib/mac/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)",
+					/Users/wyman/github/renderer/./lib/mac,
+					"/usr/local/lib/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)",
+					/usr/local/lib,
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				OTHER_CFLAGS = (
+					"-DNDEBUG",
+					"-I/Users/wyman/github/renderer",
+					"-I/Users/wyman/github/renderer/external",
+					"-I/Users/wyman/github/renderer/external/SOIL",
+					"-I/Users/wyman/github/renderer/external/SDL",
+					"-I/Users/wyman/github/renderer/include",
+					"-I/Users/wyman/github/renderer/include/realtime",
+					"-I/Users/wyman/github/renderer/include/shapes",
+					"-I/Users/wyman/github/renderer/src",
+					"-I/Users/wyman/github/renderer/src/realtime",
+					"-I/Users/wyman/github/renderer/src/shapes",
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"-DNDEBUG",
+					"'-std=gnu++11'",
+					"-I/Users/wyman/github/renderer",
+					"-I/Users/wyman/github/renderer/external",
+					"-I/Users/wyman/github/renderer/external/SOIL",
+					"-I/Users/wyman/github/renderer/external/SDL",
+					"-I/Users/wyman/github/renderer/include",
+					"-I/Users/wyman/github/renderer/include/realtime",
+					"-I/Users/wyman/github/renderer/include/shapes",
+					"-I/Users/wyman/github/renderer/src",
+					"-I/Users/wyman/github/renderer/src/realtime",
+					"-I/Users/wyman/github/renderer/src/shapes",
+				);
+				OTHER_LDFLAGS = (
+					"-Wl,-search_paths_first",
+					"-Wl,-headerpad_max_install_names",
+					"-framework",
+					Carbon,
+					"-framework",
+					OpenGL,
+					"-framework",
+					CoreFoundation,
+					"-framework",
+					Cocoa,
+					"-framework",
+					CoreAudio,
+					"-framework",
+					AudioToolbox,
+					"-framework",
+					CoreVideo,
+					"-framework",
+					IOKit,
+					"-framework",
+					ForceFeedback,
+					/usr/local/lib/libassimp.dylib,
+					/usr/local/lib/libfreetype.dylib,
+					"-lSDL2",
+					"-lSOIL",
+				);
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = renderer;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = macosx10.13;
 				SECTORDER_FLAGS = "";
 				SYMROOT = /Users/wyman/github/renderer/mac_build;
 				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+					"$(inherited)",
+				);
 			};
 			name = RelWithDebInfo;
 		};
-		FA5C1BE944D04B14871E9467 /* Debug */ = {
+		176387053D55414582495A5F /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = /Users/wyman/github/renderer/mac_build/bin/MinSizeRel;
+				DEVELOPMENT_TEAM = YFWU6D8ZM3;
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/Users/wyman/github/renderer,
+					/Users/wyman/github/renderer/external,
+					/Users/wyman/github/renderer/external/SOIL,
+					/Users/wyman/github/renderer/external/reactphysics3d,
+					/Users/wyman/github/renderer/external/SDL,
+					/Users/wyman/github/renderer/include,
+					/Users/wyman/github/renderer/include/realtime,
+					/Users/wyman/github/renderer/include/shapes,
+					/Users/wyman/github/renderer/src,
+					/Users/wyman/github/renderer/src/realtime,
+					/Users/wyman/github/renderer/src/shapes,
+				);
+				INSTALL_PATH = "";
+				LD_RUNPATH_SEARCH_PATHS = "/Users/wyman/github/renderer/./lib/mac /usr/local/lib";
+				LIBRARY_SEARCH_PATHS = (
+					"/Users/wyman/github/renderer/./lib/mac/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)",
+					/Users/wyman/github/renderer/./lib/mac,
+					"/usr/local/lib/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)",
+					/usr/local/lib,
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				OTHER_CFLAGS = (
+					"-DNDEBUG",
+					"-I/Users/wyman/github/renderer",
+					"-I/Users/wyman/github/renderer/external",
+					"-I/Users/wyman/github/renderer/external/SOIL",
+					"-I/Users/wyman/github/renderer/external/SDL",
+					"-I/Users/wyman/github/renderer/include",
+					"-I/Users/wyman/github/renderer/include/realtime",
+					"-I/Users/wyman/github/renderer/include/shapes",
+					"-I/Users/wyman/github/renderer/src",
+					"-I/Users/wyman/github/renderer/src/realtime",
+					"-I/Users/wyman/github/renderer/src/shapes",
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"-DNDEBUG",
+					"'-std=gnu++11'",
+					"-I/Users/wyman/github/renderer",
+					"-I/Users/wyman/github/renderer/external",
+					"-I/Users/wyman/github/renderer/external/SOIL",
+					"-I/Users/wyman/github/renderer/external/SDL",
+					"-I/Users/wyman/github/renderer/include",
+					"-I/Users/wyman/github/renderer/include/realtime",
+					"-I/Users/wyman/github/renderer/include/shapes",
+					"-I/Users/wyman/github/renderer/src",
+					"-I/Users/wyman/github/renderer/src/realtime",
+					"-I/Users/wyman/github/renderer/src/shapes",
+				);
+				OTHER_LDFLAGS = (
+					"-Wl,-search_paths_first",
+					"-Wl,-headerpad_max_install_names",
+					"-framework",
+					Carbon,
+					"-framework",
+					OpenGL,
+					"-framework",
+					CoreFoundation,
+					"-framework",
+					Cocoa,
+					"-framework",
+					CoreAudio,
+					"-framework",
+					AudioToolbox,
+					"-framework",
+					CoreVideo,
+					"-framework",
+					IOKit,
+					"-framework",
+					ForceFeedback,
+					/usr/local/lib/libassimp.dylib,
+					/usr/local/lib/libfreetype.dylib,
+					"-lSDL2",
+					"-lSOIL",
+				);
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = renderer;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = macosx10.13;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/wyman/github/renderer/mac_build;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+					"$(inherited)",
+				);
+			};
+			name = MinSizeRel;
+		};
+		226B3616DAC947E589CC33F8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk;
+				SYMROOT = /Users/wyman/github/renderer/mac_build/build;
+			};
+			name = Debug;
+		};
+		23CCAF7E2A7148B78D9C5E51 /* RelWithDebInfo */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'";
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/wyman/github/renderer,/Users/wyman/github/renderer/external,/Users/wyman/github/renderer/external/SOIL,/Users/wyman/github/renderer/external/SDL,/Users/wyman/github/renderer/external/reactphysics3d,/Users/wyman/github/renderer/include,/Users/wyman/github/renderer/include/realtime,/Users/wyman/github/renderer/include/shapes,/Users/wyman/github/renderer/src,/Users/wyman/github/renderer/src/realtime,/Users/wyman/github/renderer/src/shapes);
+				HEADER_SEARCH_PATHS = (
+					/Users/wyman/github/renderer,
+					/Users/wyman/github/renderer/external,
+					/Users/wyman/github/renderer/external/SOIL,
+					/Users/wyman/github/renderer/external/SDL,
+					/Users/wyman/github/renderer/include,
+					/Users/wyman/github/renderer/include/realtime,
+					/Users/wyman/github/renderer/include/shapes,
+					/Users/wyman/github/renderer/src,
+					/Users/wyman/github/renderer/src/realtime,
+					/Users/wyman/github/renderer/src/shapes,
+				);
 				INSTALL_PATH = "";
 				OTHER_LDFLAGS = " ";
 				OTHER_REZFLAGS = "";
@@ -889,73 +1556,630 @@ exit 0";
 				SECTORDER_FLAGS = "";
 				SYMROOT = /Users/wyman/github/renderer/mac_build;
 				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+					"$(inherited)",
+				);
 			};
-			name = Debug;
+			name = RelWithDebInfo;
 		};
-		FA87E7CB20AD4FF482E8DFD9 /* Release */ = {
+		433A1EB5289E494893F7DA97 /* MinSizeRel */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = "";
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk;
 				SYMROOT = /Users/wyman/github/renderer/mac_build/build;
 			};
+			name = MinSizeRel;
+		};
+		4674F00A54CE4EF2987442CF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/Users/wyman/github/renderer,
+					/Users/wyman/github/renderer/external,
+					/Users/wyman/github/renderer/external/SOIL,
+					/Users/wyman/github/renderer/external/SDL,
+					/Users/wyman/github/renderer/include,
+					/Users/wyman/github/renderer/include/realtime,
+					/Users/wyman/github/renderer/include/shapes,
+					/Users/wyman/github/renderer/src,
+					/Users/wyman/github/renderer/src/realtime,
+					/Users/wyman/github/renderer/src/shapes,
+				);
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/wyman/github/renderer/mac_build;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+					"$(inherited)",
+				);
+			};
+			name = Debug;
+		};
+		4C74EAC91E5F479FB686FA7D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/Users/wyman/github/renderer,
+					/Users/wyman/github/renderer/external,
+					/Users/wyman/github/renderer/external/SOIL,
+					/Users/wyman/github/renderer/external/SDL,
+					/Users/wyman/github/renderer/include,
+					/Users/wyman/github/renderer/include/realtime,
+					/Users/wyman/github/renderer/include/shapes,
+					/Users/wyman/github/renderer/src,
+					/Users/wyman/github/renderer/src/realtime,
+					/Users/wyman/github/renderer/src/shapes,
+				);
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/wyman/github/renderer/mac_build;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+					"$(inherited)",
+				);
+			};
 			name = Release;
+		};
+		4E245432FC9740B3936CF54F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = /Users/wyman/github/renderer/mac_build/bin/Debug;
+				DEVELOPMENT_TEAM = YFWU6D8ZM3;
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/Users/wyman/github/renderer,
+					/Users/wyman/github/renderer/external,
+					/Users/wyman/github/renderer/external/SOIL,
+					/Users/wyman/github/renderer/external/reactphysics3d,
+					/Users/wyman/github/renderer/external/SDL,
+					/Users/wyman/github/renderer/include,
+					/Users/wyman/github/renderer/include/realtime,
+					/Users/wyman/github/renderer/include/shapes,
+					/Users/wyman/github/renderer/src,
+					/Users/wyman/github/renderer/src/realtime,
+					/Users/wyman/github/renderer/src/shapes,
+				);
+				INSTALL_PATH = "";
+				LD_RUNPATH_SEARCH_PATHS = "/Users/wyman/github/renderer/./lib/mac /usr/local/lib";
+				LIBRARY_SEARCH_PATHS = (
+					"/Users/wyman/github/renderer/./lib/mac/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)",
+					/Users/wyman/github/renderer/./lib/mac,
+					"/usr/local/lib/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)",
+					/usr/local/lib,
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				OTHER_CFLAGS = (
+					"-I/Users/wyman/github/renderer",
+					"-I/Users/wyman/github/renderer/external",
+					"-I/Users/wyman/github/renderer/external/SOIL",
+					"-I/Users/wyman/github/renderer/external/SDL",
+					"-I/Users/wyman/github/renderer/include",
+					"-I/Users/wyman/github/renderer/include/realtime",
+					"-I/Users/wyman/github/renderer/include/shapes",
+					"-I/Users/wyman/github/renderer/src",
+					"-I/Users/wyman/github/renderer/src/realtime",
+					"-I/Users/wyman/github/renderer/src/shapes",
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"'-std=gnu++11'",
+					"-I/Users/wyman/github/renderer",
+					"-I/Users/wyman/github/renderer/external",
+					"-I/Users/wyman/github/renderer/external/SOIL",
+					"-I/Users/wyman/github/renderer/external/SDL",
+					"-I/Users/wyman/github/renderer/include",
+					"-I/Users/wyman/github/renderer/include/realtime",
+					"-I/Users/wyman/github/renderer/include/shapes",
+					"-I/Users/wyman/github/renderer/src",
+					"-I/Users/wyman/github/renderer/src/realtime",
+					"-I/Users/wyman/github/renderer/src/shapes",
+				);
+				OTHER_LDFLAGS = (
+					"-Wl,-search_paths_first",
+					"-Wl,-headerpad_max_install_names",
+					"-framework",
+					Carbon,
+					"-framework",
+					OpenGL,
+					"-framework",
+					CoreFoundation,
+					"-framework",
+					Cocoa,
+					"-framework",
+					CoreAudio,
+					"-framework",
+					AudioToolbox,
+					"-framework",
+					CoreVideo,
+					"-framework",
+					IOKit,
+					"-framework",
+					ForceFeedback,
+					/usr/local/lib/libassimp.dylib,
+					/usr/local/lib/libfreetype.dylib,
+					"-lSDL2",
+					"-lSOIL",
+				);
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = renderer;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = macosx10.13;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/wyman/github/renderer/mac_build;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+					"$(inherited)",
+				);
+			};
+			name = Debug;
+		};
+		51D0254E458F424294190191 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/Users/wyman/github/renderer,
+					/Users/wyman/github/renderer/external,
+					/Users/wyman/github/renderer/external/SOIL,
+					/Users/wyman/github/renderer/external/SDL,
+					/Users/wyman/github/renderer/include,
+					/Users/wyman/github/renderer/include/realtime,
+					/Users/wyman/github/renderer/include/shapes,
+					/Users/wyman/github/renderer/src,
+					/Users/wyman/github/renderer/src/realtime,
+					/Users/wyman/github/renderer/src/shapes,
+				);
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/wyman/github/renderer/mac_build;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+					"$(inherited)",
+				);
+			};
+			name = MinSizeRel;
+		};
+		53EF0AB7668643069CE6B619 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/Users/wyman/github/renderer,
+					/Users/wyman/github/renderer/external,
+					/Users/wyman/github/renderer/external/SOIL,
+					/Users/wyman/github/renderer/external/SDL,
+					/Users/wyman/github/renderer/include,
+					/Users/wyman/github/renderer/include/realtime,
+					/Users/wyman/github/renderer/include/shapes,
+					/Users/wyman/github/renderer/src,
+					/Users/wyman/github/renderer/src/realtime,
+					/Users/wyman/github/renderer/src/shapes,
+				);
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/wyman/github/renderer/mac_build;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+					"$(inherited)",
+				);
+			};
+			name = RelWithDebInfo;
+		};
+		54AA3C510B2A4FC98B18B28D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = /Users/wyman/github/renderer/mac_build/bin/Release;
+				DEVELOPMENT_TEAM = YFWU6D8ZM3;
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/Users/wyman/github/renderer,
+					/Users/wyman/github/renderer/external,
+					/Users/wyman/github/renderer/external/SOIL,
+					/Users/wyman/github/renderer/external/reactphysics3d,
+					/Users/wyman/github/renderer/external/SDL,
+					/Users/wyman/github/renderer/include,
+					/Users/wyman/github/renderer/include/realtime,
+					/Users/wyman/github/renderer/include/shapes,
+					/Users/wyman/github/renderer/src,
+					/Users/wyman/github/renderer/src/realtime,
+					/Users/wyman/github/renderer/src/shapes,
+				);
+				INSTALL_PATH = "";
+				LD_RUNPATH_SEARCH_PATHS = "/Users/wyman/github/renderer/./lib/mac /usr/local/lib";
+				LIBRARY_SEARCH_PATHS = (
+					"/Users/wyman/github/renderer/./lib/mac/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)",
+					/Users/wyman/github/renderer/./lib/mac,
+					"/usr/local/lib/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)",
+					/usr/local/lib,
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				OTHER_CFLAGS = (
+					"-DNDEBUG",
+					"-I/Users/wyman/github/renderer",
+					"-I/Users/wyman/github/renderer/external",
+					"-I/Users/wyman/github/renderer/external/SOIL",
+					"-I/Users/wyman/github/renderer/external/SDL",
+					"-I/Users/wyman/github/renderer/include",
+					"-I/Users/wyman/github/renderer/include/realtime",
+					"-I/Users/wyman/github/renderer/include/shapes",
+					"-I/Users/wyman/github/renderer/src",
+					"-I/Users/wyman/github/renderer/src/realtime",
+					"-I/Users/wyman/github/renderer/src/shapes",
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"-DNDEBUG",
+					"'-std=gnu++11'",
+					"-I/Users/wyman/github/renderer",
+					"-I/Users/wyman/github/renderer/external",
+					"-I/Users/wyman/github/renderer/external/SOIL",
+					"-I/Users/wyman/github/renderer/external/SDL",
+					"-I/Users/wyman/github/renderer/include",
+					"-I/Users/wyman/github/renderer/include/realtime",
+					"-I/Users/wyman/github/renderer/include/shapes",
+					"-I/Users/wyman/github/renderer/src",
+					"-I/Users/wyman/github/renderer/src/realtime",
+					"-I/Users/wyman/github/renderer/src/shapes",
+				);
+				OTHER_LDFLAGS = (
+					"-Wl,-search_paths_first",
+					"-Wl,-headerpad_max_install_names",
+					"-framework",
+					Carbon,
+					"-framework",
+					OpenGL,
+					"-framework",
+					CoreFoundation,
+					"-framework",
+					Cocoa,
+					"-framework",
+					CoreAudio,
+					"-framework",
+					AudioToolbox,
+					"-framework",
+					CoreVideo,
+					"-framework",
+					IOKit,
+					"-framework",
+					ForceFeedback,
+					/usr/local/lib/libassimp.dylib,
+					/usr/local/lib/libfreetype.dylib,
+					"-lSDL2",
+					"-lSOIL",
+				);
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = renderer;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = macosx10.13;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/wyman/github/renderer/mac_build;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+					"$(inherited)",
+				);
+			};
+			name = Release;
+		};
+		8CEC40984F9842DFBD58166B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/Users/wyman/github/renderer,
+					/Users/wyman/github/renderer/external,
+					/Users/wyman/github/renderer/external/SOIL,
+					/Users/wyman/github/renderer/external/SDL,
+					/Users/wyman/github/renderer/include,
+					/Users/wyman/github/renderer/include/realtime,
+					/Users/wyman/github/renderer/include/shapes,
+					/Users/wyman/github/renderer/src,
+					/Users/wyman/github/renderer/src/realtime,
+					/Users/wyman/github/renderer/src/shapes,
+				);
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/wyman/github/renderer/mac_build;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+					"$(inherited)",
+				);
+			};
+			name = Debug;
+		};
+		95C71E0BEFF24B9E80F8AE82 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/Users/wyman/github/renderer,
+					/Users/wyman/github/renderer/external,
+					/Users/wyman/github/renderer/external/SOIL,
+					/Users/wyman/github/renderer/external/SDL,
+					/Users/wyman/github/renderer/include,
+					/Users/wyman/github/renderer/include/realtime,
+					/Users/wyman/github/renderer/include/shapes,
+					/Users/wyman/github/renderer/src,
+					/Users/wyman/github/renderer/src/realtime,
+					/Users/wyman/github/renderer/src/shapes,
+				);
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/wyman/github/renderer/mac_build;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+					"$(inherited)",
+				);
+			};
+			name = MinSizeRel;
+		};
+		B6E258751C484FA6A7EEE5D7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/Users/wyman/github/renderer,
+					/Users/wyman/github/renderer/external,
+					/Users/wyman/github/renderer/external/SOIL,
+					/Users/wyman/github/renderer/external/SDL,
+					/Users/wyman/github/renderer/include,
+					/Users/wyman/github/renderer/include/realtime,
+					/Users/wyman/github/renderer/include/shapes,
+					/Users/wyman/github/renderer/src,
+					/Users/wyman/github/renderer/src/realtime,
+					/Users/wyman/github/renderer/src/shapes,
+				);
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/wyman/github/renderer/mac_build;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+					"$(inherited)",
+				);
+			};
+			name = Debug;
+		};
+		C01162DCBDDD4B969CB8EB75 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/Users/wyman/github/renderer,
+					/Users/wyman/github/renderer/external,
+					/Users/wyman/github/renderer/external/SOIL,
+					/Users/wyman/github/renderer/external/SDL,
+					/Users/wyman/github/renderer/include,
+					/Users/wyman/github/renderer/include/realtime,
+					/Users/wyman/github/renderer/include/shapes,
+					/Users/wyman/github/renderer/src,
+					/Users/wyman/github/renderer/src/realtime,
+					/Users/wyman/github/renderer/src/shapes,
+				);
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/wyman/github/renderer/mac_build;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+					"$(inherited)",
+				);
+			};
+			name = Release;
+		};
+		D6833C66B3434ABEB91BEC1F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/Users/wyman/github/renderer,
+					/Users/wyman/github/renderer/external,
+					/Users/wyman/github/renderer/external/SOIL,
+					/Users/wyman/github/renderer/external/SDL,
+					/Users/wyman/github/renderer/include,
+					/Users/wyman/github/renderer/include/realtime,
+					/Users/wyman/github/renderer/include/shapes,
+					/Users/wyman/github/renderer/src,
+					/Users/wyman/github/renderer/src/realtime,
+					/Users/wyman/github/renderer/src/shapes,
+				);
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/wyman/github/renderer/mac_build;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+					"$(inherited)",
+				);
+			};
+			name = Release;
+		};
+		ED98B20E42F94F19BE580101 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk;
+				SYMROOT = /Users/wyman/github/renderer/mac_build/build;
+			};
+			name = RelWithDebInfo;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		3E7B8C5440244300A23E7695 /* Build configuration list for PBXAggregateTarget "install" */ = {
+		0316E814AD5D46F584D29490 /* Build configuration list for PBXNativeTarget "renderer" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				FA5C1BE944D04B14871E9467 /* Debug */,
-				D5501C908CFF4CA6AD4ACCC3 /* Release */,
-				A45D5D6FF98B45F38676D65C /* MinSizeRel */,
-				0F25784C27C8416B84C44660 /* RelWithDebInfo */,
+				4E245432FC9740B3936CF54F /* Debug */,
+				54AA3C510B2A4FC98B18B28D /* Release */,
+				176387053D55414582495A5F /* MinSizeRel */,
+				11C47E8819734568AFFC82F4 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		489F86D17ACF4511A5212147 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */ = {
+		150400DA6A04473E98823B39 /* Build configuration list for PBXAggregateTarget "install" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				48B502BE31584774B21A7AD4 /* Debug */,
-				9A1B0EF8DBD74D7B8992979F /* Release */,
-				45679C6598B9456BA99C3C95 /* MinSizeRel */,
-				D8D5B743339C4922B4AE6D06 /* RelWithDebInfo */,
+				4674F00A54CE4EF2987442CF /* Debug */,
+				C01162DCBDDD4B969CB8EB75 /* Release */,
+				1011F1DFDC8F445F9FD5189F /* MinSizeRel */,
+				23CCAF7E2A7148B78D9C5E51 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		BC97F3B99B4243F89959272B /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
+		3CADFEBA04964DAB888C8922 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				210F3A24958F45A192CEC7D4 /* Debug */,
-				8AE3B930F21C44D5911D902F /* Release */,
-				924A197765D847D08F0AC69D /* MinSizeRel */,
-				DB0688A1060F40EC8A6E2A5D /* RelWithDebInfo */,
+				B6E258751C484FA6A7EEE5D7 /* Debug */,
+				D6833C66B3434ABEB91BEC1F /* Release */,
+				51D0254E458F424294190191 /* MinSizeRel */,
+				11B17E161796495DBB172D3B /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		E25089EF816741FB836C1C92 /* Build configuration list for PBXProject "renderer" */ = {
+		512E7FA4DDE94994A86FAF6E /* Build configuration list for PBXProject "renderer" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A894B259BAC5484585F3388B /* Debug */,
-				FA87E7CB20AD4FF482E8DFD9 /* Release */,
-				B608219BDA734C1199241E54 /* MinSizeRel */,
-				6E292349AD144E6D9ABC50B9 /* RelWithDebInfo */,
+				226B3616DAC947E589CC33F8 /* Debug */,
+				0C503EE601224B6288C7513A /* Release */,
+				433A1EB5289E494893F7DA97 /* MinSizeRel */,
+				ED98B20E42F94F19BE580101 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		FCE18F5389CF443F90E6814F /* Build configuration list for PBXNativeTarget "renderer" */ = {
+		D1C7E5968AD74663A4C015A1 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				ED923642DAA84C8FB7E74276 /* Debug */,
-				572FCCE3B84C45F993508A20 /* Release */,
-				493A5FC73A2A42E8B3EEC2C4 /* MinSizeRel */,
-				EED7A3B8739C4A6A91C3C607 /* RelWithDebInfo */,
+				8CEC40984F9842DFBD58166B /* Debug */,
+				4C74EAC91E5F479FB686FA7D /* Release */,
+				95C71E0BEFF24B9E80F8AE82 /* MinSizeRel */,
+				53EF0AB7668643069CE6B619 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
