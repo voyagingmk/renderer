@@ -191,7 +191,7 @@
             "near_plane": 0.0001,
             "far_plane": 1100.0,
             "spatial": [
-                [123.0,  617.0, 602.0],
+                [-80.0,  80.0, 0.0],
                 [1, 1, 1],
                 [1, 0, 0, 0]
             ],
@@ -358,20 +358,33 @@
         }
     ],
     "sceneRoot": {  
-        "model": "tt_mesh.ozz",
         "spatial": [
             [0, 0, 0],
             [1, 1, 1],
             [0, 0, 0]
         ],
-        "children0": [
+        "children": [
             {
-                "model": "teapot.obj",
+                "model": "planeobj.obj",
+                "bounciness": 0.0,
+                "friction": 1.0,
                 "static": true,
                 "spatial": [
                     [0, 0, 0],
                     [1, 1, 1],
                     [0, 0, 0]
+                ],
+                "children": [
+                    {
+                        "model": "cube.obj",
+                        "bounciness": 0.5,
+                        "friction": 0.9,
+                        "spatial": [
+                            [0, 10, 0],
+                            [1, 1, 1],
+                            [0, 0, 0]
+                        ]
+                    }
                 ]
             }
         ]

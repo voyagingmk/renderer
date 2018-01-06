@@ -1,21 +1,72 @@
 #include "stdafx.h"
 #include "system/physicsSys.hpp"
-#include "com/spatialData.hpp"
 #include "com/quaternion.hpp"
 #include "com/miscCom.hpp"
 
 namespace renderer {
     
-    rp3d::Quaternion Trans(QuaternionF& q) {
+    class MyEventListener: public rp3d::EventListener {
+        /// Called when a new contact point is found between two bodies that were separated before
+        /**
+         * @param contact Information about the contact
+         */
+        virtual void beginContact(const ContactPointInfo& contact) {
+            printf("beginContact: %f,%f,%f <->", contact.localPoint1.x , contact.localPoint1.y,  contact.localPoint1.z);
+            printf("%f,%f,%f\n", contact.localPoint2.x , contact.localPoint2.y,  contact.localPoint2.z);
+        }
+        
+        /// Called when a new contact point is found between two bodies
+        /**
+         * @param contact Information about the contact
+         */
+        virtual void newContact(const ContactPointInfo& contact) {
+            //printf("newContact: %f,%f,%f <->", contact.localPoint1.x , contact.localPoint1.y,  contact.localPoint1.z);
+            //printf("%f,%f,%f\n", contact.localPoint2.x , contact.localPoint2.y,  contact.localPoint2.z);
+            
+        }
+        
+        /// Called at the beginning of an internal tick of the simulation step.
+        /// Each time the DynamicsWorld::update() method is called, the physics
+        /// engine will do several internal simulation steps. This method is
+        /// called at the beginning of each internal simulation step.
+        virtual void beginInternalTick() {
+            
+        }
+        
+        /// Called at the end of an internal tick of the simulation step.
+        /// Each time the DynamicsWorld::update() metho is called, the physics
+        /// engine will do several internal simulation steps. This method is
+        /// called at the end of each internal simulation step.
+        virtual void endInternalTick() {
+            
+        }
+    };
+    
+    Vector3dF Trans(const rp3d::Vector3& p) {
+        return Vector3dF(p.x, p.y, p.z);
+    }
+    
+    rp3d::Vector3 Trans(const Vector3dF& p) {
+        return rp3d::Vector3(p.x, p.y, p.z);
+    }
+    
+    QuaternionF Trans(const rp3d::Quaternion& q) {
+        return QuaternionF(q.x, q.y, q.z, q.w);
+    }
+    
+    rp3d::Quaternion Trans(const QuaternionF& q) {
         return rp3d::Quaternion(q.x, q.y, q.z, q.s);
     }
-
+    
+    const rp3d::Transform MakeTransform(const ComponentHandle<SpatialData> com) {
+        return rp3d::Transform(Trans(com->pos), Trans(com->orientation));
+    }
     
     void PhysicsSystem::init(ObjectManager &objMgr, EventManager &evtMgr) {
         printf("PhysicsSystem init\n");
         evtMgr.on<CreateCollisionShapeEvent>(*this);
-        //rp3d::decimal radius = rp3d::decimal(3.0)
-        //const rp3d::BoxShape shape(radius);
+        evtMgr.on<ComponentAddedEvent<PhysicsWorld>>(*this);
+        evtMgr.on<UpdateSpatialDataEvent>(*this);
     }
     
     void PhysicsSystem::update(ObjectManager &objMgr, EventManager &evtMgr, float dt) {
@@ -29,7 +80,33 @@ namespace renderer {
         }
         float interpolationFactor = float(com->accumulator) / com->timestep;
         for (Object obj: m_objMgr->entities<DynamicObjTag, ColBodyCom>()) {
-            ComputeTransform(obj.component<ColBodyCom>(), interpolationFactor);
+            auto com = obj.component<ColBodyCom>();
+            ComputeTransform(com, interpolationFactor);
+            auto spatialData = obj.component<SpatialData>();
+            spatialData->pos = Trans(com->body->getTransform().getPosition());
+            spatialData->orientation = Trans(com->body->getTransform().getOrientation());
+            m_evtMgr->emit<UpdateSpatialDataEvent>(obj, 1);
+        }
+    }
+    
+    void PhysicsSystem::receive(const ComponentAddedEvent<PhysicsWorld>& evt) {
+        static MyEventListener listener;
+        ComponentHandle<PhysicsWorld> com = evt.component;
+        com->world.setEventListener(&listener);
+         com->world.setNbIterationsVelocitySolver(15);
+         com->world.setNbIterationsPositionSolver(8);
+    }
+    
+    
+    void PhysicsSystem::receive(const UpdateSpatialDataEvent &evt) {
+        if (evt.flag == 1) {
+            return;
+        }
+        Object obj = evt.obj;
+        if (obj.hasComponent<ColBodyCom>()) {
+            auto spatialData = obj.component<SpatialData>();
+            auto com = obj.addComponent<ColBodyCom>();
+            com->body->setTransform(MakeTransform(spatialData));
         }
     }
     
@@ -40,10 +117,7 @@ namespace renderer {
         }
         auto spatialData = obj.component<SpatialData>();
         auto physicsWorld = m_objMgr->getSingletonComponent<PhysicsWorld>();
-        rp3d::Vector3 initPosition(spatialData->pos.x, spatialData->pos.y, spatialData->pos.z);
-        rp3d::Quaternion initOrientation = Trans(spatialData->orientation);
-        const rp3d::Transform transform(initPosition, initOrientation);
-        rp3d::RigidBody* body = physicsWorld->world.createRigidBody(transform);
+        rp3d::RigidBody* body = physicsWorld->world.createRigidBody(MakeTransform(spatialData));
         auto com = obj.addComponent<ColBodyCom>();
         com->body = body;
         if (obj.hasComponent<StaticObjTag>()) {
@@ -54,6 +128,15 @@ namespace renderer {
         rp3d::Material& material = body->getMaterial();
         material.setBounciness(rp3d::decimal(evt.bounciness));
         material.setFrictionCoefficient(rp3d::decimal(evt.friction));
+        
+        auto meshSet = m_objMgr->getSingletonComponent<MeshSet>();
+        auto meshRef = obj.component<MeshRef>();
+        Mesh& mesh = meshSet->getMesh(meshRef->meshID);
+        BBox bound = mesh.Bound();
+        auto boxShape = GetPool<rp3d::BoxShape>()->newElement(rp3d::Vector3(bound.Extent(0) / 2, bound.Extent(1) / 2, bound.Extent(2) / 2));
+        body->addCollisionShape(boxShape,
+                                rp3d::Transform(Trans(bound.Center()), rp3d::Quaternion::identity()),
+                                1.0f);
     }
     
     // Compute the new transform matrix

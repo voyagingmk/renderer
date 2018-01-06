@@ -45,7 +45,7 @@ namespace renderer {
 			p = -cameraView->GetUpVector().Normalize();
 		}
 
-		cameraView->SetCameraPosition(cameraView->GetCameraPosition() + p * 0.1f);
+		cameraView->SetCameraPosition(cameraView->GetCameraPosition() + p * 1.0f);
 		m_evtMgr->emit<CameraMoveEvent>(cameraView.object());
 		//camera.SetTargetVector(p + Vector3dF(0.0, 0.0, -1.0));
 		// cameraView->eye.debug();

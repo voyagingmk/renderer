@@ -5,7 +5,9 @@
 #include "ecs/ecs.hpp"
 #include "com/physics.hpp"
 #include "com/matrix.hpp"
+#include "com/spatialData.hpp"
 #include "event/physicsEvent.hpp"
+#include "event/spatialEvent.hpp"
 
 
 using namespace ecs;
@@ -18,8 +20,12 @@ namespace renderer {
         
         void update(ObjectManager &objMgr, EventManager &evtMgr, float dt) override;
         
+        void receive(const ComponentAddedEvent<PhysicsWorld>& evt);
+        
         void receive(const CreateCollisionShapeEvent& evt);
 
+        void receive(const UpdateSpatialDataEvent &evt);
+        
     private:
         
         void ComputeTransform(ComponentHandle<ColBodyCom> com, float interpolationFactor);

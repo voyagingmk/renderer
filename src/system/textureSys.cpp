@@ -116,6 +116,7 @@ namespace renderer {
 			&width, &height, &channels, evt.channels);
 		if (!image) {
 			std::cout << "LoadTextureEvent failed: " << evt.filename << std::endl;
+            assert(false);
 			return;
 		}
 		if (evt.channels > 0) {
@@ -151,7 +152,7 @@ namespace renderer {
 		texRef.type = TexType::Tex2D;
 		texDict->insert({ evt.aliasname, texRef });
 		CheckGLError;
-		std::cout << "TextureSystem: image[" << evt.filename << "] loaded, w:" << width << ", h:" << height << std::endl;
+		std::cout << "TextureSystem: image[" << evt.filename << "," << evt.aliasname << "] loaded, w:" << width << ", h:" << height << std::endl;
 	}
     
     void TextureSystem::receive(const CreateNoiseTextureEvent &evt) {
@@ -208,14 +209,18 @@ namespace renderer {
 	}
 
 	void TextureSystem::receive(const ActiveTextureEvent &evt) {
-		assert(strcmp(evt.aliasname, "") != 0);
-		if (strcmp(evt.aliasname , "") == 0) {
+		assert(evt.aliasname.length() != 0);
+		if (evt.aliasname.length() == 0) {
+            glActiveTexture(GL_TEXTURE0 + evt.idx);
+            glBindTexture(GL_TEXTURE_2D, 0);
 			return;
 		}
 		auto texDict = m_objMgr->getSingletonComponent<TextureDict>();
-		auto it = texDict->find(std::string(evt.aliasname));
-		// assert(it != texDict->end());
+		auto it = texDict->find(evt.aliasname);
+        assert(it != texDict->end());
 		if (it == texDict->end()) {
+            glActiveTexture(GL_TEXTURE0 + evt.idx);
+            glBindTexture(GL_TEXTURE_2D, 0);
 			return;
         }
         Shader shader = evt.shader;

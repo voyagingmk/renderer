@@ -23,6 +23,7 @@
 #include "event/actionEvent.hpp"
 #include "event/lightEvent.hpp"
 #include "event/spatialEvent.hpp"
+#include "event/physicsEvent.hpp"
 #include "utils/helper.hpp"
 
 using namespace std;
@@ -101,8 +102,8 @@ namespace renderer {
 		auto com = objCamera.addComponent<PerspectiveCameraView>(45.0f, (float)winWidth / (float)winHeight, 0.1f, 10000.0f);
         //com->eye = Vector3dF(156.0f, 116.0f, 143.0f);
         //com->SetFrontVector({30.0f, -15.0f, -30.0f});
-        com->eye = Vector3dF(0.0f, 0.0f, 3.0f);
-        com->SetFrontVector({0.0f, 0.0f, -1.0f});
+        com->eye = Vector3dF(-50.0f, 20.0f, 70.0f);
+        com->SetFrontVector({1.0f, -0.1f, -1.0f});
 
         loadTextures(assetsDir + texSubDir, config);
 		loadSkyboxes(assetsDir + skyboxSubDir, config);
@@ -311,6 +312,11 @@ namespace renderer {
 	Object LoaderSystem::loadSceneObjects(const json &config, const json &objInfo) {
         auto aniDataSet = m_objMgr->getSingletonComponent<AnimationDataSet>();
 		Object objScene = m_objMgr->create();
+        if (objInfo["static"].is_boolean() && bool(objInfo["static"]) == true) {
+            objScene.addComponent<StaticObjTag>();
+        } else {
+            objScene.addComponent<DynamicObjTag>();
+        }
 		auto sgNode = objScene.addComponent<SceneGraphNode>();
 		auto spatial = objInfo["spatial"];
 		loadSpatialData(objScene, spatial);
@@ -322,6 +328,9 @@ namespace renderer {
                 objScene.addComponent<MeshRef>(meshID);
                 objScene.addComponent<ReceiveLightTag>();
                 objScene.addComponent<RenderableTag>();
+                rp3d::decimal bounciness = objInfo["bounciness"];
+                rp3d::decimal friction = objInfo["friction"];
+                m_evtMgr->emit<CreateCollisionShapeEvent>(objScene, bounciness, friction);
                 printf("scene obj with mesh, ID: %d, meshID: %d \n", (int)objScene.ID(), (int)meshID);
             } else {
                 AnimationData& data = aniDataSet->getAnimationData("test");
@@ -329,12 +338,6 @@ namespace renderer {
                 auto com = objScene.addComponent<AnimationCom>(id, data);
                 com->curAniName = "run";
             }
-		}
-		if (objInfo["static"].is_boolean() && bool(objInfo["static"]) == true) {
-			objScene.addComponent<StaticObjTag>();
-		}
-		else {
-			objScene.addComponent<DynamicObjTag>();
 		}
 		objScene.addComponent<MotionCom>();
 		/*
@@ -349,18 +352,23 @@ namespace renderer {
 		}
 		*/
 		for (auto childObjInfo : objInfo["children"])
-		{
-			for (int i = 0; i < 20; i++) {
-				Object childObj = loadSceneObjects(config, childObjInfo);
-				sgNode->children.push_back(childObj.ID());
-				auto spatialData = childObj.component<SpatialData>();
-				spatialData->pos = {
-					randomFloat() * 30.0f,
-					0.0f,
-					randomFloat() * 30.0f
-				};
-				m_evtMgr->emit<UpdateSpatialDataEvent>(childObj);
-			}
+        {
+            Object childObj = loadSceneObjects(config, childObjInfo);
+            sgNode->children.push_back(childObj.ID());
+            if (hasModel) {
+                std::string filename = objInfo["model"];
+                for (int i = 0; i < 20; i++) {
+                    Object childObj = loadSceneObjects(config, childObjInfo);
+                    sgNode->children.push_back(childObj.ID());
+                    auto spatialData = childObj.component<SpatialData>();
+                    spatialData->pos = {
+                        randomFloat() * 30.0f,
+                        spatialData->pos.y + randomFloat() * 30.0f,
+                        randomFloat() * 30.0f
+                    };
+                    m_evtMgr->emit<UpdateSpatialDataEvent>(childObj);
+                }
+            }
 		}
 
 		return objScene;

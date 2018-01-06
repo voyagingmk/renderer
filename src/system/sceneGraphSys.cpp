@@ -112,19 +112,17 @@ namespace renderer {
 			glDepthMask(GL_TRUE);
 			*/
 			shader.set1b("instanced", false);
-		}
-
-		if (obj.hasComponent<RenderableTag>() && obj.hasComponent<DynamicObjTag>()) {
-			auto meshRef = obj.component<MeshRef>();
-			auto meshID = meshRef->meshID;
-			Mesh& mesh = meshSet->meshDict[meshID];
-			for (uint32_t subMeshIdx = 0; subMeshIdx < mesh.meshes.size(); subMeshIdx++) {
-				SubMesh& subMesh = mesh.meshes[subMeshIdx];
-				auto settingID = mesh.settingIDs[subMeshIdx];
-				m_evtMgr->emit<ActiveMaterialEvent>(settingID, shader);
-				m_evtMgr->emit<DrawMeshBufferEvent>(meshID, subMeshIdx);
-			}
-		}
+        } else if (obj.hasComponent<RenderableTag>()) {
+            auto meshRef = obj.component<MeshRef>();
+            auto meshID = meshRef->meshID;
+            Mesh& mesh = meshSet->meshDict[meshID];
+            for (uint32_t subMeshIdx = 0; subMeshIdx < mesh.meshes.size(); subMeshIdx++) {
+                auto settingID = mesh.settingIDs[subMeshIdx];
+                m_evtMgr->emit<ActiveMaterialEvent>(settingID, shader);
+                m_evtMgr->emit<DrawMeshBufferEvent>(meshID, subMeshIdx);
+                m_evtMgr->emit<DeactiveMaterialEvent>(settingID);
+            }
+        }
 
 		auto spatialData = obj.component<SpatialData>();
 		trans = trans * spatialData->o2w;
@@ -152,6 +150,7 @@ namespace renderer {
 				m_evtMgr->emit<UnbindInstanceBufferEvent>(
 					batchInfoCom->meshID,
 					subMeshIdx);
+                m_evtMgr->emit<DeactiveMaterialEvent>(settingID);
 			}
 		}
 	}

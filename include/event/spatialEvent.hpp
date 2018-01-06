@@ -9,10 +9,12 @@ namespace renderer {
 
 	class UpdateSpatialDataEvent : public ecs::Event<UpdateSpatialDataEvent> {
 	public:
-		UpdateSpatialDataEvent(ecs::Object obj):
-            obj(obj)
+		UpdateSpatialDataEvent(ecs::Object obj, uint32_t flag = 0):
+            obj(obj),
+            flag(flag)
 		{}
         ecs::Object obj;
+        uint32_t flag;
 	};
 
 

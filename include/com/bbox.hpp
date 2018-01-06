@@ -28,6 +28,12 @@ namespace renderer {
 		float SurfaceArea() const;
 		float Volume() const;
 		Axis MaximumExtent() const;
+        float Extent(int i) const {
+            return (pMax - pMin)[i];
+        }
+        Vector3dF Center() const {
+            return pMax * 0.5 + pMin * 0.5;
+        }
 		Vector3dF Lerp(float tx, float ty, float tz) const;
 		Vector3dF Offset(const Vector3dF &p) const; 
 		void BoundingSphere(Vector3dF *c, float *rad) const;

@@ -45,9 +45,9 @@ namespace renderer {
 
 	class LoadTextureEvent : public ecs::Event<LoadTextureEvent> {
 	public:
-		LoadTextureEvent(const std::string& dirpath,
-			const std::string& filename,
-			const std::string& aliasname,
+		LoadTextureEvent(const std::string dirpath,
+			const std::string filename,
+			const std::string aliasname,
 			size_t channels, bool toLinear = true) :
 			dirpath(dirpath),
 			filename(filename),
@@ -55,9 +55,9 @@ namespace renderer {
 			channels(channels),
 			toLinear(toLinear)
 		{}
-		const std::string& dirpath;
-		const std::string& filename;
-		const std::string& aliasname;
+		const std::string dirpath;
+		const std::string filename;
+		const std::string aliasname;
 		size_t channels;
 		bool toLinear;
 	};
@@ -83,17 +83,17 @@ namespace renderer {
 	class ActiveTextureEvent : public ecs::Event<ActiveTextureEvent> {
 	public:
         ActiveTextureEvent(Shader shader,
-						   const char* sample2DName,
-                           uint32_t idx, const char* aliasname) :
+						   std::string sample2DName,
+                           uint32_t idx, std::string aliasname) :
             shader(shader),
             sample2DName(sample2DName),
 			idx(idx),
 			aliasname(aliasname)
         {}
         Shader shader;
-		const char* sample2DName;
+		std::string sample2DName;
 		uint32_t idx;
-		const char* aliasname;
+        std::string aliasname;
 	};
 
 	

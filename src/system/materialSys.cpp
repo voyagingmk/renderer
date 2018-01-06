@@ -127,7 +127,7 @@ namespace renderer {
         }
         uint32_t idx = 0;
         for (auto texInfo: setting->texList) {
-            m_evtMgr->emit<ActiveTextureEvent>(shader, texInfo.first.c_str(), idx, texInfo.second.c_str());
+            m_evtMgr->emit<ActiveTextureEvent>(shader, texInfo.first, idx, texInfo.second);
             idx++;
         }
         
@@ -138,10 +138,8 @@ namespace renderer {
 	}
 
 	void MaterialSystem::receive(const DeactiveMaterialEvent &evt) {
-        auto com = m_objMgr->getSingletonComponent<MaterialSet>();
-        MaterialSettingBase* setting = com->settingDict[evt.settingID];
-        uint32_t idx = 0;
-		for (auto texInfo: setting->texList) {
+        // auto com = m_objMgr->getSingletonComponent<MaterialSet>();
+        for(uint32_t idx = 0; idx < 6; idx++) {
 			m_evtMgr->emit<DeactiveTextureEvent>(idx++);
 		}	
 	}
