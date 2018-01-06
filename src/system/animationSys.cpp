@@ -676,6 +676,9 @@ namespace renderer {
     }
     
     void AnimationSystem::UpdateAnimationTime(AnimationData& data, ComponentHandle<AnimationCom> com, float dt) {
+        if (!com->play) {
+            return;
+        }
         ozz::animation::Animation* animation = data.GetAnimation(com->curAniName);
         const float new_time = com->time + dt * com->playback_speed;
         const float loops = new_time / animation->duration();

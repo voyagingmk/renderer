@@ -86,6 +86,7 @@ public:
     ozz::Range<ozz::math::Float4x4> models;
     ozz::Range<ozz::math::Float4x4> skinning_matrices;
     bool play = true;
+    bool loop = false;
     float time = 0.0f;
     float playback_speed = 1.0f;
     AnimationDataID aniDataID = 0;

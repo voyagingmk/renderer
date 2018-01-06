@@ -6,6 +6,7 @@
 #include "system/renderSys.hpp"
 #include "system/shaderSys.hpp"
 #include "system/loaderSys.hpp"
+#include "system/physicsSys.hpp"
 #include "system/bufferSys.hpp"
 #include "system/materialSys.hpp"
 #include "system/spatialSys.hpp"
@@ -49,6 +50,7 @@ void MainECS::setup() {
 	m_systemMgr.add<BatchSystem>();
 	m_systemMgr.add<BVHSystem>();
 	m_systemMgr.add<KdTreeSystem>();
+    m_systemMgr.add<PhysicsSystem>();
 	m_systemMgr.add<SceneGraphSystem>();
 	m_systemMgr.add<LightSystem>();
     m_systemMgr.add<TextureSystem>();
