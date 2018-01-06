@@ -4,6 +4,7 @@
 #include "base.hpp"
 #include "ecs/ecs.hpp"
 #include "com/physics.hpp"
+#include "com/matrix.hpp"
 #include "event/physicsEvent.hpp"
 
 
@@ -20,6 +21,8 @@ namespace renderer {
         void receive(const CreateCollisionShapeEvent& evt);
 
     private:
+        
+        void ComputeTransform(ComponentHandle<ColBodyCom> com, float interpolationFactor);
         
     };
     

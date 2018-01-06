@@ -21,11 +21,15 @@ namespace renderer {
     void PhysicsSystem::update(ObjectManager &objMgr, EventManager &evtMgr, float dt) {
         auto com = m_objMgr->getSingletonComponent<PhysicsWorld>();
         com->accumulator += dt;
-        while (com->accumulator > com->timestep) {
+        while (com->accumulator >= com->timestep) {
             com->accumulator -= com->timestep;
             if (com->world.getNbRigidBodies() > 0) {
                 com->world.update(com->timestep);
             }
+        }
+        float interpolationFactor = float(com->accumulator) / com->timestep;
+        for (Object obj: m_objMgr->entities<DynamicObjTag, ColBodyCom>()) {
+            ComputeTransform(obj.component<ColBodyCom>(), interpolationFactor);
         }
     }
     
@@ -47,12 +51,23 @@ namespace renderer {
         } else if (obj.hasComponent<DynamicObjTag>()) {
             body->setType(rp3d::BodyType::DYNAMIC);
         }
-        // Get the current material of the body
         rp3d::Material& material = body->getMaterial();
-        // Change the bounciness of the body
         material.setBounciness(rp3d::decimal(evt.bounciness));
-        // Change the friction coefficient of the body
         material.setFrictionCoefficient(rp3d::decimal(evt.friction));
+    }
+    
+    // Compute the new transform matrix
+    void PhysicsSystem::ComputeTransform(ComponentHandle<ColBodyCom> com, float interpolationFactor) {
+
+        // Get the transform of the rigid body
+        rp3d::Transform transform = com->body->getTransform();
+        
+        // Interpolate the transform between the previous one and the new one
+        rp3d::Transform interpolatedTransform =
+            rp3d::Transform::interpolateTransforms(com->prevTransform,
+                                                   transform,
+                                                   interpolationFactor);
+        com->prevTransform = transform;
     }
 
 }

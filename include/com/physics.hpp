@@ -3,8 +3,6 @@
 
 #include "reactphysics3d/reactphysics3d.h"
 
-using namespace reactphysics3d;
-
 namespace renderer {
 
 class PhysicsWorld {
@@ -15,7 +13,7 @@ public:
         timestep(1.0f / 60.0f)
     {}
     // rp3d::CollisionWorld world;
-    DynamicsWorld world;
+    rp3d::DynamicsWorld world;
     float accumulator;
     const float timestep;
 };
@@ -27,17 +25,18 @@ public:
     CollisionShapeSet() :
         idCount(0) {}
     CollisionShapeID newID() { return ++idCount; }
-    CollisionShape* getShape(CollisionShapeID id) {
+    rp3d::CollisionShape* getShape(CollisionShapeID id) {
         return shapeDict[id];
     }
     CollisionShapeID idCount;
-    std::map<CollisionShapeID, CollisionShape*> shapeDict;
+    std::map<CollisionShapeID, rp3d::CollisionShape*> shapeDict;
     std::map<std::string, CollisionShapeID> alias2id;
 };
     
 class ColBodyCom {
 public:
-    RigidBody* body;
+    rp3d::RigidBody* body;
+    rp3d::Transform prevTransform;
 };
 
 };
