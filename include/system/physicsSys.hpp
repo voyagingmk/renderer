@@ -3,6 +3,7 @@
 
 #include "base.hpp"
 #include "ecs/ecs.hpp"
+#include "com/physics.hpp"
 
 using namespace ecs;
 

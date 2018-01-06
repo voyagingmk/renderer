@@ -152,6 +152,7 @@
 		F5F67D431F8249950016CEF2 /* imgui_draw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5F67D421F8249950016CEF2 /* imgui_draw.cpp */; };
 		F5F67D451F8249C00016CEF2 /* imgui.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5F67D441F8249C00016CEF2 /* imgui.cpp */; };
 		F5FD0B401F70CF57007BA9DB /* motionSys.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5FD0B3F1F70CF57007BA9DB /* motionSys.cpp */; };
+		F5FFC8A720008D3F00512D53 /* physicsSys.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5FFC8A620008D3F00512D53 /* physicsSys.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -437,6 +438,9 @@
 		F5FD0B421F70D31C007BA9DB /* motionCom.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = motionCom.hpp; path = include/com/motionCom.hpp; sourceTree = "<group>"; };
 		F5FD0B431F70EC43007BA9DB /* actionCom.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = actionCom.hpp; path = include/com/actionCom.hpp; sourceTree = "<group>"; };
 		F5FD0B441F726EFD007BA9DB /* base.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = base.hpp; path = include/base.hpp; sourceTree = "<group>"; };
+		F5FFC8A520008D3000512D53 /* physicsSys.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = physicsSys.hpp; path = include/system/physicsSys.hpp; sourceTree = "<group>"; };
+		F5FFC8A620008D3F00512D53 /* physicsSys.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = physicsSys.cpp; path = src/system/physicsSys.cpp; sourceTree = "<group>"; };
+		F5FFC8A820008EAF00512D53 /* physics.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = physics.hpp; path = include/com/physics.hpp; sourceTree = "<group>"; };
 		F64270B82FB946F9BC21F3DA /* CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
@@ -856,6 +860,7 @@
 				F58A3DC91F679AA50046A853 /* transform.hpp */,
 				F58A3DCA1F679AA50046A853 /* vertex.hpp */,
 				F5484D571FF4C35A008850F7 /* animation.hpp */,
+				F5FFC8A820008EAF00512D53 /* physics.hpp */,
 			);
 			name = com;
 			sourceTree = "<group>";
@@ -867,6 +872,7 @@
 				F58A3DF91F679CDE0046A853 /* envSys.hpp */,
 				F5FD0B411F70CF69007BA9DB /* motionSys.hpp */,
 				F548063B1FEC01E8001A5B13 /* kdtreeSys.hpp */,
+				F5FFC8A520008D3000512D53 /* physicsSys.hpp */,
 				F5F27AB61F95C81800F8347E /* lightSys.hpp */,
 				F520C5041F6F78C3000B6E54 /* configSys.hpp */,
 				F58A3E001F67AD210046A853 /* materialSys.hpp */,
@@ -902,6 +908,7 @@
 				F5CE08F51F66343500989DDE /* renderSys.cpp */,
 				F55137CE1F664E4F0061DF99 /* shaderSys.cpp */,
 				F58A3E051F67B5430046A853 /* spatialSys.cpp */,
+				F5FFC8A620008D3F00512D53 /* physicsSys.cpp */,
 				F5CE08F61F66343500989DDE /* textureSys.cpp */,
 				F5484D541FF4C26E008850F7 /* animationSys.cpp */,
 			);
@@ -1112,6 +1119,7 @@
 				F5435C7D1FFF4E1C004A1A01 /* GJKAlgorithm.cpp in Sources */,
 				F592374C1F6AA01D00A82A24 /* transform.cpp in Sources */,
 				F5435C6B1FFF4E1C004A1A01 /* CylinderShape.cpp in Sources */,
+				F5FFC8A720008D3F00512D53 /* physicsSys.cpp in Sources */,
 				F5435C671FFF4E1C004A1A01 /* CollisionDetection.cpp in Sources */,
 				F5FD0B401F70CF57007BA9DB /* motionSys.cpp in Sources */,
 				F5435C531FFF4E1C004A1A01 /* Body.cpp in Sources */,

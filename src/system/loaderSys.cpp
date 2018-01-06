@@ -15,6 +15,7 @@
 #include "com/miscCom.hpp"
 #include "com/motionCom.hpp"
 #include "com/actionCom.hpp"
+#include "com/physics.hpp"
 #include "event/textureEvent.hpp"
 #include "event/shaderEvent.hpp"
 #include "event/materialEvent.hpp"
@@ -57,6 +58,7 @@ namespace renderer {
 		obj.addComponent<MeshSet>();
         obj.addComponent<AllBufferDictCom>();
         obj.addComponent<AnimationDataSet>();
+        obj.addComponent<PhysicsWorld>();
         m_evtMgr->emit<GlobalComAddedEvent>();
         
 		

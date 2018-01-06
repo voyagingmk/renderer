@@ -78,14 +78,15 @@ int ecsMain(int argc, char *argv[])
 	std::cout << "default max_align_t:" << alignof(std::max_align_t) << std::endl;
 	MainECS ecsObj;
 	ecsObj.setup();
-	int interval = 10;
-	int lastTick = SDL_GetTicks();
+	const uint32_t intervalMS = 1000 / EcsUpdateFPS;
+	uint32_t lastTick = SDL_GetTicks(); // 0
     auto com = ecsObj.m_objMgr.getSingletonComponent<SDLContext>();
 	while (!com->shouldExit) {
-		ecsObj.update(0.01f);
-		while (SDL_GetTicks() < lastTick + interval) {
+		while (SDL_GetTicks() < lastTick + intervalMS) {
 		}
-		lastTick = SDL_GetTicks();
+	    uint32_t nowTick = SDL_GetTicks();
+        ecsObj.update(0.001f * (nowTick - lastTick));
+        lastTick = nowTick;
 	}
     TerminateWorkerThreads();
 	return 0;

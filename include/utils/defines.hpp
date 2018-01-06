@@ -10,6 +10,8 @@ extern const int SampleNum_IndirectDiffuse;
 #define RenderType_DepthMap 1
 #define RenderType_NormalMap 2
 
+extern const uint32_t EcsUpdateFPS;
+
 extern const int RenderType;
 
 extern bool Enable_DebugPixcel;
