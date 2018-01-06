@@ -3,16 +3,22 @@
 
 #include "base.hpp"
 #include "ecs/ecs.hpp"
-#include "com/shader.hpp"
+#include "reactphysics3d/reactphysics3d.h"
+
+using namespace reactphysics3d;
 
 namespace renderer {
     
     class CreateCollisionShapeEvent : public ecs::Event<CreateCollisionShapeEvent> {
     public:
-        CreateCollisionShapeEvent(ecs::Object obj):
-        obj(obj)
+        CreateCollisionShapeEvent(ecs::Object obj, decimal bounciness, decimal friction):
+            obj(obj),
+            bounciness(bounciness),
+            friction(friction)
         {}
         ecs::Object obj;
+        decimal bounciness;
+        decimal friction;
     };
     
     

@@ -15,7 +15,7 @@ public:
         timestep(1.0f / 60.0f)
     {}
     // rp3d::CollisionWorld world;
-    rp3d::DynamicsWorld world;
+    DynamicsWorld world;
     float accumulator;
     const float timestep;
 };
@@ -37,7 +37,7 @@ public:
     
 class ColBodyCom {
 public:
-    rp3d::CollisionBody* body;
+    RigidBody* body;
 };
 
 };

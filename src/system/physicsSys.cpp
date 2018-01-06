@@ -39,14 +39,20 @@ namespace renderer {
         rp3d::Vector3 initPosition(spatialData->pos.x, spatialData->pos.y, spatialData->pos.z);
         rp3d::Quaternion initOrientation = Trans(spatialData->orientation);
         const rp3d::Transform transform(initPosition, initOrientation);
-        rp3d::CollisionBody* body = physicsWorld->world.createCollisionBody(transform);
+        rp3d::RigidBody* body = physicsWorld->world.createRigidBody(transform);
         auto com = obj.addComponent<ColBodyCom>();
         com->body = body;
         if (obj.hasComponent<StaticObjTag>()) {
-            com->body->setType(rp3d::BodyType::STATIC);
+            body->setType(rp3d::BodyType::STATIC);
         } else if (obj.hasComponent<DynamicObjTag>()) {
-            com->body->setType(rp3d::BodyType::DYNAMIC);
+            body->setType(rp3d::BodyType::DYNAMIC);
         }
+        // Get the current material of the body
+        rp3d::Material& material = body->getMaterial();
+        // Change the bounciness of the body
+        material.setBounciness(rp3d::decimal(evt.bounciness));
+        // Change the friction coefficient of the body
+        material.setFrictionCoefficient(rp3d::decimal(evt.friction));
     }
 
 }
