@@ -5,7 +5,8 @@
 namespace renderer {
     void PhysicsSystem::init(ObjectManager &objMgr, EventManager &evtMgr) {
         printf("PhysicsSystem init\n");
-        
+        //rp3d::decimal radius = rp3d::decimal(3.0)
+        //const rp3d::BoxShape shape(radius); 
     }
     
     void PhysicsSystem::update(ObjectManager &objMgr, EventManager &evtMgr, float dt) {

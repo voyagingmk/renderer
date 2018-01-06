@@ -59,6 +59,7 @@ namespace renderer {
         obj.addComponent<AllBufferDictCom>();
         obj.addComponent<AnimationDataSet>();
         obj.addComponent<PhysicsWorld>();
+        obj.addComponent<CollisionShapeSet>();
         m_evtMgr->emit<GlobalComAddedEvent>();
         
 		
