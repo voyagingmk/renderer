@@ -4,6 +4,8 @@
 #include "base.hpp"
 #include "ecs/ecs.hpp"
 #include "com/physics.hpp"
+#include "event/physicsEvent.hpp"
+
 
 using namespace ecs;
 
@@ -15,6 +17,8 @@ namespace renderer {
         
         void update(ObjectManager &objMgr, EventManager &evtMgr, float dt) override;
         
+        void receive(const CreateCollisionShapeEvent& evt);
+
     private:
         
     };

@@ -35,14 +35,8 @@ public:
     std::map<std::string, CollisionShapeID> alias2id;
 };
     
-class CollisionBody {
+class ColBodyCom {
 public:
-    /*
-    // Initial position and orientation of the collision body
-    rp3d::Vector3 initPosition(0.0, 3.0, 0.0);
-    rp3d::Quaternion initOrientation = rp3d::Quaternion::identity();
-    rp3d::Transform transform(initPosition, initOrientation);
-    */
     rp3d::CollisionBody* body;
 };
 

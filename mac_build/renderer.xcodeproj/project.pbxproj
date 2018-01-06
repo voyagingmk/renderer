@@ -441,6 +441,7 @@
 		F5FFC8A520008D3000512D53 /* physicsSys.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = physicsSys.hpp; path = include/system/physicsSys.hpp; sourceTree = "<group>"; };
 		F5FFC8A620008D3F00512D53 /* physicsSys.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = physicsSys.cpp; path = src/system/physicsSys.cpp; sourceTree = "<group>"; };
 		F5FFC8A820008EAF00512D53 /* physics.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = physics.hpp; path = include/com/physics.hpp; sourceTree = "<group>"; };
+		F5FFC8A92000C2EC00512D53 /* physicsEvent.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = physicsEvent.hpp; path = include/event/physicsEvent.hpp; sourceTree = "<group>"; };
 		F64270B82FB946F9BC21F3DA /* CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
@@ -980,6 +981,7 @@
 				F58A3DE11F679AC30046A853 /* textureEvent.hpp */,
 				F520C4FF1F6F7889000B6E54 /* spatialEvent.hpp */,
 				F58A3DE21F679AC30046A853 /* winEvent.hpp */,
+				F5FFC8A92000C2EC00512D53 /* physicsEvent.hpp */,
 			);
 			name = event;
 			sourceTree = "<group>";
