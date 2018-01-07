@@ -163,6 +163,11 @@ namespace renderer {
         
         // *this must be normalized
         Matrix4x4 toMatrix4x4() {
+            float nQ = x*x + y*y + z*z + s*s;
+            float n = 0.0f;
+            if (nQ > 0.0f) {
+                n = 2.0f / nQ;
+            }
             float xy = x * y;
             float yz = y * z;
             float xz = x * z;
@@ -173,9 +178,9 @@ namespace renderer {
             float y2 = y * y;
             float z2 = z * z;
             return Matrix4x4{
-                1.0f - 2.0f*(y2 + z2), 2.0f*(xy - zs), 2.0f*(xz + ys), 0.0f,
-                2.0f*(xy + zs), 1.0f - 2.0f*(x2 + z2), 2.0f*(yz - xs), 0.0f,
-                2.0f*(xz - ys), 2.0f*(yz + xs), 1.0f - 2.0f*(x2 + y2), 0.0f,
+                1.0f - n*(y2 + z2), n*(xy - zs), n*(xz + ys), 0.0f,
+                n*(xy + zs), 1.0f - n*(x2 + z2), n*(yz - xs), 0.0f,
+                n*(xz - ys), n*(yz + xs), 1.0f - n*(x2 + y2), 0.0f,
                 0.0f, 0.0f, 0.0f, 1.0f};
         }
         
