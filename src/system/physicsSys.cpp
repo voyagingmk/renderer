@@ -79,6 +79,7 @@ namespace renderer {
             }
         }
         float interpolationFactor = float(com->accumulator) / com->timestep;
+        assert(interpolationFactor >= 0.0f && interpolationFactor <= 1.0f);
         for (Object obj: m_objMgr->entities<DynamicObjTag, ColBodyCom>()) {
             auto com = obj.component<ColBodyCom>();
             ComputeTransform(com, interpolationFactor);
@@ -116,6 +117,7 @@ namespace renderer {
             return;
         }
         auto spatialData = obj.component<SpatialData>();
+        auto shapeSet = m_objMgr->getSingletonComponent<CollisionShapeSet>();
         auto physicsWorld = m_objMgr->getSingletonComponent<PhysicsWorld>();
         rp3d::RigidBody* body = physicsWorld->world.createRigidBody(MakeTransform(spatialData));
         auto com = obj.addComponent<ColBodyCom>();
@@ -132,11 +134,32 @@ namespace renderer {
         auto meshSet = m_objMgr->getSingletonComponent<MeshSet>();
         auto meshRef = obj.component<MeshRef>();
         Mesh& mesh = meshSet->getMesh(meshRef->meshID);
-        BBox bound = mesh.Bound();
-        auto boxShape = GetPool<rp3d::BoxShape>()->newElement(rp3d::Vector3(bound.Extent(0) / 2, bound.Extent(1) / 2, bound.Extent(2) / 2));
-        body->addCollisionShape(boxShape,
-                                rp3d::Transform(Trans(bound.Center()), rp3d::Quaternion::identity()),
-                                1.0f);
+        for (size_t i = 0; i < mesh.meshes.size(); i++) {
+            SubMesh& subMesh = mesh.meshes[i];
+            CollisionShapeID shapeID = meshRef->meshID * 10000 + i;
+            if (!shapeSet->hasShape(shapeID)) {
+                BBox bound = subMesh.Bound();
+                auto boxShape = GetPool<rp3d::BoxShape>()->newElement(rp3d::Vector3(bound.Extent(0) / 2, bound.Extent(1) / 2, bound.Extent(2) / 2));
+                shapeSet->shapeDict[shapeID] = {rp3d::Transform(Trans(bound.Center()),
+                                                                 rp3d::Quaternion::identity()), boxShape};
+            }
+            ShapeInfo& info = shapeSet->shapeDict[shapeID];
+            auto boxShape = shapeSet->getShape(shapeID);
+            body->addCollisionShape(info.shape, info.transform, 1.0f);
+        }
+        /*
+        auto c = bound.Center();
+        auto t = body->getTransform();
+        auto p = t.getPosition();
+        auto o = t.getOrientation();
+        
+        auto t2 = proxyShape->getLocalToBodyTransform();
+        auto p2 = t2.getPosition();
+        auto o2 = t2.getOrientation();
+   
+        int i = 0;
+        i+=1;*/
+    
     }
     
     // Compute the new transform matrix

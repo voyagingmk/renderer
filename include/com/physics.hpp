@@ -20,16 +20,24 @@ public:
     
 typedef size_t CollisionShapeID;
     
+struct ShapeInfo {
+    rp3d::Transform transform;
+    rp3d::CollisionShape* shape;
+};
+    
 class CollisionShapeSet {
 public:
     CollisionShapeSet() :
         idCount(0) {}
     CollisionShapeID newID() { return ++idCount; }
-    rp3d::CollisionShape* getShape(CollisionShapeID id) {
+    bool hasShape(CollisionShapeID id) {
+        return shapeDict.find(id) != shapeDict.end();
+    }
+    ShapeInfo& getShape(CollisionShapeID id) {
         return shapeDict[id];
     }
     CollisionShapeID idCount;
-    std::map<CollisionShapeID, rp3d::CollisionShape*> shapeDict;
+    std::map<CollisionShapeID, ShapeInfo> shapeDict;
     std::map<std::string, CollisionShapeID> alias2id;
 };
     
