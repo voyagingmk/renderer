@@ -212,24 +212,24 @@ namespace renderer {
    
 		// copy from vcglib
         
-        void ToEulerAngles(RadianF &_x, RadianF &_y, RadianF &_z) const
+        void ToEulerAngles(RadianF &rx, RadianF &ry, RadianF &rz) const
         {
 #define P(a,b,c,d) (2*((a)*(b)+(c)*(d)))
 #define M(a,b,c,d) (2*((a)*(b)-(c)*(d)))
-            _x.radian = atan2( P(s,x,y,z) , 1-P(x,x,y,y) );
-            _y.radian = asin ( M(s,y,z,x) );
-            _z.radian = atan2( P(s,z,x,y) , 1-P(y,y,z,z) );
+            rx.radian = atan2( P(s,x,y,z) , 1-P(x,x,y,y) );
+            ry.radian = asin ( M(s,y,z,x) );
+            rz.radian = atan2( P(s,z,x,y) , 1-P(y,y,z,z) );
 #undef P
 #undef M
         }
         
-        void ToEulerAngles(DegreeF &x, DegreeF &y, DegreeF &z) const
+        void ToEulerAngles(DegreeF &dx, DegreeF &dy, DegreeF &dz) const
         {
             RadianF a, b, c;
             ToEulerAngles(a, b, c);
-            x.degree = a.ToDegree().degree;
-            y.degree = b.ToDegree().degree;
-            z.degree = c.ToDegree().degree;
+            dx.degree = a.ToDegree().degree;
+            dy.degree = b.ToDegree().degree;
+            dz.degree = c.ToDegree().degree;
         }
         
         void FromEulerAngles(RadianF rx, RadianF ry, RadianF rz)
@@ -252,9 +252,9 @@ namespace renderer {
             z = cosX * cosYsinZ - sinX * sinYcosZ;
         }
         
-        void FromEulerAngles(DegreeF x, DegreeF y, DegreeF z)
+        void FromEulerAngles(DegreeF dx, DegreeF dy, DegreeF dz)
         {
-            FromEulerAngles(x.ToRadian(), y.ToRadian(), z.ToRadian());
+            FromEulerAngles(dx.ToRadian(), dy.ToRadian(), dz.ToRadian());
         }
 
 	};
