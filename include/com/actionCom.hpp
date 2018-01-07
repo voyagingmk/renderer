@@ -40,17 +40,17 @@ namespace renderer {
     
     class RotateToAction: public ActionBase {
     public:
-        RotateToAction(float duration, DegreeF phi, DegreeF theta, DegreeF psi):
+        RotateToAction(float duration, DegreeF x, DegreeF y, DegreeF z):
         ActionBase(duration, ActionType::RotateTo)
         {
-            to.FromEulerAngles(phi, theta, psi);
+            to.FromEulerAngles(x, y, x);
         }
         
         
-        RotateToAction(float duration, RadianF phi, RadianF theta, RadianF psi):
+        RotateToAction(float duration, RadianF x, RadianF y, RadianF z):
             ActionBase(duration, ActionType::RotateTo)
         {
-            to.FromEulerAngles(phi, theta, psi);
+            to.FromEulerAngles(x, y, z);
         }
         
         RotateToAction(float duration, QuaternionF to):
@@ -65,22 +65,22 @@ namespace renderer {
     class RotateByAction: public ActionBase {
     public:
 		/* 
-			alpha: x counter-clockwise
-			beta:  y counter-clockwise
-			gamma: z counter-clockwise
+			x: x counter-clockwise
+			y: y counter-clockwise
+			z: z counter-clockwise
 		*/
-        RotateByAction(float duration, DegreeF alpha, DegreeF beta, DegreeF gamma, bool inverse = false):
+        RotateByAction(float duration, DegreeF x, DegreeF y, DegreeF z, bool inverse = false):
 			ActionBase(duration, ActionType::RotateBy),
 			inverse(inverse)
         {
-            by.FromEulerAngles(alpha, beta, gamma);
+            by.FromEulerAngles(x, y, z);
         }
         
-        RotateByAction(float duration, RadianF alpha, RadianF beta, RadianF gamma, bool inverse = false):
+        RotateByAction(float duration, RadianF x, RadianF y, RadianF z, bool inverse = false):
 			ActionBase(duration, ActionType::RotateBy),
 			inverse(inverse)
         {
-            by.FromEulerAngles(alpha, beta, gamma);
+            by.FromEulerAngles(x, y, z);
         }
         
         RotateByAction(float duration, QuaternionF by, bool inverse = false):

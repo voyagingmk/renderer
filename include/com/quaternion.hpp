@@ -212,44 +212,49 @@ namespace renderer {
    
 		// copy from vcglib
         
-        void ToEulerAngles(RadianF &alpha, RadianF &beta, RadianF &gamma) const
+        void ToEulerAngles(RadianF &_x, RadianF &_y, RadianF &_z) const
         {
 #define P(a,b,c,d) (2*((a)*(b)+(c)*(d)))
 #define M(a,b,c,d) (2*((a)*(b)-(c)*(d)))
-            alpha.radian = atan2( P(s,x,y,z) , 1-P(x,x,y,y) );
-            beta.radian  = asin ( M(s,y,z,x) );
-            gamma.radian = atan2( P(s,z,x,y) , 1-P(y,y,z,z) );
+            _x.radian = atan2( P(s,x,y,z) , 1-P(x,x,y,y) );
+            _y.radian = asin ( M(s,y,z,x) );
+            _z.radian = atan2( P(s,z,x,y) , 1-P(y,y,z,z) );
 #undef P
 #undef M
         }
         
-        void ToEulerAngles(DegreeF &alpha, DegreeF &beta, DegreeF &gamma) const
+        void ToEulerAngles(DegreeF &x, DegreeF &y, DegreeF &z) const
         {
             RadianF a, b, c;
             ToEulerAngles(a, b, c);
-            alpha.degree = a.ToDegree().degree;
-            beta.degree = b.ToDegree().degree;
-            gamma.degree = c.ToDegree().degree;
+            x.degree = a.ToDegree().degree;
+            y.degree = b.ToDegree().degree;
+            z.degree = c.ToDegree().degree;
         }
         
-        void FromEulerAngles(RadianF alpha, RadianF beta, RadianF gamma)
+        void FromEulerAngles(RadianF rx, RadianF ry, RadianF rz)
         {
-            T cosalpha = cos(alpha.radian / 2.0);
-            T cosbeta = cos(beta.radian / 2.0);
-            T cosgamma = cos(gamma.radian / 2.0);
-            T sinalpha = sin(alpha.radian / 2.0);
-            T sinbeta = sin(beta.radian / 2.0);
-            T singamma = sin(gamma.radian / 2.0);
-            
-            s = cosalpha * cosbeta * cosgamma + sinalpha * sinbeta * singamma;
-            x = sinalpha * cosbeta * cosgamma - cosalpha * sinbeta * singamma;
-            y = cosalpha * sinbeta * cosgamma + sinalpha * cosbeta * singamma;
-            z = cosalpha * cosbeta * singamma - sinalpha * sinbeta * cosgamma;
+            T cosX = cos(rx.radian / 2.0);
+            T cosY = cos(ry.radian / 2.0);
+            T cosZ = cos(rz.radian / 2.0);
+            T sinX = sin(rx.radian / 2.0);
+            T sinY = sin(ry.radian / 2.0);
+            T sinZ = sin(rz.radian / 2.0);
+           
+            const T cosYcosZ = cosY * cosZ;
+            const T sinYcosZ = sinY * cosZ;
+            const T cosYsinZ = cosY * sinZ;
+            const T sinYsinZ = sinY * sinZ;
+
+            s = cosX * cosYcosZ + sinX * sinYsinZ;
+            x = sinX * cosYcosZ - cosX * sinYsinZ;
+            y = cosX * sinYcosZ + sinX * cosYsinZ;
+            z = cosX * cosYsinZ - sinX * sinYcosZ;
         }
         
-        void FromEulerAngles(DegreeF alpha, DegreeF beta, DegreeF gamma)
+        void FromEulerAngles(DegreeF x, DegreeF y, DegreeF z)
         {
-            FromEulerAngles(alpha.ToRadian(), beta.ToRadian(), gamma.ToRadian());
+            FromEulerAngles(x.ToRadian(), y.ToRadian(), z.ToRadian());
         }
 
 	};
