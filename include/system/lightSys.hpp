@@ -16,7 +16,9 @@ namespace renderer {
 		void init(ObjectManager &objMgr, EventManager &evtMgr);
 
 		void update(ObjectManager &objMgr, EventManager &evtMgr, float dt) override;
-		
+        
+        void receive(const DrawLightBoundEvent &evt);
+        
         void receive(const UpdateLightEvent &evt);	
         
         void receive(const AddLightEvent &evt);

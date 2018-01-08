@@ -388,7 +388,7 @@ void EPAAlgorithm::computePenetrationDepthAndContactPoints(const Simplex& simple
 
             // Update the upper bound of the penetration depth
             decimal wDotv = points[indexNewVertex].dot(triangle->getClosestPoint());
-            assert(wDotv > 0.0);
+            // assert(wDotv > 0.0);
             decimal wDotVSquare = wDotv * wDotv / triangle->getDistSquare();
             if (wDotVSquare < upperBoundSquarePenDepth) {
                 upperBoundSquarePenDepth = wDotVSquare;
@@ -427,7 +427,7 @@ void EPAAlgorithm::computePenetrationDepthAndContactPoints(const Simplex& simple
     Vector3 pBLocal = body2Tobody1.getInverse() * triangle->computeClosestPointOfObject(suppPointsB);
     Vector3 normal = v.getUnit();
     decimal penetrationDepth = v.length();
-    assert(penetrationDepth > 0.0);
+    // assert(penetrationDepth > 0.0);
 
     if (normal.lengthSquare() < MACHINE_EPSILON) return;
     

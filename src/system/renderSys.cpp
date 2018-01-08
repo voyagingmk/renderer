@@ -103,6 +103,9 @@ namespace renderer {
 			m_evtMgr->emit<DebugDrawBVHEvent>(objCamera, objBVH);
 		}
         m_evtMgr->emit<DebugDrawSkeletonEvent>(objCamera);
+        for (auto objLight : m_objMgr->entities<DirLightCom>()) {
+            m_evtMgr->emit<DrawLightBoundEvent>(objLight);
+        }
 		evtMgr.emit<UnuseColorBufferEvent>(curSceneBuf);
 		
 		if (gSettingCom->get1b("enableSSAO")) {

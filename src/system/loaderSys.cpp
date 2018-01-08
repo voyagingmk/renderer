@@ -362,9 +362,9 @@ namespace renderer {
                     sgNode->children.push_back(childObj.ID());
                     auto spatialData = childObj.component<SpatialData>();
                     spatialData->pos = {
-                        randomFloat() * 30.0f,
-                        spatialData->pos.y + randomFloat() * 30.0f,
-                        randomFloat() * 30.0f
+                        randomFloat() * 200.0f - 100.0f,
+                        spatialData->pos.y + randomFloat() * 200.0f,
+                        randomFloat() * 200.0f - 100.0f
                     };
                     m_evtMgr->emit<UpdateSpatialDataEvent>(childObj);
                 }

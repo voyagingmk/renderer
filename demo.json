@@ -370,6 +370,50 @@
                 "friction": 1.0,
                 "static": true,
                 "spatial": [
+                    [-100, 100, 0],
+                    [1, 1, 1],
+                    [0, 0, 90]
+                ]
+            },
+            {
+                "model": "planeobj.obj",
+                "bounciness": 0.0,
+                "friction": 1.0,
+                "static": true,
+                "spatial": [
+                    [100, 100, 0],
+                    [1, 1, 1],
+                    [0, 0, 90]
+                ]
+            },
+            {
+                "model": "planeobj.obj",
+                "bounciness": 0.0,
+                "friction": 1.0,
+                "static": true,
+                "spatial": [
+                    [0, 100, -100],
+                    [1, 1, 1],
+                    [90, 0, 0]
+                ]
+            },
+            {
+                "model": "planeobj.obj",
+                "bounciness": 0.0,
+                "friction": 1.0,
+                "static": true,
+                "spatial": [
+                    [0, 100, 100],
+                    [1, 1, 1],
+                    [90, 0, 0]
+                ]
+            },
+            {
+                "model": "planeobj.obj",
+                "bounciness": 0.0,
+                "friction": 1.0,
+                "static": true,
+                "spatial": [
                     [0, 0, 0],
                     [1, 1, 1],
                     [0, 0, 0]
@@ -377,7 +421,7 @@
                 "children": [
                     {
                         "model": "cube.obj",
-                        "bounciness": 0.5,
+                        "bounciness": 0.2,
                         "friction": 0.9,
                         "spatial": [
                             [0, 10, 0],

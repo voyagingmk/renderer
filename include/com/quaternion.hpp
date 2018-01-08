@@ -117,7 +117,7 @@ namespace renderer {
 		T CosTheta(const Quaternion<T>& q) {
 			return Dot(q) / (Norm() * q.Norm());
 		}
-		Quaternion<T> Rotate(T theta, const Quaternion<T>& normAxis) {
+		Quaternion<T> Rotate(T theta, const Vector3dF normAxis) {
 			theta =T(0.5) * theta;
 			T cosTheta = cos(theta);
 			T sinTheta = sin(theta);
@@ -257,6 +257,36 @@ namespace renderer {
             FromEulerAngles(dx.ToRadian(), dy.ToRadian(), dz.ToRadian());
         }
 
+        
+        void RotationBetweenVectors(Vector3dF start, Vector3dF dest) {
+            start = start.Normalize();
+            dest = dest.Normalize();
+            
+            float cosTheta = start.Dot(dest);
+            Vector3dF rotationAxis;
+            
+            if (cosTheta < -1 + 0.001f){
+                // special case when vectors in opposite directions:
+                // there is no "ideal" rotation axis
+                // So guess one; any will do as long as it's perpendicular to start
+                rotationAxis = Vector3dF(0.0f, 0.0f, 1.0f).Cross(start);
+                if (rotationAxis.LengthSquare() < 0.01 ) // bad luck, they were parallel, try again!
+                    rotationAxis = Vector3dF(1.0f, 0.0f, 0.0f).Cross(start);
+                
+                rotationAxis = rotationAxis.Normalize();
+                Rotate(180.0f, rotationAxis);
+            }
+            
+            rotationAxis = start.Cross(dest);
+            
+            float d = sqrt( (1+cosTheta)*2 );
+            float invd = 1 / d;
+            
+            s = d * 0.5f;
+            x = rotationAxis.x * invd;
+            y = rotationAxis.y * invd;
+            z = rotationAxis.z * invd;
+        }
 	};
     
     typedef Quaternion<float> QuaternionF;

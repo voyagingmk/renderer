@@ -37,6 +37,16 @@ namespace renderer {
 		{}
 		ecs::Object obj;
 	};
+    
+    class DrawLightBoundEvent : public ecs::Event<DrawLightBoundEvent> {
+    public:
+        DrawLightBoundEvent(ecs::Object obj) :
+            obj(obj)
+        {}
+        ecs::Object obj;
+    };
+    
+    
 };
 
 #endif

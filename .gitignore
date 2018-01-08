@@ -37,3 +37,4 @@ mac_build/CMakeScripts
 CMakeCache.txt
 UserInterfaceState.xcuserstate
 cmake_install.cmake
+Breakpoints_v2.xcbkptlist

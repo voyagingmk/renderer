@@ -14,10 +14,31 @@ namespace renderer {
 		evtMgr.on<UpdateSpatialDataEvent>(*this);
 		evtMgr.on<EnableLightShadowEvent>(*this);
 		evtMgr.on<DisableLightShadowEvent>(*this);
+        evtMgr.on<DrawLightBoundEvent>(*this);
     }
     
     void LightSystem::update(ObjectManager &objMgr, EventManager &evtMgr, float dt) {
         
+    }
+    
+    void LightSystem::receive(const DrawLightBoundEvent &evt) {
+        Object obj = evt.obj;
+        auto spatialData = obj.component<SpatialData>();
+        auto com = obj.component<DirLightTransform>();
+        Vector3dF lightPos = spatialData->pos;
+        Vector3dF dir = lightPos.Normalize();
+        auto spSetCom = m_objMgr->getSingletonComponent<ShaderProgramSet>();
+        Shader shader = spSetCom->getShader("wireframe");
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        Matrix4x4 T = Translate<Matrix4x4>(lightPos);
+        QuaternionF o;
+        o.RotationBetweenVectors(Vector3dF(1.0, 0.0, 0.0), dir);
+        Matrix4x4 R = o.toMatrix4x4();
+        Matrix4x4 S = Scale<Matrix4x4>(Vector3dF(com->size, com->size, com->size));
+        shader.setMatrix4f("modelMat", T * R * S);
+        shader.set3f("wireColor", Vector3dF{ 1.0f, 1.0f, 0.0f});
+        m_evtMgr->emit<DrawMeshBufferEvent>("wfbox", 0);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
 
     void LightSystem::receive(const UpdateLightEvent &evt) {
