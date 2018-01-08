@@ -46,11 +46,11 @@ namespace renderer {
 				float size = dirLightTrans->size;
 				float n = dirLightTrans->n;
 				float f = dirLightTrans->f;
-				ImGui::SliderFloat("size", &size, 0.001f, 10000.0f);
-				ImGui::SliderFloat("near_plane", &n, 0.001f, 10000.0f);
-				ImGui::SliderFloat("far_plane", &f, 0.001f, 10000.0f);
+				ImGui::SliderFloat("size", &size, 0.001f, 1000.0f);
+				ImGui::SliderFloat("near_plane", &n, 0.001f, 1000.0f);
+				ImGui::SliderFloat("far_plane", &f, 0.001f, 1000.0f);
 				float pos[3] = { spatialData->pos.x, spatialData->pos.y, spatialData->pos.z };
-				ImGui::SliderFloat3("position", pos, -10000.0f, 10000.0f);
+				ImGui::SliderFloat3("position", pos, -1000.0f, 1000.0f);
 				auto posV = Vector3dF(pos[0], pos[1], pos[2]);
 				if (spatialData->pos != posV || dirLightTrans->size != size || dirLightTrans->n != n || dirLightTrans->f != f) {
 					dirLightTrans->n = n;

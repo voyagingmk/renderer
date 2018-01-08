@@ -878,7 +878,7 @@ void ContactSolver::computeFrictionVectors(const Vector3& deltaVelocity,
 void ContactSolver::computeFrictionVectors(const Vector3& deltaVelocity,
                                            ContactManifoldSolver& contact) const {
 
-    assert(contact.normal.length() > 0.0);
+    // assert(contact.normal.length() > 0.0);
 
     // Compute the velocity difference vector in the tangential plane
     Vector3 normalVelocity = deltaVelocity.dot(contact.normal) * contact.normal;

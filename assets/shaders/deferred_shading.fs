@@ -210,7 +210,10 @@ vec3 calRadiance(vec3 FragPos, Material material, Light light, vec3 F0, vec3 N, 
     vec3 L = normalize(lightDir);
     vec3 H = normalize(V + L);
     float distance = length(lightDir);
-    float attenuation = 1.0 / ( 1.0 +light.Linear * distance +light.Quadratic * distance * distance);
+    float attenuation = 1.0;
+    if (type != 1) {
+        attenuation = 1.0 / ( 1.0 +light.Linear * distance +light.Quadratic * distance * distance);
+    }
     vec3 radiance = light.Color * attenuation;
 
     // Cook-Torrance BRDF

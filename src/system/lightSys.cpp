@@ -24,19 +24,29 @@ namespace renderer {
     void LightSystem::receive(const DrawLightBoundEvent &evt) {
         Object obj = evt.obj;
         auto spatialData = obj.component<SpatialData>();
-        auto com = obj.component<DirLightTransform>();
-        Vector3dF lightPos = spatialData->pos;
-        Vector3dF dir = lightPos.Normalize();
         auto spSetCom = m_objMgr->getSingletonComponent<ShaderProgramSet>();
         Shader shader = spSetCom->getShader("wireframe");
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        QuaternionF o;
-        o.RotationBetweenVectors(Vector3dF(1.0, 0.0, 0.0), dir);
-        Matrix4x4 R = o.toMatrix4x4();
-        Matrix4x4 S = Scale<Matrix4x4>(Vector3dF(com->size, com->size, com->size));
-        shader.setMatrix4f("modelMat", R * S);
+        shader.use();
         shader.set3f("wireColor", Vector3dF{ 1.0f, 1.0f, 0.0f});
-        m_evtMgr->emit<DrawMeshBufferEvent>("wfbox", 0);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        if (obj.hasComponent<PointLightTransform>()) {
+            
+        }
+        else if (obj.hasComponent<DirLightTransform>()) {
+            auto com = obj.component<DirLightTransform>();
+            Vector3dF lightPos = spatialData->pos;
+            Vector3dF dir = lightPos.Normalize();
+            QuaternionF o;
+            o.RotationBetweenVectors(Vector3dF(1.0, 0.0, 0.0), dir);
+            Matrix4x4 T = Translate<Matrix4x4>(lightPos);
+            Matrix4x4 R = o.toMatrix4x4();
+            Matrix4x4 S = Scale<Matrix4x4>(Vector3dF(com->size, com->size, com->size));
+            shader.setMatrix4f("modelMat", T * R * S);
+            m_evtMgr->emit<DrawMeshBufferEvent>("wfbox", 0);
+        }
+        else if (obj.hasComponent<SpotLightTransform>()) {
+            
+        }
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
 
