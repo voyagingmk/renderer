@@ -117,17 +117,11 @@ namespace renderer {
 		T CosTheta(const Quaternion<T>& q) {
 			return Dot(q) / (Norm() * q.Norm());
 		}
-		Quaternion<T> Rotate(T theta, const Vector3dF normAxis) {
-			theta =T(0.5) * theta;
-			T cosTheta = cos(theta);
-			T sinTheta = sin(theta);
-			Quaternion<T> rotQ(cosTheta, 
-				sinTheta * normAxis.x, 
-				sinTheta * normAxis.y, 
-				sinTheta * normAxis.z);
+		Quaternion<T> Rotate(T theta, const Quaternion<T> rotQ) {
 			Quaternion<T> rotQInv = rotQ.Conjugate();
 			return rotQ * (*this) * rotQInv;
 		}
+        
 		Quaternion<T> Exp() {
 			T normV = sqrt(x * x + y * y + z * z);
 			T expS = exp(s);
@@ -199,6 +193,7 @@ namespace renderer {
             y = a[1] * sinphi;
             z = a[2] * sinphi;
         }
+
         
         void FromAxis(const T phi, const Vector3dF a) {
             a.Normalize();
@@ -274,7 +269,7 @@ namespace renderer {
                     rotationAxis = Vector3dF(1.0f, 0.0f, 0.0f).Cross(start);
                 
                 rotationAxis = rotationAxis.Normalize();
-                Rotate(180.0f, rotationAxis);
+                FromAxis(180.0f, rotationAxis);
             }
             
             rotationAxis = start.Cross(dest);
