@@ -102,7 +102,7 @@ namespace renderer {
 		auto com = objCamera.addComponent<PerspectiveCameraView>(45.0f, (float)winWidth / (float)winHeight, 0.1f, 10000.0f);
         //com->eye = Vector3dF(156.0f, 116.0f, 143.0f);
         //com->SetFrontVector({30.0f, -15.0f, -30.0f});
-        com->eye = Vector3dF(-50.0f, 20.0f, 70.0f);
+        com->eye = Vector3dF(50.0f, 150.0f, 20.0f);
         com->SetFrontVector({1.0f, -0.1f, -1.0f});
 
         loadTextures(assetsDir + texSubDir, config);
