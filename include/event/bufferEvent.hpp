@@ -10,10 +10,12 @@ namespace renderer {
     
     class CreateDynamicMeshBufferEvent: public ecs::Event<CreateDynamicMeshBufferEvent> {
     public:
-        CreateDynamicMeshBufferEvent(std::string meshName) :
-            meshName(meshName)
+        CreateDynamicMeshBufferEvent(std::string meshName, bool noIndices = false) :
+            meshName(meshName),
+            noIndices(noIndices)
         {}
         std::string meshName;
+        bool noIndices;
     };
     
     

@@ -40,10 +40,12 @@ namespace renderer {
     
     class DrawLightBoundEvent : public ecs::Event<DrawLightBoundEvent> {
     public:
-        DrawLightBoundEvent(ecs::Object obj) :
-            obj(obj)
+        DrawLightBoundEvent(ecs::Object obj, ecs::Object objCamera) :
+            obj(obj),
+            objCamera(objCamera)
         {}
         ecs::Object obj;
+        ecs::Object objCamera;
     };
     
     

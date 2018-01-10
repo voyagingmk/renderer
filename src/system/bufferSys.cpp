@@ -45,7 +45,7 @@ namespace renderer {
         if (dmDict.find(evt.meshName) != dmDict.end()) {
             return;
         }
-        dmDict[evt.meshName] = CreateMeshBuffer();
+        dmDict[evt.meshName] = CreateMeshBuffer(evt.noIndices);
     }
 
     void BufferSystem::receive(const UpdateDynamicMeshBufferEvent &evt) {
@@ -344,15 +344,16 @@ namespace renderer {
 		buf.insBuf.instanceNum = 1;
 	}
     
-    MeshBufferRef BufferSystem::CreateMeshBuffer() {
+    MeshBufferRef BufferSystem::CreateMeshBuffer(bool noIndices) {
         MeshBufferRef meshBuffer;
         glGenVertexArrays(1, &meshBuffer.vao);
         glGenBuffers(1, &meshBuffer.vbo);
-        glGenBuffers(1, &meshBuffer.ebo);
+        if(!noIndices) glGenBuffers(1, &meshBuffer.ebo);
         // Bind the Vertex Array Object first, then bind and set vertex buffer(s) and attribute pointer(s).
         glBindVertexArray(meshBuffer.vao);
         glBindBuffer(GL_ARRAY_BUFFER, meshBuffer.vbo);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshBuffer.ebo);
+        
+        if(!noIndices) glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshBuffer.ebo);
 
         // Position attribute
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)0);
@@ -371,12 +372,13 @@ namespace renderer {
         
         glBindVertexArray(0); // Unbind VAO (it's always a good thing to unbind any buffer/array to prevent strange bugs), remember: do NOT unbind the EBO, keep it bound to this VAO
         
-        assert(meshBuffer.vao > 0 && meshBuffer.vbo > 0 && meshBuffer.ebo > 0);
+        assert(meshBuffer.vao > 0 && meshBuffer.vbo > 0);
+        if(!noIndices) assert(meshBuffer.ebo > 0);
         return meshBuffer;
     }
     
 	MeshBufferRef BufferSystem::CreateSubMeshBuffer(const SubMesh& subMesh) {
-        MeshBufferRef meshBuffer = CreateMeshBuffer();
+        MeshBufferRef meshBuffer = CreateMeshBuffer(false);
 		meshBuffer.meshType = subMesh.meshType;
         meshBuffer.noIndices = subMesh.indexes.size() == 0;
 		meshBuffer.count = meshBuffer.noIndices ? subMesh.vertices.size() : subMesh.indexes.size();

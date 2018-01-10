@@ -104,7 +104,7 @@ namespace renderer {
 		}
         m_evtMgr->emit<DebugDrawSkeletonEvent>(objCamera);
         for (auto objLight : m_objMgr->entities<DirLightCom>()) {
-            m_evtMgr->emit<DrawLightBoundEvent>(objLight);
+            m_evtMgr->emit<DrawLightBoundEvent>(objLight, objCamera);
         }
 		evtMgr.emit<UnuseColorBufferEvent>(curSceneBuf);
 		

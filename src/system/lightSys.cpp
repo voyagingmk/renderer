@@ -2,6 +2,7 @@
 #include "system/lightSys.hpp"
 #include "com/spatialData.hpp"
 #include "event/bufferEvent.hpp"
+#include "event/shaderEvent.hpp"
 #include "com/bufferCom.hpp"
 
 using namespace std;
@@ -28,6 +29,7 @@ namespace renderer {
         Shader shader = spSetCom->getShader("wireframe");
         shader.use();
         shader.set3f("wireColor", Vector3dF{ 1.0f, 1.0f, 0.0f});
+        m_evtMgr->emit<UploadCameraToShaderEvent>(evt.objCamera, shader);
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         if (obj.hasComponent<PointLightTransform>()) {
             
@@ -35,12 +37,23 @@ namespace renderer {
         else if (obj.hasComponent<DirLightTransform>()) {
             auto com = obj.component<DirLightTransform>();
             Vector3dF lightPos = spatialData->pos;
+            Vector3dF lightDir = lightPos.Normalize();
             auto size = com->size * 2;
-            Matrix4x4 T = Translate<Matrix4x4>(lightPos);
-            Matrix4x4 R = LookAt(lightPos, Vector3dF{ 0.0, 0.0, 0.0 }, { 0.0, 1.0, 0.0 });
-            Matrix4x4 S = Scale<Matrix4x4>(Vector3dF(size, size, size));
-            shader.setMatrix4f("modelMat", T * R * S);
+            shader.setMatrix4f("modelMat", Matrix4x4::newIdentity());
             m_evtMgr->emit<DrawMeshBufferEvent>("wfbox", 0);
+            m_evtMgr->emit<CreateDynamicMeshBufferEvent>("dirlight", true);
+            m_evtMgr->emit<BindDynamicMeshBufferEvent>("dirlight");
+            std::vector<Vertex> vertices;
+            for (int i = -5; i < 5; i++) {
+                Vector3dF o = {i * 5.0f, 0, 0};
+                Vector3dF p = o + lightPos;
+                vertices.push_back({o});
+                vertices.push_back({p});
+            }
+            glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STREAM_DRAW);
+            glDrawArrays(GL_LINES, 0, vertices.size());
+            m_evtMgr->emit<UnbindDynamicMeshBufferEvent>("dirlight");
+            
         }
         else if (obj.hasComponent<SpotLightTransform>()) {
             

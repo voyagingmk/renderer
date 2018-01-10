@@ -104,7 +104,7 @@ namespace renderer {
 
 		void CopyFrameBufferDepth(FrameBufferBase& buf, FrameBufferBase& buf2);
         
-        MeshBufferRef CreateMeshBuffer();
+        MeshBufferRef CreateMeshBuffer(bool noIndices);
 	};
 };
 
