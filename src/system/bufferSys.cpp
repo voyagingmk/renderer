@@ -385,9 +385,11 @@ namespace renderer {
 		glBindVertexArray(meshBuffer.vao);
 		glBindBuffer(GL_ARRAY_BUFFER, meshBuffer.vbo);
 		glBufferData(GL_ARRAY_BUFFER, subMesh.vertices.size() * sizeof(Vertex), &subMesh.vertices[0], GL_STATIC_DRAW);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshBuffer.ebo);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, subMesh.indexes.size() * sizeof(unsigned int), &subMesh.indexes[0], GL_STATIC_DRAW);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
+		if (!meshBuffer.noIndices) {
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshBuffer.ebo);
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, subMesh.indexes.size() * sizeof(unsigned int), &subMesh.indexes[0], GL_STATIC_DRAW);
+		}
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
 		return meshBuffer;
 	}

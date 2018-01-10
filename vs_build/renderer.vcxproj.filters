@@ -154,6 +154,186 @@
     <ClCompile Include="..\external\ozz\ozz_options.cc">
       <Filter>External</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\system\physicsSys.cpp">
+      <Filter>Source Files\system</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\body\Body.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\body\CollisionBody.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\body\RigidBody.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\collision\broadphase\BroadPhaseAlgorithm.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\collision\broadphase\DynamicAABBTree.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\collision\CollisionDetection.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\collision\ContactManifold.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\collision\ContactManifoldSet.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\collision\narrowphase\ConcaveVsConvexAlgorithm.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\collision\narrowphase\DefaultCollisionDispatch.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\collision\narrowphase\EPA\EdgeEPA.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\collision\narrowphase\EPA\EPAAlgorithm.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\collision\narrowphase\EPA\TriangleEPA.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\collision\narrowphase\EPA\TrianglesStore.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\collision\narrowphase\GJK\GJKAlgorithm.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\collision\narrowphase\GJK\Simplex.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\collision\narrowphase\NarrowPhaseAlgorithm.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\collision\narrowphase\SphereVsSphereAlgorithm.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\collision\ProxyShape.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\collision\RaycastInfo.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\collision\shapes\AABB.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\collision\shapes\BoxShape.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\collision\shapes\CapsuleShape.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\collision\shapes\CollisionShape.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\collision\shapes\ConcaveMeshShape.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\collision\shapes\ConcaveShape.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\collision\shapes\ConeShape.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\collision\shapes\ConvexMeshShape.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\collision\shapes\ConvexShape.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\collision\shapes\CylinderShape.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\collision\shapes\HeightFieldShape.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\collision\shapes\SphereShape.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\collision\shapes\TriangleShape.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\collision\TriangleMesh.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\collision\TriangleVertexArray.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\constraint\BallAndSocketJoint.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\constraint\ContactPoint.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\constraint\FixedJoint.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\constraint\HingeJoint.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\constraint\Joint.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\constraint\SliderJoint.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\engine\CollisionWorld.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\engine\ConstraintSolver.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\engine\ContactSolver.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\engine\DynamicsWorld.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\engine\Island.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\engine\Material.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\engine\OverlappingPair.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\engine\Profiler.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\engine\Timer.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\mathematics\mathematics_functions.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\mathematics\Matrix2x2.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\mathematics\Matrix3x3.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\mathematics\Quaternion.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\mathematics\Transform.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\mathematics\Vector2.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\mathematics\Vector3.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\reactphysics3d\memory\MemoryAllocator.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="..\external\ozz\mesh.cc">
+      <Filter>External</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="D:\workplace\github\renderer\CMakeLists.txt" />
@@ -445,6 +625,216 @@
     </ClInclude>
     <ClInclude Include="..\include\utils\memory.hpp">
       <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\body\Body.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\body\CollisionBody.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\body\RigidBody.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\collision\broadphase\BroadPhaseAlgorithm.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\collision\broadphase\DynamicAABBTree.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\collision\CollisionDetection.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\collision\CollisionShapeInfo.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\collision\ContactManifold.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\collision\ContactManifoldSet.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\collision\narrowphase\CollisionDispatch.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\collision\narrowphase\ConcaveVsConvexAlgorithm.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\collision\narrowphase\DefaultCollisionDispatch.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\collision\narrowphase\EPA\EdgeEPA.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\collision\narrowphase\EPA\EPAAlgorithm.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\collision\narrowphase\EPA\TriangleEPA.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\collision\narrowphase\EPA\TrianglesStore.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\collision\narrowphase\GJK\GJKAlgorithm.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\collision\narrowphase\GJK\Simplex.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\collision\narrowphase\NarrowPhaseAlgorithm.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\collision\narrowphase\SphereVsSphereAlgorithm.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\collision\ProxyShape.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\collision\RaycastInfo.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\collision\shapes\AABB.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\collision\shapes\BoxShape.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\collision\shapes\CapsuleShape.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\collision\shapes\CollisionShape.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\collision\shapes\ConcaveMeshShape.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\collision\shapes\ConcaveShape.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\collision\shapes\ConeShape.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\collision\shapes\ConvexMeshShape.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\collision\shapes\ConvexShape.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\collision\shapes\CylinderShape.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\collision\shapes\HeightFieldShape.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\collision\shapes\SphereShape.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\collision\shapes\TriangleShape.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\collision\TriangleMesh.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\collision\TriangleVertexArray.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\configuration.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\constraint\BallAndSocketJoint.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\constraint\ContactPoint.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\constraint\FixedJoint.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\constraint\HingeJoint.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\constraint\Joint.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\constraint\SliderJoint.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\decimal.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\engine\CollisionWorld.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\engine\ConstraintSolver.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\engine\ContactSolver.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\engine\DynamicsWorld.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\engine\EventListener.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\engine\Impulse.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\engine\Island.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\engine\Material.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\engine\OverlappingPair.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\engine\Profiler.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\engine\Timer.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\mathematics\mathematics.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\mathematics\mathematics_functions.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\mathematics\Matrix2x2.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\mathematics\Matrix3x3.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\mathematics\Quaternion.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\mathematics\Ray.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\mathematics\Transform.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\mathematics\Vector2.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\mathematics\Vector3.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\memory\MemoryAllocator.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\memory\Stack.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\reactphysics3d\reactphysics3d.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\com\physics.hpp">
+      <Filter>Header Files\com</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\com\animation.hpp">
+      <Filter>Header Files\com</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
