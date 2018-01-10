@@ -422,7 +422,7 @@
                     {
                         "model": "cube.obj",
                         "bounciness": 0.2,
-                        "friction": 0.9,
+                        "friction": 0.2,
                         "spatial": [
                             [0, 10, 0],
                             [1, 1, 1],

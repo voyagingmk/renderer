@@ -2,6 +2,8 @@
 #include "system/physicsSys.hpp"
 #include "com/quaternion.hpp"
 #include "com/miscCom.hpp"
+#include "event/shaderEvent.hpp"
+#include "event/bufferEvent.hpp"
 
 namespace renderer {
     
@@ -51,7 +53,7 @@ namespace renderer {
     }
     
     QuaternionF Trans(const rp3d::Quaternion& q) {
-        return QuaternionF(q.x, q.y, q.z, q.w);
+        return QuaternionF(q.w, q.x, q.y, q.z);
     }
     
     rp3d::Quaternion Trans(const QuaternionF& q) {
@@ -67,6 +69,7 @@ namespace renderer {
         evtMgr.on<CreateCollisionShapeEvent>(*this);
         evtMgr.on<ComponentAddedEvent<PhysicsWorld>>(*this);
         evtMgr.on<UpdateSpatialDataEvent>(*this);
+        evtMgr.on<DebugDrawCollisionShapeEvent>(*this);
     }
     
     void PhysicsSystem::update(ObjectManager &objMgr, EventManager &evtMgr, float dt) {
@@ -98,6 +101,40 @@ namespace renderer {
          com->world.setNbIterationsPositionSolver(8);
     }
     
+    void PhysicsSystem::receive(const DebugDrawCollisionShapeEvent &evt) {
+        auto meshSet = m_objMgr->getSingletonComponent<MeshSet>();
+        auto spSetCom = m_objMgr->getSingletonComponent<ShaderProgramSet>();
+        Shader shader = spSetCom->getShader("wireframe");
+        shader.use();
+        shader.set1b("instanced", true);
+        shader.setMatrix4f("modelMat", Matrix4x4::newIdentity());
+        m_evtMgr->emit<UploadCameraToShaderEvent>(evt.objCamera, shader);
+        const char * insBufferName = "colShapes";
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        std::vector<Matrix4x4Value> modelMatrixes;
+        for (Object obj: m_objMgr->entities<ColBodyCom>()) {
+            auto com = obj.component<ColBodyCom>();
+            BoxShape* shape = (BoxShape*)com->body->getProxyShapesList()->getCollisionShape();
+            auto extent = 2 * shape->getExtent();
+            auto pos = com->body->getTransform().getPosition();
+            Vector3dF p(pos.x, pos.y, pos.z);
+            Vector3dF e(extent.x, extent.y, extent.z);
+            auto q = Trans(com->body->getTransform().getOrientation());
+            Matrix4x4 modelMat = Translate<Matrix4x4>(p) * q.toMatrix4x4() * Scale<Matrix4x4>(e);
+            modelMatrixes.push_back(modelMat.transpose().dataRef());
+        }
+        m_evtMgr->emit<CreateInstanceBufferEvent>(insBufferName);
+        m_evtMgr->emit<UpdateInstanceBufferEvent>(insBufferName,
+          modelMatrixes.size(),
+          sizeof(Matrix4x4Value),
+          &modelMatrixes[0],
+          true);
+        MeshID meshID = meshSet->getMeshID("wfbox");
+        m_evtMgr->emit<BindInstanceBufferEvent>(meshID, 0, insBufferName);
+        m_evtMgr->emit<DrawMeshBufferEvent>(meshID, 0);
+        m_evtMgr->emit<UnbindInstanceBufferEvent>(meshID, 0);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    }
     
     void PhysicsSystem::receive(const UpdateSpatialDataEvent &evt) {
         if (evt.flag == 1) {

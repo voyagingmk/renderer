@@ -21,6 +21,13 @@ namespace renderer {
         decimal friction;
     };
     
+    class DebugDrawCollisionShapeEvent : public ecs::Event<DebugDrawCollisionShapeEvent> {
+    public:
+        DebugDrawCollisionShapeEvent(ecs::Object objCamera):
+        objCamera(objCamera)
+        {}
+        ecs::Object objCamera;
+    };
     
 }
 

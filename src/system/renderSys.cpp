@@ -14,6 +14,7 @@
 #include "event/bufferEvent.hpp"
 #include "event/textureEvent.hpp"
 #include "event/lightEvent.hpp"
+#include "event/physicsEvent.hpp"
 #include "utils/helper.hpp"
 #include "AreaTex.h"
 #include "SearchTex.h"
@@ -103,6 +104,7 @@ namespace renderer {
 			m_evtMgr->emit<DebugDrawBVHEvent>(objCamera, objBVH);
 		}
         m_evtMgr->emit<DebugDrawSkeletonEvent>(objCamera);
+        m_evtMgr->emit<DebugDrawCollisionShapeEvent>(objCamera);
         for (auto objLight : m_objMgr->entities<LightCommon>()) {
             m_evtMgr->emit<DrawLightBoundEvent>(objLight, objCamera);
         }

@@ -26,6 +26,8 @@ namespace renderer {
 
         void receive(const UpdateSpatialDataEvent &evt);
         
+        void receive(const DebugDrawCollisionShapeEvent& evt);
+        
     private:
         
         void ComputeTransform(ComponentHandle<ColBodyCom> com, float interpolationFactor);

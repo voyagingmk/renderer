@@ -357,7 +357,7 @@ namespace renderer {
             sgNode->children.push_back(childObj.ID());
             if (hasModel) {
                 std::string filename = objInfo["model"];
-                for (int i = 0; i < 30; i++) {
+                for (int i = 0; i < 20; i++) {
                     Object childObj = loadSceneObjects(config, childObjInfo);
                     sgNode->children.push_back(childObj.ID());
                     auto spatialData = childObj.component<SpatialData>();
