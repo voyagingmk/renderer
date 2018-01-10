@@ -236,16 +236,19 @@ namespace renderer {
 		UpdateInstanceBufferEvent(std::string aliasName,
 			size_t instanceNum,
 			size_t perBytes,
-			void* data) :
+			void* data,
+            bool dynamic) :
 			aliasName(aliasName),
 			instanceNum(instanceNum),
 			perBytes(perBytes),
-			data(data)
+			data(data),
+            dynamic(dynamic)
 		{}
 		std::string aliasName;
 		size_t instanceNum;
 		size_t perBytes;
 		void* data;
+        bool dynamic;
 	};
 
     class CreateGBufferEvent : public ecs::Event<CreateGBufferEvent> {

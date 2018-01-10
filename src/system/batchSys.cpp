@@ -101,7 +101,8 @@ namespace renderer {
 				m_evtMgr->emit<UpdateInstanceBufferEvent>(batchInfoCom->bufferName,
 					batchInfoCom->modelMatrixes.size(),
 					sizeof(Matrix4x4Value),
-					&batchInfoCom->modelMatrixes[0]);
+					&batchInfoCom->modelMatrixes[0],
+                    false);
 			}
 		}
 

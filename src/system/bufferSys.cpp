@@ -164,7 +164,7 @@ namespace renderer {
 		InstanceBufferRef& buf = it->second;
 		buf.instanceNum = evt.instanceNum;
 		glBindBuffer(GL_ARRAY_BUFFER, buf.bufID);
-		glBufferData(GL_ARRAY_BUFFER, evt.instanceNum * evt.perBytes, evt.data, GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, evt.instanceNum * evt.perBytes, evt.data, !evt.dynamic? GL_STATIC_DRAW : GL_STREAM_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 

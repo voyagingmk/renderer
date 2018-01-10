@@ -429,7 +429,7 @@ namespace renderer {
         m_evtMgr->emit<UpdateInstanceBufferEvent>("posture",
                                                   instance_count,
                                                   4 * 4 * sizeof(float),
-                                                  (void*)uniforms);
+                                                  (void*)uniforms, false);
         
         auto spatialData = obj.component<SpatialData>();
         const Matrix4x4& modelMat = spatialData->o2w.GetMatrix();
