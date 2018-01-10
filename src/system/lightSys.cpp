@@ -68,7 +68,15 @@ namespace renderer {
             glDrawArrays(GL_LINES, 0, vertices.size());
         }
         else if (obj.hasComponent<SpotLightTransform>()) {
-            
+            auto com = obj.component<SpotLightTransform>();
+            auto spotLightCom = obj.component<SpotLightCom>();
+            Vector3dF lightPos = spatialData->pos;
+            std::vector<Vertex> vertices;
+            vertices.push_back({lightPos});
+            vertices.push_back({lightPos + spotLightCom->direction * com->f});
+ 
+            glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STREAM_DRAW);
+            glDrawArrays(GL_LINES, 0, vertices.size());
         }
         m_evtMgr->emit<UnbindDynamicMeshBufferEvent>("wirelight");
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
