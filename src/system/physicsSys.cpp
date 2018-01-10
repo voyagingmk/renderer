@@ -102,7 +102,7 @@ namespace renderer {
         com->world.setNbIterationsPositionSolver(5);
         com->world.setNbIterationsVelocitySolver(15);
         com->world.setTimeBeforeSleep(1);
-        com->world.setEventListener(&listener);
+        // com->world.setEventListener(&listener);
         // com->world.setGravity(gravity);
     }
     
