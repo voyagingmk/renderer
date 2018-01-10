@@ -96,9 +96,14 @@ namespace renderer {
     void PhysicsSystem::receive(const ComponentAddedEvent<PhysicsWorld>& evt) {
         static MyEventListener listener;
         ComponentHandle<PhysicsWorld> com = evt.component;
+        com->world.enableSleeping(true);
+        com->world.setSleepLinearVelocity(0.02);
+        com->world.setSleepAngularVelocity(0.052359879);
+        com->world.setNbIterationsPositionSolver(5);
+        com->world.setNbIterationsVelocitySolver(15);
+        com->world.setTimeBeforeSleep(1);
         com->world.setEventListener(&listener);
-         com->world.setNbIterationsVelocitySolver(15);
-         com->world.setNbIterationsPositionSolver(8);
+        // com->world.setGravity(gravity);
     }
     
     void PhysicsSystem::receive(const DebugDrawCollisionShapeEvent &evt) {
