@@ -184,7 +184,7 @@
     ],
     "light": [
         {
-            "type": "DirLight",
+            "type": "DirLight0",
             "shadowType": "vsm",
             "intensity": 4.1,
             "size": 80.0,
@@ -245,11 +245,11 @@
             "shadow": true
         },
         {
-            "type": "PointLight0",
+            "type": "PointLight",
             "intensity": 1.0,
-            "far_plane": 10000,
+            "far_plane": 100,
             "spatial": [
-                [-30.0,  5.0, 30.0],
+                [0.0,  20.0, 0.0],
                 [1, 1, 1],
                 [1, 0, 0, 0]
             ],

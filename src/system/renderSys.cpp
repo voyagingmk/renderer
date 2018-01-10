@@ -103,7 +103,7 @@ namespace renderer {
 			m_evtMgr->emit<DebugDrawBVHEvent>(objCamera, objBVH);
 		}
         m_evtMgr->emit<DebugDrawSkeletonEvent>(objCamera);
-        for (auto objLight : m_objMgr->entities<DirLightCom>()) {
+        for (auto objLight : m_objMgr->entities<LightCommon>()) {
             m_evtMgr->emit<DrawLightBoundEvent>(objLight, objCamera);
         }
 		evtMgr.emit<UnuseColorBufferEvent>(curSceneBuf);
@@ -443,8 +443,8 @@ namespace renderer {
 			MeshRef, PointLightCom, SpatialData>()) {
 			m_evtMgr->emit<UploadCameraToShaderEvent>(objCamera, lightShader);	
 			m_evtMgr->emit<UploadMatrixToShaderEvent>(lightObj, lightShader);
-			auto meshID = lightObj.component<MeshRef>()->meshID;
-			m_evtMgr->emit<DrawMeshBufferEvent>(meshID, 0);		
+			auto meshName = lightObj.component<MeshRef>()->meshName;
+			m_evtMgr->emit<DrawMeshBufferEvent>(meshName, 0);		
 		}
 		m_evtMgr->emit<UnuseColorBufferEvent>(colorBufferAliasName);
 	}

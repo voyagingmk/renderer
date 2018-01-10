@@ -30,34 +30,47 @@ namespace renderer {
         shader.use();
         shader.set3f("wireColor", Vector3dF{ 1.0f, 1.0f, 0.0f});
         m_evtMgr->emit<UploadCameraToShaderEvent>(evt.objCamera, shader);
+        m_evtMgr->emit<CreateDynamicMeshBufferEvent>("wirelight", true);
+        m_evtMgr->emit<BindDynamicMeshBufferEvent>("wirelight");
+        shader.setMatrix4f("modelMat", Matrix4x4::newIdentity());
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         if (obj.hasComponent<PointLightTransform>()) {
-            
+            auto com = obj.component<PointLightTransform>();
+            Vector3dF lightPos = spatialData->pos;
+            std::vector<Vertex> vertices;
+            const int horizontalLines = 20;
+            const int verticalLines = 20;
+            const float radius = com->f;
+            for (int m = 0; m < horizontalLines; m++)
+            {
+                for (int n = 0; n < verticalLines - 1; n++)
+                {
+                    float x = sin(M_PI * m / horizontalLines) * cos(2 * M_PI * n/verticalLines);
+                    float y = sin(M_PI * m / horizontalLines) * sin(2 * M_PI * n/verticalLines);
+                    float z = cos(M_PI * m / horizontalLines);
+                    auto p = lightPos + Vector3dF(x, y, z) * radius;
+                    vertices.push_back({p});
+                }
+            }
+            glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STREAM_DRAW);
+            glDrawArrays(GL_LINE_LOOP, 0, vertices.size());
         }
         else if (obj.hasComponent<DirLightTransform>()) {
-            auto com = obj.component<DirLightTransform>();
             Vector3dF lightPos = spatialData->pos;
-            Vector3dF lightDir = lightPos.Normalize();
-            auto size = com->size * 2;
-            shader.setMatrix4f("modelMat", Matrix4x4::newIdentity());
-            m_evtMgr->emit<DrawMeshBufferEvent>("wfbox", 0);
-            m_evtMgr->emit<CreateDynamicMeshBufferEvent>("dirlight", true);
-            m_evtMgr->emit<BindDynamicMeshBufferEvent>("dirlight");
             std::vector<Vertex> vertices;
             for (int i = -5; i < 5; i++) {
-                Vector3dF o = {i * 5.0f, 0, 0};
+                Vector3dF o = {i * 3.0f, 0, 0};
                 Vector3dF p = o + lightPos;
                 vertices.push_back({o});
                 vertices.push_back({p});
             }
             glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STREAM_DRAW);
             glDrawArrays(GL_LINES, 0, vertices.size());
-            m_evtMgr->emit<UnbindDynamicMeshBufferEvent>("dirlight");
-            
         }
         else if (obj.hasComponent<SpotLightTransform>()) {
             
         }
+        m_evtMgr->emit<UnbindDynamicMeshBufferEvent>("wirelight");
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
 
