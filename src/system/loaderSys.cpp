@@ -330,7 +330,8 @@ namespace renderer {
                 objScene.addComponent<RenderableTag>();
                 rp3d::decimal bounciness = objInfo["bounciness"];
                 rp3d::decimal friction = objInfo["friction"];
-                m_evtMgr->emit<CreateCollisionShapeEvent>(objScene, bounciness, friction);
+                rp3d::decimal mass = objInfo["mass"];
+                m_evtMgr->emit<CreateCollisionShapeEvent>(objScene, bounciness, friction, mass);
                 printf("scene obj with mesh, ID: %d, meshID: %d \n", (int)objScene.ID(), (int)meshID);
             } else {
                 AnimationData& data = aniDataSet->getAnimationData("test");

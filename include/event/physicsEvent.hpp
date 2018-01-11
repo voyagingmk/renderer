@@ -11,14 +11,16 @@ namespace renderer {
     
     class CreateCollisionShapeEvent : public ecs::Event<CreateCollisionShapeEvent> {
     public:
-        CreateCollisionShapeEvent(ecs::Object obj, decimal bounciness, decimal friction):
+        CreateCollisionShapeEvent(ecs::Object obj, decimal bounciness, decimal friction, decimal mass):
             obj(obj),
             bounciness(bounciness),
-            friction(friction)
+            friction(friction),
+            mass(mass)
         {}
         ecs::Object obj;
         decimal bounciness;
         decimal friction;
+        decimal mass;
     };
     
     class DebugDrawCollisionShapeEvent : public ecs::Event<DebugDrawCollisionShapeEvent> {

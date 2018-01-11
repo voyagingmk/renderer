@@ -187,7 +187,7 @@ namespace renderer {
             }
             ShapeInfo& info = shapeSet->shapeDict[shapeID];
             auto boxShape = shapeSet->getShape(shapeID);
-            body->addCollisionShape(info.shape, info.transform, 1.0f);
+            body->addCollisionShape(info.shape, info.transform, evt.mass || 1.0f);
         }
         /*
         auto c = bound.Center();

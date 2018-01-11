@@ -366,8 +366,9 @@
         "children": [
             {
                 "model": "planeobj.obj",
-                "bounciness": 0.0,
+                "bounciness": 0.2,
                 "friction": 1.0,
+                "mass": 100.0,
                 "static": true,
                 "spatial": [
                     [-100, 100, 0],
@@ -377,8 +378,9 @@
             },
             {
                 "model": "planeobj.obj",
-                "bounciness": 0.0,
+                "bounciness": 0.2,
                 "friction": 1.0,
+                "mass": 100.0,
                 "static": true,
                 "spatial": [
                     [100, 100, 0],
@@ -388,8 +390,9 @@
             },
             {
                 "model": "planeobj.obj",
-                "bounciness": 0.0,
+                "bounciness": 0.2,
                 "friction": 1.0,
+                "mass": 100.0,
                 "static": true,
                 "spatial": [
                     [0, 100, -100],
@@ -401,6 +404,7 @@
                 "model": "planeobj.obj",
                 "bounciness": 0.0,
                 "friction": 1.0,
+                "mass": 100.0,
                 "static": true,
                 "spatial": [
                     [0, 100, 100],
@@ -410,8 +414,9 @@
             },
             {
                 "model": "planeobj.obj",
-                "bounciness": 0.0,
+                "bounciness": 0.2,
                 "friction": 1.0,
+                "mass": 100.0,
                 "static": true,
                 "spatial": [
                     [0, 0, 0],
@@ -423,6 +428,7 @@
                         "model": "cube.obj",
                         "bounciness": 0.2,
                         "friction": 0.2,
+                        "mass": 1.0,
                         "spatial": [
                             [0, 10, 0],
                             [1, 1, 1],
