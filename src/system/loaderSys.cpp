@@ -493,7 +493,7 @@ namespace renderer {
 		if (!scene)
 		{
 			cout << importer.GetErrorString() << endl;
-			return 0;
+			exit(-1);
 		}
 		std::vector<MaterialSettingID> settingIDs;
 		string texSubDir = config["texSubDir"];
