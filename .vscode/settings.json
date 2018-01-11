@@ -7,7 +7,10 @@
         "*/temp/": true,
         "/library/*": true,
         "tiancai/": true,
-        "**/*.anim": true
+        "CMakeFiles/": true,
+        "**/*.anim": true,
+        "**/*.log": true,
+        "**/*.tlog": true
     },
     "files.exclude": {
         "**/.git": true,
@@ -17,6 +20,7 @@
         "**/*.xml": true,
         "**/library/**": true,
         "*/local/": true,
+        "*/CMakeFiles/": true,
         "external/": true,
         "*/temp/": true,
         "robot/": true
