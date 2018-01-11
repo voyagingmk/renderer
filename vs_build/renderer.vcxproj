@@ -85,7 +85,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">D:\workplace\github\renderer\vs_build\bin\Debug\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">bin\Debug\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">renderer.dir\Debug\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">renderer</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.exe</TargetExt>
@@ -113,7 +113,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LibraryPath>../lib/32/;../lib/32/debug/;../lib/32/debug/static/;$(LibraryPath)</LibraryPath>
     <ExecutablePath>$(ExecutablePath)</ExecutablePath>
-    <IncludePath>D:\workplace\github\renderer\external\reactphysics3d;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)/../include/;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">
     <LibraryPath>../lib/32/;$(LibraryPath)</LibraryPath>
@@ -136,7 +136,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>D:\workplace\github\renderer;D:\workplace\github\renderer\external;D:\workplace\github\renderer\external\SOIL;D:\workplace\github\renderer\external\SDL;D:\workplace\github\renderer\include;D:\workplace\github\renderer\include\realtime;D:\workplace\github\renderer\include\shapes;D:\workplace\github\renderer\src;D:\workplace\github\renderer\src\realtime;D:\workplace\github\renderer\src\shapes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..;$(ProjectDir)\..\external;$(ProjectDir)\..\external\reactphysics3d;$(ProjectDir)\..\external\SOIL;$(ProjectDir)\..\external\SDL;$(ProjectDir)\..\include;$(ProjectDir)\..\include\realtime;$(ProjectDir)\..\include\shapes;$(ProjectDir)\..\src;$(ProjectDir)\..\src\realtime;$(ProjectDir)\..\src\shapes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>Debug/</AssemblerListingLocation>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <CompileAs>CompileAsCpp</CompileAs>
