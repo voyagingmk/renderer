@@ -367,7 +367,7 @@
             {
                 "model": "planeobj.obj",
                 "bounciness": 0.2,
-                "friction": 1.0,
+                "friction": 10.0,
                 "mass": 100.0,
                 "static": true,
                 "spatial": [
@@ -379,7 +379,7 @@
             {
                 "model": "planeobj.obj",
                 "bounciness": 0.2,
-                "friction": 1.0,
+                "friction": 10.0,
                 "mass": 100.0,
                 "static": true,
                 "spatial": [
@@ -391,7 +391,7 @@
             {
                 "model": "planeobj.obj",
                 "bounciness": 0.2,
-                "friction": 1.0,
+                "friction": 10.0,
                 "mass": 100.0,
                 "static": true,
                 "spatial": [
@@ -415,7 +415,7 @@
             {
                 "model": "planeobj.obj",
                 "bounciness": 0.2,
-                "friction": 1.0,
+                "friction": 10.0,
                 "mass": 100.0,
                 "static": true,
                 "spatial": [
@@ -427,7 +427,7 @@
                     {
                         "model": "cube.obj",
                         "bounciness": 0.2,
-                        "friction": 0.2,
+                        "friction": 5.0,
                         "mass": 1.0,
                         "spatial": [
                             [0, 10, 0],
