@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "camera.hpp"
+#include "com/camera.hpp"
 #include "com/geometry.hpp"
 #include "com/ray.hpp"
 
