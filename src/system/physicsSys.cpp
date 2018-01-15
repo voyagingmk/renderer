@@ -102,7 +102,7 @@ namespace renderer {
         com->world.setNbIterationsPositionSolver(5);
         com->world.setNbIterationsVelocitySolver(15);
         com->world.setTimeBeforeSleep(1);
-        // com->world.setEventListener(&listener);
+        com->world.setEventListener(&listener);
         // com->world.setGravity(gravity);
     }
     
@@ -181,7 +181,8 @@ namespace renderer {
             CollisionShapeID shapeID = meshRef->meshID * 10000 + i;
             if (!shapeSet->hasShape(shapeID)) {
                 BBox bound = subMesh.Bound();
-                auto boxShape = GetPool<rp3d::BoxShape>()->newElement(rp3d::Vector3(bound.Extent(0) / 2, bound.Extent(1) / 2, bound.Extent(2) / 2));
+                float margin = 0.01;
+                auto boxShape = GetPool<rp3d::BoxShape>()->newElement(rp3d::Vector3(bound.Extent(0) / 2 + margin, bound.Extent(1) / 2 + margin, bound.Extent(2) / 2  + margin), margin);
                 shapeSet->shapeDict[shapeID] = {rp3d::Transform(Trans(bound.Center()),
                                                                  rp3d::Quaternion::identity()), boxShape};
             }
