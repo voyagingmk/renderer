@@ -113,7 +113,7 @@ namespace renderer {
 		Matrix4x4 shadowProj;
 		shadowProj = Perspective(spotLightCom->outerCutOff.ToDegree().degree * 2.0f, com->aspect, com->n, com->f);
 		Vector3dF lightPos = spatialData->pos;
-		com->lightPV = shadowProj * LookAt(lightPos, lightPos + spotLightCom->direction, { 0.0, 1.0, 0.0 });  // right
+		com->lightPV = shadowProj * LookAt(lightPos, lightPos + spotLightCom->direction.Normalize(), { 0.0, 1.0, 0.0 });  // right
 	}
 
 	void LightSystem::updatePointLight(Object obj) {

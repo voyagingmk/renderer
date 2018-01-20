@@ -358,14 +358,14 @@ namespace renderer {
             sgNode->children.push_back(childObj.ID());
             if (hasModel) {
                 std::string filename = objInfo["model"];
-                for (int i = 0; i < 5; i++) {
+                for (int i = 0; i < 30; i++) {
                     Object childObj = loadSceneObjects(config, childObjInfo);
                     sgNode->children.push_back(childObj.ID());
                     auto spatialData = childObj.component<SpatialData>();
                     spatialData->pos = {
-                        randomFloat() * 200.0f - 100.0f,
-                        spatialData->pos.y + randomFloat() * 200.0f,
-                        randomFloat() * 200.0f - 100.0f
+                        0.0f,
+                        spatialData->pos.y + 30.0f + randomFloat() * 200.0f,
+                        0.0f
                     };
                     m_evtMgr->emit<UpdateSpatialDataEvent>(childObj);
                 }
@@ -583,9 +583,9 @@ namespace renderer {
 	void LoaderSystem::loadSpatialData(Object obj, const json &spatial) {
 		auto pos = spatial[0];
 		auto scale = spatial[1];
-		auto o = spatial[2];
+		auto angle = spatial[2];
 		QuaternionF q;
-		q.FromEulerAngles(DegreeF((float)o[0]), DegreeF((float)o[1]), DegreeF((float)o[2]));
+		q.FromEulerAngles(DegreeF((float)angle[0]), DegreeF((float)angle[1]), DegreeF((float)angle[2]));
 		obj.addComponent<SpatialData>(
 			Vector3dF{ (float)pos[0], (float)pos[1], (float)pos[2] },
 			Vector3dF{ (float)scale[0], (float)scale[1], (float)scale[2] },
