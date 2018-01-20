@@ -294,7 +294,7 @@ float chebyshevUpperBound(sampler2D shadowMap, float d, vec2 coord)
 	// How likely this pixel is to be lit (p_max)
 	float variance = moments.y - (moments.x * moments.x);
 	//variance = max(variance, 0.000002);
-	variance = max(variance, 0.00002);
+//	variance = max(variance, 0.00002);
 
 	float d_minus_mean = d - moments.x;
 	float p_max = variance / (variance + d_minus_mean * d_minus_mean);
