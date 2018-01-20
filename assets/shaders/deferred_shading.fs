@@ -269,14 +269,6 @@ void main()
     material.roughness = pbrData.g;
     material.specular = pbrData.b;
     material.ao = pbrData.a;
-
-    if (begin) {
-        // ambient lighting (note that the next IBL tutorial will replace 
-        // this ambient lighting with environment lighting).
-        vec3 ambient = vec3(0.03) * material.albedo * material.ao;
-        FragColor = vec4(ambient, 1.0);
-        return;
-    }
     vec3 N = normalize(Normal);
     vec3 V = normalize(viewPos - FragPos);
 

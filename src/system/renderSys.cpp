@@ -336,7 +336,7 @@ namespace renderer {
 	}
 
 	void RenderSystem::deferredLightingPass(std::string colorBufferAliasName, Object objCamera, std::string gBufferAliasName, size_t winWidth, size_t winHeight) {
-		glEnable(GL_BLEND);
+	//	glEnable(GL_BLEND);
 		glBlendFunc(GL_ONE, GL_ONE);
 		glDisable(GL_DEPTH_TEST);
 		m_evtMgr->emit<UseColorBufferEvent>(colorBufferAliasName);
@@ -358,10 +358,6 @@ namespace renderer {
 		setViewport(std::make_tuple(0, 0, winWidth, winHeight));
 		clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
 			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-		shader.set1i("begin", 1);
-		
-		renderQuad();
-		shader.set1i("begin", 0);
 		for (auto obj : m_objMgr->entities<LightTag>()) {
 			uploadLight(shader, obj);
 			renderQuad();
@@ -370,7 +366,7 @@ namespace renderer {
 		
 		m_evtMgr->emit<UnuseColorBufferEvent>(colorBufferAliasName);
 		glEnable(GL_DEPTH_TEST);
-		glDisable(GL_BLEND);
+		// glDisable(GL_BLEND);
 	}
     
 	void RenderSystem::uploadLight(Shader shader, Object lightObject) {
