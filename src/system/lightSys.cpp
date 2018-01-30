@@ -29,6 +29,7 @@ namespace renderer {
         Shader shader = spSetCom->getShader("wireframe");
         shader.use();
         shader.set3f("wireColor", Vector3dF{ 1.0f, 1.0f, 0.0f});
+        shader.set1b("instanced", false);
         m_evtMgr->emit<UploadCameraToShaderEvent>(evt.objCamera, shader);
         m_evtMgr->emit<CreateDynamicMeshBufferEvent>("wirelight", true);
         m_evtMgr->emit<BindDynamicMeshBufferEvent>("wirelight");
