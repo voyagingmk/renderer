@@ -177,9 +177,9 @@
         },
         {
             "alias": "tt",
-            "file": "tt.png",
+            "file": "msdf.png",
             "toLinear": true,
-            "channels": 4
+            "channels": 3
         }
     ],
     "light": [

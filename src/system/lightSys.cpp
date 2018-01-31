@@ -87,8 +87,7 @@ namespace renderer {
             } else if (d.z != 0.0f) {
                 p.z = -(d.x * (p.x - c.x) + d.y * (p.y - c.y)) / d.z + c.z;
             }
-            p = (p - c).Normalize();
-            p = c + p * spotLightCom->calOuterRadius(com->f);
+            p = (p - c).Normalize() * spotLightCom->calOuterRadius(com->f);
             // from light position to far plane contour
             for (float theta = 0.0f; theta < 360.0f; theta += 30.0f) {
                 vertices.push_back({lightPos});
@@ -96,8 +95,9 @@ namespace renderer {
 				Vector3dF v = d * sin(r);
 				QuaternionF tmp(0.0f, p.x, p.y, p.z);
 				QuaternionF q(cos(r), v.x, v.y, v.z);
-				tmp.Rotate(q);
-				vertices.push_back({ {tmp.x, tmp.y, tmp.z} });
+				tmp = tmp.Rotate(q);
+				Vector3dF pNew = { tmp.x, tmp.y, tmp.z };
+				vertices.push_back({ c + pNew });
             }
  
             glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STREAM_DRAW);
