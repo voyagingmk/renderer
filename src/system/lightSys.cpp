@@ -79,7 +79,7 @@ namespace renderer {
             vertices.push_back({lightPos});
             vertices.push_back({c});
             auto randomV = spotLightCom->direction;
-            Vector3dF p(1, 1, 1);
+            Vector3dF p(30, 40, 50);
             if (d.x != 0.0f) {
                 p.x = -(d.z * (p.z - c.z) + d.y * (p.y - c.y)) / d.x + c.x;
             } else if (d.y != 0.0f) {
@@ -87,11 +87,12 @@ namespace renderer {
             } else if (d.z != 0.0f) {
                 p.z = -(d.x * (p.x - c.x) + d.y * (p.y - c.y)) / d.z + c.z;
             }
-            p = p.Normalize() * spotLightCom->calOuterRadius(com->f);
+            p = (p - c).Normalize();
+            p = c + p * spotLightCom->calOuterRadius(com->f);
             // from light position to far plane contour
             for (int i = 0; i < 1; i++) {
                 vertices.push_back({lightPos});
-                vertices.push_back({c + p});
+                vertices.push_back({p});
             }
  
             glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STREAM_DRAW);
