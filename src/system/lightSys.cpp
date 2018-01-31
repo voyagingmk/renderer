@@ -76,8 +76,8 @@ namespace renderer {
             auto d = spotLightCom->direction;
             // from light position to far plane center position
             auto c = lightPos + spotLightCom->direction * com->f; // farPlaneCenter
-            vertices.push_back({lightPos});
-            vertices.push_back({c});
+            // vertices.push_back({lightPos});
+            // vertices.push_back({c});
             auto randomV = spotLightCom->direction;
             Vector3dF p(30, 40, 50);
             if (d.x != 0.0f) {
@@ -88,16 +88,20 @@ namespace renderer {
                 p.z = -(d.x * (p.x - c.x) + d.y * (p.y - c.y)) / d.z + c.z;
             }
             p = (p - c).Normalize() * spotLightCom->calOuterRadius(com->f);
+			Vector3dF pOld = p;
             // from light position to far plane contour
-            for (float theta = 0.0f; theta < 360.0f; theta += 30.0f) {
-                vertices.push_back({lightPos});
+            for (float theta = 30.0f; theta <= 360.0f; theta += 30.0f) {
 				float r = Radians(0.5f * theta);
 				Vector3dF v = d * sin(r);
 				QuaternionF tmp(0.0f, p.x, p.y, p.z);
 				QuaternionF q(cos(r), v.x, v.y, v.z);
 				tmp = tmp.Rotate(q);
 				Vector3dF pNew = { tmp.x, tmp.y, tmp.z };
+				vertices.push_back({ lightPos });
 				vertices.push_back({ c + pNew });
+				vertices.push_back({ c + pOld });
+				vertices.push_back({ c + pNew });
+				pOld = pNew;
             }
  
             glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STREAM_DRAW);
