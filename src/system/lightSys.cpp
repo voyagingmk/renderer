@@ -75,17 +75,23 @@ namespace renderer {
             std::vector<Vertex> vertices;
             auto d = spotLightCom->direction;
             // from light position to far plane center position
-            auto farPlaneCenter = lightPos + spotLightCom->direction * com->f;
+            auto c = lightPos + spotLightCom->direction * com->f; // farPlaneCenter
             vertices.push_back({lightPos});
-            vertices.push_back({farPlaneCenter});
+            vertices.push_back({c});
             auto randomV = spotLightCom->direction;
-            Vector3dF p(0, 1, 0);
-            p.z = -(d.x * (p.x - farPlaneCenter.x) + d.y * (p.y - farPlaneCenter.y)) / d.z + farPlaneCenter.z;
+            Vector3dF p(1, 1, 1);
+            if (d.x != 0.0f) {
+                p.x = -(d.z * (p.z - c.z) + d.y * (p.y - c.y)) / d.x + c.x;
+            } else if (d.y != 0.0f) {
+                p.y = -(d.x * (p.x - c.x) + d.z * (p.z - c.z)) / d.y + c.y;
+            } else if (d.z != 0.0f) {
+                p.z = -(d.x * (p.x - c.x) + d.y * (p.y - c.y)) / d.z + c.z;
+            }
             p = p.Normalize() * spotLightCom->calOuterRadius(com->f);
             // from light position to far plane contour
             for (int i = 0; i < 1; i++) {
                 vertices.push_back({lightPos});
-                vertices.push_back({farPlaneCenter + p});
+                vertices.push_back({c + p});
             }
  
             glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STREAM_DRAW);
