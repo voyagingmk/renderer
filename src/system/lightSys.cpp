@@ -90,9 +90,14 @@ namespace renderer {
             p = (p - c).Normalize();
             p = c + p * spotLightCom->calOuterRadius(com->f);
             // from light position to far plane contour
-            for (int i = 0; i < 1; i++) {
+            for (float theta = 0.0f; theta < 360.0f; theta += 30.0f) {
                 vertices.push_back({lightPos});
-                vertices.push_back({p});
+				float r = Radians(0.5f * theta);
+				Vector3dF v = d * sin(r);
+				QuaternionF tmp(0.0f, p.x, p.y, p.z);
+				QuaternionF q(cos(r), v.x, v.y, v.z);
+				tmp.Rotate(q);
+				vertices.push_back({ {tmp.x, tmp.y, tmp.z} });
             }
  
             glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STREAM_DRAW);

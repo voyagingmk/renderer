@@ -97,7 +97,7 @@ namespace renderer {
             assert(com->models.Count() == com->skinning_matrices.Count() &&
                    com->models.Count() == data.mesh.inverse_bind_poses.size());
             for (size_t i = 0; i < com->models.Count(); ++i) {
-                com->skinning_matrices[i] = com->models[i] * data.mesh.inverse_bind_poses[i];
+//                com->skinning_matrices[i] = com->models[i] * data.mesh.inverse_bind_poses[i];
             }
             DrawSkinnedMesh(data.mesh, com->skinning_matrices, obj);
         }

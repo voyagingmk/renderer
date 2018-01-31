@@ -37,7 +37,7 @@ namespace renderer {
 		Quaternion<T> operator * (T f) {
 			return Quaternion<T>(s * f, x * f, y * f, z * f);
 		}
-		Quaternion<T> operator * (Quaternion<T> q) {
+		Quaternion<T> operator * (Quaternion<T> q) const {
 			/*
 			= (sa + xai + yaj + zak)(sb + xbi + ybj + zbk)
 			= (sasb - xaxb - yayb - zazb)
@@ -95,41 +95,41 @@ namespace renderer {
             *this = (*this) * q;
             return *this;
         }
-        T Norm() {
+        T Norm() const {
 			return sqrt(s * s + x * x + y * y + z * z);
 		}
-		Quaternion<T> Normalize() {
+		Quaternion<T> Normalize() const {
 			T n = Norm();
 			assert(n != 0);
 			T inv = T(1) / n;
 			return Quaternion<T>(s * inv, x * inv, y * inv, z * inv);
 		}
-		Quaternion<T> Conjugate() {
+		Quaternion<T> Conjugate() const {
 			return Quaternion<T>(s, -x, -y, -z);
 		}
-		Quaternion<T> Inverse() {
+		Quaternion<T> Inverse() const {
 			T n = Norm();
 			return Conjugate() / (n * n);
 		}
-		T Dot(const Quaternion<T>& q) {
+		T Dot(const Quaternion<T>& q) const {
 			return s * q.s + x * q.x + y * q.y + z * q.z;
 		}
-		T CosTheta(const Quaternion<T>& q) {
+		T CosTheta(const Quaternion<T>& q) const {
 			return Dot(q) / (Norm() * q.Norm());
 		}
-		Quaternion<T> Rotate(T theta, const Quaternion<T> rotQ) {
-			Quaternion<T> rotQInv = rotQ.Conjugate();
+		Quaternion<T> Rotate(const Quaternion<T> rotQ) const {
+			const Quaternion<T> rotQInv = rotQ.Conjugate();
 			return rotQ * (*this) * rotQInv;
 		}
         
-		Quaternion<T> Exp() {
+		Quaternion<T> Exp() const {
 			T normV = sqrt(x * x + y * y + z * z);
 			T expS = exp(s);
 			T s = expS * cos(normV);
 			T f = expS * sin(normV) / normV;
 			return Quaternion<T>(s, x * f, y * f, z * f);
 		}
-		Quaternion<T> Slerp() {
+		Quaternion<T> Slerp() const {
 
 		}
         
@@ -156,7 +156,7 @@ namespace renderer {
         }
         
         // *this must be normalized
-        Matrix4x4 toMatrix4x4() {
+        Matrix4x4 toMatrix4x4() const  {
             float nQ = x*x + y*y + z*z + s*s;
             float n = 0.0f;
             if (nQ > 0.0f) {
