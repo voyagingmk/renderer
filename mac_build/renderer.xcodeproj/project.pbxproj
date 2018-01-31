@@ -123,7 +123,6 @@
 		F5484D551FF4C26E008850F7 /* animationSys.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5484D541FF4C26E008850F7 /* animationSys.cpp */; };
 		F54F3BAE1FC180AD00987986 /* matrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F54F3BAD1FC180AD00987986 /* matrix.cpp */; };
 		F55137CF1F664E4F0061DF99 /* shaderSys.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F55137CE1F664E4F0061DF99 /* shaderSys.cpp */; };
-		F55E2B2A1FF222BD008CF25D /* duktape.c in Sources */ = {isa = PBXBuildFile; fileRef = F55E2B291FF222BD008CF25D /* duktape.c */; };
 		F58A3DDA1F679AB40046A853 /* event.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F58A3DCE1F679AB40046A853 /* event.cpp */; };
 		F58A3DDC1F679AB40046A853 /* object.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F58A3DD31F679AB40046A853 /* object.cpp */; };
 		F58A3E021F67ADAE0046A853 /* materialSys.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F58A3E011F67ADAE0046A853 /* materialSys.cpp */; };
@@ -353,9 +352,6 @@
 		F5484D581FF4D676008850F7 /* ozz.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ozz.h; path = external/ozz/ozz.h; sourceTree = "<group>"; };
 		F54F3BAD1FC180AD00987986 /* matrix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = matrix.cpp; path = src/com/matrix.cpp; sourceTree = "<group>"; };
 		F55137CE1F664E4F0061DF99 /* shaderSys.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = shaderSys.cpp; path = src/system/shaderSys.cpp; sourceTree = "<group>"; };
-		F55E2B291FF222BD008CF25D /* duktape.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = duktape.c; path = external/duktape/duktape.c; sourceTree = "<group>"; };
-		F55E2B2B1FF222C1008CF25D /* duktape.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = duktape.h; path = external/duktape/duktape.h; sourceTree = "<group>"; };
-		F55E2B2C1FF222C1008CF25D /* duk_config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = duk_config.h; path = external/duktape/duk_config.h; sourceTree = "<group>"; };
 		F576A1E31FF50F5F00CD09D2 /* glutils.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = glutils.hpp; path = include/utils/glutils.hpp; sourceTree = "<group>"; };
 		F58A3DBA1F679AA50046A853 /* bbox.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = bbox.hpp; path = include/com/bbox.hpp; sourceTree = "<group>"; };
 		F58A3DBB1F679AA50046A853 /* cameraCom.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = cameraCom.hpp; path = include/com/cameraCom.hpp; sourceTree = "<group>"; };
@@ -812,16 +808,6 @@
 			name = com;
 			sourceTree = "<group>";
 		};
-		F55E2B281FF222B2008CF25D /* duktape */ = {
-			isa = PBXGroup;
-			children = (
-				F55E2B2C1FF222C1008CF25D /* duk_config.h */,
-				F55E2B2B1FF222C1008CF25D /* duktape.h */,
-				F55E2B291FF222BD008CF25D /* duktape.c */,
-			);
-			name = duktape;
-			sourceTree = "<group>";
-		};
 		F58A3DB21F6799DA0046A853 /* Include Files */ = {
 			isa = PBXGroup;
 			children = (
@@ -921,7 +907,6 @@
 			children = (
 				F5435BC41FFF4E07004A1A01 /* reactphysics3d */,
 				F5484D411FF4C10E008850F7 /* ozz */,
-				F55E2B281FF222B2008CF25D /* duktape */,
 				CD768ED31C904300A83FBFDB /* gl3w.c */,
 				F5024F4C1F9F127300D6C743 /* AreaTex.h */,
 				F5024F4B1F9F127300D6C743 /* SearchTex.h */,
@@ -1131,7 +1116,6 @@
 				F5435C6A1FFF4E1C004A1A01 /* ConvexShape.cpp in Sources */,
 				F5CE08E81F66337B00989DDE /* geometry.cpp in Sources */,
 				F5435C801FFF4E1C004A1A01 /* EPAAlgorithm.cpp in Sources */,
-				F55E2B2A1FF222BD008CF25D /* duktape.c in Sources */,
 				F5435C651FFF4E1C004A1A01 /* TriangleMesh.cpp in Sources */,
 				F5435C731FFF4E1C004A1A01 /* CapsuleShape.cpp in Sources */,
 				F5435C7B1FFF4E1C004A1A01 /* ConcaveVsConvexAlgorithm.cpp in Sources */,

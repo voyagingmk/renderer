@@ -98,6 +98,9 @@ namespace renderer {
 		Vector3dF direction;
 		RadianF cutOff;
 		RadianF outerCutOff;
+        float calOuterRadius(float f) {
+            return atan(outerCutOff.radian) * f;
+        }
 	};
 
 

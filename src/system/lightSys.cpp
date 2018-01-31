@@ -73,8 +73,20 @@ namespace renderer {
             auto spotLightCom = obj.component<SpotLightCom>();
             Vector3dF lightPos = spatialData->pos;
             std::vector<Vertex> vertices;
+            auto d = spotLightCom->direction;
+            // from light position to far plane center position
+            auto farPlaneCenter = lightPos + spotLightCom->direction * com->f;
             vertices.push_back({lightPos});
-            vertices.push_back({lightPos + spotLightCom->direction * com->f});
+            vertices.push_back({farPlaneCenter});
+            auto randomV = spotLightCom->direction;
+            Vector3dF p(0, 1, 0);
+            p.z = -(d.x * (p.x - farPlaneCenter.x) + d.y * (p.y - farPlaneCenter.y)) / d.z + farPlaneCenter.z;
+            p = p.Normalize() * spotLightCom->calOuterRadius(com->f);
+            // from light position to far plane contour
+            for (int i = 0; i < 1; i++) {
+                vertices.push_back({lightPos});
+                vertices.push_back({farPlaneCenter + p});
+            }
  
             glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STREAM_DRAW);
             glDrawArrays(GL_LINES, 0, vertices.size());
