@@ -39,3 +39,6 @@ CMakeCache.txt
 UserInterfaceState.xcuserstate
 cmake_install.cmake
 Breakpoints_v2.xcbkptlist
+win32_build2/
+win32_build/
+win_build/

@@ -39,10 +39,16 @@ include_directories("${PROJECT_SOURCE_DIR}/src/shapes")
 
 FILE(GLOB_RECURSE BASE_SOURCERS 
   ${PROJECT_SOURCE_DIR}/include/*.cc
+  ${PROJECT_SOURCE_DIR}/include/ecs/*.cpp
   ${PROJECT_SOURCE_DIR}/src/*.cpp
   ${PROJECT_SOURCE_DIR}/src/realtime/*.cpp
   ${PROJECT_SOURCE_DIR}/src/shapes/*.cpp
   ${PROJECT_SOURCE_DIR}/external/GL/*.c
+  ${PROJECT_SOURCE_DIR}/external/ozz/*.cc
+  ${PROJECT_SOURCE_DIR}/external/reactphysics3d/*/*.cpp
+  ${PROJECT_SOURCE_DIR}/external/imgui_impl_sdl_gl3.cpp
+  ${PROJECT_SOURCE_DIR}/external/imgui_draw.cpp
+  ${PROJECT_SOURCE_DIR}/external/imgui.cpp
   )
 
 FILE(GLOB_RECURSE MAIN_SOURCERS ${PROJECT_SOURCE_DIR}/main/*.cpp)
@@ -97,11 +103,22 @@ set (EXTRA_LIBS ${EXTRA_LIBS} opengl32)
 set (EXTRA_LIBS ${EXTRA_LIBS} SOIL)
 set (EXTRA_LIBS ${EXTRA_LIBS} assimp)
 set (EXTRA_LIBS ${EXTRA_LIBS} freetype)
+set (EXTRA_LIBS ${EXTRA_LIBS} Version)
+set (EXTRA_LIBS ${EXTRA_LIBS} winmm)
+link_directories(
+    "lib/"
+    "lib/32/"
+    "lib/32/debug/"
+    "lib/32/debug/static"
+)
 ENDIF (WIN32)
-
 
 add_executable(renderer ${BASE_SOURCERS} ${PROJECT_SOURCE_DIR})
 
+
+IF (WIN32)
+set_property(TARGET renderer PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/")
+ENDIF (WIN32)
 
 find_package( Threads )
 target_link_libraries (renderer ${EXTRA_LIBS})

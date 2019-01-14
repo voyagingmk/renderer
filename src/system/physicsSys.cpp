@@ -128,16 +128,18 @@ namespace renderer {
             Matrix4x4 modelMat = Translate<Matrix4x4>(p) * q.toMatrix4x4() * Scale<Matrix4x4>(e);
             modelMatrixes.push_back(modelMat.transpose().dataRef());
         }
-        m_evtMgr->emit<CreateInstanceBufferEvent>(insBufferName);
-        m_evtMgr->emit<UpdateInstanceBufferEvent>(insBufferName,
-          modelMatrixes.size(),
-          sizeof(Matrix4x4Value),
-          &modelMatrixes[0],
-          true);
-        MeshID meshID = meshSet->getMeshID("wfbox");
-        m_evtMgr->emit<BindInstanceBufferEvent>(meshID, 0, insBufferName);
-        m_evtMgr->emit<DrawMeshBufferEvent>(meshID, 0);
-        m_evtMgr->emit<UnbindInstanceBufferEvent>(meshID, 0);
+		if (modelMatrixes.size() > 0) {
+			m_evtMgr->emit<CreateInstanceBufferEvent>(insBufferName);
+			m_evtMgr->emit<UpdateInstanceBufferEvent>(insBufferName,
+				modelMatrixes.size(),
+				sizeof(Matrix4x4Value),
+				&modelMatrixes[0],
+				true);
+			MeshID meshID = meshSet->getMeshID("wfbox");
+			m_evtMgr->emit<BindInstanceBufferEvent>(meshID, 0, insBufferName);
+			m_evtMgr->emit<DrawMeshBufferEvent>(meshID, 0);
+			m_evtMgr->emit<UnbindInstanceBufferEvent>(meshID, 0);
+		}
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
     
