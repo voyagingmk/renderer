@@ -478,17 +478,18 @@ namespace renderer {
 		string assetsDir = config["assetsDir"];
 		string modelsDir = config["modelsDir"];
 		const aiScene* scene = importer.ReadFile(assetsDir + modelsDir + filename,
-			// aiProcess_CalcTangentSpace |
-			aiProcess_Triangulate |
-			aiProcess_JoinIdenticalVertices |
-			aiProcess_PreTransformVertices |
-			aiProcess_RemoveRedundantMaterials |
-			aiProcess_GenSmoothNormals |
-			aiProcess_OptimizeMeshes |
-#if !defined(__APPLE__)
-            aiProcess_OptimizeGraph | // not suppoted on Mac OS
-#endif
-			aiProcess_SortByPType);
+			   aiProcess_CalcTangentSpace
+			 | aiProcess_Triangulate
+			 | aiProcess_JoinIdenticalVertices
+			 | aiProcess_PreTransformVertices
+			 | aiProcess_RemoveRedundantMaterials
+			 | aiProcess_GenSmoothNormals
+			 | aiProcess_OptimizeMeshes
+//#if !defined(__APPLE__)
+//           | aiProcess_OptimizeGraph // not suppoted on Mac OS, may crash on Win
+//#endif
+			 | aiProcess_SortByPType
+		);
 		// If the import failed, report it
 		if (!scene)
 		{
