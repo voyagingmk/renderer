@@ -38,6 +38,35 @@ include_directories("${PROJECT_SOURCE_DIR}/include")
 include_directories("${PROJECT_SOURCE_DIR}/include/ecs")
 include_directories("${PROJECT_SOURCE_DIR}/src")
 
+FILE(GLOB_RECURSE EXTERNAL_GL 
+  ${PROJECT_SOURCE_DIR}/external/imgui/*
+)
+FILE(GLOB_RECURSE EXTERNAL_OZZ 
+  ${PROJECT_SOURCE_DIR}/external/ozz/*
+)
+FILE(GLOB_RECURSE EXTERNAL_PHYSICS 
+  ${PROJECT_SOURCE_DIR}/external/reactphysics3d/*
+)
+FILE(GLOB_RECURSE EXTERNAL_IMGUI 
+  ${PROJECT_SOURCE_DIR}/external/imgui/*
+)
+FILE(GLOB_RECURSE EXTERNAL_GLFW 
+  ${PROJECT_SOURCE_DIR}/external/GLFW/*
+)
+FILE(GLOB_RECURSE EXTERNAL_FREETYPE
+  ${PROJECT_SOURCE_DIR}/external/freetype/*
+)
+FILE(GLOB_RECURSE EXTERNAL_ASSIMP
+  ${PROJECT_SOURCE_DIR}/external/assimp/*
+)
+FILE(GLOB_RECURSE EXTERNAL_SDL
+  ${PROJECT_SOURCE_DIR}/external/SDL/*
+)
+FILE(GLOB_RECURSE EXTERNAL_VULKAN
+  ${PROJECT_SOURCE_DIR}/external/vulkan/*
+)
+
+
 FILE(GLOB_RECURSE HEADER_EVENT 
   ${PROJECT_SOURCE_DIR}/include/event/*.hpp
 )
@@ -83,7 +112,6 @@ FILE(GLOB_RECURSE SRC_IMGUI
   ${PROJECT_SOURCE_DIR}/external/imgui*.cpp
 )
 
-
 source_group("include\\ecs"  FILES ${HEADER_ECS})
 source_group("include\\event"  FILES ${HEADER_EVENT})
 source_group("include\\utils"  FILES ${HEADER_UTILS})
@@ -97,10 +125,16 @@ source_group("src\\utils"  FILES ${SRC_UTILS})
 source_group("src\\com"  FILES ${SRC_COM})
 source_group("src\\system"  FILES ${SRC_SYSTEM})
 
-source_group("external\\gl"  FILES ${SRC_GL})
-source_group("external\\ozz"  FILES ${SRC_OZZ})
-source_group("external\\reactphysics3d"  FILES ${SRC_PHYSICS})
-source_group("external\\imgui"  FILES ${SRC_IMGUI})
+source_group("external\\GL"  FILES ${EXTERNAL_GL})
+source_group("external\\ozz"  FILES ${EXTERNAL_OZZ})
+source_group("external\\reactphysics3d"  FILES ${EXTERNAL_PHYSICS})
+source_group("external\\imgui"  FILES ${EXTERNAL_IMGUI})
+source_group("external\\GLFW"  FILES ${EXTERNAL_GLFW})
+source_group("external\\freetype"  FILES ${EXTERNAL_FREETYPE})
+source_group("external\\assimp"  FILES ${EXTERNAL_ASSIMP})
+source_group("external\\SDL"  FILES ${EXTERNAL_SDL})
+source_group("external\\vulkan"  FILES ${EXTERNAL_VULKAN})
+
 
 IF(APPLE)
    #SET(GUI_TYPE MACOSX_BUNDLE)
