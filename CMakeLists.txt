@@ -20,7 +20,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin")
 set(EXECUTABLE_OUTPUT_PATH "${PROJECT_BINARY_DIR}/bin")
 
 FILE(GLOB_RECURSE MY_HEADERS "${PROJECT_SOURCE_DIR}/include/*.h")
-source_group("My Headers" FILES ${MY_HEADERS})
+source_group("include" FILES ${MY_HEADERS})
 
 include_directories("${PROJECT_SOURCE_DIR}")
 
@@ -28,30 +28,79 @@ include_directories("${PROJECT_SOURCE_DIR}/external")
 include_directories("${PROJECT_SOURCE_DIR}/external/SOIL")
 include_directories("${PROJECT_SOURCE_DIR}/external/SDL")
 include_directories("${PROJECT_SOURCE_DIR}/external/reactphysics3d")
-
+#include_directories("${PROJECT_SOURCE_DIR}/external/GL")
+#include_directories("${PROJECT_SOURCE_DIR}/external/assimp")
+#include_directories("${PROJECT_SOURCE_DIR}/external/vulkan")
+#include_directories("${PROJECT_SOURCE_DIR}/external/ozz")
+#include_directories("${PROJECT_SOURCE_DIR}/external/GLFW")
+#include_directories("${PROJECT_SOURCE_DIR}/external/freetype")
 include_directories("${PROJECT_SOURCE_DIR}/include")
-include_directories("${PROJECT_SOURCE_DIR}/include/realtime")
-include_directories("${PROJECT_SOURCE_DIR}/include/shapes")
-
+include_directories("${PROJECT_SOURCE_DIR}/include/ecs")
 include_directories("${PROJECT_SOURCE_DIR}/src")
-include_directories("${PROJECT_SOURCE_DIR}/src/realtime")
-include_directories("${PROJECT_SOURCE_DIR}/src/shapes")
 
-FILE(GLOB_RECURSE BASE_SOURCERS 
-  ${PROJECT_SOURCE_DIR}/include/*.cc
-  ${PROJECT_SOURCE_DIR}/include/ecs/*.cpp
-  ${PROJECT_SOURCE_DIR}/src/*.cpp
-  ${PROJECT_SOURCE_DIR}/src/realtime/*.cpp
-  ${PROJECT_SOURCE_DIR}/src/shapes/*.cpp
+FILE(GLOB_RECURSE HEADER_EVENT 
+  ${PROJECT_SOURCE_DIR}/include/event/*.hpp
+)
+FILE(GLOB_RECURSE HEADER_UTILS
+  ${PROJECT_SOURCE_DIR}/include/utils/*.hpp
+)
+FILE(GLOB_RECURSE HEADER_ECS 
+  ${PROJECT_SOURCE_DIR}/include/ecs/*.hpp
+)
+FILE(GLOB_RECURSE HEADER_SYSTEM
+  ${PROJECT_SOURCE_DIR}/include/system/*.hpp
+)
+FILE(GLOB_RECURSE HEADER_COM
+  ${PROJECT_SOURCE_DIR}/include/com/*.hpp
+)
+
+FILE(GLOB_RECURSE SRC_MAIN
+  ${PROJECT_SOURCE_DIR}/src/main.cpp
+  ${PROJECT_SOURCE_DIR}/src/main_ecs.cpp
+)
+FILE(GLOB_RECURSE SRC_ECS 
+  ${PROJECT_SOURCE_DIR}/src/ecs/*.cpp
+)
+FILE(GLOB_RECURSE SRC_SYSTEM
+  ${PROJECT_SOURCE_DIR}/src/system/*.cpp
+)
+FILE(GLOB_RECURSE SRC_COM
+  ${PROJECT_SOURCE_DIR}/src/com/*.cpp
+)
+FILE(GLOB_RECURSE SRC_UTILS
+  ${PROJECT_SOURCE_DIR}/src/utils/*.cpp
+)
+FILE(GLOB_RECURSE SRC_GL
   ${PROJECT_SOURCE_DIR}/external/GL/*.c
+)
+FILE(GLOB_RECURSE SRC_OZZ
   ${PROJECT_SOURCE_DIR}/external/ozz/*.cc
+)
+FILE(GLOB_RECURSE SRC_PHYSICS
   ${PROJECT_SOURCE_DIR}/external/reactphysics3d/*/*.cpp
-  ${PROJECT_SOURCE_DIR}/external/imgui_impl_sdl_gl3.cpp
-  ${PROJECT_SOURCE_DIR}/external/imgui_draw.cpp
-  ${PROJECT_SOURCE_DIR}/external/imgui.cpp
-  )
+)
+FILE(GLOB_RECURSE SRC_IMGUI
+  ${PROJECT_SOURCE_DIR}/external/imgui*.cpp
+)
 
-FILE(GLOB_RECURSE MAIN_SOURCERS ${PROJECT_SOURCE_DIR}/main/*.cpp)
+
+source_group("include\\ecs"  FILES ${HEADER_ECS})
+source_group("include\\event"  FILES ${HEADER_EVENT})
+source_group("include\\utils"  FILES ${HEADER_UTILS})
+source_group("include\\system"  FILES ${HEADER_SYSTEM})
+source_group("include\\com"  FILES ${HEADER_COM})
+
+
+source_group("src"  FILES ${SRC_MAIN})
+source_group("src\\ecs"  FILES ${SRC_ECS})
+source_group("src\\utils"  FILES ${SRC_UTILS})
+source_group("src\\com"  FILES ${SRC_COM})
+source_group("src\\system"  FILES ${SRC_SYSTEM})
+
+source_group("external\\gl"  FILES ${SRC_GL})
+source_group("external\\ozz"  FILES ${SRC_OZZ})
+source_group("external\\reactphysics3d"  FILES ${SRC_PHYSICS})
+source_group("external\\imgui"  FILES ${SRC_IMGUI})
 
 IF(APPLE)
    #SET(GUI_TYPE MACOSX_BUNDLE)
@@ -101,7 +150,7 @@ set (EXTRA_LIBS ${EXTRA_LIBS} SDL2main)
 set (EXTRA_LIBS ${EXTRA_LIBS} glu32)
 set (EXTRA_LIBS ${EXTRA_LIBS} opengl32)
 set (EXTRA_LIBS ${EXTRA_LIBS} SOIL)
-set (EXTRA_LIBS ${EXTRA_LIBS} assimp)
+set (EXTRA_LIBS ${EXTRA_LIBS} assimp-vc140-mt)
 set (EXTRA_LIBS ${EXTRA_LIBS} freetype)
 set (EXTRA_LIBS ${EXTRA_LIBS} Version)
 set (EXTRA_LIBS ${EXTRA_LIBS} winmm)
@@ -113,7 +162,10 @@ link_directories(
 )
 ENDIF (WIN32)
 
-add_executable(renderer ${BASE_SOURCERS} ${PROJECT_SOURCE_DIR})
+add_executable(renderer  ${SRC_MAIN} ${SRC_ECS} ${SRC_COM} ${SRC_SYSTEM} ${SRC_UTILS}
+    ${SRC_GL} ${SRC_OZZ} ${SRC_PHYSICS} ${SRC_IMGUI} 
+    ${HEADER_ECS} ${HEADER_EVENT} ${HEADER_UTILS} ${HEADER_SYSTEM} ${HEADER_COM}
+    ${PROJECT_SOURCE_DIR})
 
 
 IF (WIN32)
