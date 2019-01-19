@@ -27,6 +27,7 @@ include_directories("${PROJECT_SOURCE_DIR}")
 include_directories("${PROJECT_SOURCE_DIR}/external")
 include_directories("${PROJECT_SOURCE_DIR}/external/SOIL")
 include_directories("${PROJECT_SOURCE_DIR}/external/SDL")
+include_directories("${PROJECT_SOURCE_DIR}/external/imgui")
 include_directories("${PROJECT_SOURCE_DIR}/external/reactphysics3d")
 #include_directories("${PROJECT_SOURCE_DIR}/external/GL")
 #include_directories("${PROJECT_SOURCE_DIR}/external/assimp")
@@ -39,7 +40,7 @@ include_directories("${PROJECT_SOURCE_DIR}/include/ecs")
 include_directories("${PROJECT_SOURCE_DIR}/src")
 
 FILE(GLOB_RECURSE EXTERNAL_GL 
-  ${PROJECT_SOURCE_DIR}/external/imgui/*
+  ${PROJECT_SOURCE_DIR}/external/GL/*
 )
 FILE(GLOB_RECURSE EXTERNAL_OZZ 
   ${PROJECT_SOURCE_DIR}/external/ozz/*
@@ -65,7 +66,6 @@ FILE(GLOB_RECURSE EXTERNAL_SDL
 FILE(GLOB_RECURSE EXTERNAL_VULKAN
   ${PROJECT_SOURCE_DIR}/external/vulkan/*
 )
-
 
 FILE(GLOB_RECURSE HEADER_EVENT 
   ${PROJECT_SOURCE_DIR}/include/event/*.hpp
@@ -109,7 +109,7 @@ FILE(GLOB_RECURSE SRC_PHYSICS
   ${PROJECT_SOURCE_DIR}/external/reactphysics3d/*/*.cpp
 )
 FILE(GLOB_RECURSE SRC_IMGUI
-  ${PROJECT_SOURCE_DIR}/external/imgui*.cpp
+  ${PROJECT_SOURCE_DIR}/external/imgui/*.cpp
 )
 
 source_group("include\\ecs"  FILES ${HEADER_ECS})
@@ -119,21 +119,21 @@ source_group("include\\system"  FILES ${HEADER_SYSTEM})
 source_group("include\\com"  FILES ${HEADER_COM})
 
 
-source_group("src"  FILES ${SRC_MAIN})
 source_group("src\\ecs"  FILES ${SRC_ECS})
 source_group("src\\utils"  FILES ${SRC_UTILS})
 source_group("src\\com"  FILES ${SRC_COM})
 source_group("src\\system"  FILES ${SRC_SYSTEM})
+source_group("src"  FILES ${SRC_MAIN})
 
 source_group("external\\GL"  FILES ${EXTERNAL_GL})
 source_group("external\\ozz"  FILES ${EXTERNAL_OZZ})
 source_group("external\\reactphysics3d"  FILES ${EXTERNAL_PHYSICS})
-source_group("external\\imgui"  FILES ${EXTERNAL_IMGUI})
 source_group("external\\GLFW"  FILES ${EXTERNAL_GLFW})
 source_group("external\\freetype"  FILES ${EXTERNAL_FREETYPE})
 source_group("external\\assimp"  FILES ${EXTERNAL_ASSIMP})
 source_group("external\\SDL"  FILES ${EXTERNAL_SDL})
 source_group("external\\vulkan"  FILES ${EXTERNAL_VULKAN})
+source_group("external\\imgui"  FILES ${EXTERNAL_IMGUI})
 
 
 IF(APPLE)
@@ -161,7 +161,7 @@ IF(APPLE)
                      FORCEFEEDBACK_LIBRARY
                      ASSIMP_LIBRARY
                      FREETYPE_LIBRARY)
-   SET(EXTRA_LIBS ${CARBON_LIBRARY} ${OPENGL_LIBRARY} 
+   SET(EXTRA_LIBS "-Wl,--allow-multiple-definition" ${CARBON_LIBRARY} ${OPENGL_LIBRARY} 
     ${CF_LIBRARY} ${COCOA_LIBRARY}
     ${COREAUDIO_LIBRARY} ${AUDIOTOOLBOX_LIBRARY} 
     ${COREVIDEO_LIBRARY} ${IOKIT_LIBRARY} 
@@ -169,6 +169,7 @@ IF(APPLE)
     ${FREETYPE_LIBRARY})
 ENDIF (APPLE)
 
+#如果出现link冲突SDL，则尝试项目-属性-链接器-命令行-附加参数加入   /FORCE:MULTIPLE
 
 link_directories(
     "./lib/mac/"
@@ -197,7 +198,8 @@ link_directories(
 ENDIF (WIN32)
 
 add_executable(renderer  ${SRC_MAIN} ${SRC_ECS} ${SRC_COM} ${SRC_SYSTEM} ${SRC_UTILS}
-    ${SRC_GL} ${SRC_OZZ} ${SRC_PHYSICS} ${SRC_IMGUI} 
+    ${EXTERNAL_SDL} ${EXTERNAL_IMGUI} ${EXTERNAL_ASSIMP} ${EXTERNAL_PHYSICS} ${EXTERNAL_OZZ} ${EXTERNAL_IMGUI}
+    ${EXTERNAL_GL} ${EXTERNAL_GLFW}
     ${HEADER_ECS} ${HEADER_EVENT} ${HEADER_UTILS} ${HEADER_SYSTEM} ${HEADER_COM}
     ${PROJECT_SOURCE_DIR})
 

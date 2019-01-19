@@ -6,7 +6,8 @@
 #include "com/lightCom.hpp"
 #include "com/miscCom.hpp"
 #include "event/lightEvent.hpp"
-#include "imgui_impl_sdl_gl3.h"
+#include "imgui.h"
+#include "imgui_impl_opengl3.h"
 
 using namespace std;
 
@@ -22,7 +23,11 @@ namespace renderer {
     }
     void UISystem::receive(const DrawUIEvent &evt) {
 		auto com = m_objMgr->getSingletonComponent<SDLContext>();
-        ImGui_ImplSdlGL3_NewFrame(com->win);
+		ImGuiIO& io = ImGui::GetIO();
+		io.DisplaySize = ImVec2(com->width, com->height);
+		io.DeltaTime = 1.0f / 60.0f;
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui::NewFrame();
         // 1. Show a simple window
         // Tip: if we don't call ImGui::Begin()/ImGui::End() the widgets appears in a window automatically called "Debug"
         // Rendering
@@ -178,7 +183,12 @@ namespace renderer {
 
     void UISystem::receive(const SetupSDLDoneEvent &evt) {
         auto com = evt.obj.component<SDLContext>();
-        ImGui_ImplSdlGL3_Init(com->win);
+		IMGUI_CHECKVERSION();
+		ImGui::CreateContext();
+        ImGui_ImplOpenGL3_Init();
+		//ImGuiIO& io = ImGui::GetIO();
+		//io.DisplaySize = ImVec2(1920, 1080);
+		//io.DeltaTime = 1.0f / 60.0f;
     }
 
 };

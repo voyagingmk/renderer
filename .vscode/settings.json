@@ -21,7 +21,6 @@
         "**/library/**": true,
         "*/local/": true,
         "*/CMakeFiles/": true,
-        "external/": true,
         "*/temp/": true,
         "robot/": true
     },

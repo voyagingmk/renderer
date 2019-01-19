@@ -49,7 +49,8 @@ class ScratchBuffer {
 public:
     ScratchBuffer() : buffer(NULL), size(0) {}
     ~ScratchBuffer() {
-        ozz::memory::default_allocator()->Deallocate(buffer);
+		if (buffer)
+			ozz::memory::default_allocator()->Deallocate(buffer);
     }
     void* Resize(size_t s) {
         if (s > size) {
