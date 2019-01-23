@@ -122,7 +122,6 @@ namespace renderer {
 
 	void UISystem::settingUI() {
 		auto com = m_objMgr->getSingletonComponent<SDLContext>();
-		auto cameraView = m_objMgr->getSingletonComponent<PerspectiveCameraView>();
 		ImGui::Begin("Settings");
 		ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_FirstUseEver);
 		ImGui::Text("ShadowMap:");
@@ -173,9 +172,13 @@ namespace renderer {
 		bool debugShadow = gSettingCom->getValue("debugShadow");
 		ImGui::Checkbox("DebugShadow", &debugShadow);
 		gSettingCom->setValue("debugShadow", debugShadow);
-
-		auto pos = cameraView->GetCameraPosition();
-		ImGui::Text("Camera: %.2f %.2f %.2f", pos.x, pos.y, pos.z);
+		
+		int idx = 0;
+		for (const Object objCamera : m_objMgr->entities<PerspectiveCameraView, CameraRoamable>()) {
+			auto pos = objCamera.component<PerspectiveCameraView>()->GetCameraPosition();
+			ImGui::Text("Camera[%d]: %.2f %.2f %.2f", idx, pos.x, pos.y, pos.z);
+			idx++;
+		}
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		ImGui::End();
 	}

@@ -93,14 +93,14 @@ namespace renderer {
         for (const Object obj : m_objMgr->entities<AnimationCom>()) {
             auto com = obj.component<AnimationCom>();
             AnimationData& data = dataSet->getAnimationData(com->aniDataID);
-            // DrawPosture(data.skeleton, com->models, obj);
+            // DrawPosture(evt.objCamera, data.skeleton, com->models, obj);
            
             assert(com->models.Count() == com->skinning_matrices.Count() &&
                    com->models.Count() == data.mesh.inverse_bind_poses.size());
             for (size_t i = 0; i < com->models.Count(); ++i) {
 //                com->skinning_matrices[i] = com->models[i] * data.mesh.inverse_bind_poses[i];
             }
-            DrawSkinnedMesh(data.mesh, com->skinning_matrices, obj);
+            DrawSkinnedMesh(evt.objCamera, data.mesh, com->skinning_matrices, obj);
         }
     }
     
@@ -355,7 +355,7 @@ namespace renderer {
         return true;
     }
     
-    bool AnimationSystem::DrawSkinnedMesh(const OzzMesh& mesh, const ozz::Range<ozz::math::Float4x4> skinning_matrices, Object obj) {
+    bool AnimationSystem::DrawSkinnedMesh(Object objCamera, const OzzMesh& mesh, const ozz::Range<ozz::math::Float4x4> skinning_matrices, Object obj) {
         auto spatialData = obj.component<SpatialData>();
         const Matrix4x4& modelMat = spatialData->o2w.GetMatrix();
         auto spSetCom = m_objMgr->getSingletonComponent<ShaderProgramSet>();
@@ -375,7 +375,6 @@ namespace renderer {
         auto settingID = mesh.settingIDs[0];
         m_evtMgr->emit<ActiveMaterialEvent>(settingID, shader);
         
-        Object objCamera = m_objMgr->getSingletonComponent<PerspectiveCameraView>().object();
         m_evtMgr->emit<UploadCameraToShaderEvent>(objCamera, shader);
         shader.setMatrix4f("modelMat", modelMat);
 
@@ -396,7 +395,7 @@ namespace renderer {
         return true;
     }
     
-    bool AnimationSystem::DrawPosture(const ozz::animation::Skeleton& skeleton,
+    bool AnimationSystem::DrawPosture(Object objCamera, const ozz::animation::Skeleton& skeleton,
                      ozz::Range<const ozz::math::Float4x4> matrices,
                      Object obj,
                      bool draw_joints) {
@@ -413,17 +412,17 @@ namespace renderer {
         float* uniforms =
         static_cast<float*>(scratch_buffer.Resize(max_uniforms_size));
         
-        const int instance_count = DrawPosture_FillUniforms(skeleton, matrices, uniforms, max_skeleton_pieces);
+        const int instance_count = DrawPosture_FillUniforms(objCamera, skeleton, matrices, uniforms, max_skeleton_pieces);
         assert(instance_count <= max_skeleton_pieces);
         
-        DrawPosture_InstancedImpl(obj, uniforms, instance_count, draw_joints);
+        DrawPosture_InstancedImpl(objCamera, obj, uniforms, instance_count, draw_joints);
 
         return true;
     }
     
     
     // "Draw posture" internal instanced rendering implementation.
-    void AnimationSystem::DrawPosture_InstancedImpl(
+    void AnimationSystem::DrawPosture_InstancedImpl(Object objCamera,
                                                  Object obj, const float* uniforms,
                                                  int instance_count, bool draw_joints) {
         m_evtMgr->emit<CreateInstanceBufferEvent>("posture");
@@ -442,8 +441,6 @@ namespace renderer {
         
         Shader shaderBone = spSetCom->getShader("bone");
         Shader shaderJoint = spSetCom->getShader("joint");
-        Object objCamera = m_objMgr->getSingletonComponent<PerspectiveCameraView>().object();
-
         // Renders models.
         for (int i = 0; i < (draw_joints ? 2 : 1); ++i) {
             MeshID meshID = i == 0? meshIDBone : meshIDJoint;
@@ -458,7 +455,7 @@ namespace renderer {
     }
     
     
-    int AnimationSystem::DrawPosture_FillUniforms(const ozz::animation::Skeleton& skeleton,
+    int AnimationSystem::DrawPosture_FillUniforms(Object objCamera, const ozz::animation::Skeleton& skeleton,
                                  ozz::Range<const ozz::math::Float4x4> matrices,
                                  float* uniforms, int max_instances) {
         assert(ozz::math::IsAligned(uniforms, OZZ_ALIGN_OF(ozz::math::SimdFloat4)));

@@ -28,6 +28,8 @@ namespace renderer {
 		void receive(const CameraMoveEvent &evt);
 
     private:
+		void renderCamera(ObjectManager &objMgr, EventManager &evtMgr, Object objCamera);
+
 		void updateRenderQueue();
         
         void scissorView(const Viewport& viewport);

@@ -30,19 +30,19 @@ namespace renderer {
         
         bool InitPostureRendering();
 
-        bool DrawSkinnedMesh(const OzzMesh& mesh, const ozz::Range<ozz::math::Float4x4> skinning_matrices,
+        bool DrawSkinnedMesh(Object objCamera, const OzzMesh& mesh, const ozz::Range<ozz::math::Float4x4> skinning_matrices,
                                               Object obj);
         
-        bool DrawPosture(const ozz::animation::Skeleton& skeleton,
+        bool DrawPosture(Object objCamera, const ozz::animation::Skeleton& skeleton,
                          ozz::Range<const ozz::math::Float4x4> matrices,
                          Object obj,
                          bool draw_joints = true);
         
-        int DrawPosture_FillUniforms(const ozz::animation::Skeleton& skeleton,
+        int DrawPosture_FillUniforms(Object objCamera, const ozz::animation::Skeleton& skeleton,
                                                       ozz::Range<const ozz::math::Float4x4> matrices,
                                                       float* uniforms, int max_instances);
         
-        void DrawPosture_InstancedImpl(Object obj, const float* uniforms,
+        void DrawPosture_InstancedImpl(Object objCamera, Object obj, const float* uniforms,
                                                         int instance_count, bool draw_joints);
         
         bool LoadByConfig(const std::string& assetsDir,const json &config);

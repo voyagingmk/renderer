@@ -332,30 +332,6 @@
         }
     ],
     "animations": [
-        { 
-            "name": "test0",
-            "mesh": "testman_mesh.ozz",
-            "skeleton": "testman_skeleton.ozz",
-            "aniDict": [
-                { 
-                    "name": "run",
-                    "file": "testman_animation.ozz"
-                }
-            ],
-            "material": "tt"
-        },
-        { 
-            "name": "test",
-            "mesh": "tt_mesh.ozz",
-            "skeleton": "tt_skeleton.ozz",
-            "aniDict": [
-                { 
-                    "name": "run",
-                    "file": "tt_animation.ozz"
-                }
-            ],
-            "material": "tt"
-        }
     ],
     "sceneRoot": {  
         "spatial": [

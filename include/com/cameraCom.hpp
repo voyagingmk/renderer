@@ -69,6 +69,10 @@ namespace renderer {
 		}
 	};
 
+	class CameraRoamable {
+
+	};
+
 	class PerspectiveCameraView: public CameraView {
 	public:
 		PerspectiveCameraView(float fov = 45.0f, 

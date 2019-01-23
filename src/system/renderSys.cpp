@@ -32,10 +32,18 @@ namespace renderer {
 	void RenderSystem::update(ObjectManager &objMgr, EventManager &evtMgr, float dt) {
 		auto context = objMgr.getSingletonComponent<SDLContext>();
 		auto gSettingCom = objMgr.getSingletonComponent<GlobalSettingCom>();
-		Object objCamera = objMgr.getSingletonComponent<PerspectiveCameraView>().object();
 		if (!context.valid()) {
 			return;
 		}
+		for (const Object objCamera : m_objMgr->entities<PerspectiveCameraView>()) {
+			renderCamera(objMgr, evtMgr, objCamera);
+		}
+	}
+
+	void RenderSystem::renderCamera(ObjectManager &objMgr, EventManager &evtMgr, Object objCamera) {
+		auto com = objCamera.component<PerspectiveCameraView>();
+		auto context = objMgr.getSingletonComponent<SDLContext>();
+		auto gSettingCom = objMgr.getSingletonComponent<GlobalSettingCom>();
 		auto screenViewport = std::make_tuple(0, 0, context->width, context->height);
 		setViewport(screenViewport);
 		clearView(Color(0.0f, 0.0f, 0.0f, 1.0f),
