@@ -189,6 +189,8 @@ set (EXTRA_LIBS ${EXTRA_LIBS} assimp-vc140-mt)
 set (EXTRA_LIBS ${EXTRA_LIBS} freetype)
 set (EXTRA_LIBS ${EXTRA_LIBS} Version)
 set (EXTRA_LIBS ${EXTRA_LIBS} winmm)
+set (EXTRA_LIBS ${EXTRA_LIBS} imm32)
+set (EXTRA_LIBS ${EXTRA_LIBS} advapi32)
 link_directories(
     "lib/"
     "lib/32/"
